@@ -8,7 +8,7 @@
 | Tiền tố TC ID | `CRM_` → `CRM_<MODULE>_TC_<3 số>` |
 | Nguồn requirements | [`docs/requirements/README.md`](../requirements/README.md) |
 | Môi trường | ⚠️ **Dùng chung** — TC phải chỉ đọc hoặc hoàn tác được; cấm thao tác phá huỷ dữ liệu nghiệp vụ |
-| Ngày cập nhật | 19-09-2026 |
+| Ngày cập nhật | 24-09-2026 |
 
 ---
 
@@ -112,6 +112,8 @@ Xem nhanh bằng web viewer: `scripts/execution-viewer/bundle.html` (mở offlin
 
 | Ngày | Thay đổi |
 |---|---|
+| 24-09-2026 | Rà soát danh mục: bổ sung dòng nhật ký còn thiếu bên dưới (`TC_106` → `108`), cập nhật `Ngày cập nhật`. Không đổi TC nào |
+| 20-09-2026 | `_book-api/` · `AUTH` tách `TC_069` · `TC_082` → thêm `BK_AUTH_TC_106` → `108`. API **50 TC**, module **108 TC** |
 | 20-09-2026 | `_book-api/` · `AUTH` thêm **47 TC API** (`BK_AUTH_TC_059` → `105`) — module phủ 86/86 REQ |
 | 20-09-2026 | Namespace **`_book-api/`** có bộ TC đầu tiên: module `AUTH` · Mobile (Android) · 58 TC · 95 biến thể (`BK_AUTH_TC_001` → `058`). Chi tiết ở danh mục riêng [`_book-api/README.md`](_book-api/README.md) |
 | 19-09-2026 | **Quyết định PO.** `LOGIN`: `CRM_LOGIN_TC_039` trỏ sang `REQ-LOGIN-44` mới (ép HTTPS), thêm tiền đề tắt HTTPS-Upgrades của Chrome để tránh PASS giả — độ phủ **40/40**. `CUST`: `TC_119`, `TC_120` gỡ `@AssumptionBased` theo `AMB-CUST-14` ✅. Không thêm TC, TC ID giữ nguyên |
