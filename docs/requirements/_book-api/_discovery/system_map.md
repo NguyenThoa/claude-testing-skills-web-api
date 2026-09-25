@@ -115,16 +115,17 @@ Không module nào `BLOCKED`. iOS: chưa có lịch — cần máy Mac hoặc cl
 
 | Ngày | Nguồn | Thay đổi |
 |---|---|---|
+| 25-09-2026 | `/generate-requirements-from-website` (AUTH · USER · BOOK) | Lệch so với bản đồ: hệ thống **có mặt Web** tại `https://book.anhtester.com` (mục 1 ghi "Web: không trong phạm vi") — cùng web app React mà Android bọc lại, điều hướng bằng **sidebar** thay cho bottom navigation: `Dashboard` `/` · `User` `/user-management` (+ `/my-profile` · `/setting-account`) · `Book` `/book-management` (+ `/handle` · `/detail/<slug>`) · `Promotion` `/promotion-book-management` · `File` `/file-management` · **`Database` `/db-management`** — mục này **không có** trên Android và **chưa thuộc module/prefix nào** → cần `/discover-system` mode ADD (mặt Web) trước khi recon. Web khác Android: menu tài khoản **không** có `Exit app`; User hiển thị dạng bảng 6 cột + bộ lọc nâng cao. REQ Web đã sinh cho `AUTH` · `USER` · `BOOK` |
 | 19-09-2026 | User bổ sung mặt Mobile | Tạo file. Khám phá app Android `book.anhtester.com` 1.0 (Hybrid Capacitor, debug). Ghép 8/9 module vào module đã có của mặt API, **cấp prefix mới `DASH`** (user chốt). Không deep link, không quyền runtime, không màn hình lần đầu. Tách bản đồ thành 6 file (9 module > ngưỡng 8). **Dữ liệu tạo ra:** 1 user `auto_discover_<timestamp>@auto.test` (dùng tiếp cho recon `AUTH`) — **đã xoá** cuối phiên bằng token của chính tài khoản đó (tạo 1 · dọn 1 · sót 0) · **không** sửa/xoá bản ghi có sẵn nào. Mở `AMB-BK-11` · `AMB-BK-12` |
 
 ## 8. Ambiguity cấp hệ thống phát sinh ở mặt Mobile
 
 Nối tiếp dải `AMB-BK-nn` của [`api_map.md` mục 4](api_map.md#4-khoảng-trống-của-spec-amb--cần-chốt-trước-khi-sinh-tc) (đang dùng tới `AMB-BK-10`).
 
-| Mã | Câu hỏi | Chặn cái gì | Mức |
-|---|---|---|---|
-| **AMB-BK-11** | Link "Need help?" ở header Sign in / Sign up bấm vào không có phản ứng gì — tính năng chưa làm hay lỗi? | TC cho link này ở `AUTH` | 🟡 |
-| **AMB-BK-12** | Đang ở My Profile / Setting account, bấm tab **User** ở bottom navigation không quay về danh sách (chỉ breadcrumb "User management" làm được) — cố ý hay lỗi? | TC điều hướng của `USER` | 🟡 |
+| Mã | Câu hỏi | Chặn cái gì | Mức | Kết luận (✅ chốt 25-09-2026 · `DEMO-AMB-2509`) |
+|---|---|---|---|---|
+| **AMB-BK-11** | Link "Need help?" ở header Sign in / Sign up bấm vào không có phản ứng gì — tính năng chưa làm hay lỗi? | TC cho link này ở `AUTH` | 🟡 | ✅ Tính năng **chưa làm** ở bản 1.0 — link để ngoài phạm vi kiểm thử, không cấp REQ |
+| **AMB-BK-12** | Đang ở My Profile / Setting account, bấm tab **User** ở bottom navigation không quay về danh sách (chỉ breadcrumb "User management" làm được) — cố ý hay lỗi? | TC điều hướng của `USER` | 🟡 | ✅ **Lỗi** điều hướng Android — cấp REQ khi recon `USER` mặt Android |
 
 ## 9. Ghi chú kỹ thuật cho automation
 
