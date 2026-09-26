@@ -23,7 +23,7 @@
 
 | Namespace | Hệ thống | Trạng thái |
 |---|---|---|
-| `_book-api/` | AnhTester Book Management (hệ thống thứ hai — API + Android) | `AUTH`: **108 TC** — Mobile 58 · API 50 (`BK_AUTH_TC_001` → `108`) — danh mục riêng: [`_book-api/README.md`](_book-api/README.md) |
+| `_book-api/` | AnhTester Book Management (hệ thống thứ hai — Web · API · Android) | **522 TC** — `AUTH` 193 (`BK_AUTH_TC_001` → `193`) · `USER` 149 (`BK_USER_TC_001` → `149`) · `BOOK` 180 (`BK_BOOK_TC_001` → `180`) — danh mục riêng: [`_book-api/README.md`](_book-api/README.md) |
 
 
 ### Độ hạt test case của từng module
@@ -112,6 +112,7 @@ Xem nhanh bằng web viewer: `scripts/execution-viewer/bundle.html` (mở offlin
 
 | Ngày | Thay đổi |
 |---|---|
+| 26-09-2026 | `_book-api/` · `USER` +42 TC Mobile (`BK_USER_TC_108` → `149`) · `BOOK` +45 TC Mobile (`BK_BOOK_TC_136` → `180`). Cập nhật dòng namespace (trước đó còn ghi số liệu `AUTH` 20-09-2026) — tổng **522 TC**. Chi tiết ở [`_book-api/README.md`](_book-api/README.md) |
 | 24-09-2026 | Rà soát danh mục: bổ sung dòng nhật ký còn thiếu bên dưới (`TC_106` → `108`), cập nhật `Ngày cập nhật`. Không đổi TC nào |
 | 20-09-2026 | `_book-api/` · `AUTH` tách `TC_069` · `TC_082` → thêm `BK_AUTH_TC_106` → `108`. API **50 TC**, module **108 TC** |
 | 20-09-2026 | `_book-api/` · `AUTH` thêm **47 TC API** (`BK_AUTH_TC_059` → `105`) — module phủ 86/86 REQ |
