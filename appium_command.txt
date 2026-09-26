@@ -41,7 +41,7 @@ appium -a 127.0.0.2 -p 9000
 
 
 emulator @Pixel_9_Pro_XL_API_35
-emulator @Pixel_8_Pro_API_34
+emulator @Pixel_10_Pro_XL
 
 # Khởi động emulator mà không hiển thị GUI
 emulator -avd Pixel_9_Pro_XL_API_35 -no-window

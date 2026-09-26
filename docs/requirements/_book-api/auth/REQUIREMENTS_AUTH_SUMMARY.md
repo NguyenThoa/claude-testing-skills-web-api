@@ -8,15 +8,15 @@
 | **Module** | Xác thực & Phiên đăng nhập — tag spec `Authentication Management` |
 | **Prefix** | `AUTH` → mã REQ `REQ-BK-AUTH-<nn>` · TC ID `BK_AUTH_TC_<nnn>` |
 | **Operation** | 6 — `POST /api/register` · `POST /api/login` · `POST /api/refetch-token` · `DELETE /api/logout` · `GET /api/me` · `PATCH /api/profile` |
-| **Nền tảng** | API ✅ · **Android** 🟨 (Đăng ký · Đăng nhập · Đăng xuất ✅ — Profile · Settings chưa khảo sát) · **Web** ✅ (Đăng ký · Đăng nhập · Đăng xuất · My Profile · Setting account — 25-09-2026) · iOS ❔ chưa khảo sát |
+| **Nền tảng** | API ✅ · **Android** ✅ (Đăng ký · Đăng nhập · Đăng xuất — 19-09-2026 · My Profile · Setting account · Exit app — 26-09-2026; cập nhật hồ sơ / đổi mật khẩu thành công ❔ — REQ-122 đang lỗi) · **Web** ✅ (Đăng ký · Đăng nhập · Đăng xuất · My Profile · Setting account — 25-09-2026) · iOS ❔ chưa khảo sát |
 | **Nguồn phân tích** | API: spec OpenAPI snapshot 19-09-2026 + 101 request gọi thật · Android: thao tác thật trên app `book.anhtester.com` 1.0 (debug) ngày 19-09-2026 · Web: thao tác thật trên `https://book.anhtester.com` (Chrome, Playwright MCP) ngày 25-09-2026 — chi tiết ở từng file nền tảng |
-| **Ngày phân tích** | 19-09-2026 (API · Android) · 25-09-2026 (Web) |
+| **Ngày phân tích** | 19-09-2026 (API · Android) · 25-09-2026 (Web) · 26-09-2026 (Android lượt 2) |
 | **Tài khoản dùng khảo sát** | API: 5 tài khoản **tự đăng ký** `auto_auth_<timestamp>_*`, đã dọn hết · Android: 1 tài khoản **tự đăng ký trên app** `auto_discover_<timestamp>@auto.test`, đã xoá sau khảo sát · Web: 2 tài khoản tự tạo `auto_web_<timestamp>_a|b@auto.test` — A đã xoá, **B còn sót** (web mục 10) — không dùng tài khoản có sẵn nào |
 | **Môi trường dùng chung** | **KHÔNG** (user chốt 14-08-2026) — vẫn áp luật chỉ ghi/xoá bản ghi do phiên tạo (skill 3.4.4) |
-| **Tổng số REQ** | **121** — dùng chung `Android · API · Web` 8 · dùng chung `Android · Web` 29 · `api/` 40 · `mobile/` 9 · `web/` 35 |
-| **Dải mã đã dùng** | `REQ-BK-AUTH-01` → `REQ-BK-AUTH-121` (đợt 1 API `01 → 48` · đợt 2 Android `49 → 86` · đợt 3 Web `87 → 119` · đợt 4 chốt AMB `DEMO-AMB-2509` `120 → 121`) · đợt 5 `DEMO-AMB-2509B`: chỉ sửa `73` · `AMB-BK-AUTH-01` → `AMB-BK-AUTH-33` · `RISK-BK-AUTH-01` → `RISK-BK-AUTH-10` · `STORY-BK-AUTH-01` → `06` |
-| **Mã kế tiếp** | Đợt phân tích sau bắt đầu từ `REQ-BK-AUTH-122` · `AMB-BK-AUTH-34` · `RISK-BK-AUTH-11` — **KHÔNG đánh lại từ 01** |
-| **Ambiguity còn treo** | **0** — 33/33 AMB đã chốt (`33` ngày 25-09-2026 theo `DEMO-AMB-2509B`) (`01` · `02` · `04` ngày 20-09-2026 · `03` · `05` → `32` ngày 25-09-2026 theo `DEMO-AMB-2509`, dữ liệu dạy học demo) · AMB cấp hệ thống tham chiếu (`AMB-BK-01` · `08` · `10` · `11`) cũng đã chốt |
+| **Tổng số REQ** | **126** — dùng chung `Android · API · Web` 8 · dùng chung `Android · Web` 40 · `api/` 40 · `mobile/` 14 · `web/` 24 |
+| **Dải mã đã dùng** | `REQ-BK-AUTH-01` → `REQ-BK-AUTH-126` (đợt 1 API `01 → 48` · đợt 2 Android `49 → 86` · đợt 3 Web `87 → 119` · đợt 4 chốt AMB `DEMO-AMB-2509` `120 → 121`) · đợt 5 `DEMO-AMB-2509B`: chỉ sửa `73` · đợt 6 Android lượt 2 `122 → 126` · `AMB-BK-AUTH-01` → `AMB-BK-AUTH-35` · `RISK-BK-AUTH-01` → `RISK-BK-AUTH-11` · `STORY-BK-AUTH-01` → `06` |
+| **Mã kế tiếp** | Đợt phân tích sau bắt đầu từ `REQ-BK-AUTH-127` · `AMB-BK-AUTH-36` · `RISK-BK-AUTH-12` — **KHÔNG đánh lại từ 01** |
+| **Ambiguity còn treo** | **0** — 35/35 AMB đã chốt (`34` · `35` ngày 26-09-2026 theo `DEMO-AMB-2609`) (`33` ngày 25-09-2026 theo `DEMO-AMB-2509B`) (`01` · `02` · `04` ngày 20-09-2026 · `03` · `05` → `32` ngày 25-09-2026 theo `DEMO-AMB-2509`, dữ liệu dạy học demo) · AMB cấp hệ thống tham chiếu (`AMB-BK-01` · `08` · `10` · `11`) cũng đã chốt |
 
 ---
 
@@ -47,7 +47,7 @@ Từ 25-09-2026 module có thêm **mặt Web** — cùng web app React mà app A
 | Giải mã/kiểm tra nội dung JWT (claim, thuật toán ký) | Không có tài liệu về claim; chỉ assert **hình thái** token |
 | Giới hạn tần suất / chống dò mật khẩu | Không có căn cứ trong spec — `AMB-BK-08` cấp hệ thống |
 | Nội dung trường `config` | Kiểu tự do, không có schema — `AMB-BK-10` cấp hệ thống |
-| Android: My Profile · Setting account · Exit app | Chưa khảo sát ở lượt 19-09-2026 — lượt sau của `/generate-requirements-from-mobile auth`. Đã có REQ **Web** tương ứng (101 → 119) — **không** suy sang Android |
+| Android: cập nhật hồ sơ thành công · đổi mật khẩu · email trùng ở My Profile (REQ-103 · 104 · 109 → 112 · 114 · 120) | Chưa kiểm được ở lượt 26-09-2026: Save Profile trên Android đang lỗi (REQ-122) và agent không nhập mật khẩu trên hệ thống thật — tester chạy khi REQ-122 được sửa |
 | Web: tải ảnh đại diện (Upload photo) ở My Profile | Chưa thử — `AMB-BK-USER-05` (cùng thành phần ở Add/Update user) |
 | Web: Back/Forward trình duyệt · mất mạng · nhiều tab cùng phiên | Chưa khảo sát ở lượt 25-09-2026 |
 | iOS | Chưa khảo sát — cần máy Mac hoặc cloud. **Không** suy từ Android |
@@ -61,11 +61,12 @@ Từ 25-09-2026 module có thêm **mặt Web** — cùng web app React mà app A
 |---|---|---|---|
 | Chung `Android · API · Web` | chính file này — mục 3.1 | STORY-BK-AUTH-01 · 02 | `01` · `03` · `08` · `09` · `11` · `14` · `15` · `16` (8) |
 | Chung `Android · Web` | chính file này — mục 3.2 | STORY-BK-AUTH-01 · 02 | `49 → 59` · `65 → 81` · `83` (29) |
+| Chung `Android · Web` | chính file này — mục 3.3 | STORY-BK-AUTH-04 · 06 | `101` · `102` · `105 → 108` · `113` · `116 → 119` (11) |
 | API | [api/requirements_auth_api.md](api/requirements_auth_api.md) | STORY-BK-AUTH-01 → 05 | `02` · `04 → 07` · `10` · `12` · `13` · `17 → 48` (40) |
-| Mobile (Android) | [mobile/requirements_auth_mobile.md](mobile/requirements_auth_mobile.md) | STORY-BK-AUTH-01 · 02 · 03 | `60 → 64` · `82` · `84 → 86` (9) |
-| Web | [web/requirements_auth_web.md](web/requirements_auth_web.md) | STORY-BK-AUTH-01 · 02 · 03 · 04 · 06 | `REQ-BK-AUTH-87` → `REQ-BK-AUTH-121` (35) |
+| Mobile (Android) | [mobile/requirements_auth_mobile.md](mobile/requirements_auth_mobile.md) | STORY-BK-AUTH-01 · 02 · 03 · 04 · 06 | `60 → 64` · `82` · `84 → 86` · `122 → 126` (14) |
+| Web | [web/requirements_auth_web.md](web/requirements_auth_web.md) | STORY-BK-AUTH-01 · 02 · 03 · 04 | `87` → `121` trừ `101` · `102` · `105 → 108` · `113` · `116 → 119` (24) |
 
-Tự kiểm: `8 + 29 + 40 + 9 + 35 = 121` = dải `01 → 121` ✔ — mỗi REQ nằm ở đúng 1 file.
+Tự kiểm: `8 + 29 + 11 + 40 + 14 + 24 = 126` = dải `01 → 126` ✔ — mỗi REQ nằm ở đúng 1 file.
 
 | Nội dung | Ở đâu |
 |---|---|
@@ -134,6 +135,26 @@ App Android là web app React bọc trong WebView — màn hình giống hệt w
 
 **Tổng mục 3: 37 REQ** — 3.1: 8 · 3.2: 29 (`49 → 59` = 11 · `65 → 81` = 17 · `83` = 1) → `8 + 11 + 17 + 1 = 37 ✔`
 
+### 3.3. My Profile · Setting account (Android · Web)
+
+REQ sinh ở đợt Web (25-09-2026), **chuyển lên index** ngày 26-09-2026 khi kiểm khớp trên app Android (`/generate-requirements-from-mobile`); mã giữ nguyên, AC Web giữ nguyên văn và thêm vế **Android**. Ảnh Web ở lại `web/evidence/`, ảnh Android ở `mobile/evidence/`. REQ của My Profile **chưa** kiểm được trên Android (đổi mật khẩu thành công/sai · email trùng · Save sau lỗi · mở thẳng URL) vẫn ở `web/` — lý do ở [mobile/requirements_auth_mobile.md mục 2](mobile/requirements_auth_mobile.md#2-bản-đồ-phủ-tài-liệu).
+
+| REQ ID | Tên yêu cầu | Nền tảng | Mô tả | Acceptance Criteria | Trạng thái | Cập nhật lần cuối | Nguồn |
+|---|---|---|---|---|---|---|---|
+| REQ-BK-AUTH-101 | My Profile hiển thị dữ liệu hiện tại của tài khoản | Android · Web | Lối vào: menu avatar → `Profile` | **Web:** Mở `/user-management/my-profile` → tiêu đề `My Profile` · breadcrumb `User management / Change my profile` · nhóm *Infomation*: `Upload photo` (dòng `Allowed *.jpeg,.jpg*.png*.gif*.webp*.bmp*.svg max size of 3.0 MB`) · `Name *` · `Phone` · `Division` · `Ward` · `Address` — **điền sẵn** giá trị đã đăng ký, địa chỉ ghép được **tách lại** đúng 3 ô · nhóm *Account*: `Email *` (điền sẵn, sửa được) · `Old Password` · `Password` · `Password Confirmation` (trống) · nút `Reset` · `Save Profile` **Android:** menu avatar → `Profile` → tiêu đề `My Profile` · breadcrumb `User management / Change my profile` · cùng các ô như Web · Name · Phone · Email **điền sẵn** đúng tài khoản đang đăng nhập · 3 ô mật khẩu trống · tab `User` của bottom navigation được chọn. Tài khoản khảo sát **chưa có địa chỉ** nên Division · Ward · Address trống — vế *tách lại địa chỉ ghép* **chưa kiểm** trên Android | 🟢 | 26-09-2026 · + Android | Web: Kiểm chứng thực tế · `web_profile_default_fullpage.png` · đọc `value` các ô · Android: Kiểm chứng thực tế · android_profile_default_part1.png · android_profile_default_part2.png · đọc `text` các ô |
+| REQ-BK-AUTH-102 | Nút Save Profile và Reset mờ khi chưa sửa gì | Android · Web |  | **Web:** Mở My Profile, chưa sửa ô nào → `Save Profile` và `Reset` hiển thị **mờ** **Android:** chưa sửa ô nào → `Save Profile` và `Reset` có `enabled=false` · sửa một ô → cả hai `enabled=true` · bấm `Reset` → trở lại `enabled=false` | 🟢 | 26-09-2026 · + Android | Web: UI thực tế · `web_profile_default_fullpage.png` — chưa đọc thuộc tính `disabled` · Android: Kiểm chứng thực tế · android_profile_default_part2.png · đọc `enabled` |
+| REQ-BK-AUTH-105 | My Profile: bỏ trống Name bị chặn | Android · Web |  | **Web:** Xoá trắng Name → `Save Profile` → dưới ô Name hiện `Name is required.` · không gửi request **Android:** xoá trắng Name → `Save Profile` → dưới ô `Name is required.` · ô viền đỏ | 🟢 | 26-09-2026 · + Android | Web: Kiểm chứng thực tế · `web_profile_invalid_fields_fullpage.png` · Android: Kiểm chứng thực tế · android_profile_invalid_fields.png |
+| REQ-BK-AUTH-106 | My Profile: Email sai định dạng bị chặn | Android · Web |  | **Web:** Email `khong-phai-email` → `Save Profile` → dưới ô Email hiện `Invalid email address` **Android:** Email `khong-phai-email` → `Save Profile` → dưới ô `Invalid email address` | 🟢 | 26-09-2026 · + Android | Web: Kiểm chứng thực tế · `web_profile_invalid_fields_fullpage.png` · Android: Kiểm chứng thực tế · android_profile_invalid_fields.png |
+| REQ-BK-AUTH-107 | Đổi mật khẩu bắt buộc nhập Old Password | Android · Web |  | **Web:** Old Password trống, Password có giá trị → `Save Profile` → dưới ô Old Password hiện `Old Password is required.` · nhãn đổi thành `Old Password *` **Android:** Old Password trống, Password có giá trị (tester nhập tay) → `Save Profile` → dưới ô Old Password `Old Password is required.` · nhãn đổi thành `Old Password *`. Ô Password Confirmation đang trống nên cùng lúc hiện `Password confirmation does not match.` (REQ-108) | 🟢 | 26-09-2026 · + Android | Web: Kiểm chứng thực tế · `web_profile_invalid_fields_fullpage.png` · Android: Kiểm chứng thực tế · android_profile_old_password_required.png |
+| REQ-BK-AUTH-108 | My Profile: mật khẩu xác nhận phải khớp | Android · Web |  | **Web:** Password `a` · Password Confirmation `b` → dưới ô Password Confirmation hiện `Password confirmation does not match.` **Android:** Password có giá trị, Password Confirmation **trống** → `Save Profile` → dưới ô Confirmation `Password confirmation does not match.`. Cặp giá trị khác nhau khác rỗng (`a`/`b`) **chưa** chạy được trên Android — tester nhập nhầm cả hai ô là `a` | 🟢 | 26-09-2026 · + Android | Web: Kiểm chứng thực tế · `web_profile_invalid_fields_fullpage.png` · Android: Kiểm chứng thực tế · android_profile_old_password_required.png |
+| REQ-BK-AUTH-113 | Reset khôi phục giá trị đã lưu | Android · Web |  | **Web:** Sửa Name/Email/mật khẩu (có lỗi hiển thị) → `Reset` → mọi ô về giá trị đang lưu, 3 ô mật khẩu trống, **không** còn lỗi nào **Android:** sửa Name (trắng) + Email (sai định dạng, đang báo lỗi) → `Reset` → Name · Email về giá trị đang lưu, không còn lỗi, `Save Profile`/`Reset` khoá lại. Lần 2: 2 ô Password + Confirmation có giá trị (tester nhập) → `Reset` → cả 3 ô mật khẩu trống | 🟢 | 26-09-2026 · + Android | Web: Kiểm chứng thực tế · đọc `value` + lỗi sau Reset · Android: Kiểm chứng thực tế · đọc `text` + lỗi + `enabled` sau Reset |
+| REQ-BK-AUTH-116 | Màn hình Setting account có đủ thành phần | Android · Web | Lối vào: menu avatar → `Settings` | **Web:** `/user-management/setting-account` → tiêu đề `Setting account` · breadcrumb `User management / Setting account` · khối *Theme*: 3 tab `Light` · `Dark` · `System` (mặc định `System` đang chọn) · khối *Select color*: bảng **133** ô màu (19 cột × 7 hàng) · nút `Reset` · `Save` **Android:** menu avatar → `Settings` → cùng thành phần. Tab `System` có `selected=true`. Bảng **133** ô màu xếp **12 cột** (7 hàng × 12 + 7 hàng × 7) do màn hình hẹp — không assert số cột. Ô màu **không** có trong cây phần tử (RISK-BK-AUTH-11) | 🟢 | 26-09-2026 · + Android | Web: Kiểm chứng thực tế · `web_settings_dark_theme_viewport.png` · đọc `aria-selected` của tab + đếm ô màu · Android: Kiểm chứng thực tế · android_settings_default_part1.png · android_settings_default_part2.png · đếm ô trên ảnh |
+| REQ-BK-AUTH-117 | Chọn theme áp dụng ngay, chưa cần Save | Android · Web |  | **Web:** Bấm tab `Dark` → nền trang chuyển tối ngay (màu nền `body` đổi), **chưa** bấm Save **Android:** bấm `Dark` → nền chuyển tối ngay, chưa Save · bấm một ô màu → ô có dấu ✓, màu chủ đạo (tab đang chọn ở bottom navigation, viền avatar) đổi ngay | 🟢 | 26-09-2026 · + Android | Web: Kiểm chứng thực tế · `web_settings_dark_theme_viewport.png` · đọc `getComputedStyle(body).backgroundColor` trước/sau · Android: Kiểm chứng thực tế · android_settings_dark_theme.png · android_settings_save_no_feedback.png |
+| REQ-BK-AUTH-118 | Save lưu cấu hình giao diện lên tài khoản | Android · Web | Kỳ vọng — hiện **chưa đạt** | **Web:** Chọn theme + màu → `Save` → phải báo thành công. **Hiện tại:** thông báo `Invalid data.`; network `PATCH /api/profile` body `{"config":{"theme":…,"mainColor":…}}` → **422** `fields.fields` **Hiện tại — Android:** chọn `Dark` (lần 1) · `Dark` + một màu (lần 2) → `Save` → **không có phản hồi nào**: không thông báo nổi (chụp liên tục 3 giây sau khi bấm), vẫn ở Setting account. Không quan sát được request (không proxy) — `AMB-BK-AUTH-35` | 🟢 | 26-09-2026 · + Android | Web: Kiểm chứng thực tế — ❌ lệch (`AMB-BK-AUTH-30`) · `web_settings_save_invalid_data_viewport.png` · Android: Kiểm chứng thực tế · android_settings_save_no_feedback.png |
+| REQ-BK-AUTH-119 | Reset đưa theme về System | Android · Web |  | **Web:** Đang chọn `Dark` → `Reset` → tab `System` được chọn · nền trang về sáng (theo hệ điều hành của máy khảo sát) **Android:** mở Setting account khi theme đang `System` → chọn `Dark` → `Reset` → tab `System` `selected=true`, nền sáng lại. Mở màn hình khi theme **đang khác** `System` thì Reset không về `System` — REQ-124 | 🟢 | 26-09-2026 · + Android | Web: Kiểm chứng thực tế · đọc `aria-selected` + màu nền sau Reset · Android: Kiểm chứng thực tế · android_settings_reset_back_to_loaded.png · đọc `selected` |
+
+**Mục 3.3: 11 REQ** — mọi dòng `Nền tảng` = `Android · Web`.
+
 ---
 
 ## 6. Ma trận Phân quyền
@@ -165,9 +186,10 @@ và [logout · me · profile] × [Vai trò khác] — hệ thống không có va
 | Mở Sign in bằng nút avatar | ✅ (REQ-50) | ❌ — avatar mở menu tài khoản (REQ-60) |
 | Mở Sign up · đăng ký | ✅ (REQ-66 · 01) | — |
 | Đăng xuất | — | ✅ (REQ-62) |
+| My Profile · Setting account · Exit app qua menu | ❌ — không có menu tài khoản (avatar dẫn tới Sign in — REQ-50) | ✅ (REQ-101 · 116 · 126 — 26-09-2026) |
 
 ```
-Tổng 6 ô = Đã kiểm chứng 4 · Suy diễn 0 · Chưa rõ 0 · Không áp dụng 2
+Tổng 8 ô = Đã kiểm chứng 6 · Suy diễn 0 · Chưa rõ 0 · Không áp dụng 2
 Ô "không áp dụng" là [Mở Sign up × Đã đăng nhập] — không có lối vào Sign up khi đã đăng nhập (avatar mở menu,
 Dashboard không còn thẻ sign in); [Đăng xuất × Chưa đăng nhập] — chưa có phiên để đăng xuất.
 ```
@@ -201,22 +223,22 @@ Chưa thử: khách mở thẳng URL /user-management/my-profile · setting-acco
 | Story ID | Tên Story | REQ bao phủ | Số REQ | AMB / RISK liên quan | Ghi chú phạm vi |
 |---|---|---|---|---|---|
 | STORY-BK-AUTH-01 | Đăng ký tài khoản | REQ-BK-AUTH-01 → 10 · 65 → 86 · 88 → 90 | 35 | AMB-BK-AUTH-03 · 08 · 14 · 15 · 17 · 18 · 22 · 31 · 33 · RISK-BK-AUTH-03 · 04 | `POST /api/register` · màn hình Sign up (Android · Web) |
-| STORY-BK-AUTH-02 | Đăng nhập | REQ-BK-AUTH-11 → 23 · 49 → 61 · 63 · 64 · 87 · 91 → 93 · 96 → 100 · 121 | 38 | AMB-BK-AUTH-04 · 09 · 13 · 16 · 23 · 24 · 25 · 26 · RISK-BK-AUTH-05 · 06 · 09 | `POST /api/login` + cookie phiên · màn hình Sign in, menu tài khoản, vòng đời phiên (Android · Web) · chặn trang cần đăng nhập (Web) |
+| STORY-BK-AUTH-02 | Đăng nhập | REQ-BK-AUTH-11 → 23 · 49 → 61 · 63 · 64 · 87 · 91 → 93 · 96 → 100 · 121 · 126 | 39 | AMB-BK-AUTH-04 · 09 · 13 · 16 · 23 · 24 · 25 · 26 · RISK-BK-AUTH-05 · 06 · 09 | `POST /api/login` + cookie phiên · màn hình Sign in, menu tài khoản, vòng đời phiên (Android · Web) · chặn trang cần đăng nhập (Web) |
 | STORY-BK-AUTH-03 | Làm mới token & Đăng xuất | REQ-BK-AUTH-24 → 33 · 62 · 94 · 95 | 13 | AMB-BK-AUTH-02 · 06 · 07 · 10 · RISK-BK-AUTH-01 | `POST /api/refetch-token` · `DELETE /api/logout` · Logout (Android · Web) |
-| STORY-BK-AUTH-04 | Thông tin & Hồ sơ người dùng hiện tại | REQ-BK-AUTH-34 → 47 · 101 → 115 · 120 | 30 | AMB-BK-AUTH-01 · 05 · 12 · 21 · 27 · 28 · 29 · RISK-BK-AUTH-02 | `GET /api/me` · `PATCH /api/profile` · My Profile (Web) — Android chưa khảo sát |
+| STORY-BK-AUTH-04 | Thông tin & Hồ sơ người dùng hiện tại | REQ-BK-AUTH-34 → 47 · 101 → 115 · 120 · 122 · 123 | 32 | AMB-BK-AUTH-01 · 05 · 12 · 21 · 27 · 28 · 29 · 34 · RISK-BK-AUTH-02 | `GET /api/me` · `PATCH /api/profile` · My Profile (Web · Android) |
 | STORY-BK-AUTH-05 | Quy ước chung của module | REQ-BK-AUTH-48 | 1 | — | Error envelope dùng chung |
-| STORY-BK-AUTH-06 | Tuỳ chỉnh giao diện tài khoản | REQ-BK-AUTH-116 → 119 | 4 | AMB-BK-AUTH-30 | Setting account — theme, màu chủ đạo (Web). Lưu lên server qua `PATCH /api/profile` (`config`) — Android chưa khảo sát |
+| STORY-BK-AUTH-06 | Tuỳ chỉnh giao diện tài khoản | REQ-BK-AUTH-116 → 119 · 124 · 125 | 6 | AMB-BK-AUTH-30 · 35 | Setting account — theme, màu chủ đạo (Web · Android). Lưu lên server qua `PATCH /api/profile` (`config`) |
 
-**Tổng: 6 Story / 121 REQ** — `35 + 38 + 13 + 30 + 1 + 4 = 121 ✔` · mọi REQ thuộc đúng một Story, không mồ côi, không trùng. (Story 01: `10 + 22 + 3` · Story 02: `13 + 13 + 1 + 1 + 1 + 3 + 5 + 1` · Story 03: `10 + 1 + 2` · Story 04: `14 + 15 + 1`.)
+**Tổng: 6 Story / 126 REQ** — `35 + 39 + 13 + 32 + 1 + 6 = 126 ✔` · mọi REQ thuộc đúng một Story, không mồ côi, không trùng. (Story 01: `10 + 22 + 3` · Story 02: `13 + 13 + 1 + 1 + 1 + 3 + 5 + 1 + 1` · Story 03: `10 + 1 + 2` · Story 04: `14 + 15 + 1 + 2` · Story 06: `4 + 2`.)
 
 ### Đối chiếu AMB / RISK
 
 | Nhóm | Mã | Nằm ở đâu |
 |---|---|---|
-| AMB thuộc Story | AMB-BK-AUTH-01 → 10 · 12 → 18 · 21 → 31 · 33 | phân bổ ở bảng Story |
+| AMB thuộc Story | AMB-BK-AUTH-01 → 10 · 12 → 18 · 21 → 31 · 33 · 34 · 35 | phân bổ ở bảng Story |
 | AMB cấp Epic | AMB-BK-AUTH-11 · 19 · 20 · 32 | `11`: status khai trong spec chưa quan sát — cắt ngang 6 operation · `19`: phiên bản app tối thiểu — cấp app · `20`: content-type/kích thước body — cắt ngang operation · `32`: tiêu đề tab trình duyệt — cắt ngang mọi trang web |
 | RISK thuộc Story | RISK-BK-AUTH-01 → 06 · 09 | phân bổ ở bảng Story |
-| RISK cấp Epic | RISK-BK-AUTH-07 · 08 · 10 | `07` · `08`: locator và thao tác bấm trên app — mọi TC Android · `10`: thông báo nổi sống ≈ 3 giây — mọi TC web |
+| RISK cấp Epic | RISK-BK-AUTH-07 · 08 · 10 · 11 | `07` · `08` · `11`: locator, thao tác bấm, cây phần tử trên app — mọi TC Android · `10`: thông báo nổi sống ≈ 3 giây — mọi TC web |
 
 ### Hạng mục cấp Epic (cố ý không gán vào Story nào)
 
@@ -225,7 +247,7 @@ Chưa thử: khách mở thẳng URL /user-management/my-profile · setting-acco
 | Ma trận phân quyền (6) | Cắt ngang 6 operation |
 | `AMB-BK-AUTH-11` | Mỗi operation có ≥ 1 status khai mà chưa quan sát — một câu hỏi chung cho PO |
 | Tham chiếu `AMB-BK-01` · `AMB-BK-08` · `AMB-BK-10` · `AMB-BK-11` | AMB **cấp hệ thống**, sở hữu ở `api_map.md` / `system_map.md` — module chỉ tham chiếu |
-| `AMB-BK-AUTH-19` · `RISK-BK-AUTH-07` · `08` | Cấp app / cấp automation Android — cắt ngang mọi Story có mặt Android |
+| `AMB-BK-AUTH-19` · `RISK-BK-AUTH-07` · `08` · `11` | Cấp app / cấp automation Android — cắt ngang mọi Story có mặt Android |
 | `AMB-BK-AUTH-20` | Content-type / kích thước body — cắt ngang `register` · `login` · `profile` |
 | `AMB-BK-AUTH-32` · `RISK-BK-AUTH-10` | Tiêu đề tab và thông báo nổi của web — cắt ngang mọi Story có mặt Web |
 
@@ -237,7 +259,7 @@ Chưa thử: khách mở thẳng URL /user-management/my-profile · setting-acco
 4. **STORY-BK-AUTH-03 Làm mới & Đăng xuất** — `REQ-33` kỳ vọng FAIL (`AMB-BK-AUTH-02` ✅ chốt là lỗi — TC `@KnownBug`)
 5. **STORY-BK-AUTH-04 Hồ sơ** — `REQ-41 · 42 · 45 → 47` kỳ vọng FAIL với body một phần (`AMB-BK-AUTH-01` · `21` ✅ — TC `@KnownBug`); phần còn lại làm ngay được
 
-**Android:** cùng thứ tự Story. Không REQ Android nào `BLOCKED`; `REQ-63` · `83` · `73` dựa trên hành vi quan sát — PO đã chốt giữ nguyên (`AMB-BK-AUTH-16` · `17` · `14` ✅).
+**Android:** cùng thứ tự Story. `REQ-63` · `83` dựa trên hành vi quan sát — PO đã chốt giữ nguyên (`AMB-BK-AUTH-16` · `17` ✅); `REQ-73` đã sửa thành biên 191 (`AMB-BK-AUTH-33`), Android chưa đạt. `REQ-122` kỳ vọng FAIL (TC `@KnownBug`) — **chặn** việc kiểm trên Android các REQ web `103` · `104` · `109 → 112` · `114` · `120` (giữ ở `web/`).
 
 **Web:** cùng thứ tự Story, thêm **STORY-BK-AUTH-06** sau Story 04. Không REQ web nào `BLOCKED`. 4 REQ ghi hành vi **kỳ vọng** mà hệ thống chưa đạt — TC `@KnownBug`, mở bug bằng `/create-bug-report`: `REQ-97` (`AMB-BK-AUTH-25`) · `REQ-114` (`28`) · `REQ-115` (`29`) · `REQ-118` (`30`). `REQ-120` theo quyết định PO, chưa kiểm chứng — TC `@NeedsVerify`.
 
@@ -282,6 +304,8 @@ Chưa thử: khách mở thẳng URL /user-management/my-profile · setting-acco
 | AMB-BK-AUTH-31 | Lúc chờ đăng ký, thông báo nổi hiện `Upload user...` — chữ không đúng ngữ cảnh | Người dùng hiểu nhầm đang tải tệp | 🟢 | Lỗi câu chữ — không cấp REQ | ✅ Đã chốt 25-09-2026 | **Lỗi câu chữ**, chấp nhận ở bản 1.0 — không cấp REQ; TC **không** assert thông báo lúc chờ (DEMO-AMB-2509) |
 | AMB-BK-AUTH-32 | Tiêu đề tab trình duyệt không theo trang: Dashboard sau khi đăng nhập giữ `Sign in - Book UI for api-book.anhtester.com`; lúc tải trang luôn là `API RESTful miễn phí dành cho Tester kiểm thử` | TC assert tiêu đề sẽ đỏ theo thời điểm đọc | 🟢 | Không cấp REQ về tiêu đề; TC chỉ assert tiêu đề **chứa** phần ổn định sau khi trang tải xong | ✅ Đã chốt 25-09-2026 | Trùng Assumption — không cấp REQ về tiêu đề tab; TC chỉ assert phần ổn định (DEMO-AMB-2509) |
 | AMB-BK-AUTH-33 | Độ dài tối đa của Name khi đăng ký: app · web cho tới **250** (REQ-73), server từ chối từ **192** ký tự (`POST /api/register` → 422 body `fields.fields`). Giới hạn đúng là bao nhiêu? (cùng `AMB-BK-USER-09`) | Người dùng nhập 200 ký tự, giao diện cho qua, server báo lỗi khó hiểu | 🟠 | Giới hạn thật của cột lưu trữ (191) là chính thức | ✅ Đã chốt 25-09-2026 | Giới hạn chính thức **191** ký tự. **Sửa `REQ-BK-AUTH-73`** 🟡 (Android · Web chưa đạt) (DEMO-AMB-2509B) |
+| AMB-BK-AUTH-34 | Save Profile trên **Android** luôn báo `Error in processing request`, hồ sơ không đổi (3/3, kể cả khi đủ địa chỉ), trong khi web cập nhật thành công với cùng thao tác (REQ-103). Lỗi riêng app hay riêng tài khoản khảo sát? | Người dùng app không sửa được hồ sơ, không đổi được mật khẩu; 8 REQ My Profile không kiểm được trên Android | 🟠 | Là **lỗi app Android** — cùng form phải cho cùng kết quả như web | ✅ Đã chốt 26-09-2026 | **Lỗi Android** — trùng Assumption. **Sinh `REQ-BK-AUTH-122`** (kỳ vọng, chưa đạt). Nguyên nhân **cần Dev xác minh** — không quan sát được request (không proxy, WebView không bật gỡ lỗi); tester nên thử cùng tài khoản trên web để loại trừ yếu tố tài khoản (DEMO-AMB-2609) |
+| AMB-BK-AUTH-35 | Setting account → `Save` trên **Android** không có phản hồi nào (không thông báo), web báo `Invalid data.` | Người dùng không biết đã lưu hay chưa | 🟡 | Cùng gốc lỗi REQ-118; Android còn thiếu thông báo | ✅ Đã chốt 26-09-2026 | **Lỗi** — cùng gốc `AMB-BK-AUTH-30` (REQ-118 kỳ vọng lưu thành công, cả hai nền tảng chưa đạt). Không cấp REQ mới; AC REQ-118 ghi hiện trạng từng nền tảng (DEMO-AMB-2609) |
 
 **AMB cấp hệ thống tham chiếu** (sở hữu ở [`api_map.md` mục 4](../_discovery/api_map.md#4-khoảng-trống-của-spec-amb--cần-chốt-trước-khi-sinh-tc) · [`system_map.md` mục 8](../_discovery/system_map.md#8-ambiguity-cấp-hệ-thống-phát-sinh-ở-mặt-mobile)) — **đều đã chốt 25-09-2026** (`DEMO-AMB-2509`): `AMB-BK-01` không có mô hình vai trò (cột "Vai trò khác" ở mục 6 → không áp dụng) · `AMB-BK-08` không có rate limit · `AMB-BK-10` `config` = `{ theme, mainColor }` · `AMB-BK-11` link "Need help?" chưa làm, ngoài phạm vi.
 
@@ -300,12 +324,17 @@ Chưa thử: khách mở thẳng URL /user-management/my-profile · setting-acco
 | RISK-BK-AUTH-09 | Access token đọc được bằng JavaScript trên web | Web lưu token ở `localStorage['accessToken']` **và** cookie `accessToken` không `HttpOnly` (F-03) — một lỗi XSS ở bất kỳ trang nào lấy được token sống 6 ngày | TC REQ-95 kiểm token bị gỡ khi đăng xuất; bổ sung TC `@Security` cho `AMB-BK-AUTH-04` ở mặt web; báo đội bảo mật |
 | RISK-BK-AUTH-10 | Thông báo nổi trên web sống ngắn và xếp chồng | Toast tự đóng sau ≈ 3 giây, nhiều toast có thể cùng hiện (`Login successfully.` + `Logout successfully.`) — TC chờ cố định hoặc bắt toast đầu tiên sẽ lúc đỏ lúc xanh | Automation assert toast bằng web-first assertion ngay sau thao tác, lọc theo **nội dung** chứ không theo vị trí; tester chụp ảnh ngay sau khi bấm |
 
+| RISK-BK-AUTH-11 | Cây phần tử Android thiếu / sai | Lượt 26-09-2026: cây của WebView **rỗng** tới khi có thao tác chạm đầu tiên · 133 ô màu Setting account **không** có node · `Switch.checked` luôn `false` · phím Back khi bàn phím đã đóng làm điều hướng về màn trước | Automation: chạm một vùng trung tính trước khi đọc cây · kiểm `mInputShown` trước khi bấm Back · assert trạng thái công tắc qua kết quả nghiệp vụ · đề nghị dev thêm `aria-label` cho ô màu |
+
 ---
 
 ## 13. Nhật ký Thay đổi
 
 | Ngày | Nguồn | REQ ảnh hưởng | Loại | Tóm tắt thay đổi | TC cần xử lý |
 |---|---|---|---|---|---|
+| 26-09-2026 | UI recon Android lượt 2 · `/generate-requirements-from-mobile` · DEMO-AMB-2609 | REQ-BK-AUTH-122 → 126 | 🟢 Thêm | Mặt Android — My Profile · Setting account · Exit app: 5 REQ ở `mobile/` (`122` Save Profile lỗi — kỳ vọng · `123` Back · `124` Reset về theme lúc mở · `125` theme giữ khi rời màn · `126` Exit app) · 12 ảnh · chốt `AMB-BK-AUTH-34` · `35` · thêm `RISK-BK-AUTH-11` | viết mới cho Android (tag `@Android`) · `122` `@KnownBug` |
+| 26-09-2026 | UI recon Android lượt 2 | REQ-BK-AUTH-101 · 102 · 105 → 108 · 113 · 116 → 119 | 🟢 Thêm | **Mở rộng nền tảng: + Android** — chuyển 11 dòng từ `web/` lên index mục 3.3 (`Android · Web`), AC web giữ nguyên + thêm vế Android, mã giữ nguyên. `118` ghi hiện trạng Android (không phản hồi) · `119` ghi rõ điều kiện mở màn hình khi đang `System` | viết mới cho Android · TC web giữ nguyên |
+| 26-09-2026 | UI recon Android lượt 2 | — | ✏️ Biên tập | Metadata · phạm vi · Bản đồ tài liệu · bảng Story (Story 02 → 39 · 04 → 32 · 06 → 6 REQ) · đoạn thứ tự triển khai Android sửa theo `AMB-BK-AUTH-33` (REQ-73 đã đổi biên 191) | — |
 | 25-09-2026 | DEMO-AMB-2509B (đồng bộ với `USER`) | REQ-BK-AUTH-73 | 🟡 Sửa | Name tối đa 250 → **191** ký tự (Android · Web chưa đạt). Phát hiện khi kiểm `USER` API: `POST /api/register` từ chối name ≥ 192 ký tự. Chốt `AMB-BK-AUTH-33` | `BK_AUTH_TC_037` · `038` (mobile) · `153` · `154` (web) → review (biên 250/251 → 191/192, `@KnownBug`) — **đã chỉnh 25-09-2026** (số TC không đổi; `038` · `154` `@KnownBug`) |
 | 25-09-2026 | DEMO-AMB-2509 (chốt AMB giả lập — dữ liệu dạy học demo) | REQ-BK-AUTH-120 · 121 | 🟢 Thêm | `120` My Profile đổi Email sang email đã có → `Email already exists.` (giải quyết `AMB-BK-AUTH-12`, **chưa kiểm chứng**) · `121` tài khoản bị khoá + sai mật khẩu → `User account is disabled.` (giải quyết `AMB-BK-AUTH-26`). Story 02 → 38 REQ · Story 04 → 30 REQ | viết mới Web (`120` gắn `@NeedsVerify`) |
 | 25-09-2026 | DEMO-AMB-2509 | REQ-BK-AUTH-97 | 🟡 Sửa | `AMB-BK-AUTH-25` chốt: `redirect` phải giữ **cả query string** → AC đổi từ *"chỉ assert path"* sang *"về đúng URL gốc kèm query"*. Hệ thống hiện **chưa đạt** | viết mới Web — kỳ vọng FAIL, `@KnownBug` (chưa có TC cũ) |

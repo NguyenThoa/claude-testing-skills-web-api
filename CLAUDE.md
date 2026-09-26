@@ -5,6 +5,11 @@
 
 ---
 
+## Được phép lấy thông tin tài khoản mật khẩu từ .env để nhập liệu trong quá trình chạy.
+Tôi cho phép Claude đọc file `.env` trong root project để lấy thông tin tài khoản, mật khẩu, token, cookie xác thực, session id, API key… phục vụ cho việc chạy test automation. File `.env` **không** được commit lên git (đã `.gitignore`) — Claude chỉ đọc để dùng, không ghi lại hay hiển thị ra log.
+
+---
+
 ## Git Pull Restriction Rule
 
 * Tuyệt đối KHÔNG dùng lệnh GIT làm thay đổi trạng thái code (như `git pull`, `git checkout`, `git merge`, `git rebase`, `git reset`) để lấy code hoặc thay đổi nhánh.

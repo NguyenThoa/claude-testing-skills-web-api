@@ -115,6 +115,7 @@ Không module nào `BLOCKED`. iOS: chưa có lịch — cần máy Mac hoặc cl
 
 | Ngày | Nguồn | Thay đổi |
 |---|---|---|
+| 26-09-2026 | `/generate-requirements-from-mobile` (AUTH lượt 2 · USER · BOOK) | Lệch so với bản đồ: (1) context `WEBVIEW_book.anhtester.com` **không** còn liệt kê (chỉ `NATIVE_APP`), WebView hệ thống lên `153.0.8010.36`; cây phần tử WebView **rỗng** tới lần chạm đầu tiên. (2) Nút avatar giờ mang `text` = chữ cái đầu tên tài khoản (không còn rỗng hoàn toàn). (3) Lỗi điều hướng `AMB-BK-12` gặp **cả ở tab Book** khi đang ở `Modify book` (REQ-BK-BOOK-148), không riêng tab User. (4) Mục `Exit app` đưa app về launcher, tiến trình vẫn chạy. Sơ đồ điều hướng không đổi. REQ Android đã sinh cho `USER` · `BOOK`, bổ sung cho `AUTH` |
 | 25-09-2026 | `/generate-requirements-from-website` (AUTH · USER · BOOK) | Lệch so với bản đồ: hệ thống **có mặt Web** tại `https://book.anhtester.com` (mục 1 ghi "Web: không trong phạm vi") — cùng web app React mà Android bọc lại, điều hướng bằng **sidebar** thay cho bottom navigation: `Dashboard` `/` · `User` `/user-management` (+ `/my-profile` · `/setting-account`) · `Book` `/book-management` (+ `/handle` · `/detail/<slug>`) · `Promotion` `/promotion-book-management` · `File` `/file-management` · **`Database` `/db-management`** — mục này **không có** trên Android và **chưa thuộc module/prefix nào** → cần `/discover-system` mode ADD (mặt Web) trước khi recon. Web khác Android: menu tài khoản **không** có `Exit app`; User hiển thị dạng bảng 6 cột + bộ lọc nâng cao. REQ Web đã sinh cho `AUTH` · `USER` · `BOOK` |
 | 19-09-2026 | User bổ sung mặt Mobile | Tạo file. Khám phá app Android `book.anhtester.com` 1.0 (Hybrid Capacitor, debug). Ghép 8/9 module vào module đã có của mặt API, **cấp prefix mới `DASH`** (user chốt). Không deep link, không quyền runtime, không màn hình lần đầu. Tách bản đồ thành 6 file (9 module > ngưỡng 8). **Dữ liệu tạo ra:** 1 user `auto_discover_<timestamp>@auto.test` (dùng tiếp cho recon `AUTH`) — **đã xoá** cuối phiên bằng token của chính tài khoản đó (tạo 1 · dọn 1 · sót 0) · **không** sửa/xoá bản ghi có sẵn nào. Mở `AMB-BK-11` · `AMB-BK-12` |
 
@@ -125,7 +126,7 @@ Nối tiếp dải `AMB-BK-nn` của [`api_map.md` mục 4](api_map.md#4-khoản
 | Mã | Câu hỏi | Chặn cái gì | Mức | Kết luận (✅ chốt 25-09-2026 · `DEMO-AMB-2509`) |
 |---|---|---|---|---|
 | **AMB-BK-11** | Link "Need help?" ở header Sign in / Sign up bấm vào không có phản ứng gì — tính năng chưa làm hay lỗi? | TC cho link này ở `AUTH` | 🟡 | ✅ Tính năng **chưa làm** ở bản 1.0 — link để ngoài phạm vi kiểm thử, không cấp REQ |
-| **AMB-BK-12** | Đang ở My Profile / Setting account, bấm tab **User** ở bottom navigation không quay về danh sách (chỉ breadcrumb "User management" làm được) — cố ý hay lỗi? | TC điều hướng của `USER` | 🟡 | ✅ **Lỗi** điều hướng Android — cấp REQ khi recon `USER` mặt Android |
+| **AMB-BK-12** | Đang ở My Profile / Setting account, bấm tab **User** ở bottom navigation không quay về danh sách (chỉ breadcrumb "User management" làm được) — cố ý hay lỗi? | TC điều hướng của `USER` | 🟡 | ✅ **Lỗi** điều hướng Android — đã cấp `REQ-BK-USER-120` (26-09-2026). Cùng lỗi ở tab Book từ `Modify book` → `REQ-BK-BOOK-148` |
 
 ## 9. Ghi chú kỹ thuật cho automation
 
@@ -136,7 +137,8 @@ Nối tiếp dải `AMB-BK-nn` của [`api_map.md` mục 4](api_map.md#4-khoản
 | Có `content-desc` dùng được | `Book management sign in` · `Get started` · `Need help?` · `anhtester_logo_512` · `Free API for Testing` |
 | Tab bottom navigation | `android.view.View` có `text` = tên tab, `clickable=true`, tab đang chọn `selected=true` |
 | App tải chậm hơn khung | Mở app lần đầu: màn hình trắng trước khi Dashboard hiện. Bộ đếm Dashboard hiện `0` rồi mới ra số thật — phải chờ theo điều kiện |
-| WebView context | `WEBVIEW_book.anhtester.com` liệt kê được nhưng không đọc được DOM. Automation dùng `NATIVE_APP` |
+| WebView context | 19-09-2026: `WEBVIEW_book.anhtester.com` liệt kê được nhưng không đọc được DOM · 26-09-2026: không còn liệt kê. Automation dùng `NATIVE_APP` |
+| Cây phần tử rỗng lúc đầu phiên | 26-09-2026: `page source` đầu tiên chỉ có 1 `WebView` rỗng — chạm một vùng trung tính rồi mới đọc cây |
 | `appium_screenshot` lỗi schema | Chụp bằng `adb shell screencap` + `adb pull` |
 
 ## Bản đồ tài liệu

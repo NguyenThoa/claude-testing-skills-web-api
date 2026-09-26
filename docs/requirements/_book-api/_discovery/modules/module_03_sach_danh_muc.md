@@ -13,7 +13,7 @@
 
 - Thẻ sách đầu tiên hiển thị giá bán **"-1.000 ₫"** (giá gốc 50.000 ₫) — giá âm lọt lên UI, cùng bản chất F-04. Nối AMB-BK-03.
 - Icon bút hiện trên sách **không phải của tài khoản đang đăng nhập** — cùng bản chất F-02 (không phân quyền). Chưa bấm thử.
-- Chưa mở: Filter · Sort · chi tiết sách · form New book.
+- Chưa mở: Filter · Sort · chi tiết sách · form New book. → **26-09-2026: đã khảo sát ở tầng module** — [`book/mobile/requirements_book_mobile.md`](../../book/mobile/requirements_book_mobile.md)
 
 Evidence: [android_book_overview.png](../evidence/android_book_overview.png) (đã đăng nhập)
 

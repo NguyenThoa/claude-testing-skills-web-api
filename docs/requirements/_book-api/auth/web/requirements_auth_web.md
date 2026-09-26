@@ -11,7 +11,7 @@
 | **Tầng network** | ✅ Quan sát **thụ động** request do UI phát sinh (`browser_network_requests`). **Không** gọi API trực tiếp |
 | **Phương pháp** | Thao tác thật ngày 25-09-2026 — gửi form trống/sai để lấy message, đọc thuộc tính DOM (`type` · `required` · `disabled` · `aria-invalid` · `value`), đo thời gian sống của thông báo nổi bằng `MutationObserver` |
 | **Tài khoản** | 2 tài khoản **tự tạo trong phiên**: `auto_web_<timestamp>_a@auto.test` (đăng ký qua Sign up) · `auto_web_<timestamp>_b@auto.test` (tạo qua Add user). Không đụng tài khoản có sẵn nào. Mục 10 |
-| **REQ trong file này** | **35** — `REQ-BK-AUTH-87` → `REQ-BK-AUTH-121` (`120` · `121` thêm 25-09-2026 từ `DEMO-AMB-2509`). Cộng **37 REQ dùng chung** ở index: 8 `Android · API · Web` + 29 `Android · Web` |
+| **REQ trong file này** | **24** — `REQ-BK-AUTH-87` → `REQ-BK-AUTH-121` trừ 11 REQ `101` · `102` · `105 → 108` · `113` · `116 → 119` — kiểm khớp trên Android ngày 26-09-2026, **chuyển lên** [index mục 3.3](../REQUIREMENTS_AUTH_SUMMARY.md#33-my-profile--setting-account-android--web) (`Android · Web`), mã giữ nguyên. Cộng **48 REQ dùng chung** ở index: 8 `Android · API · Web` + 40 `Android · Web` |
 
 > **Thang `Nguồn`:** `Kiểm chứng thực tế` = đã thao tác trên web và xác nhận bằng ảnh (tên ảnh ở cột Nguồn, danh mục mục 9) hoặc số liệu DOM/network ghi trong AC. `API · <METHOD> <path> → <status>` = quan sát thụ động request do UI gửi. `❌ lệch (AMB-…)` = AC ghi hành vi **kỳ vọng**, hệ thống hiện chưa đạt.
 
@@ -57,35 +57,28 @@ Không có tài liệu nào cho web — toàn bộ REQ sinh từ khảo sát th�
 
 ### 3.4. My Profile (STORY-BK-AUTH-04)
 
+> ↗️ `101` · `102` · `105 → 108` · `113` **đã chuyển lên index** mục 3.3 ngày 26-09-2026 (kiểm khớp trên Android). REQ còn ở đây chưa kiểm được trên Android — lý do ở [../mobile/requirements_auth_mobile.md mục 2](../mobile/requirements_auth_mobile.md#2-bản-đồ-phủ-tài-liệu).
+
 | REQ ID | Tên yêu cầu | Mô tả | Acceptance Criteria | Trạng thái | Cập nhật lần cuối | Nguồn |
 |---|---|---|---|---|---|---|
-| REQ-BK-AUTH-101 | My Profile hiển thị dữ liệu hiện tại của tài khoản | Lối vào: menu avatar → `Profile` | Mở `/user-management/my-profile` → tiêu đề `My Profile` · breadcrumb `User management / Change my profile` · nhóm *Infomation*: `Upload photo` (dòng `Allowed *.jpeg,.jpg*.png*.gif*.webp*.bmp*.svg max size of 3.0 MB`) · `Name *` · `Phone` · `Division` · `Ward` · `Address` — **điền sẵn** giá trị đã đăng ký, địa chỉ ghép được **tách lại** đúng 3 ô · nhóm *Account*: `Email *` (điền sẵn, sửa được) · `Old Password` · `Password` · `Password Confirmation` (trống) · nút `Reset` · `Save Profile` | 🟢 | — | Kiểm chứng thực tế · `web_profile_default_fullpage.png` · đọc `value` các ô |
-| REQ-BK-AUTH-102 | Nút Save Profile và Reset mờ khi chưa sửa gì | | Mở My Profile, chưa sửa ô nào → `Save Profile` và `Reset` hiển thị **mờ** | 🟢 | — | UI thực tế · `web_profile_default_fullpage.png` — chưa đọc thuộc tính `disabled` |
 | REQ-BK-AUTH-103 | Cập nhật hồ sơ thành công | Đổi Name | Sửa Name → `Save Profile` → thông báo `Updated profile successfully.` · vẫn ở My Profile. Network: `PATCH /api/profile` → **200**, body JSON phẳng đủ 7 khoá `name` · `email` · `password_old` · `password` · `avatarUrl` · `phone` · `address` (xem `AMB-BK-AUTH-21`) | 🟢 | — | Kiểm chứng thực tế · `web_profile_save_name_viewport.png` · API · PATCH /api/profile → 200 |
 | REQ-BK-AUTH-104 | Tên mới hiển thị ở Dashboard | Tác tạo của cập nhật hồ sơ dùng được (skill 4.3.8) | Sau REQ-103 → mở Dashboard → thẻ chào hiển thị `Welcome <Name mới>` · mở lại My Profile thấy Name mới | 🟢 | — | Kiểm chứng thực tế · đọc thẻ `Welcome …` sau khi điều hướng |
-| REQ-BK-AUTH-105 | My Profile: bỏ trống Name bị chặn | | Xoá trắng Name → `Save Profile` → dưới ô Name hiện `Name is required.` · không gửi request | 🟢 | — | Kiểm chứng thực tế · `web_profile_invalid_fields_fullpage.png` |
-| REQ-BK-AUTH-106 | My Profile: Email sai định dạng bị chặn | | Email `khong-phai-email` → `Save Profile` → dưới ô Email hiện `Invalid email address` | 🟢 | — | Kiểm chứng thực tế · `web_profile_invalid_fields_fullpage.png` |
-| REQ-BK-AUTH-107 | Đổi mật khẩu bắt buộc nhập Old Password | | Old Password trống, Password có giá trị → `Save Profile` → dưới ô Old Password hiện `Old Password is required.` · nhãn đổi thành `Old Password *` | 🟢 | — | Kiểm chứng thực tế · `web_profile_invalid_fields_fullpage.png` |
-| REQ-BK-AUTH-108 | My Profile: mật khẩu xác nhận phải khớp | | Password `a` · Password Confirmation `b` → dưới ô Password Confirmation hiện `Password confirmation does not match.` | 🟢 | — | Kiểm chứng thực tế · `web_profile_invalid_fields_fullpage.png` |
 | REQ-BK-AUTH-109 | Old Password sai thì không đổi được mật khẩu | | Old Password sai + Password mới + Confirmation khớp → `Save Profile` → thông báo `Invalid data.` · vẫn đăng nhập · mật khẩu cũ vẫn dùng được. Network: `PATCH /api/profile` → **422**. Câu thông báo chung chung — `AMB-BK-AUTH-27` | 🟢 | — | Kiểm chứng thực tế · `web_profile_wrong_old_password_viewport.png` · API · PATCH /api/profile → 422 |
 | REQ-BK-AUTH-110 | Đổi mật khẩu thành công thì tự đăng xuất | | Old Password đúng + Password mới + Confirmation khớp → `Save Profile` → `PATCH /api/profile` → 200 → ứng dụng gọi `DELETE /api/logout` → chuyển sang Sign in · thông báo `Please login first` | 🟢 | — | Kiểm chứng thực tế · `web_profile_change_password_logout_viewport.png` · network |
 | REQ-BK-AUTH-111 | Sau khi đổi, mật khẩu cũ bị từ chối | Tác tạo của đổi mật khẩu có tác dụng | Sau REQ-110 → Sign in bằng mật khẩu **cũ** → thông báo `Invalid password.` | 🟢 | — | Kiểm chứng thực tế · API · POST /api/login → 400 |
 | REQ-BK-AUTH-112 | Sau khi đổi, mật khẩu mới đăng nhập được | | Sau REQ-110 → Sign in bằng mật khẩu **mới** → Dashboard · `Login successfully.` | 🟢 | — | Kiểm chứng thực tế · API · POST /api/login → 200 |
-| REQ-BK-AUTH-113 | Reset khôi phục giá trị đã lưu | | Sửa Name/Email/mật khẩu (có lỗi hiển thị) → `Reset` → mọi ô về giá trị đang lưu, 3 ô mật khẩu trống, **không** còn lỗi nào | 🟢 | — | Kiểm chứng thực tế · đọc `value` + lỗi sau Reset |
 | REQ-BK-AUTH-114 | Save Profile vẫn gửi được sau một lần bị server từ chối | Kỳ vọng tối thiểu của một form — hiện **chưa đạt** | Sau REQ-109 (422) → sửa Old Password thành đúng → `Save Profile` → phải gửi `PATCH /api/profile`. **Hiện tại:** bấm nhiều lần **không** có request nào, không thông báo — phải tải lại trang | 🟢 | — | Kiểm chứng thực tế — ❌ lệch (`AMB-BK-AUTH-28`) |
 | REQ-BK-AUTH-115 | Mở thẳng URL My Profile khi đã đăng nhập hiển thị My Profile | Kỳ vọng — hiện **chưa đạt** | Đã đăng nhập → mở thẳng / tải lại `/user-management/my-profile` → phải hiển thị My Profile. **Hiện tại:** chuyển sang `/sign-in` trong khi phiên vẫn còn (`GET /api/me` → 200, mở `/` vẫn thấy `Welcome <tên>`). Đi qua menu avatar → `Profile` thì mở được | 🟢 | — | Kiểm chứng thực tế — ❌ lệch (`AMB-BK-AUTH-29`) · tái hiện 2/2 lần |
 | REQ-BK-AUTH-120 | My Profile: đổi Email sang email đã có bị từ chối | Email là định danh duy nhất (`AMB-BK-AUTH-12` ✅) | Sửa Email thành email của **một tài khoản khác** đang tồn tại → `Save Profile` → thông báo `Email already exists.` · vẫn ở My Profile · email của tài khoản **không** đổi (menu avatar và My Profile sau khi tải lại vẫn hiện email cũ) | 🟢 | 25-09-2026 · DEMO-AMB-2509 | Quyết định PO · DEMO-AMB-2509 — **chưa kiểm chứng thực tế** (vị trí hiển thị thông báo chưa khảo sát) |
 
 ### 3.5. Setting account (STORY-BK-AUTH-06)
 
+> ↗️ `116 → 119` **đã chuyển lên index** mục 3.3 ngày 26-09-2026 — cả 4 REQ kiểm khớp trên Android.
+
 | REQ ID | Tên yêu cầu | Mô tả | Acceptance Criteria | Trạng thái | Cập nhật lần cuối | Nguồn |
 |---|---|---|---|---|---|---|
-| REQ-BK-AUTH-116 | Màn hình Setting account có đủ thành phần | Lối vào: menu avatar → `Settings` | `/user-management/setting-account` → tiêu đề `Setting account` · breadcrumb `User management / Setting account` · khối *Theme*: 3 tab `Light` · `Dark` · `System` (mặc định `System` đang chọn) · khối *Select color*: bảng **133** ô màu (19 cột × 7 hàng) · nút `Reset` · `Save` | 🟢 | — | Kiểm chứng thực tế · `web_settings_dark_theme_viewport.png` · đọc `aria-selected` của tab + đếm ô màu |
-| REQ-BK-AUTH-117 | Chọn theme áp dụng ngay, chưa cần Save | | Bấm tab `Dark` → nền trang chuyển tối ngay (màu nền `body` đổi), **chưa** bấm Save | 🟢 | — | Kiểm chứng thực tế · `web_settings_dark_theme_viewport.png` · đọc `getComputedStyle(body).backgroundColor` trước/sau |
-| REQ-BK-AUTH-118 | Save lưu cấu hình giao diện lên tài khoản | Kỳ vọng — hiện **chưa đạt** | Chọn theme + màu → `Save` → phải báo thành công. **Hiện tại:** thông báo `Invalid data.`; network `PATCH /api/profile` body `{"config":{"theme":…,"mainColor":…}}` → **422** `fields.fields` | 🟢 | — | Kiểm chứng thực tế — ❌ lệch (`AMB-BK-AUTH-30`) · `web_settings_save_invalid_data_viewport.png` |
-| REQ-BK-AUTH-119 | Reset đưa theme về System | | Đang chọn `Dark` → `Reset` → tab `System` được chọn · nền trang về sáng (theo hệ điều hành của máy khảo sát) | 🟢 | — | Kiểm chứng thực tế · đọc `aria-selected` + màu nền sau Reset |
 
-**Tổng: 35 REQ** — Đăng nhập & phiên 10 (`87` · `91 → 93` · `96 → 100` · `121`) · Đăng xuất 2 (`94` · `95`) · Đăng ký 3 (`88 → 90`) · My Profile 16 (`101 → 115` · `120`) · Setting account 4 (`116 → 119`) → `10 + 2 + 3 + 16 + 4 = 35 ✔`
+**Tổng đợt Web: 35 REQ** (24 còn ở file này + 11 đã lên index) — Đăng nhập & phiên 10 (`87` · `91 → 93` · `96 → 100` · `121`) · Đăng xuất 2 (`94` · `95`) · Đăng ký 3 (`88 → 90`) · My Profile 16 (`101 → 115` · `120`) · Setting account 4 (`116 → 119`) → `10 + 2 + 3 + 16 + 4 = 35 ✔`
 
 ---
 
