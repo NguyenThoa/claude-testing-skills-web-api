@@ -3,7 +3,7 @@
     "launchOptions": {
       "args": [
         "--test-type",
-        "--window-position=0,0"
+        "--window-position=-3,0"
       ]
     }
   }
