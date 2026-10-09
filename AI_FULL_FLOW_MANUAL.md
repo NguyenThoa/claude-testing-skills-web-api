@@ -180,8 +180,10 @@ Cộng thêm: `README.md` cập nhật `Trạng thái recon` ⬜ → ✅.
 docs/testcases/<module>/TEST_CASES_<TÊN_MODULE>_SUMMARY.md               ← INDEX, tên file BẤT BIẾN — tổng hợp · Bản đồ tài liệu · coverage
 docs/testcases/<module>/<nền-tảng>/test_cases_<module>_<nền-tảng>.md   ← TC của từng nền tảng: web · mobile · api
 docs/testcases/<module>/<nền-tảng>/parts/part_NN_<nền-tảng>_<slug>.md  ← khi file nền tảng > 40 TC (TÁCH) · > 50 TC (GỘP)
-docs/checklists/<module>/<nền-tảng>/checklist_<loại>_<YYYYMMDD>.md ← nếu chạy mode CHECKLIST (post-hotfix: checklist_post-hotfix_<TICKET-ID>.md · release: docs/checklists/_release/checklist_release_<mốc>.md)
+docs/checklists/<module>/<nền-tảng>/checklist_<loại>_<YYYYMMDD>.md ← nếu chạy mode CHECKLIST (post-hotfix: checklist_post-hotfix_<TICKET-ID>.md · release: docs/checklists/_release/<nền-tảng>/checklist_release_<mốc>.md)
 ```
+
+Checklist mang **`Mã checklist`** ở header (`CL-smoke_20261009`) — các chặng sau dựa vào mã này để không nhầm mục `#3` của checklist này với mục `#3` của checklist khác. Đi tiếp thế nào: xem [Luồng checklist](#luồng-checklist--từ-rà-nhanh-tới-báo-cáo-release).
 
 ---
 
@@ -299,7 +301,10 @@ Mỗi kỳ (thường hằng tuần) trả lời: **kỳ này làm được gì 
 docs/executions/<module>/web/run_<timestamp>/execution_report.md
 docs/executions/<module>/web/run_<timestamp>/evidence/<TC_ID>_<mô_tả>.png
   (mỗi lần chạy thuộc đúng một nền tảng — chạy trên trình duyệt nên là web/)
+docs/executions/_release/web/run_<timestamp>/execution_report.md    ← khi chạy checklist Release-readiness
 ```
+
+Header report có ô **`Loại nguồn`** — `Bộ TC` hay `Checklist <loại>`. Chạy checklist thì cột `TC ID` ghi **mã mục** `CL-smoke_20261009-03`, không ghi `#3`.
 
 Report gồm 6 mục: Tổng kết · Kết quả từng TC · Chi tiết FAIL · TC BLOCKED · **Dữ liệu đã tạo & dọn dẹp** · Đề xuất bước tiếp theo.
 
@@ -325,6 +330,8 @@ Report gồm 6 mục: Tổng kết · Kết quả từng TC · Chi tiết FAIL �
 docs/executions/<module>/<nền-tảng>/analysis_<timestamp>.md ← gom nhóm theo root cause (nhánh MANUAL)
 docs/bugs/<module>/<nền-tảng>/BUG_<module>_<timestamp>_<TC_ID>.md  ← mỗi bug 1 file, hậu tố TC_ID để nhìn tên biết ngay thuộc TC nào
 ```
+
+Bug từ mục checklist: hậu tố lấy `TC ID liên quan` của mục (mục không có TC thì `CL<số mục>`); checklist release thì bug nằm ở **module của mục**, không nằm ở `_release`.
 
 > Gom nhóm trước rồi mới viết bug report — đỡ tạo 12 bug trùng nhau cho cùng một nguyên nhân.
 
@@ -360,14 +367,17 @@ TC FAIL → /create-bug-report → dev fix → /retest-fixed-bugs
 
 📋 Prompt mẫu: [`prompts/prompt_13_generate_traceability_matrix.txt`](prompts/prompt_13_generate_traceability_matrix.txt)
 
-**Ra 4 nhóm phát hiện:**
+**Ra 5 nhóm phát hiện:**
 
 | Ký hiệu | Nghĩa |
 |---|---|
 | ⬛ | **Module chưa có tài liệu** — còn ⬜ trong danh mục, nằm **ngoài** phạm vi RTM |
 | 🔴 | REQ chưa có TC nào cover |
+| 🟠 | REQ **chỉ có mục checklist**, chưa có TC — đã rà nhanh nhưng chưa có cách chạy lại được, **không** tính vào coverage |
 | 🟡 | TC chưa được automate |
 | ⚪ | Test mồ côi — không map về REQ nào |
+
+**Đầu ra:** `docs/traceability/traceability_matrix.md` (toàn hệ thống) · `docs/traceability/<module>/traceability_matrix_<module>.md` (một module) — ghi đè tại chỗ, header có Ngày sinh · Phạm vi · Mốc git để chặng 7 biết RTM đã cũ hay chưa.
 
 > ⚠️ **Đọc mục ⬛ trước mọi con số phần trăm.** Coverage 95% mà còn 3 module chưa ai khảo sát thì con số đó vô nghĩa — nó chỉ tính trên phần đã có tài liệu.
 
@@ -396,10 +406,38 @@ Gộp **mọi** kết quả của cả đợt — execution report nhiều modul
 | **QA khuyến nghị, PM quyết định** | QA không nắm áp lực thị trường, hợp đồng, chi phí trễ hạn |
 | **Khuyến nghị GO vẫn phải kèm rủi ro tồn đọng** | GO trơn không nêu tồn đọng là báo cáo vô trách nhiệm — có sự cố thì không ai biết QA đã cảnh báo hay chưa |
 | **Vùng chưa test đứng TRƯỚC mọi tỷ lệ** | Cùng lý do với mục ⬛ của RTM: pass rate đẹp che mất module chưa ai chạm |
+| **Kết quả checklist báo bảng riêng, không cộng vào bộ TC** | 12 mục smoke không phải 12 TC — cộng vào là pass rate vô nghĩa. Số của bộ TC lấy kết quả mới nhất của **từng TC**, không lấy nguyên lần chạy mới nhất |
 
 **Tiêu chí exit phải chốt TRƯỚC khi nhìn kết quả.** Nhìn số rồi mới đặt ngưỡng là hợp thức hoá kết quả, không phải đánh giá. Đợt có kế hoạch chính thức thì `/generate-master-test-plan` đã công bố bộ tiêu chí này từ đầu — chặng 7 chỉ chấm lại đúng bộ đó ([luật 3](#kế-hoạch-kiểm-thử-chính-thức--trước-chặng-4-tuỳ-chọn)).
 
 **Đầu ra:** `docs/executions/test_summary_<mốc>_<timestamp>.md`
+
+---
+
+## Luồng checklist — từ rà nhanh tới báo cáo release
+
+Checklist đi **cùng** chuỗi chặng 4 → 7 như bộ TC, chỉ khác cách các chặng sau đếm nó:
+
+```
+/generate-checklist-test   → docs/checklists/<module>/<nền-tảng>/checklist_<loại>_<YYYYMMDD>.md     Mã checklist: CL-<loại>_<ngày>
+        ↓                     (release: docs/checklists/_release/<nền-tảng>/checklist_release_<mốc>.md — có cột Module)
+/execute-test-cases        → execution_report.md — Loại nguồn: Checklist <loại> · mỗi mục mã CL-…-<nn>
+        ↓                     (release: docs/executions/_release/<nền-tảng>/run_<timestamp>/)
+/create-bug-report         → docs/bugs/<module của mục>/<nền-tảng>/ — trỏ về TC ID liên quan + mã mục
+/retest-fixed-bugs         → như bug của bộ TC
+        ↓
+/generate-traceability-matrix → cột Checklist · REQ chỉ có checklist = 🟠, không tính là đã cover
+        ↓
+/generate-test-summary-report → bảng 4b "Kết quả rà checklist", tách khỏi bảng bộ TC
+```
+
+| Chặng | Checklist được tính thế nào | Vì sao |
+|---|---|---|
+| 4 · Chạy | Mỗi mục là một đơn vị chạy, mã `CL-<…>-<nn>`. **Không** tick vào file checklist | `#3` trùng giữa mọi checklist; kết quả phải nằm trong execution report để các chặng sau đọc được |
+| 6 · RTM | Nguồn **phụ** — REQ chỉ có checklist xếp 🟠 | Checklist không có steps nên không chạy lại hay automate được như TC |
+| 7 · Báo cáo | Bảng riêng · **không** vào pass rate TC High / toàn bộ / BLOCKED (#3 · #4 · #5) · tính cho #6 **chỉ** khi REQ không có TC nào · cặp module × nền tảng chỉ có checklist = tiêu chí #7 **chưa đạt** | Checklist là lớp rà nhanh **trên** bộ TC, không thay bộ TC |
+
+> 🚨 **Checklist mới FAIL, bộ TC cũ PASS → tin checklist.** Smoke trên build mới hỏng một mục mà TC liên quan đã PASS ở build trước = build mới đã vỡ. Chặng 7 nêu đây là regression, không để số PASS cũ che đi.
 
 ---
 
@@ -409,8 +447,8 @@ Không cần đọc file `.md` thô. Mở [`scripts/execution-viewer/bundle.html
 
 | Nạp file | Xem được gì |
 |---|---|
-| `execution_report.md` · `retest_report.md` (chặng 4–5) | Thống kê PASS/FAIL/BLOCKED/SKIPPED · **so sánh giữa các lần chạy** (🆕 mới fail · 🔁 fail liên tục · ✅ vừa được fix) · cảnh báo BLOCKED > 20%, nợ kiểm thử, data chưa dọn |
-| `traceability_matrix.md` (chặng 6) | **Độ phủ automation** — REQ nào chưa có TC, TC nào chưa automate, REQ mới automate **một phần**, orphan test |
+| `execution_report.md` · `retest_report.md` (chặng 4–5) | Thống kê PASS/FAIL/BLOCKED/SKIPPED · **so sánh giữa các lần chạy** (🆕 mới fail · 🔁 fail liên tục · ✅ vừa được fix) · cảnh báo BLOCKED > 20%, nợ kiểm thử, data chưa dọn · lần chạy checklist mang nhãn **CHECKLIST**, nạp lẫn với bộ TC thì có cảnh báo trộn đơn vị |
+| `docs/traceability/traceability_matrix.md` (chặng 6) | **Độ phủ automation** — REQ nào chưa có TC, REQ **chỉ có checklist**, TC nào chưa automate, REQ mới automate **một phần**, orphan test |
 
 Xuất **CSV** hoặc **Excel** (nhiều sheet, ô trạng thái tô màu) đúng phần đang hiển thị.
 
@@ -455,7 +493,7 @@ Cột **`TC cần xử lý`** trong Nhật ký thay đổi của tài liệu req
 | 1' | `/generate-requirements-from-api` | [`prompt_29`](prompts/prompt_29_generate_requirements_from_api.txt) | **N lần** = số module có mặt API |
 | 2 | `/generate-testcases-manual-rbt` | [`prompt_02`](prompts/prompt_02_generate_test_cases.txt) | **N lần** = số module (web + mobile) |
 | 2" | `/generate-testcases-api` | [`prompt_09`](prompts/prompt_09_generate_api_tests.txt) | **N lần** = số module có mặt API |
-| 2' | `/generate-checklist-test` | [`prompt_15`](prompts/prompt_15_generate_checklist.txt) | Khi cần checklist tick tay |
+| 2' | `/generate-checklist-test` | [`prompt_15`](prompts/prompt_15_generate_checklist.txt) | Khi cần checklist tick tay — chạy bằng `/execute-test-cases` ([luồng checklist](#luồng-checklist--từ-rà-nhanh-tới-báo-cáo-release)) |
 | 3 | `/review-testcases` | [`prompt_12`](prompts/prompt_12_review_testcases.txt) | 1 lần / bộ TC |
 | 4 | `/execute-test-cases` | [`prompt_16`](prompts/prompt_16_execute_test_cases.txt) | Mỗi đợt kiểm thử |
 | 5 | `/analyze-test-report` | [`prompt_11`](prompts/prompt_11_analyze_test_report.txt) | Khi nhiều TC FAIL |

@@ -50,10 +50,10 @@ Glob theo bảng **Input** của skill, **ghi lại đường dẫn từng file*
 
 1. `docs/test-plans/test_plan_<slug>.md` — mục 2.1 · 3.6 · 4.2 · 6 · 7.1 · 7.2 · 8.1
 2. Báo cáo tiến độ kỳ trước cùng mốc — số luỹ kế · trạng thái rủi ro · kế hoạch đã hứa cho kỳ này
-3. `docs/executions/<module>/<nền-tảng>/run_*/` và `retest_*/` — **lọc theo epoch trong kỳ**
+3. `docs/executions/<module>/<nền-tảng>/run_*/` và `retest_*/` — **lọc theo epoch trong kỳ**; thêm `docs/executions/_release/<nền-tảng>/run_*/` (checklist Release-readiness). Phân loại từng lần chạy theo ô `Loại nguồn` — lần chạy checklist báo ở bảng riêng, không cộng vào số bộ TC
 4. `docs/bugs/README.md` → `BUG_*.md` — bug phát hiện trong kỳ (epoch trong tên file) · bug fix/đóng trong kỳ (Lịch sử retest)
 5. `docs/testcases/README.md` → index từng module trong phạm vi — Nhật ký thay đổi trong kỳ
-6. `**/traceability_matrix.md` — nếu có
+6. `docs/traceability/traceability_matrix.md` — nếu có (không có thì `docs/traceability/<module>/`; RTM kiểu cũ ở chỗ khác vẫn đọc)
 7. `reports/` — automation, nếu có
 
 > 📂 Mục 3–4 quét **cả** kiểu cũ không có tầng nền tảng (`docs/executions/<module>/run_*/` · `docs/bugs/<module>/BUG_*.md`).

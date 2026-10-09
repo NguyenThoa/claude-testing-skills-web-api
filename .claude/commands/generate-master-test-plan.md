@@ -233,7 +233,7 @@ docs/executions/test_summary_<slug>_<timestamp>.md   ← báo cáo tổng hợp 
 | `docs/executions/<module>/<nền-tảng>/run_*/` · kiểu cũ `docs/executions/<module>/run_*/` | Module × nền tảng **đã từng chạy** | 2.1 |
 | `docs/bugs/README.md` → `BUG_*.md` (cả hai kiểu thư mục) | Bug đang mở theo Severity · Priority · trạng thái đang dùng | 4.1 · 4.2 · 8.1 · 9 |
 | `.claude/skills/skills-bug-reporter/SKILL.md` — *Severity & Priority Guide* · *4 trạng thái retest* | Thang Severity/Priority mặc định **nguyên văn** · kết quả retest | 9 |
-| `**/traceability_matrix.md` (nếu có) | Độ phủ REQ ↔ TC ↔ Automation | 2.1 · 3.6 |
+| `docs/traceability/traceability_matrix.md` (nếu có — RTM kiểu cũ ở chỗ khác vẫn đọc) | Độ phủ REQ ↔ TC ↔ Automation | 2.1 · 3.6 |
 | `docs/executions/test_summary_*.md` của **mốc trước** | *Yếu tố cản trở & Bài học* · **thời lượng thực tế** đợt trước (dữ liệu cho ước lượng `tỷ lệ`/`ngoại suy`) | 4.1 · 5 · 7.2 · 8.1 · 9 |
 | Project automation (`package.json` · `pom.xml` · `pyproject.toml`) · file CI (`.github/workflows/` · `.gitlab-ci.yml` · `Jenkinsfile`) | Đã có framework automation chưa · đã có pipeline chưa · số script hiện có | 3.2 · 3.7 · 5.3 · 8.1 |
 
@@ -482,7 +482,7 @@ File: `docs/test-plans/test_plan_<slug>.md` — thư mục **`docs/test-plans/`*
 | Tiến độ kiểm thử | TC đã viết / đã review · TC đã chạy / chưa chạy · PASS · FAIL · BLOCKED | `docs/testcases/` · `execution_report.md` | Báo cáo tiến độ · tiêu chí exit #3, #4, #5, #7 |
 | Tiến độ dự án | Công sức thực tế so với ước lượng 7.2 | Báo cáo tiến độ | Phát hiện trễ sớm |
 | Lỗi | Bug mới / đã fix / đang mở theo Severity · regression phát sinh | `docs/bugs/` · công cụ quản lý bug | Tiêu chí exit #1, #2 |
-| Độ phủ | REQ có TC · REQ Critical có TC PASS | `traceability_matrix.md` | Tiêu chí exit #6 |
+| Độ phủ | REQ có TC · REQ Critical có TC PASS | `docs/traceability/traceability_matrix.md` | Tiêu chí exit #6 |
 | Rủi ro | Trạng thái từng rủi ro ở 8.1 | Báo cáo tiến độ | Kiểm soát rủi ro |
 
 ### 3.7 Chiến lược tự động hoá
@@ -559,6 +559,8 @@ File: `docs/test-plans/test_plan_<slug>.md` — thư mục **`docs/test-plans/`*
 |---|---|---|
 
 > Gợi ý ISTQB CTFL v4.0 mục 5.1.3 cho bảng bổ sung: mật độ lỗi · đã thực hiện kiểm thử tĩnh (review requirements/TC) · mọi lỗi tìm thấy đã được báo cáo · toàn bộ regression đã được automate.
+
+> **Kết quả checklist (`/generate-checklist-test`) được tính thế nào** — ghi nguyên đoạn này vào plan để người duyệt biết trước: #3 · #4 · #5 · #7 chỉ tính trên **bộ TC**; #6 nhận mục checklist PASS **chỉ** cho REQ chưa có TC nào; cặp module × nền tảng chỉ có checklist là #7 **chưa đạt**. Đợt muốn dùng checklist làm điều kiện ra (smoke, release-readiness) → thêm vào bảng bổ sung, VD *"Checklist release-readiness: 100% mục P1 PASS"*. Luật đầy đủ: `skills-test-summary-reporter` mục *Kết quả checklist trong các tiêu chí*.
 
 ☐ Bộ mặc định  ☐ Bộ mặc định + bổ sung  ☐ Bộ tiêu chí riêng của dự án
 
@@ -752,7 +754,7 @@ TC FAIL ──/create-bug-report──→ 🔴 Đang mở ──Dev sửa──�
 | Retest report | `docs/executions/<module>/<nền-tảng>/retest_*/` | `/retest-fixed-bugs` |
 | Bug report | `docs/bugs/<module>/<nền-tảng>/` | `/create-bug-report` |
 | Automation script + report | Project automation · `reports/` | `/generate-automation-web` · `/generate-automation-mobile` · `/generate-automation-api` |
-| Ma trận truy vết | `traceability_matrix.md` | `/generate-traceability-matrix` |
+| Ma trận truy vết | `docs/traceability/traceability_matrix.md` | `/generate-traceability-matrix` |
 | **Báo cáo tiến độ** | `docs/executions/test_progress_<slug>_<YYYYMMDD>.md` | `/generate-test-progress-report` |
 | **Báo cáo tổng hợp** | `docs/executions/test_summary_<slug>_*.md` | `/generate-test-summary-report` |
 

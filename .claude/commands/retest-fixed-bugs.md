@@ -55,7 +55,7 @@ Trích từ bug report gốc, **không diễn giải lại**:
 1. **Steps to Reproduce** — chép nguyên văn, sẽ chạy đúng từng bước
 2. **Expected Result** — đây là chuẩn chấm điểm, KHÔNG dùng cảm nhận cá nhân
 3. **Actual Result** cũ — để so sánh hành vi trước/sau
-4. **TC ID · REQ ID liên quan** — dùng cho Bước 3 (chọn phạm vi regression)
+4. **TC ID · REQ ID liên quan** — dùng cho Bước 3 (chọn phạm vi regression). Bug từ mục checklist ghi thêm **mã mục** (`CL-…-<nn>`) — mục không có TC thì REQ ID là neo duy nhất để chọn regression
 5. **Test data đã dùng** — data cũ có thể đã bị xoá; cần data mới thì sinh theo quy tắc traceable (`CLAUDE.md` mục 7) và ghi rõ đã đổi
 
 > Bug gốc **thiếu Steps to Reproduce hoặc thiếu Expected** → không retest được một cách khách quan. Báo user, đề nghị bổ sung bug report trước.
@@ -96,6 +96,8 @@ Fix là **thay đổi code** — mà mọi thay đổi code đều có thể là
 | **1. Cùng REQ** | Mọi TC map về **cùng REQ ID** với bug | `docs/testcases/<module>/` hoặc RTM |
 | **2. Cùng màn hình** | TC thao tác trên **cùng màn hình / cùng form** | File TC của module |
 | **3. Luồng dùng chung** | Nếu fix đụng thành phần dùng chung (validate, phân quyền, search, export) → TC của **module khác** dùng cùng thành phần đó | `_discovery/system_map.md` mục phụ thuộc |
+
+> Bug sinh từ **mục checklist** mà REQ của nó chưa có TC nào (RTM xếp 🟠) → vòng 1 không có TC để chọn: chạy lại **mục checklist gốc** (mã mục) như một đơn vị regression, và ghi vào mục Đề xuất của report *"REQ chỉ có checklist — nên sinh TC"*.
 
 ⚠️ **Phải có giới hạn.** Regression không phải chạy lại cả suite:
 

@@ -86,11 +86,12 @@ Giáo trình ghi ISO/IEC/IEEE 29119-3 gọi loại tài liệu này là **test s
 |---|---|---|
 | `docs/test-plans/test_plan_<slug>.md` | Phạm vi module × nền tảng (2.1) · chỉ số theo dõi (3.6) · tiêu chí exit (4.2) · lịch (7.1) · ước lượng (7.2) · rủi ro dự án (8.1) · nhân lực (6) | Nên có |
 | `docs/executions/test_progress_<slug>_*.md` | Báo cáo kỳ trước — số luỹ kế · rủi ro · **kế hoạch kỳ này đã hứa** | Nếu có |
-| `docs/executions/<module>/<nền-tảng>/run_*/execution_report.md` · kiểu cũ `docs/executions/<module>/run_*/` | Kết quả chạy manual trong kỳ · lý do BLOCKED | ✅ |
+| `docs/executions/<module>/<nền-tảng>/run_*/execution_report.md` · kiểu cũ `docs/executions/<module>/run_*/` | Kết quả chạy manual trong kỳ · lý do BLOCKED — phân loại **bộ TC / checklist** theo ô `Loại nguồn` | ✅ |
+| `docs/executions/_release/<nền-tảng>/run_*/execution_report.md` | Lần chạy checklist Release-readiness trong kỳ | Nếu có |
 | `docs/executions/<module>/<nền-tảng>/retest_*/retest_report.md` · kiểu cũ | Bug đã verify · regression phát sinh | Nếu có |
 | `docs/bugs/README.md` + `BUG_*.md` (cả hai kiểu thư mục) | Bug mới · đã fix · đang mở theo Severity | ✅ |
 | `docs/testcases/README.md` + index từng module | Số TC · Nhật ký thay đổi (TC viết/review trong kỳ) | ✅ |
-| `**/traceability_matrix.md` | Độ phủ REQ ↔ TC | Nếu có |
+| `docs/traceability/traceability_matrix.md` (không có thì `docs/traceability/<module>/`; RTM kiểu cũ ở chỗ khác vẫn đọc) | Độ phủ REQ ↔ TC | Nếu có |
 | `reports/` | Kết quả automation trong kỳ | Nếu có |
 
 > 📂 Tài liệu sinh trước khi có tầng nền tảng **không** bị di chuyển — quét **cả** `<module>/<nền-tảng>/` lẫn `<module>/`.
@@ -179,7 +180,12 @@ File: `docs/executions/test_progress_<slug>_<YYYYMMDD>.md` — `YYYYMMDD` là **
 | Module × nền tảng | Chạy trong kỳ | Chưa chạy | ✅ PASS | ❌ FAIL | ⚠️ BLOCKED | ⏭️ SKIP | Pass rate | Nguồn |
 |---|---|---|---|---|---|---|---|---|
 
-> Pass rate = PASS / (PASS + FAIL + BLOCKED). Nhiều lần chạy trong kỳ → lấy lần mới nhất của mỗi TC.
+> Pass rate = PASS / (PASS + FAIL + BLOCKED). Nhiều lần chạy trong kỳ → lấy lần mới nhất của mỗi TC. Chỉ tính lần chạy **bộ TC** — lần chạy checklist vào bảng dưới, **không** cộng vào đây (12 mục smoke không phải 12 TC).
+
+**Checklist đã rà trong kỳ** *(báo riêng)*
+
+| Checklist | Loại | Module × nền tảng | Số mục | ✅ PASS | ❌ FAIL | ⚠️ BLOCKED | ⏭️ SKIP | Nguồn |
+|---|---|---|---|---|---|---|---|---|
 
 ### 3.3 Automation *(báo riêng, không cộng vào 3.2)*
 

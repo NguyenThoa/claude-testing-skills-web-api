@@ -3,7 +3,7 @@
 Trang web nhỏ gọn để **xem và gộp kết quả kiểm thử từ file Markdown** — thống kê, lọc, so sánh giữa các lần chạy, và xem độ phủ automation.
 
 Dùng để đọc output của:
-`/execute-test-cases` (`execution_report.md`) · `/retest-fixed-bugs` (`retest_report.md`) · `/generate-traceability-matrix` (`traceability_matrix.md`)
+`/execute-test-cases` (`execution_report.md` — chạy bộ TC lẫn chạy checklist) · `/retest-fixed-bugs` (`retest_report.md`) · `/generate-traceability-matrix` (`docs/traceability/traceability_matrix.md`)
 
 ---
 
@@ -16,7 +16,8 @@ Kéo thả, hoặc bấm **+ Import thư mục** / **+ Import file .md** ở gó
 ```
 docs/executions/customers/web/run_1785700456/execution_report.md
 docs/executions/customers/web/retest_1785700999/retest_report.md
-traceability_matrix.md
+docs/executions/_release/web/run_1786100000/execution_report.md      ← chạy checklist Release-readiness
+docs/traceability/traceability_matrix.md
 ```
 
 Nạp **nhiều file/thư mục** để gộp số liệu và so sánh giữa các lần chạy — mỗi thư mục `run_*` là 1 lần chạy.
@@ -36,7 +37,8 @@ Nạp **nhiều file/thư mục** để gộp số liệu và so sánh giữa c�
 | **Gộp nhiều lần chạy** | Cùng module + nền tảng nạp ≥ 2 report → **mỗi TC một dòng, lấy kết quả của lần chạy mới nhất** có chạy TC đó (xếp theo số trong Run ID). Kết quả cũ hiện mờ dưới trạng thái (`trước: BLOCKED`), đủ chuỗi trong panel chi tiết và cột `Lịch sử các lần chạy` khi export. Ví dụ: `run_A` chạy TC 001–010 có TC 010 BLOCKED, `run_B` chỉ chạy lại TC 010 → PASS ⇒ hiện **10 TC**, TC 010 = PASS, không phải 11 dòng |
 | **Cảnh báo tự động** | 5 loại — xem mục dưới |
 | **Xoá tất cả** | Nút **Xoá tất cả** cạnh **+ Import file .md** (chỉ hiện khi đã nạp ít nhất 1 file) — xoá hết report + ảnh evidence đã nạp (kể cả trong `localStorage`), quay về màn hình kéo thả trống |
-| **Sidebar** | Danh sách report đã nạp kèm nhãn `RUN` / `RETEST`; click để xem riêng một lần chạy, `×` để gỡ |
+| **Sidebar** | Danh sách report đã nạp kèm nhãn `RUN` / `CHECKLIST` / `RETEST` / `RTM`; click để xem riêng một lần chạy, `×` để gỡ |
+| **Lần chạy checklist** | Nhận diện qua ô `Loại nguồn` ở header (`Checklist <loại> · <Mã checklist>`), hoặc `Nguồn TC` nằm trong `docs/checklists/`, hoặc mọi ID đều là mã mục `CL-…-<nn>`. Checklist Release-readiness có cột `Module` → mỗi mục hiện đúng module của nó, không gom chung vào `_release` |
 | **Lọc** | Theo trạng thái (chip) · theo module · tìm toàn văn trên TC ID, kịch bản, ghi chú, nguyên nhân chặn, Expected/Actual |
 | **Sort** | Click header — TC ID sort theo số tự nhiên (`TC_002` trước `TC_010`) |
 | **Chi tiết** | Click một dòng để mở panel: REQ ID · Priority · bước fail · Expected vs Actual · nguyên nhân chặn · evidence · file nguồn |
@@ -54,14 +56,15 @@ Trả lời câu hỏi *"test case manual nào đã có script automation"*.
 > ⚠️ **Nguồn phải là `traceability_matrix.md`** do `/generate-traceability-matrix` sinh ra — workflow đó quét **code thật** để biết TC nào có script.
 > **Đừng** dùng cột `Automation` trong file test case: đó là **dự định** lúc viết TC, không phải **thực tế** đã automate. Hai con số này lệch nhau rất nhanh.
 
-**Bốn trạng thái, suy ra từ dữ liệu chứ không đọc cột `Trạng thái` của file:**
+**Năm trạng thái, suy ra từ dữ liệu chứ không đọc cột `Trạng thái` của file:**
 
 | Trạng thái | Điều kiện |
 |---|---|
 | ✅ **Đã automate** | Mọi TC của REQ đều có script |
 | 🟣 **Automate một phần** | Có script nhưng chưa phủ hết TC — VD `customers.spec.ts (1/3)` |
 | 🟡 **Mới có TC thủ công** | Có TC, chưa có script nào |
-| 🔴 **Chưa có TC** | REQ chưa được viết test case |
+| 🟠 **Chỉ có checklist** | 0 TC nhưng có mục checklist (cột `Checklist`) — đã rà nhanh, chưa có TC để chạy lại. **Không** tính vào *REQ có test case* |
+| 🔴 **Chưa có TC** | REQ chưa được viết test case, cũng không có mục checklist |
 
 Trạng thái 🟣 là lý do phải tự suy thay vì đọc cột có sẵn: RTM ghi `🟡 Manual only` cho dòng đã automate 1/3, gộp vào một nhóm là **thổi phồng độ phủ**.
 
@@ -85,7 +88,7 @@ Hai nút `↓ CSV` và `↓ Excel` xuất **đúng tab đang mở**, đã áp b�
 | Tab | Sheet |
 |---|---|
 | Kết quả TC | `Tổng hợp` + mỗi **lần chạy** một sheet (khi nạp > 1 lần chạy) |
-| Độ phủ automation | `Tổng hợp` + `TC chưa automate` + `Orphan test` + `Mapping suy luận` + `Module chưa có tài liệu` |
+| Độ phủ automation | `Tổng hợp` (có cột `Checklist`) + `TC chưa automate` + `Orphan test` + `Mapping suy luận` + `Module chưa có tài liệu` |
 
 Tên file dạng `execution_report_<yyyyMMdd-HHmmss>.xlsx` / `do_phu_automation_<...>.xlsx`.
 
@@ -93,7 +96,7 @@ Tên file dạng `execution_report_<yyyyMMdd-HHmmss>.xlsx` / `do_phu_automation_
 
 ---
 
-## 4 cảnh báo tự động
+## Cảnh báo tự động
 
 Đây là phần khiến trang này khác một bảng Excel thường — nó chủ động chặn những kết luận sai hay gặp nhất:
 
@@ -103,6 +106,7 @@ Tên file dạng `execution_report_<yyyyMMdd-HHmmss>.xlsx` / `do_phu_automation_
 | 🟡 **BLOCKED 5–20%** | — | Nhắc nêu rõ nguyên nhân chặn khi báo cáo |
 | 🟡 **Có TC SKIPPED** | Bất kỳ TC nào bị skip | TC skip do thao tác phá huỷ trên môi trường dùng chung là **nợ kiểm thử**, dễ biến mất khỏi mọi báo cáo về sau |
 | 🟡 **Dữ liệu chưa dọn** | Cột `Đã xoá?` có ô khác ✅ (ô `—` của dòng *"Không tạo bản ghi nào"* không tính) | Môi trường còn data thừa → lần chạy sau có thể fail vì lý do không liên quan đến ứng dụng |
+| 🟡 **Trộn bộ TC với checklist** | Trong phạm vi đang xem có cả lần chạy bộ TC lẫn lần chạy checklist | Mục checklist không phải test case — Tổng TC và pass rate đang cộng hai loại đơn vị. Báo cáo tổng hợp tách hai bảng; chọn một lần chạy ở sidebar để xem số đúng |
 | 🔵 **Gộp nhiều lần chạy cùng module** | Cùng module + nền tảng có ≥ 2 report | Báo số liệu đang là **kết quả mới nhất của từng TC**, không phải của riêng một lần chạy nào, và bao nhiêu TC có kết quả thay đổi. Chọn một lần chạy ở sidebar để xem số của riêng lần đó |
 
 ---
@@ -113,13 +117,13 @@ Parser **không phụ thuộc số thứ tự mục** (`## 1.`, `## 2.`…) — 
 
 | Loại bảng | Nhận diện bằng | Lấy ra |
 |---|---|---|
-| Kết quả từng TC | có cột `TC ID` **và** cột `Kết quả` | TC ID · kịch bản · trạng thái · bước fail · ghi chú |
+| Kết quả từng TC | có cột `TC ID` **và** cột `Kết quả` | TC ID · kịch bản (cột `Test Scenario` / `Hạng mục kiểm tra`) · trạng thái · bước fail · ghi chú · `Module` của từng dòng nếu có cột đó |
 | TC BLOCKED | có cột `TC ID` **và** cột `Nguyên nhân chặn` | nguyên nhân chặn · cần gì để chạy được |
-| Chi tiết FAIL / REG | heading `### FAIL #1 — <TC ID> · <kịch bản>` + bảng 2 cột ngay sau | REQ ID · Priority · Expected · Actual · evidence · nghi ngờ nguyên nhân |
+| Chi tiết FAIL / REG | heading `### FAIL #1 — <TC ID hoặc mã mục CL-…-<nn>> · <kịch bản>` + bảng 2 cột ngay sau | REQ ID · Priority · Expected · Actual · evidence · nghi ngờ nguyên nhân |
 | Verify bug (retest) | bảng 2 cột có khoá `Bug` **và** khoá `Kết quả` | bug · kết quả retest · severity gốc · số lần lặp |
 | Dữ liệu đã dọn | có cột `Đã xoá?` | đếm số dòng chưa dọn |
-| Header lần chạy | bảng 2 cột đầu file (`Thông tin` / `Nội dung`) | Run ID · Retest ID · Build · môi trường… |
-| **Ma trận truy vết** | có cột `REQ ID` **và** cột `TC IDs` | REQ · mô tả · TC · script · số TC đã automate |
+| Header lần chạy | bảng 2 cột đầu file (`Thông tin` / `Nội dung`) | Run ID · Retest ID · Build · `Loại nguồn` · môi trường… |
+| **Ma trận truy vết** | có cột `REQ ID` **và** cột `TC IDs` | REQ · mô tả · TC · script · số TC đã automate · mục checklist (cột `Checklist`) |
 | ⬛ Module chưa có tài liệu | có cột `Module`, heading chứa ⬛ / "chưa" / "recon" | module nằm ngoài phạm vi RTM |
 
 File được nhận là RTM khi tiêu đề hoặc tên file chứa `Ma trận truy vết` / `traceability` / `RTM`.
@@ -148,6 +152,8 @@ Gom report theo **module + nền tảng**, sắp theo Run ID (số trong `run_17
 | 🔓 Hết BLOCKED | lần trước BLOCKED → lần này PASS (BLOCKED → FAIL xếp vào 🆕 Mới fail) |
 
 > ⚠️ So sánh chỉ có ý nghĩa khi các lần chạy dùng **cùng nguồn TC**. File TC đã sửa giữa hai lần chạy thì đừng kết luận "chất lượng giảm" từ số thô.
+>
+> Mục checklist mang mã riêng của từng checklist (`CL-smoke_20261009-03`), nên mục `#3` của checklist smoke **không** bị so với mục `#3` của checklist regression. Chạy lại **đúng** một file checklist thì so được với nhau như TC.
 
 ---
 

@@ -71,7 +71,7 @@ Hai nguồn report khác nhau về bản chất; chọn nhầm nhánh là phân 
 
 | Input | Cách lấy |
 |---|---|
-| **Report manual** | User cung cấp path, HOẶC glob `docs/executions/<module>/<nền-tảng>/run_*/execution_report.md` và `docs/executions/<module>/<nền-tảng>/retest_*/retest_report.md` (và `docs/executions/<module>/run_*/` của lần chạy cũ chưa có tầng nền tảng). **Không** gộp lần chạy của hai nền tảng vào một chuỗi trend — TC ID khác nhau, so sánh vô nghĩa |
+| **Report manual** | User cung cấp path, HOẶC glob `docs/executions/<module>/<nền-tảng>/run_*/execution_report.md` và `docs/executions/<module>/<nền-tảng>/retest_*/retest_report.md` (và `docs/executions/<module>/run_*/` của lần chạy cũ chưa có tầng nền tảng; checklist Release-readiness ở `docs/executions/_release/<nền-tảng>/run_*/`). Đọc ô `Loại nguồn` ở header — trend chỉ so các lần chạy **cùng `Nguồn TC`**, không so lần chạy checklist với lần chạy bộ TC. **Không** gộp lần chạy của hai nền tảng vào một chuỗi trend — TC ID khác nhau, so sánh vô nghĩa |
 | **Nguồn TC gốc** (khuyến nghị) | `docs/testcases/<module>/` — cần khi phải phân biệt "bug ứng dụng" với "TC viết sai" |
 | **Các lần chạy trước cùng module** | Tự glob — có ≥ 2 run thì làm luôn phần trend, không cần hỏi |
 
@@ -116,7 +116,7 @@ Nguồn TC đã đổi giữa 2 lần chạy → nêu rõ, **không** so số th
 
 **Bước 5: Báo Cáo**
 
-Xuất `docs/executions/<module>/<nền-tảng>/analysis_<timestamp>.md`:
+Xuất `docs/executions/<module>/<nền-tảng>/analysis_<timestamp>.md` (lần chạy checklist release: `docs/executions/_release/<nền-tảng>/analysis_<timestamp>.md`, nhóm theo cột `Module`):
 
 ```markdown
 # Phân Tích Kết Quả Manual — <Module>

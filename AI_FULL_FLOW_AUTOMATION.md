@@ -286,7 +286,7 @@ Cùng một command với flow manual, nhưng ở đây đọc **tầng 3**: REQ
 
 > ⚪ thường sinh ra từ **mode FLOW** của `/generate-automation-web` / `-mobile` (viết script khi chưa có TC — `testId` = `FLOW_<MODULE>_<nnn>`) hoặc từ script quên gắn `testId`. Cả hai đều làm coverage automation thành số không kiểm chứng được — sinh TC cho flow đó rồi đổi label sang TC ID thật.
 
-Xem trực quan bằng [`scripts/execution-viewer/bundle.html`](scripts/execution-viewer/README.md) — kéo thả `traceability_matrix.md` vào, nó chỉ ra REQ nào mới automate **một phần**.
+Xem trực quan bằng [`scripts/execution-viewer/bundle.html`](scripts/execution-viewer/README.md) — kéo thả `docs/traceability/traceability_matrix.md` vào, nó chỉ ra REQ nào mới automate **một phần**.
 
 ---
 

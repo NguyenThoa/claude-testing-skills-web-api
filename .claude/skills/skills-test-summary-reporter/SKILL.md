@@ -42,6 +42,8 @@ Báo cáo này đưa ra **khuyến nghị go/no-go kèm căn cứ**. Quyết đ�
 3. **Vùng chưa test đứng TRƯỚC mọi tỷ lệ.** Cùng nguyên tắc với RTM: module chưa có TC thì không có gì để fail, pass rate vẫn đẹp trong khi cả vùng đó chưa ai chạm tới
 4. **BLOCKED không phải PASS.** Trừ khỏi phần đã kiểm chứng, nêu riêng
 5. **Số liệu mâu thuẫn giữa các nguồn → báo ra, không tự chọn số đẹp hơn**
+6. **Không gộp kết quả checklist với kết quả bộ TC.** Mục checklist là đơn vị rà nhanh, không phải TC — 12 mục smoke cộng vào 36 TC thì cả tổng lẫn pass rate đều vô nghĩa. Phân loại từng lần chạy theo ô `Loại nguồn` ở header execution report (thiếu ô → `Nguồn TC` nằm trong `docs/checklists/` là checklist, còn lại là bộ TC). Kết quả checklist báo ở **bảng riêng** (mục 4b)
+7. **Số của một module × nền tảng = kết quả mới nhất của TỪNG TC**, không phải "lần chạy mới nhất". Lần chạy sau thường chỉ chạy lại vài TC BLOCKED/FAIL — lấy nguyên lần đó làm số chính là báo 3 TC thay cho 36. Gộp mọi lần chạy **bộ TC** cùng `Nguồn TC`, mỗi TC lấy kết quả của lần chạy mới nhất có chạy TC đó (cùng cách `scripts/execution-viewer` gộp)
 
 ---
 
@@ -69,6 +71,16 @@ Báo cáo này đưa ra **khuyến nghị go/no-go kèm căn cứ**. Quyết đ�
 
 > Tiêu chí #7 chấm theo **cặp module × nền tảng**: module có web đã chạy nhưng mobile trong phạm vi chưa chạy thì cặp mobile là **chưa đạt** — không được tính đủ nhờ lần chạy web.
 
+**Kết quả checklist trong các tiêu chí:**
+
+| Tiêu chí | Checklist có được tính? |
+|---|---|
+| #3 · #4 · #5 — pass rate, tỷ lệ BLOCKED | ❌ Không — các tiêu chí này đo **bộ TC**. Plan có tiêu chí bổ sung riêng cho checklist (VD *"smoke 100% mục P1 PASS"*) thì chấm tiêu chí đó trên bảng 4b, quy đổi `P1` = High · `P2` = Medium · `P3` = Low |
+| #6 — REQ Critical có TC PASS | ⚠️ Chỉ khi REQ **không có TC nào** (checklist REQ-based) — mục checklist có `REQ ID` đó PASS thì tính, và cột *Thực tế* ghi rõ số REQ đạt nhờ checklist (VD `12/12 · 2 REQ chỉ có checklist PASS`). REQ đã có TC thì phải có TC PASS |
+| #7 — module × nền tảng đã có TC và đã chạy | ❌ Cặp chỉ có lần chạy checklist là **chưa đạt** — ghi *"chỉ rà checklist <loại>"* ở mục 2 |
+
+> 🚨 **Checklist mới hơn mà FAIL, bộ TC cũ hơn mà PASS → tin checklist.** Mục checklist FAIL có `TC ID liên quan` đã PASS ở lần chạy bộ TC trước đó trên build cũ hơn = **build mới đã vỡ**. Nêu ở mục 5 như regression, ghi cả hai nguồn — **không** để con số PASS cũ của bộ TC che đi.
+
 > **Dừng khi hết thời gian/ngân sách** (ISTQB CTFL v4.0 mục 5.1.3) — hợp lệ khi người có quyền đã **chấp nhận bằng văn bản** rủi ro phát hành. Báo cáo vẫn chấm tiêu chí nào **Không đạt**, và ghi thêm *ai chấp nhận, ngày nào, văn bản nào* — **không** đổi thành Đạt.
 
 Mỗi tiêu chí chấm **Đạt / Không đạt / Không áp dụng**, kèm số thực tế. Chấm "gần đạt" là không được — 94.8% so với ngưỡng 95% là **không đạt**, có thể chấp nhận nhưng phải ghi là ngoại lệ có người duyệt.
@@ -81,11 +93,12 @@ Mỗi tiêu chí chấm **Đạt / Không đạt / Không áp dụng**, kèm s�
 |---|---|---|
 | `docs/test-plans/test_plan_<mốc>.md` | Tiêu chí exit đã công bố (mục 4.2) · mục tiêu kiểm thử (1.1) · phạm vi module × nền tảng (2.1) · ngoài phạm vi (2.2) · lịch & ước lượng công sức (7.1 · 7.2) · rủi ro dự án (8.1) | Nếu có |
 | `docs/executions/test_progress_<mốc>_*.md` | Chỉ số từng kỳ · **thời lượng trở ngại** · rủi ro đã xảy ra · sai lệch lịch — ISTQB CTFL v4.0 mục 5.3.2: báo cáo tổng hợp *"uses test progress reports"* | Nếu có |
-| `docs/executions/<module>/<nền-tảng>/run_*/execution_report.md` · kiểu cũ `docs/executions/<module>/run_*/` | PASS/FAIL/BLOCKED/SKIPPED từng module × nền tảng | ✅ |
+| `docs/executions/<module>/<nền-tảng>/run_*/execution_report.md` · kiểu cũ `docs/executions/<module>/run_*/` | PASS/FAIL/BLOCKED/SKIPPED từng module × nền tảng — phân loại **bộ TC / checklist** theo ô `Loại nguồn` | ✅ |
+| `docs/executions/_release/<nền-tảng>/run_*/execution_report.md` | Kết quả checklist Release-readiness — chọn lần chạy có `Nguồn TC` là `checklist_release_<mốc>.md`, quy từng mục về module theo cột `Module` | Nếu có |
 | `docs/executions/<module>/<nền-tảng>/retest_*/retest_report.md` · kiểu cũ `docs/executions/<module>/retest_*/` | Bug đã verify fix · regression phát sinh | Nếu có |
 | `docs/bugs/README.md` + `docs/bugs/<module>/<nền-tảng>/BUG_*.md` · kiểu cũ `docs/bugs/<module>/BUG_*.md` | Bug đang mở theo Severity · Lịch sử retest | ✅ |
 | `docs/requirements/README.md` | **Module chưa recon** — vùng mù, mục 1 của báo cáo | ✅ |
-| `traceability_matrix.md` | Độ phủ REQ ↔ TC ↔ Automation | Nếu có |
+| `docs/traceability/traceability_matrix.md` (không có thì `docs/traceability/<module>/traceability_matrix_<module>.md`; RTM kiểu cũ ở chỗ khác vẫn đọc) | Độ phủ REQ ↔ TC ↔ Automation · REQ 🟠 chỉ có checklist. **Kiểm `Ngày sinh` / `Mốc git` ở header** — RTM sinh trước lần sửa TC cuối cùng thì ghi *"RTM đã cũ, sinh ngày …"* ở mục 6 | Nếu có |
 | Report automation trong `reports/` | Kết quả suite tự động | Nếu có |
 
 > Thiếu `docs/bugs/` (đội dùng Jira) → lấy qua `skills-jira-integration`, đừng bỏ trống mục bug.
@@ -129,7 +142,7 @@ Báo cáo này tương ứng với **ISO/IEC/IEEE 29119-3 — Test Completion Re
 | Môi trường | Staging — `<URL>` |
 | Khoảng thời gian | 01-08-2026 → 12-08-2026 |
 | Người lập | <tên QA> (agent hỗ trợ) |
-| Nguồn dữ liệu | 6 execution report · 2 retest report · 14 bug report |
+| Nguồn dữ liệu | 6 execution report (4 bộ TC · 2 checklist) · 2 retest report · 14 bug report |
 | Cấu trúc tài liệu | Biên soạn **theo cấu trúc** ISO/IEC/IEEE 29119-3 — Test Completion Report · ánh xạ ở mục 9 |
 
 ---
@@ -185,11 +198,20 @@ Báo cáo này tương ứng với **ISO/IEC/IEEE 29119-3 — Test Completion Re
 | Đăng nhập | Web | 18 | 18 | 0 | 0 | 0 | 100% | [run_1785612000](…) |
 | **Tổng** | | **66** | **59** | **4** | **1** | **2** | **92.2%** | |
 
-> Mỗi dòng là **một module × một nền tảng** — lấy lần chạy mới nhất trong `docs/executions/<module>/<nền-tảng>/`. Module khai có nền tảng mà chưa có lần chạy nào ở nền tảng đó → vẫn ghi dòng, cột kết quả `—`, và đưa vào rủi ro: *chưa kiểm trên <nền tảng>*.
+> Mỗi dòng là **một module × một nền tảng**, chỉ tính lần chạy **bộ TC** — mỗi TC lấy kết quả mới nhất trong mọi lần chạy bộ TC ở `docs/executions/<module>/<nền-tảng>/` (Nguyên tắc số liệu #7). Cột Nguồn liệt kê đủ các lần chạy đã gộp. Module khai có nền tảng mà chưa có lần chạy nào ở nền tảng đó → vẫn ghi dòng, cột kết quả `—`, và đưa vào rủi ro: *chưa kiểm trên <nền tảng>*.
 
 > Pass rate = PASS / (PASS + FAIL + BLOCKED). SKIPPED không tính vào mẫu số nhưng vẫn là **nợ kiểm thử** ở mục 2.
 
 **Automation** (báo riêng, không cộng vào bảng trên): 120 test · 114 PASS · 6 FAIL · pass rate 95.0% — [reports/allure-report](…)
+
+### 4b. Kết quả rà checklist (báo riêng, không cộng vào bảng trên)
+
+| Checklist | Loại | Module · Nền tảng | Build | Số mục | ✅ PASS | ❌ FAIL | ⚠️ BLOCKED | ⏭️ SKIP | Mục P1 FAIL | Nguồn |
+|---|---|---|---|---|---|---|---|---|---|---|
+| CL-smoke_20261009 | Smoke | Khách hàng · Web | v2.4.3 | 12 | 11 | 1 | 0 | 0 | 1 — CL-smoke_20261009-04 | [run_1786000000](…) |
+| CL-release_release_2.4 | Release-readiness | 4 module · Web | v2.4.3 | 38 | 37 | 0 | 1 | 0 | 0 | [run_1786100000](docs/executions/_release/web/run_1786100000/execution_report.md) |
+
+> Checklist chạy **sau** lần chạy bộ TC, trên build mới hơn → đây là tín hiệu mới nhất về build. Mục FAIL có `TC ID liên quan` đã PASS ở bảng trên = regression, nêu lại ở mục 5.
 
 ---
 
@@ -217,7 +239,8 @@ Báo cáo này tương ứng với **ISO/IEC/IEEE 29119-3 — Test Completion Re
 
 | Chỉ số | Giá trị | Nguồn |
 |---|---|---|
-| REQ có ít nhất 1 TC | 48/52 = 92.3% | [traceability_matrix.md](…) |
+| REQ có ít nhất 1 TC | 48/52 = 92.3% | [traceability_matrix.md](docs/traceability/traceability_matrix.md) · sinh 08-08-2026 |
+| REQ chỉ có checklist (🟠) | 1 | |
 | REQ Critical có TC PASS | 12/12 = 100% | |
 | TC đã automate | 30/54 = 55.6% | |
 
@@ -260,7 +283,7 @@ Báo cáo này tương ứng với **ISO/IEC/IEEE 29119-3 — Test Completion Re
 | Tài sản | Nơi lưu | Dùng lại cho |
 |---|---|---|
 | Bộ TC module Khách hàng (36 TC) | `docs/testcases/customers/` | Regression các đợt sau |
-| Checklist smoke 12 mục | `docs/testcases/checklist_smoke.md` | Mọi build mới |
+| Checklist smoke 12 mục | `docs/checklists/customers/web/checklist_smoke_20260801.md` | Mọi build mới — sinh lại file theo ngày bằng `/generate-checklist-test` |
 
 ---
 
@@ -291,6 +314,8 @@ Báo cáo này tương ứng với **ISO/IEC/IEEE 29119-3 — Test Completion Re
 - [ ] Tiêu chí exit ghi rõ là của dự án hay bộ mặc định của agent
 - [ ] Mọi số có link về file nguồn
 - [ ] Manual và automation báo **riêng**, không cộng gộp
+- [ ] Lần chạy **checklist** báo ở bảng 4b, **không** cộng vào bảng bộ TC; số bộ TC lấy kết quả mới nhất của **từng TC**, không lấy nguyên lần chạy mới nhất
+- [ ] Mục checklist FAIL trên build mới mà TC liên quan PASS trên build cũ → đã nêu như regression ở mục 5
 - [ ] BLOCKED và SKIPPED không bị tính lẫn vào phần đã kiểm chứng
 - [ ] Regression phát sinh trong kỳ được nêu riêng — đây là tín hiệu chất lượng bản fix
 - [ ] Không có credentials, không có dữ liệu khách hàng thật trong báo cáo
@@ -307,6 +332,7 @@ Báo cáo này tương ứng với **ISO/IEC/IEEE 29119-3 — Test Completion Re
 | Đặt ngưỡng exit sau khi đã xem kết quả | Chốt tiêu chí trước, chấm sau |
 | "Pass rate 95%, ổn rồi" khi 2 module chưa test | Nêu vùng chưa test trước, tỷ lệ chỉ tính trên phần đã có TC |
 | Cộng số manual + automation thành một tỷ lệ | Báo riêng hai bảng |
+| Lấy lần chạy smoke 12 mục (mới nhất) làm số của cả module 36 TC | Lần chạy checklist vào bảng 4b; bảng bộ TC gộp kết quả mới nhất của từng TC |
 | Tính BLOCKED vào PASS cho đẹp số | BLOCKED = chưa kiểm được, tách riêng |
 | QA tự tuyên bố "không được release" | Khuyến nghị NO-GO + nêu rủi ro, quyết định là của PM |
 | Khuyến nghị GO trơn, không nêu tồn đọng | GO luôn kèm danh sách rủi ro chấp nhận |

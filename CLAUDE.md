@@ -275,7 +275,7 @@ docs/
 ├── checklists/                                  ← /generate-checklist-test — ảnh chụp tại một thời điểm, KHÔNG sửa tại chỗ
 │   ├── <module>/<nền-tảng>/checklist_<loại>_<YYYYMMDD>.md ← smoke · regression
 │   ├── <module>/<nền-tảng>/checklist_post-hotfix_<TICKET-ID>.md
-│   └── _release/checklist_release_<mốc>.md      ← release-readiness, cắt ngang module — cùng slug <mốc> với test plan
+│   └── _release/<nền-tảng>/checklist_release_<mốc>.md ← release-readiness, cắt ngang module (có cột Module) — cùng slug <mốc> với test plan
 │
 ├── test-plans/                                  ← kế hoạch kiểm thử — lập TRƯỚC đợt
 │   ├── test_plan_<mốc>.md                      ← Master Test Plan — công bố phạm vi + tiêu chí exit TRƯỚC đợt
@@ -284,14 +284,19 @@ docs/
 ├── executions/                                 ← kết quả thực thi
 │   ├── test_progress_<mốc>_<YYYYMMDD>.md       ← báo cáo tiến độ từng kỳ TRONG đợt
 │   ├── test_summary_<mốc>_<timestamp>.md       ← báo cáo tổng hợp, CẮT NGANG mọi module và mọi nền tảng — chấm lại tiêu chí của plan
+│   ├── _release/<nền-tảng>/run_<timestamp>/    ← chạy checklist release-readiness — `_release` là module giả
 │   └── <module>/<nền-tảng>/                    ← mỗi lần chạy thuộc ĐÚNG MỘT nền tảng
 │       ├── run_<timestamp>/
-│       │   ├── execution_report.md
+│       │   ├── execution_report.md             ← ô `Loại nguồn`: Bộ TC / Checklist <loại> — mục checklist mang mã CL-<…>-<nn>
 │       │   └── evidence/<TC_ID>_<mô_tả>.png
 │       ├── retest_<timestamp>/                 ← /retest-fixed-bugs
 │       │   ├── retest_report.md
 │       │   └── evidence/*.png
 │       └── analysis_<timestamp>.md             ← /analyze-test-report nhánh MANUAL
+│
+├── traceability/                               ← /generate-traceability-matrix — ghi đè tại chỗ, bản cũ tra git
+│   ├── traceability_matrix.md                  ← RTM toàn hệ thống — TÊN FILE BẤT BIẾN, workflow phía sau đọc file này trước
+│   └── <module>/traceability_matrix_<module>.md ← RTM một module — KHÔNG đè file toàn hệ thống
 │
 ├── bugs/                                       ← bug sinh từ TC FAIL
 │   ├── README.md                               ← DANH MỤC bug — có cột Nền tảng
@@ -320,7 +325,7 @@ Ba trang tĩnh trong `scripts/`, mở bằng cách double-click, chạy offline,
 | Trang | Nạp file gì | Dùng khi |
 |---|---|---|
 | `scripts/testcases-viewer/bundle.html` | `test_cases_*.md` | Duyệt, lọc, xuất Excel test case |
-| `scripts/execution-viewer/bundle.html` | `execution_report.md` · `retest_report.md` · `traceability_matrix.md` | Xem kết quả chạy, so sánh giữa các lần chạy, xem độ phủ automation, xuất CSV/Excel |
+| `scripts/execution-viewer/bundle.html` | `execution_report.md` · `retest_report.md` · `docs/traceability/traceability_matrix.md` | Xem kết quả chạy (bộ TC lẫn checklist — nhãn `CHECKLIST` riêng), so sánh giữa các lần chạy, xem độ phủ automation, xuất CSV/Excel |
 | `scripts/bugs-viewer/bundle.html` | `docs/bugs/README.md` (danh mục) · `docs/bugs/<module>/<nền-tảng>/BUG_*.md` | Lọc bug theo Severity/Priority/Trạng thái, xem Lịch sử retest, xuất CSV/Excel |
 
 ### Quy tắc bất biến
@@ -343,6 +348,7 @@ Ba trang tĩnh trong `scripts/`, mở bằng cách double-click, chạy offline,
 | 🔍 **Chụp xong phải mở lại ảnh xác nhận đúng trạng thái** trước khi ghi vào Danh mục Evidence | Thao tác mở dropdown/tab có thể thất bại âm thầm. Dòng danh mục sai **nguy hiểm hơn không có ảnh** — nó tạo cảm giác REQ đã có bằng chứng |
 | Bug report sống ở **`docs/bugs/<module>/<nền-tảng>/`**, KHÔNG ở gốc repo | Bug là mắt xích thứ tư của chuỗi truy vết; để ngoài `docs/` thì lệnh dọn dự án bỏ sót, để lại bug mồ côi trỏ vào TC/REQ đã đổi nghĩa |
 | Bug **phải trỏ về TC ID và REQ ID đang có hiệu lực**; evidence chỉ **link** tới `executions/`, không nhân bản | Bug trỏ vào mã đã đổi nghĩa còn tệ hơn không trỏ — người đọc tin nhầm. Nhân bản ảnh là tạo hai nguồn sự thật |
+| Mục checklist khi đi ra khỏi file checklist mang **mã mục `CL-<phần tên file sau checklist_>-<nn>`**, không dùng `#3` trần · kết quả checklist **không** cộng vào số của bộ TC (RTM xếp REQ chỉ có checklist là 🟠, báo cáo tổng hợp tách bảng riêng) | `#3` trùng giữa mọi checklist — viewer, RTM, bug, báo cáo nối nhầm mà không ai biết. 12 mục smoke cộng vào 36 TC là pass rate vô nghĩa |
 | Thêm module = thêm thư mục + 1 dòng ở `README.md` danh mục | Không đụng gì khác trong repo |
 | 📅 **Ngày trong nội dung tài liệu viết `DD-MM-YYYY`** (VD `17-09-2026`) hoặc `DD/MM/YYYY`; có giờ thì `17-09-2026 14:10`. Áp cho mọi file trong `docs/`, mẫu trong `.claude/`, `plans/`, `prompts/` và phiếu nhập. **Tên file giữ dạng cũ**: `run_<timestamp>`, `test_progress_<mốc>_<YYYYMMDD>.md`, `openapi_<YYYY-MM-DD>.json` · mã có ngày như `PO-2026-08-18` giữ nguyên · dữ liệu nhập vào hệ thống (payload API, giá trị field) viết đúng **định dạng hệ thống yêu cầu**, không đổi theo quy tắc này | Người đọc tài liệu là QA/PM/khách Việt Nam. Tên file cần năm đứng đầu để xếp đúng thứ tự thời gian. Đọc tài liệu cũ (trước 17-09-2026) vẫn gặp `YYYY-MM-DD` → **nhận cả hai**, năm đứng đầu không thể nhầm; **không** bao giờ hiểu `05-10-2026` theo kiểu Mỹ |
 | `_discovery/` **không được** chứa mã `REQ-XXX-NN` — chỉ cấp **prefix** | Tầng khám phá chưa mở form, chưa trigger validation; cấp số REQ ở đó là chắc chắn phải đánh lại |
@@ -511,7 +517,7 @@ Agent sử dụng workflows trong `.claude/commands/` qua slash commands:
 | `/update-requirements-from-ticket`      | **Delta mode** — cập nhật tài liệu requirements đã có từ ticket mới: nhận diện THÊM/SỬA/BỎ, giữ nguyên REQ ID, ghi Nhật ký thay đổi, xuất Impact Report cho test cases |
 | `/generate-testcases-manual-rbt`        | Sinh manual test cases theo AI-RBT 6 bước (FULL RBT mode) — sinh tuần tự theo **4 vòng** (Smoke → Functional → Technical → Non-functional), có bảng đối soát loại kiểm thử ở Quality Gate |
 | `/generate-testcases-from-requirements` | Sinh test cases nhanh từ requirements (QUICK mode)         |
-| `/generate-checklist-test`              | Sinh checklist test tick tay (CHECKLIST mode) — smoke / post-hotfix / regression / release-readiness |
+| `/generate-checklist-test`              | Sinh checklist test tick tay (CHECKLIST mode) — smoke / post-hotfix / regression / release-readiness. Chạy bằng `/execute-test-cases`, mỗi mục mang mã `CL-<…>-<nn>` |
 | `/update-testcases-from-impact`         | **Delta mode cho test cases** — mắt xích giữa của chuỗi delta 3 tầng: từ Impact Report sửa TC stale tại chỗ, giữ nguyên TC ID, đánh dấu 🗑️ Deprecated TC bị gỡ, ghi Delta TC List ra `impact/delta_tc_<TICKET-ID>.md` có cột nền tảng (2 modes: PLAN/APPLY). KHÔNG sinh lại cả module |
 | `/generate-automation-from-testcases`   | **Bộ định tuyến** — tự nhận nền tảng của file TC (`web/` · `mobile/` · `api/`) rồi chuyển sang command nền tảng. Mode WEB (mặc định) / MOBILE / API để chỉ định rõ. Không chứa logic sinh code |
 | `/generate-automation-web`              | Sinh automation **web** (Playwright / Selenium) — mode TC (từ file TC web, mặc định) · mode FLOW (chưa có TC, chạy thật UI flow trên browser) |
@@ -532,13 +538,13 @@ Agent sử dụng workflows trong `.claude/commands/` qua slash commands:
 | `/fetch-jira-requirements`              | Lấy requirements/user stories từ Jira                     |
 | `/import-test-results-xray`             | Đẩy kết quả test lên Xray                              |
 | `/create-bug-report`                    | Sinh bug report chuẩn từ test FAIL (tùy chọn đẩy Jira)  |
-| `/execute-test-cases`                   | Thực thi manual TC trên browser thật — chấm PASS/FAIL/BLOCKED/SKIPPED, xuất execution report |
+| `/execute-test-cases`                   | Thực thi manual TC **hoặc checklist** trên browser thật — chấm PASS/FAIL/BLOCKED/SKIPPED, xuất execution report (ô `Loại nguồn` phân biệt bộ TC / checklist) |
 | `/retest-fixed-bugs`                    | **Đóng vòng lặp bug** — retest bug đã fix trên build mới, chấm FIXED/NOT_FIXED/PARTIAL, chạy regression quanh vùng fix (2 modes: RETEST/FULL) |
 | `/analyze-test-report`                  | Phân tích test report **một lần chạy** — 2 nhánh AUTOMATION / MANUAL, gom nhóm failure, đề xuất xử lý |
 | `/generate-master-test-plan`            | Master Test Plan cấp quản lý — đầu vào phiếu YAML `plans/master-test-plan/test_plan.config.yaml`. Phạm vi **module × nền tảng**, cấp độ · loại · độc lập kiểm thử, chiến lược tự động hoá · phi chức năng, tiêu chí vào/ra, môi trường · dữ liệu kiểm thử, quản lý lỗi, lịch · ước lượng · ngân sách, rủi ro dự án + sản phẩm. Xuất `docs/test-plans/test_plan_<mốc>.md`, bám 29119-3, phủ đủ ISTQB CTFL v4.0 mục 5.1.1 |
 | `/generate-test-progress-report`        | Báo cáo tiến độ **một kỳ** trong đợt — so thực tế với lịch plan, chỉ số trong kỳ, trở ngại, rủi ro mới, kế hoạch kỳ tới, đề xuất điều chỉnh. **Không** khuyến nghị go/no-go |
 | `/generate-test-summary-report`         | Báo cáo tổng hợp tại một mốc release/sprint — gộp mọi kết quả, đối chiếu tiêu chí exit, **khuyến nghị go/no-go** |
 | `/review-testcases`                     | Review chất lượng manual TCs (3 modes: REVIEW/FIX/AUTOMATION — AUTOMATION chấm độc lập TC nào làm automation được theo `skills-rbt-manual-testing/references/automation_criteria.md`) |
-| `/generate-traceability-matrix`         | Sinh ma trận truy vết RTM 3 tầng                          |
+| `/generate-traceability-matrix`         | Sinh ma trận truy vết RTM 3 tầng (+ checklist làm nguồn phụ) → `docs/traceability/traceability_matrix.md` |
 | `/generate-api-mocks`                   | Sinh API mocks + tests cho edge cases                        |
 | `/generate-user-guide`                  | Sinh **Hướng dẫn sử dụng** cho người dùng cuối từ requirements + evidence đã khảo sát (2 modes: DOC/LIVE). KHÔNG phải tài liệu requirements viết lại giọng khác |

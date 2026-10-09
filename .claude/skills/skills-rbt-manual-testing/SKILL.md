@@ -1217,12 +1217,15 @@ Checklist **không** chấm bảng đối soát 4 vòng (Gate #10 không áp d�
 5. **Viết mỗi mục theo Quy Tắc Viết Mục Checklist** (bên dưới)
 6. **Gắn metadata:** `Priority` (P1/P2/P3), `REQ ID` (nếu có), `TC ID liên quan` (nếu TC-based)
 7. **Nhóm mục theo Module → Nhóm chức năng**, đánh số liên tục để dễ đối chiếu khi báo cáo
-8. **Chạy Checklist Quality Gate (4 tiêu chí)** trước khi xuất
+8. **Ghi `Mã checklist`** ở header — xem [Mã checklist & mã mục](#mã-checklist--mã-mục) bên dưới
+9. **Chạy Checklist Quality Gate (5 tiêu chí)** trước khi xuất
 
 ## Bảng Output Standard
 
 ```markdown
 ## [Tên Module] — Checklist <Loại> (<số mục> mục · ~<thời gian> phút)
+
+**Mã checklist:** `CL-smoke_20261009`
 
 ### Nhóm: <Tên nhóm chức năng>
 
@@ -1241,6 +1244,21 @@ Checklist **không** chấm bảng đối soát 4 vòng (Gate #10 không áp d�
 ```
 
 > Cột `✅` để trống ô tick `☐` — người chạy tự đánh dấu. Cột `TC ID liên quan` ghi `—` khi checklist là REQ-based.
+>
+> **Checklist Release-readiness** cắt ngang nhiều module → thêm cột **`Module`** (tên thư mục module, VD `customers`) ngay sau `Hạng mục kiểm tra`. Lần chạy, bug và RTM phía sau dựa vào cột này để quy mỗi mục về đúng module — thiếu cột là bug sinh ra không biết đặt vào `docs/bugs/<module>/`.
+
+### Mã checklist & mã mục
+
+Cột `#` chỉ là số thứ tự **trong một file** — mục `#3` của checklist smoke và mục `#3` của checklist regression là hai việc khác nhau. Khi kết quả đi sang execution report, bug, RTM và báo cáo tổng hợp, mỗi mục phải có mã **không trùng giữa các checklist**:
+
+| | Quy tắc | Ví dụ |
+|---|---|---|
+| **Mã checklist** | `CL-` + phần tên file **sau** `checklist_`, bỏ `.md` — giữ nguyên chữ thường và dấu | `checklist_smoke_20261009.md` → `CL-smoke_20261009` · `checklist_post-hotfix_CRM-812.md` → `CL-post-hotfix_CRM-812` · `checklist_release_release_2.0.md` → `CL-release_release_2.0` |
+| **Mã mục** | `<Mã checklist>-<số mục 2 chữ số>` | mục 3 → `CL-smoke_20261009-03` |
+
+- Mã mục **không** ghi vào bảng checklist (bảng giữ cột `#` cho người tick tay) — `/execute-test-cases` tự ghép khi ghi report
+- Mã mục **không phải** TC ID và **không** thay TC ID: mục có `TC ID liên quan` thì mọi mắt xích phía sau vẫn truy về TC đó
+- Không dùng `#` trong mã — `#` vỡ link Markdown và tên file bug
 
 ## Quy Tắc Viết Mục Checklist (BẮT BUỘC)
 
@@ -1261,7 +1279,7 @@ Checklist **không** chấm bảng đối soát 4 vòng (Gate #10 không áp d�
 ✅ Đúng: "Nhập email thiếu @ (`test.domain.com`) → hiện lỗi 'Email không hợp lệ', không submit"
 ```
 
-## 🛡️ Checklist Quality Gate (4 Tiêu Chí)
+## 🛡️ Checklist Quality Gate (5 Tiêu Chí)
 
 Trước khi xuất, agent **BẮT BUỘC** tự rà:
 
@@ -1269,6 +1287,7 @@ Trước khi xuất, agent **BẮT BUỘC** tự rà:
 - [ ] **2. Critical path đủ:** Mọi luồng sống còn của module (đăng nhập, tạo/sửa/xóa bản ghi chính, phân quyền, thanh toán nếu có) đều có ≥1 mục P1
 - [ ] **3. Component đủ:** Mỗi component có mặt trong module (Table/List, CRUD, Permission, Modal, Notification, Status Flow) có ≥1 mục — component không có trong module thì ghi "Không áp dụng", KHÔNG lặng lẽ bỏ qua
 - [ ] **4. Đúng quy mô:** Số mục nằm trong ngưỡng của loại checklist. Vượt ngưỡng → tách theo module hoặc hạ scope, ghi rõ phần đã cắt
+- [ ] **5. Truy vết được:** Header có `Mã checklist` khớp tên file · mục có REQ thì điền `REQ ID` · TC-based thì điền `TC ID liên quan` · Release-readiness có cột `Module` ở **mọi** mục
 
 ---
 
@@ -1451,8 +1470,8 @@ Vì vậy Mode DELTA đặt việc **bảo toàn TC ID** lên trên mọi mục 
 
 | Output | Mô tả |
 |--------|--------|
-| Header checklist | Loại checklist + module + số mục + thời gian chạy ước tính |
-| Bảng Checklist | Nhóm theo Module → Nhóm chức năng, có cột tick `☐`, Priority, REQ ID, TC ID liên quan |
+| Header checklist | Loại checklist + module + số mục + thời gian chạy ước tính + **Mã checklist** |
+| Bảng Checklist | Nhóm theo Module → Nhóm chức năng, có cột tick `☐`, Priority, REQ ID, TC ID liên quan — Release-readiness thêm cột `Module` |
 | Ghi chú "Không áp dụng" | Component có trong bảng chuẩn nhưng module không có → nêu rõ, không bỏ im lặng |
 | Bảng ký nhận | Môi trường · Build/Version · Người thực hiện · Ngày · Kết quả |
 
@@ -1462,9 +1481,9 @@ Vì vậy Mode DELTA đặt việc **bảo toàn TC ID** lên trên mọi mục 
 > |---|---|
 > | Smoke · Regression (module) | `docs/checklists/<module>/<nền-tảng>/checklist_<loại>_<YYYYMMDD>.md` |
 > | Post-hotfix | `docs/checklists/<module>/<nền-tảng>/checklist_post-hotfix_<TICKET-ID>.md` — gắn với bản vá, hai hotfix cùng ngày không đè nhau |
-> | Release-readiness (cắt ngang nhiều module) | `docs/checklists/_release/checklist_release_<mốc>.md` — `<mốc>` cùng slug với `docs/test-plans/test_plan_<mốc>.md` |
+> | Release-readiness (cắt ngang nhiều module) | `docs/checklists/_release/<nền-tảng>/checklist_release_<mốc>.md` — `<mốc>` cùng slug với `docs/test-plans/test_plan_<mốc>.md`. Đợt release có nhiều nền tảng → **mỗi nền tảng một file**, vì mỗi lần chạy thuộc đúng một nền tảng |
 >
-> `<loại>` viết thường: `smoke` · `regression` · `post-hotfix` · `release`. Checklist là **ảnh chụp tại một thời điểm**, không sửa tại chỗ như bộ TC: lần rà mới sinh file mới theo ngày/ticket/mốc. Cùng ngày chạy lại đúng loại đó → ghi đè file của ngày đó (chưa ai tick). Nguồn TC-based **bỏ qua TC `@Deprecated`**.
+> `_release/` đóng vai **module giả** cho mọi nhánh phía sau (`executions/_release/<nền-tảng>/`) — dấu `_` đầu = không phải module, workflow quét module bỏ qua. `<loại>` viết thường: `smoke` · `regression` · `post-hotfix` · `release`. Checklist là **ảnh chụp tại một thời điểm**, không sửa tại chỗ như bộ TC: lần rà mới sinh file mới theo ngày/ticket/mốc. Cùng ngày chạy lại đúng loại đó → ghi đè file của ngày đó (chưa ai tick). Nguồn TC-based **bỏ qua TC `@Deprecated`**.
 >
 > 📄 **Checklist là tài liệu đọc/in trực tiếp, KHÔNG nạp vào `scripts/testcases-viewer`.** Viewer đó chỉ đọc bảng test case chi tiết (`test_cases_*.md`); checklist cố tình không có `Test Steps` / `Test Data` / `Risk Level` nên nạp vào chỉ ra bảng rỗng. Vì vậy header checklist **được phép** đặt Tiếng Việt cho người tick tay (`Hạng mục kiểm tra`, `Kết quả kỳ vọng`, `TC ID liên quan`) — nó không chịu hợp đồng đọc của viewer như bảng TC.
 

@@ -72,9 +72,10 @@ Checklist không chấm bảng đối soát 4 vòng, nhưng lấy mục **theo v
 4. **Ưu tiên theo rủi ro:** luồng liên quan **tiền, phân quyền, mất dữ liệu** luôn phải có mặt dù là loại checklist nào
 5. **Viết từng mục theo Quy Tắc Viết Mục Checklist** (mục kế tiếp)
 6. **Gắn metadata:** `Priority` (P1/P2/P3), `REQ ID` (nếu có), `TC ID liên quan` (nếu TC-based, không có ghi `—`)
-7. **Nhóm theo Module → Nhóm chức năng**, đánh số liên tục để dễ đối chiếu khi báo cáo kết quả
-8. **Chạy Checklist Quality Gate (4 tiêu chí)** — chưa đạt thì sửa, KHÔNG xuất
-9. **Ghi file** theo bảng *Nơi ghi file* bên dưới, kèm bảng ký nhận — theo **Write-first**: ghi thẳng vào file, chat chỉ báo số mục + đường dẫn, KHÔNG in cả bảng checklist ra chat (trừ khi user yêu cầu xem ngay)
+7. **Nhóm theo Module → Nhóm chức năng**, đánh số liên tục để dễ đối chiếu khi báo cáo kết quả. Release-readiness thêm cột **`Module`** cho từng mục
+8. **Ghi `Mã checklist`** ở header = `CL-` + phần tên file sau `checklist_` (VD `checklist_smoke_20261009.md` → `CL-smoke_20261009`) — quy tắc đầy đủ ở skill, mục *Mã checklist & mã mục*
+9. **Chạy Checklist Quality Gate (5 tiêu chí)** — chưa đạt thì sửa, KHÔNG xuất
+10. **Ghi file** theo bảng *Nơi ghi file* bên dưới, kèm bảng ký nhận — theo **Write-first**: ghi thẳng vào file, chat chỉ báo số mục + đường dẫn, KHÔNG in cả bảng checklist ra chat (trừ khi user yêu cầu xem ngay)
 
 ## Quy Tắc Viết Mục Checklist (BẮT BUỘC)
 
@@ -100,9 +101,9 @@ Nhánh `docs/checklists/`, có tầng nền tảng như `docs/testcases/`:
 |---|---|
 | Smoke · Regression (module) | `docs/checklists/<module>/<nền-tảng>/checklist_<loại>_<YYYYMMDD>.md` |
 | Post-hotfix | `docs/checklists/<module>/<nền-tảng>/checklist_post-hotfix_<TICKET-ID>.md` |
-| Release-readiness (nhiều module) | `docs/checklists/_release/checklist_release_<mốc>.md` — `<mốc>` cùng slug với `docs/test-plans/test_plan_<mốc>.md` |
+| Release-readiness (nhiều module) | `docs/checklists/_release/<nền-tảng>/checklist_release_<mốc>.md` — `<mốc>` cùng slug với `docs/test-plans/test_plan_<mốc>.md`. Đợt có nhiều nền tảng → mỗi nền tảng một file |
 
-`<loại>` viết thường: `smoke` · `regression` · `post-hotfix` · `release`. Thư mục `_release/` có dấu `_` đầu = không phải module.
+`<loại>` viết thường: `smoke` · `regression` · `post-hotfix` · `release`. Thư mục `_release/` có dấu `_` đầu = không phải module — nó đóng vai **module giả**, kết quả chạy nằm ở `docs/executions/_release/<nền-tảng>/`.
 
 ## Bảng Output
 
@@ -113,6 +114,7 @@ Nhánh `docs/checklists/`, có tầng nền tảng như `docs/testcases/`:
 
 **Nguồn:** TC-based (`docs/testcases/<module>/<nền-tảng>/test_cases_<module>_<nền-tảng>.md`) | REQ-based
 **Scope:** <module / luồng / role>
+**Mã checklist:** `CL-<phần tên file sau checklist_>` (VD `CL-smoke_20261009` · `CL-post-hotfix_CRM-812`) — mã mục khi chạy = `<Mã checklist>-<số mục 2 chữ số>`
 
 ### Nhóm: <Tên nhóm chức năng>
 
@@ -131,12 +133,13 @@ Nhánh `docs/checklists/`, có tầng nền tảng như `docs/testcases/`:
 |  |  |  |  |  |
 ```
 
-## 🛡️ Checklist Quality Gate (4 Tiêu Chí — chạy trước khi xuất)
+## 🛡️ Checklist Quality Gate (5 Tiêu Chí — chạy trước khi xuất)
 
 - [ ] **1. Verify được:** 100% mục có kết quả kỳ vọng quan sát được, không còn từ "hoạt động đúng / bình thường / OK"
 - [ ] **2. Critical path đủ:** Mọi luồng sống còn (đăng nhập, CRUD bản ghi chính, phân quyền, thanh toán nếu có) đều có ≥1 mục P1
 - [ ] **3. Component đủ:** Mỗi component có mặt trong module có ≥1 mục — component không có thì ghi vào phần "Không áp dụng", KHÔNG lặng lẽ bỏ qua
 - [ ] **4. Đúng quy mô:** Số mục nằm trong ngưỡng của loại checklist đã chọn
+- [ ] **5. Truy vết được:** Header có `Mã checklist` khớp tên file · mục nào có REQ thì điền `REQ ID` · TC-based thì điền `TC ID liên quan` · Release-readiness có cột `Module` ở **mọi** mục — thiếu là bug và RTM phía sau không quy được mục về đâu
 
 ## Quy tắc quan trọng
 
@@ -144,6 +147,7 @@ Nhánh `docs/checklists/`, có tầng nền tảng như `docs/testcases/`:
 - Checklist **không thay thế** bộ TC chi tiết — nó là lớp rà nhanh nằm trên bộ TC
 - Checklist là **ảnh chụp tại một thời điểm** — lần rà mới sinh file mới theo ngày / ticket / mốc, **không** sửa đè checklist của lần rà trước (có thể đã có người tick). Cùng ngày chạy lại đúng loại đó thì ghi đè file của ngày đó
 - Component không áp dụng phải **ghi rõ**, không bỏ im lặng
+- **Chạy checklist bằng `/execute-test-cases`** — kết quả nằm trong execution report (mỗi mục mang mã `CL-…-<nn>`), không tick vào file checklist. Từ đó RTM có cột `Checklist`, báo cáo tổng hợp có bảng kết quả checklist **riêng**, không cộng vào pass rate của bộ TC
 
 ## Khi nào chuyển sang mode khác
 

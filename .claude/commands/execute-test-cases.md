@@ -22,7 +22,7 @@ Chạy bộ manual test cases trực tiếp trên browser thật, đối chiếu
 
 | Input | Bắt buộc? | Ghi chú |
 |---|---|---|
-| File TC hoặc checklist | ⭐ Bắt buộc | VD `docs/testcases/customers/web/test_cases_customers_web.md` · `docs/testcases/customers/web/parts/part_01_web_danh_sach.md`. User đưa file **index** → đọc `## Bản đồ tài liệu`, chỉ lấy file `web/` |
+| File TC hoặc checklist | ⭐ Bắt buộc | VD `docs/testcases/customers/web/test_cases_customers_web.md` · `docs/testcases/customers/web/parts/part_01_web_danh_sach.md` · `docs/checklists/customers/web/checklist_smoke_20261009.md`. User đưa file **index** → đọc `## Bản đồ tài liệu`, chỉ lấy file `web/` |
 | Phạm vi chạy | ⭐ Bắt buộc | Toàn bộ · theo tag (`@Smoke`) · theo TC ID range · theo nhóm chức năng. **Không có → agent hỏi**, không tự chạy hết |
 | URL & tài khoản | ⭐ Bắt buộc | Môi trường đang test + tài khoản đăng nhập |
 | Môi trường dùng chung? | ⭐ Bắt buộc | Có → bật auto-skip TC phá huỷ; Không → chạy đầy đủ, ghi rõ trong report |
@@ -42,8 +42,8 @@ Chạy bộ manual test cases trực tiếp trên browser thật, đối chiếu
 
 ### Bước 2: Chuẩn bị
 1. Tạo `run_id` dạng `run_<timestamp>`
-2. Tạo thư mục evidence `docs/executions/<module>/<nền-tảng>/<run_id>/evidence/` — `<nền-tảng>` là nền tảng của file TC đang chạy. Workflow này chạy trên **trình duyệt** nên là `web`; TC `@Android` / `@iOS` / `@API` không chạy ở đây
-3. Khởi tạo file report `docs/executions/<module>/<nền-tảng>/<run_id>/execution_report.md` với phần header
+2. Tạo thư mục evidence `docs/executions/<module>/<nền-tảng>/<run_id>/evidence/` — `<nền-tảng>` là nền tảng của file TC đang chạy. Workflow này chạy trên **trình duyệt** nên là `web`; TC `@Android` / `@iOS` / `@API` không chạy ở đây. Checklist Release-readiness (`docs/checklists/_release/<nền-tảng>/`) thì `<module>` là **`_release`**
+3. Khởi tạo file report `docs/executions/<module>/<nền-tảng>/<run_id>/execution_report.md` với phần header — **bắt buộc** có ô `Loại nguồn` (`Bộ TC` / `Checklist <loại> · <Mã checklist>`)
 
 ### Bước 3: Khởi tạo browser & đăng nhập
 1. `browser_navigate(url)`
@@ -57,7 +57,7 @@ Với mỗi TC theo thứ tự:
 1. **Kiểm tra Auto-Skip** — TC có tag `@PersonalOnly` (`Automation = No` **không** phải lý do bỏ qua — vẫn chạy bình thường), hoặc steps chứa Mass Delete / Select All / xoá qua URL GET / upload `.exe` / import hàng loạt → `⏭️ SKIPPED` + ghi lý do, sang TC tiếp. **Nhập chuỗi dài vào một field** (TC biên `max+1`) **không** phải lý do skip
 2. **Dựng Pre-Condition** — không dựng được → `⚠️ BLOCKED` + ghi nguyên nhân
 3. **Thực hiện đúng từng bước** trong Test Steps — không tự thêm/bớt bước
-4. **Verify từng Expected** bằng `snapshot` sau mỗi bước có kết quả quan sát được. TC đặc biệt chạy theo bảng **TC đặc biệt** của skill: TC gộp chạy **từng biến thể** (FAIL ghi mã `<TC ID>-<mã>`) · `@TechCheck` chấm phần chính, phần `🔧` kiểm nếu làm được · `@NeedsVerify` lệch thì ghi chú đối chiếu lại TC · mục checklist ghi `#<số mục>`
+4. **Verify từng Expected** bằng `snapshot` sau mỗi bước có kết quả quan sát được. TC đặc biệt chạy theo bảng **TC đặc biệt** của skill: TC gộp chạy **từng biến thể** (FAIL ghi mã `<TC ID>-<mã>`) · `@TechCheck` chấm phần chính, phần `🔧` kiểm nếu làm được · `@NeedsVerify` lệch thì ghi chú đối chiếu lại TC · mục checklist ghi **mã mục** `<Mã checklist>-<nn>` (VD `CL-smoke_20261009-03`), **không** ghi `#3` trần — đủ 4 luật ở mục *Chạy checklist* của skill
 5. **Chấm trạng thái:**
    - Mọi Expected khớp → `✅ PASS`
    - Có Expected không khớp → `❌ FAIL` + **screenshot ngay tại bước fail** + ghi Actual vs Expected
@@ -100,7 +100,7 @@ Agent chạy tiếp qua TC fail (fail-forward), **chỉ dừng** khi:
 
 | Tình huống | Làm gì |
 |---|---|
-| Có TC FAIL | `/create-bug-report` — sinh bug report chuẩn từ evidence đã thu |
+| Có TC FAIL | `/create-bug-report` — sinh bug report chuẩn từ evidence đã thu. Mục checklist FAIL: bug đặt theo **module của mục** (cột `Module` với checklist release) |
 | Nhiều TC FAIL cần gom nhóm root cause | `/analyze-test-report` |
 | Cần đẩy kết quả lên Xray | `/import-test-results-xray` |
 | TC FAIL do TC viết sai (không phải lỗi hệ thống), kể cả TC `@NeedsVerify` lệch Expected | `/review-testcases` mode FIX — **không sửa TC trong lúc chạy** |

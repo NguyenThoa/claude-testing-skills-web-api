@@ -83,10 +83,13 @@ claude-testing-skills/
 │   │   └── <module>/
 │   │       ├── TEST_CASES_<TÊN_MODULE>_SUMMARY.md         # INDEX — tên file bất biến, không chứa dòng TC
 │   │       └── web/ · mobile/ · api/          # test_cases_<module>_<nền-tảng>.md · parts/ khi > 40 TC
+│   ├── checklists/                            # checklist tick tay — <module>/<nền-tảng>/checklist_<loại>_<YYYYMMDD>.md · _release/<nền-tảng>/
 │   ├── executions/
+│   │   ├── _release/<nền-tảng>/run_<timestamp>/  # chạy checklist release-readiness
 │   │   └── <module>/<nền-tảng>/run_<timestamp>/
 │   │       ├── execution_report.md
 │   │       └── evidence/*.png
+│   ├── traceability/traceability_matrix.md    # RTM — tên file bất biến, ghi đè tại chỗ
 │   ├── bugs/                                  # Bug report sinh từ TC FAIL
 │   │   ├── README.md                          # DANH MỤC bug — có cột Nền tảng
 │   │   └── <module>/<nền-tảng>/BUG_<module>_<ts>_<TC_ID>.md

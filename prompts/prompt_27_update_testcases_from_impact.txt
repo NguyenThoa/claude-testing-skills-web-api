@@ -24,7 +24,7 @@
 - Tài liệu requirements hiện hành: [VD: docs/requirements/project/REQUIREMENTS_PROJECT_SUMMARY.md — agent tự theo Bản đồ tài liệu sang file nền tảng]
 - File test cases hiện hành: [VD: docs/testcases/project/TEST_CASES_PROJECT_SUMMARY.md — agent tự theo Bản đồ tài liệu sang file nền tảng]
 - Evidence của module (bắt buộc mở nếu thay đổi đụng bố cục/nhãn/thứ tự field): [VD: docs/requirements/project/web/evidence/ / "Không có"]
-- RTM (nếu có — map REQ→TC nhanh và chắc hơn): [VD: docs/traceability_matrix.md / "Không có"]
+- RTM (nếu có — map REQ→TC nhanh và chắc hơn): [VD: docs/traceability/traceability_matrix.md / "Không có"]
 
 # TÙY CHỌN
 - Giới hạn phạm vi: [VD: "Chỉ REQ-PRJ-42" / để trống = toàn bộ REQ trong delta]

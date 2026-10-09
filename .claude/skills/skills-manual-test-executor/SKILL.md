@@ -53,7 +53,7 @@ skills-rbt-manual-testing          skills-manual-test-executor          skills-b
 
 | Input | Bắt buộc? | Ghi chú |
 |---|---|---|
-| File TC hoặc checklist | ⭐ Bắt buộc | VD `docs/testcases/customers/web/test_cases_customers_web.md` · `docs/testcases/customers/web/parts/part_01_web_danh_sach.md`. User đưa file **index** → đọc `## Bản đồ tài liệu`, chỉ lấy file `web/` |
+| File TC hoặc checklist | ⭐ Bắt buộc | VD `docs/testcases/customers/web/test_cases_customers_web.md` · `docs/testcases/customers/web/parts/part_01_web_danh_sach.md` · `docs/checklists/customers/web/checklist_smoke_20261009.md` · `docs/checklists/_release/web/checklist_release_release_2.0.md`. User đưa file **index** → đọc `## Bản đồ tài liệu`, chỉ lấy file `web/` |
 | Phạm vi chạy | ⭐ Bắt buộc | Toàn bộ file · theo tag (`@Smoke`) · theo TC ID range · theo nhóm chức năng |
 | Môi trường & tài khoản | ⭐ Bắt buộc | URL, tài khoản đăng nhập, build/version đang test |
 | Mức độ dùng chung của môi trường | ⭐ Bắt buộc | Dùng chung → bật auto-skip TC phá huỷ; môi trường riêng → có thể chạy đầy đủ |
@@ -122,7 +122,16 @@ Ghi vào report: `⏭️ SKIPPED — thao tác phá huỷ trên môi trường d
 | **Độ hạt GỘP — Bảng kiểm** (Kiểu B, mục `1`, `2`, `3`…) | Đối chiếu từng mục trên cùng màn hình | PASS khi mọi mục đạt. Mục lệch → ghi số mục + REQ của mục đó |
 | **`@TechCheck`** — có dòng `🔧 Ghi chú kỹ thuật (cần DevTools):` | Chấm phần TC chính như bình thường. Phần 🔧: agent kiểm **nếu làm được** bằng công cụ đang có (`browser_evaluate`, `browser_network_requests`, xem cookie) | Phần chính quyết định PASS/FAIL. Phần 🔧 kiểm được mà lệch → `FAIL`. Không kiểm được → vẫn chấm theo phần chính, cột Ghi chú ghi `🔧 chưa kiểm — <lý do>`. 🔒 Ghi **hình thái**, không chép giá trị cookie/token thật vào report |
 | **`@NeedsVerify`** — Expected ghi `⚠️ chưa có evidence` | Chạy bình thường, **ghi lại nguyên văn** điều quan sát được ở chỗ chưa có evidence | Khớp Expected → `PASS`, ghi chú *"đã xác nhận trên UI — đề nghị gỡ `@NeedsVerify`"*. Lệch → `FAIL` kèm ghi chú *"Expected chưa có evidence — đối chiếu lại TC trước khi báo bug"*; mục Đề xuất trỏ `/review-testcases`, **không** trỏ thẳng `/create-bug-report` |
-| **Mục checklist** (nguồn `checklist_*.md`) | Mỗi mục `#` là một đơn vị chạy — thao tác theo cột `Hạng mục kiểm tra`, đối chiếu cột `Kết quả kỳ vọng` | Cột `TC ID` của report ghi `#<số mục>`, kèm `TC ID liên quan` nếu có. **Không** tick vào file checklist — kết quả nằm trong execution report; bảng ký nhận của checklist do người chịu trách nhiệm tự điền |
+| **Mục checklist** (nguồn `checklist_*.md`) | Mỗi mục `#` là một đơn vị chạy — thao tác theo cột `Hạng mục kiểm tra`, đối chiếu cột `Kết quả kỳ vọng` | Xem mục **Chạy checklist** ngay dưới. **Không** tick vào file checklist — kết quả nằm trong execution report; bảng ký nhận của checklist do người chịu trách nhiệm tự điền |
+
+### Chạy checklist — 4 luật để kết quả nối được về sau
+
+| # | Luật | Vì sao |
+|---|---|---|
+| 1 | Cột `TC ID` của report ghi **mã mục** `<Mã checklist>-<nn>` (VD `CL-smoke_20261009-03`) — lấy `Mã checklist` ở header checklist; checklist cũ không có dòng đó thì tự ghép `CL-` + phần tên file sau `checklist_`. **Cấm** ghi `#3` trần | `#3` trùng giữa mọi checklist — viewer, RTM và báo cáo tổng hợp sẽ nối nhầm mục của hai checklist khác nhau |
+| 2 | Header ghi `Loại nguồn` = `Checklist <loại>` + `Mã checklist`; bảng kết quả thêm 3 cột `Priority` · `REQ ID` · `TC ID liên quan` chép từ checklist | Báo cáo tổng hợp phân loại lần chạy theo `Loại nguồn` — thiếu là lần chạy smoke 12 mục bị coi như lần chạy bộ TC và thay số của cả module |
+| 3 | **Checklist Release-readiness** (`docs/checklists/_release/<nền-tảng>/`): report ghi vào `docs/executions/_release/<nền-tảng>/<run_id>/`, bảng kết quả thêm cột **`Module`** chép từ checklist | Một lần chạy trải nhiều module — `_release` là module giả, cột `Module` quy từng mục về đúng module cho bug và báo cáo tổng hợp |
+| 4 | Mục checklist FAIL → bug đặt ở `docs/bugs/<module của mục>/<nền-tảng>/`, trỏ về `TC ID liên quan` (nếu có) **và** mã mục | Bug phải trỏ về TC đang có hiệu lực; mục REQ-based không có TC thì mã mục + REQ ID là neo duy nhất |
 
 ---
 
@@ -164,7 +173,7 @@ Khi một TC FAIL:
 | Milestone quan trọng (tạo bản ghi thành công, hoàn tất luồng chính) | ✅ Nên chụp |
 | Mỗi bước của mọi TC | ❌ **KHÔNG** — chụp tràn lan làm report nặng và khó đọc |
 
-Lưu tại: `docs/executions/<module>/<nền-tảng>/<run_id>/evidence/<TC_ID>_<mô_tả>.png`
+Lưu tại: `docs/executions/<module>/<nền-tảng>/<run_id>/evidence/<TC_ID>_<mô_tả>.png` — chạy checklist thì `<TC_ID>` là mã mục (`CL-smoke_20261009-03_<mô_tả>.png`); checklist release thì `<module>` là `_release`
 
 ---
 
@@ -189,7 +198,7 @@ Lưu tại: `docs/executions/<module>/<nền-tảng>/<run_id>/evidence/<TC_ID>_<
 
 ## Output — Execution Report
 
-File: `docs/executions/<module>/<nền-tảng>/<run_id>/execution_report.md`
+File: `docs/executions/<module>/<nền-tảng>/<run_id>/execution_report.md` — checklist Release-readiness: `docs/executions/_release/<nền-tảng>/<run_id>/execution_report.md`
 
 ```markdown
 # Execution Report — <Module> · <Loại chạy>
@@ -198,6 +207,7 @@ File: `docs/executions/<module>/<nền-tảng>/<run_id>/execution_report.md`
 |---|---|
 | Run ID | run_1785700456 |
 | Nền tảng | `web` — một lần chạy thuộc đúng một nền tảng, quyết định thư mục `docs/executions/<module>/<nền-tảng>/` |
+| Loại nguồn | `Bộ TC` — hoặc `Checklist <loại>` · `<Mã checklist>` (VD `Checklist smoke · CL-smoke_20261009`). Báo cáo tổng hợp dựa vào ô này để **không** cộng kết quả checklist vào pass rate của bộ TC |
 | Nguồn TC | docs/testcases/customers/web/parts/part_01_web_danh_sach.md |
 | Phạm vi | 36 TC (toàn bộ Part 1) · loại 2 TC `@Deprecated` |
 | Môi trường | `<URL môi trường test>` — `<Staging/UAT/Production>` |
@@ -226,6 +236,14 @@ File: `docs/executions/<module>/<nền-tảng>/<run_id>/execution_report.md`
 | CRM_CUST_TC_001 | Bảng hiển thị đủ 9 cột | ✅ PASS | — | — |
 | CRM_CUST_TC_011 | Search chuỗi SQL injection | ❌ FAIL | 4 · biến thể `b` | Xem chi tiết #1 |
 | CRM_CUST_TC_030 | Modal Bulk Actions | ⏭️ SKIPPED | — | Thao tác phá huỷ, môi trường dùng chung |
+
+> **Lần chạy checklist** — bảng mục 2 đổi thành (cột `Module` chỉ có ở checklist Release-readiness):
+>
+> | TC ID | Hạng mục kiểm tra | Module | Kết quả | Priority | REQ ID | TC ID liên quan | Ghi chú |
+> |---|---|---|---|---|---|---|---|
+> | CL-release_release_2.0-03 | Tạo KH mới đủ field bắt buộc | customers | ✅ PASS | P1 | REQ-CUST-02 | CRM_CUST_TC_005 | — |
+>
+> Heading chi tiết FAIL giữ mẫu `### FAIL #n — <mã mục> · <hạng mục>`.
 
 ## 3. Chi tiết TC FAIL
 
@@ -280,3 +298,4 @@ File: `docs/executions/<module>/<nền-tảng>/<run_id>/execution_report.md`
 - ❌ TC gộp FAIL mà không ghi **mã biến thể** — người sửa không biết case nào hỏng
 - ❌ TC `@NeedsVerify` lệch Expected rồi đề xuất báo bug ngay — Expected chưa có evidence, phải đối chiếu lại TC trước
 - ❌ Bỏ qua mục "Dữ liệu đã tạo & dọn dẹp" trong report
+- ❌ Chạy checklist mà ghi `#3` trần ở cột `TC ID`, hoặc bỏ trống ô `Loại nguồn` — kết quả checklist sẽ bị nối nhầm và cộng lẫn vào số của bộ TC

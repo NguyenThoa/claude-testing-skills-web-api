@@ -80,9 +80,9 @@ Sử dụng skill này khi:
 
 | Từ mục | Lấy ra |
 |---|---|
-| Header | Run ID · module · build · môi trường · môi trường dùng chung? · thời lượng |
+| Header | Run ID · module · build · môi trường · môi trường dùng chung? · thời lượng · **`Loại nguồn`** (Bộ TC / Checklist) |
 | `## 1. Tổng kết` | PASS / FAIL / BLOCKED / SKIPPED + pass rate |
-| `## 2. Kết quả từng TC` | TC ID · kết quả · bước fail |
+| `## 2. Kết quả từng TC` | TC ID · kết quả · bước fail — lần chạy checklist: mã mục `CL-…-<nn>` · `TC ID liên quan` · `Module` (checklist release) |
 | `## 3. Chi tiết TC FAIL` | REQ ID · Expected · Actual · priority · tái hiện được? |
 | `## 4. TC BLOCKED` | nguyên nhân chặn — **đây là mục hay bị bỏ qua nhất** |
 | `## 5. Dữ liệu đã tạo & dọn dẹp` | data còn sót → cảnh báo môi trường bẩn |
@@ -126,7 +126,7 @@ Mục 5 của report có dòng `Đã xoá? ❌` → cảnh báo ngay. Môi trư�
 
 ### So sánh trend giữa các lần chạy
 
-Glob `docs/executions/<module>/<nền-tảng>/run_*/execution_report.md` (và `docs/executions/<module>/run_*/` của lần chạy cũ chưa có tầng nền tảng), sắp theo Run ID (timestamp tăng dần), so **cùng TC ID** giữa các lần — trend tính **riêng từng nền tảng**:
+Glob `docs/executions/<module>/<nền-tảng>/run_*/execution_report.md` (và `docs/executions/<module>/run_*/` của lần chạy cũ chưa có tầng nền tảng), sắp theo Run ID (timestamp tăng dần), so **cùng TC ID** giữa các lần — trend tính **riêng từng nền tảng** và **riêng từng nguồn** (cùng `Nguồn TC`): lần chạy bộ TC không so với lần chạy checklist, checklist này không so với checklist khác. Ngoại lệ duy nhất được nối chéo — mục checklist FAIL có `TC ID liên quan` đã PASS ở lần chạy bộ TC trước đó → xếp **🆕 Mới fail**, ghi cả hai nguồn:
 
 | Nhóm | Nghĩa | Ưu tiên |
 |---|---|---|

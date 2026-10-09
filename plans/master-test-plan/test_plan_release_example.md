@@ -209,7 +209,7 @@
 | Tiến độ kiểm thử | TC đã viết / đã review · TC đã chạy / chưa chạy · PASS · FAIL · BLOCKED | `docs/testcases/` · `execution_report.md` · `reports/` | Báo cáo tiến độ · tiêu chí exit #3, #4, #5, #7 |
 | Tiến độ dự án | Công sức thực tế so với ước lượng 7.2 | Báo cáo tiến độ | Phát hiện trễ sớm |
 | Lỗi | Bug mới / đã fix / đang mở theo Severity · regression phát sinh | Jira (nguồn chính) · `docs/bugs/` | Tiêu chí exit #1, #2 |
-| Độ phủ | REQ có TC · REQ Critical có TC PASS · TC regression High đã automate | `traceability_matrix.md` | Tiêu chí exit #6, #8 |
+| Độ phủ | REQ có TC · REQ Critical có TC PASS · TC regression High đã automate | `docs/traceability/traceability_matrix.md` | Tiêu chí exit #6, #8 |
 | Rủi ro | Trạng thái từng rủi ro ở 8.1 | Báo cáo tiến độ | Kiểm soát rủi ro |
 | Chi phí | Chi tiêu so với ngân sách 7.3 | PM | Báo cáo tổng hợp |
 
@@ -287,6 +287,8 @@
 |---|---|---|
 | 8 | TC Priority High của bộ regression đã được automate | 100% |
 | 9 | Requirements và TC của 4 module đã qua review tĩnh | 100% — có biên bản review |
+
+> **Kết quả checklist được tính thế nào:** #3 · #4 · #5 · #7 chỉ tính trên **bộ TC**; #6 nhận mục checklist PASS **chỉ** cho REQ chưa có TC nào; cặp module × nền tảng chỉ có checklist là #7 **chưa đạt**.
 
 ☐ Bộ mặc định  ☑ Bộ mặc định + bổ sung — PO và PM xác nhận ngày 09-10-2026  ☐ Bộ tiêu chí riêng của dự án
 
@@ -496,7 +498,7 @@ Mới ──phân loại──→ Đang sửa ──Dev sửa──→ Chờ ret
 | Retest report | `docs/executions/<module>/web/retest_*/` | `/retest-fixed-bugs` |
 | Bug report | Jira (nguồn chính) · `docs/bugs/<module>/<nền-tảng>/` | `/create-bug-report` |
 | Automation script + report | Project `shopmini-automation` · `reports/` | `/generate-automation-mobile` · `/generate-automation-api` |
-| Ma trận truy vết | `traceability_matrix.md` | `/generate-traceability-matrix` |
+| Ma trận truy vết | `docs/traceability/traceability_matrix.md` | `/generate-traceability-matrix` |
 | Báo cáo tiến độ hằng tuần | `docs/executions/test_progress_release_example_<YYYYMMDD>.md` | `/generate-test-progress-report` |
 | Biên bản UAT | Thư mục dự án trên Google Drive | Cửa hàng thí điểm ký |
 | **Báo cáo tổng hợp** | `docs/executions/test_summary_release_example_*.md` | `/generate-test-summary-report` |

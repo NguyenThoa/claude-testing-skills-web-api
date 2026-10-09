@@ -53,6 +53,7 @@ section.content{flex:1;min-width:0}
 .tag{font-size:10px;padding:1px 5px;border-radius:4px;background:#eef2ff;color:#4338ca;flex:none}
 .tag.retest{background:#fef3c7;color:#92400e}
 .tag.rtm{background:#dcfce7;color:#166534}
+.tag.checklist{background:#ffedd5;color:#9a3412}
 .sub{margin-top:16px}
 .sub h4{font-size:13px;margin:0 0 7px}
 .sub .hint{font-size:12px;color:var(--muted);font-weight:400}
@@ -68,7 +69,7 @@ section.content{flex:1;min-width:0}
 
 /* alerts */
 .alert{border-radius:10px;padding:11px 14px;margin-bottom:10px;font-size:13px;border:1px solid}
-.alert b{display:block;margin-bottom:2px}
+.alert > b{display:block;margin-bottom:2px}
 .alert.danger{background:#fef2f2;border-color:#fecaca;color:#991b1b}
 .alert.warn{background:#fffbeb;border-color:#fde68a;color:#92400e}
 .alert.info{background:#f0f9ff;border-color:#bae6fd;color:#075985}
@@ -105,6 +106,7 @@ td.id{font-family:ui-monospace,SFMono-Regular,Consolas,monospace;font-size:12px;
 .st.FULL{background:#dcfce7;color:#166534} .st.MANUAL{background:#fef3c7;color:#92400e}
 .st.PARTIALCOV{background:#ede9fe;color:#5b21b6}
 .st.NOTCOVERED{background:#fee2e2;color:#991b1b}
+.st.CHECKLISTONLY{background:#ffedd5;color:#9a3412}
 .st.NEW{background:#fee2e2;color:#991b1b} .st.RECUR{background:#fef3c7;color:#92400e}
 .st.FIXEDTREND{background:#dcfce7;color:#166534} .st.TOBLOCKED{background:#fef3c7;color:#92400e}
 .st.UNBLOCKED{background:#e0f2fe;color:#075985}
@@ -257,7 +259,7 @@ footer{text-align:center;color:var(--muted);font-size:12px;padding:18px}
             <span id="covChips"></span>
           </div>
           <div class="tablewrap">
-            <table><thead><tr><th>REQ ID</th><th>Mô tả</th><th>Test case</th><th>Automation</th><th>Trạng thái</th></tr></thead>
+            <table><thead><tr><th>REQ ID</th><th>Mô tả</th><th>Test case</th><th>Automation</th><th>Checklist</th><th>Trạng thái</th></tr></thead>
             <tbody id="covRows"></tbody></table>
             <div class="empty" id="noCov" style="display:none">Không có REQ nào khớp bộ lọc.</div>
           </div>
@@ -312,6 +314,10 @@ function stripMd(s){
 }
 const splitRow = r => r.trim().replace(/^\|/,'').replace(/\|$/,'').split(/(?<!\\)\|/).map(clean);
 const TCID_RE = /\b([A-Z][A-Z0-9]*(?:_[A-Z0-9]+)*_TC_\d+)\b/;
+// Mã mục checklist: `CL-<phần tên file sau checklist_>-<số mục>` — VD CL-smoke_20261009-03, CL-post-hotfix_CRM-812-05.
+// Phần giữa có thể chứa `-`, nên bám vào cụm số CUỐI cùng trước khoảng trắng.
+const CLID_RE = /\b(CL-\S+-\d{2,})(?=\s|$)/;
+const isChecklistId = id => /^CL-\S+-\d{2,}$/.test(String(id||''));
 
 function parseTables(lines){
   const out=[]; let i=0, heading='';
@@ -339,7 +345,7 @@ function kvOf(t){ const o={}; for(const r of t.rows) if(r[0]) o[r[0].replace(/[*
 /* --- Ma trận truy vết (RTM) --------------------------------------------
    Chỉ số được TÍNH LẠI từ bảng "Ma trận chi tiết", không đọc từ bảng
    "Tổng quan Coverage" — RTM có số tổng gõ sai vẫn hiện đúng.            */
-const RTM_ST={FULL:'Đã automate',PARTIALCOV:'Automate một phần',MANUAL:'Mới có TC thủ công',NOTCOVERED:'Chưa có TC'};
+const RTM_ST={FULL:'Đã automate',PARTIALCOV:'Automate một phần',MANUAL:'Mới có TC thủ công',CHECKLISTONLY:'Chỉ có checklist',NOTCOVERED:'Chưa có TC'};
 function parseRtm(tables, fileName, title){
   const rows=[], notAuto=[], orphans=[], guesses=[], undocumented=[]; const suggest={};
   for(const t of tables){
@@ -350,20 +356,23 @@ function parseRtm(tables, fileName, title){
     const iTcId=colIdx(H,/^TC\s*ID$/i), iPrio=colIdx(H,/priority|ưu tiên/i);
     const iTest=colIdx(H,/^test$/i), iFile=colIdx(H,/^file$/i);
     const iBasis=colIdx(H,/căn cứ/i), iMod=colIdx(H,/^module$/i);
+    const iCl=colIdx(H,/^checklist$/i);
 
     if(iReq>=0 && iTc>=0){                                   // Ma trận chi tiết
       for(const r of t.rows){
         const req=stripMd(r[iReq]); if(!req) continue;
         const tcs=(iTc>=0?stripMd(r[iTc]):'').split(/[,;]/).map(s=>s.trim()).filter(Boolean);
         const auto=iAuto>=0?stripMd(r[iAuto]):'';
+        const cls=(iCl>=0?stripMd(r[iCl]):'').split(/[,;]/).map(s=>s.trim()).filter(Boolean);
         // "login.spec.ts (2/2)" → 2 trên 2 TC đã automate; không có ngoặc thì coi như automate hết TC của dòng
         const m=auto.match(/\((\d+)\s*\/\s*(\d+)\)/);
         const nAuto=auto? (m? +m[1] : tcs.length) : 0;
         const nTc=m? +m[2] : tcs.length;
-        rows.push({req, desc:iDesc>=0?stripMd(r[iDesc]):'', tcs, auto, nAuto, nTc,
+        rows.push({req, desc:iDesc>=0?stripMd(r[iDesc]):'', tcs, cls, auto, nAuto, nTc,
           declared:iSt>=0?stripMd(r[iSt]):'',
           // "1/3 TC đã automate" KHÔNG phải "đã automate" — gộp hai cái làm một là thổi phồng độ phủ.
-          status: tcs.length===0 ? 'NOTCOVERED'
+          // REQ chỉ có mục checklist (0 TC) đã được rà nhưng chưa có TC để chạy lại — không phải "chưa phủ", cũng không phải "đã phủ".
+          status: tcs.length===0 ? (cls.length ? 'CHECKLISTONLY' : 'NOTCOVERED')
                 : nAuto===0      ? 'MANUAL'
                 : nAuto<nTc      ? 'PARTIALCOV' : 'FULL'});
       }
@@ -402,6 +411,9 @@ function parseReport(text, fileName){
   if(!Object.keys(meta).length){ const t=tables.find(isKV); if(t) meta=kvOf(t); }
 
   const module = stripMd((titleLine.split(/—|--/)[1]||'').split('·')[0]) || meta['Module'] || fileName.replace(/\.md$/,'');
+  // Lần chạy checklist không phải lần chạy bộ TC — cộng chung là tổng và pass rate vô nghĩa (xem cảnh báo ở render()).
+  const srcTxt = meta['Loại nguồn']||'';
+  const source = /checklist/i.test(srcTxt) || /docs\/checklists\//i.test(meta['Nguồn TC']||'') ? 'checklist' : 'tc';
   const runId  = meta['Run ID']||meta['Retest ID']||meta['Run']||fileName.replace(/\.md$/,'');
   const build  = meta['Build / Version']||meta['Build']||meta['Build lúc log bug → Build retest']||'';
 
@@ -414,7 +426,9 @@ function parseReport(text, fileName){
     if(ci<0) continue;
     const cs=colIdx(t.header,/kết quả|ket qua|trạng thái/i);
     const cn=colIdx(t.header,/nguyên nhân|nguyen nhan/i);
-    const cd=colIdx(t.header,/kịch bản|scenario|test title|mô tả/i);
+    const cd=colIdx(t.header,/kịch bản|scenario|test title|mô tả|hạng mục/i);
+    // Checklist Release-readiness trải nhiều module: cột Module của từng dòng thắng module lấy từ tiêu đề
+    const cmod=colIdx(t.header,/^module$/i);
     const cnote=colIdx(t.header,/ghi chú|ghi chu/i);
     const cstep=colIdx(t.header,/bước fail|buoc fail/i);
     const cneed=colIdx(t.header,/cần gì|can gi/i);
@@ -422,6 +436,7 @@ function parseReport(text, fileName){
       const id=stripMd(r[ci]); if(!id||/^-+$/.test(id)) continue;
       const o={};
       if(cd>=0) o.scenario=stripMd(r[cd]);
+      if(cmod>=0 && stripMd(r[cmod])) o.module=stripMd(r[cmod]);
       if(cs>=0) o.status=normStatus(r[cs]);
       if(cn>=0){ o.blockReason=stripMd(r[cn]); if(!o.status) o.status='BLOCKED'; }
       if(cnote>=0) o.note=stripMd(r[cnote]);
@@ -435,7 +450,7 @@ function parseReport(text, fileName){
   // Chi tiết FAIL / REG: "### FAIL #1 — <TCID> · <scenario>" + bảng key-value ngay sau
   for(const t of tables){
     if(!isKV(t)||!t.heading) continue;
-    const m=t.heading.match(TCID_RE); if(!m) continue;
+    const m=t.heading.match(TCID_RE)||t.heading.match(CLID_RE); if(!m) continue;
     const kv=kvOf(t);
     add(m[1],{
       scenario:(t.heading.split('·')[1]||'').trim(),
@@ -468,7 +483,8 @@ function parseReport(text, fileName){
     for(const r of t.rows) if(stripMd(r[c]) && !/✅|yes|có|x$/i.test(r[c])) dirty++;
   }
 
-  return {kind:isRetest?'retest':'run',fileName,title:titleLine,module,runId,build,isRetest,meta,tcs,bugs,dirty};
+  const src = source==='tc' && tcs.length && tcs.every(t=>isChecklistId(t.id)) ? 'checklist' : source;
+  return {kind:isRetest?'retest':'run',source:src,fileName,title:titleLine,module,runId,build,isRetest,meta,tcs,bugs,dirty};
 }
 
 /* ============================ STATE ============================ */
@@ -689,7 +705,7 @@ function render(){
   // sidebar
   $('#files').innerHTML=
     `<div class="file ${activeFile===''?'active':''}" data-f=""><span class="nm">Tất cả (${DOCS.length})</span></div>`+
-    DOCS.map(d=>{const k=d.fileName+'|'+d.runId; const kind=d.kind||'run';
+    DOCS.map(d=>{const k=d.fileName+'|'+d.runId; const kind=d.kind==='run'&&d.source==='checklist'?'checklist':(d.kind||'run');
       return `<div class="file ${activeFile===k?'active':''}" data-f="${esc(k)}">
       <span class="tag ${kind==='run'?'':kind}">${kind.toUpperCase()}</span>
       <span class="nm" title="${esc(d.fileName)} — ${esc(d.runId)}">${esc(d.module)}</span>
@@ -731,6 +747,11 @@ function render(){
       `. ${changed.length} TC được chạy nhiều lần — kết quả cũ hiện mờ ngay dưới trạng thái. `+
       'Chọn <b>một</b> lần chạy ở thanh bên để xem số của riêng lần đó, hoặc sang tab <b>So sánh các lần chạy</b>.']);
   }
+  const srcs=new Set(runDocs(vis).filter(d=>!d.isRetest).map(d=>d.source||'tc'));
+  if(srcs.has('tc') && srcs.has('checklist'))
+    al.push(['warn','Đang trộn lần chạy bộ TC với lần chạy checklist — Tổng TC và pass rate đang cộng hai loại đơn vị khác nhau',
+      'Mục checklist (mã <code>CL-…</code>) là đơn vị rà nhanh, không phải test case. Báo cáo tổng hợp tách hai loại thành hai bảng — '+
+      'chọn <b>một</b> lần chạy ở thanh bên (nhãn <b>CHECKLIST</b> / <b>RUN</b>) để xem số đúng của từng loại.']);
   const blkRate=base.length? blk/base.length*100 : 0;
   if(blkRate>20) al.push(['danger','Tỷ lệ BLOCKED '+blkRate.toFixed(1)+'% — không kết luận chất lượng từ lần chạy này',
     'BLOCKED nghĩa là <b>chưa test được</b>, không phải đạt. Trên 20% thì lần chạy thiếu dữ liệu để kết luận: dựng lại môi trường rồi chạy lại.']);
@@ -739,7 +760,7 @@ function render(){
     'TC skip do thao tác phá huỷ trên môi trường dùng chung <b>vẫn chưa được kiểm</b>. Cần chạy tay có giám sát trên môi trường riêng.']);
   const dirty=vis.reduce((s,d)=>s+d.dirty,0);
   if(dirty>0) al.push(['warn',dirty+' dòng dữ liệu test chưa dọn','Môi trường còn dữ liệu thừa — lần chạy sau có thể fail vì lý do không liên quan đến ứng dụng.']);
-  $('#alerts').innerHTML=al.map(([k,t,d])=>`<div class="alert ${k}"><b>${t}</b>${d}</div>`).join('');
+  $('#alerts').innerHTML=al.map(([k,t,d])=>`<div class="alert ${k}"><b>${t}</b><span>${d}</span></div>`).join('');
 
   // chips
   $('#chips').innerHTML=ALL_ST.map(s=>`<button class="chip ${offStatus.has(s)?'':'on'}" data-st="${s}">${s}</button>`).join(' ');
@@ -775,7 +796,7 @@ function render(){
 }
 
 /* --- Tab Độ phủ automation --------------------------------------------- */
-const offCov=new Set(); const ALL_COV=['FULL','PARTIALCOV','MANUAL','NOTCOVERED'];
+const offCov=new Set(); const ALL_COV=['FULL','PARTIALCOV','MANUAL','CHECKLISTONLY','NOTCOVERED'];
 function renderCoverage(){
   const docs=rtmDocs();
   $('#covEmpty').style.display=docs.length?'none':'block';
@@ -796,7 +817,7 @@ function renderCoverage(){
   if(R.guesses.length) al.push(['warn',
     `⚠️ ${R.guesses.length} mapping suy luận cần người xác nhận`,
     'Những dòng này map theo tên/mô tả chứ không có ID — chưa được tính là bằng chứng truy vết cho tới khi có người duyệt.']);
-  $('#covAlerts').innerHTML=al.map(([k,t,d])=>`<div class="alert ${k}"><b>${t}</b>${d}</div>`).join('');
+  $('#covAlerts').innerHTML=al.map(([k,t,d])=>`<div class="alert ${k}"><b>${t}</b><span>${d}</span></div>`).join('');
 
   const total=R.rows.length;
   const covered=R.rows.filter(r=>r.tcs.length>0).length;
@@ -806,6 +827,7 @@ function renderCoverage(){
     ['rate','REQ có test case',`${covered}/${total}`,pct(covered,total)],
     ['rate','TC đã automate',`${nAuto}/${nTc}`,pct(nAuto,nTc)],
     ['fail','REQ chưa có TC',R.rows.filter(r=>r.status==='NOTCOVERED').length,''],
+    ['blocked','REQ chỉ có checklist',R.rows.filter(r=>r.status==='CHECKLISTONLY').length,''],
     ['blocked','TC chưa automate',R.notAuto.length||Math.max(nTc-nAuto,0),''],
     ['skip','Orphan test',R.orphans.length,'']
   ].map(([cl,l,n,sub])=>`<div class="stat ${cl}"><div class="n">${n}</div><div class="l">${l}${sub?' · '+sub:''}</div></div>`).join('');
@@ -817,12 +839,13 @@ function renderCoverage(){
   const rows=R.rows.filter(r=>{
     if(offCov.has(r.status)) return false;
     if(!q) return true;
-    return [r.req,r.desc,r.auto,r.suggest,...r.tcs].some(v=>String(v||'').toLowerCase().includes(q));
+    return [r.req,r.desc,r.auto,r.suggest,...r.tcs,...(r.cls||[])].some(v=>String(v||'').toLowerCase().includes(q));
   });
   $('#covRows').innerHTML=rows.map(r=>`<tr>
     <td class="id">${esc(r.req)}</td><td>${esc(r.desc||'—')}</td>
     <td class="id">${r.tcs.length?esc(r.tcs.join(', ')):'<span style="color:var(--fail)">chưa có</span>'}</td>
     <td>${r.auto?esc(r.auto):'—'}</td>
+    <td class="id">${(r.cls||[]).length?esc(r.cls.join(', ')):'—'}</td>
     <td><span class="st ${r.status}">${RTM_ST[r.status]}</span>${r.suggest?`<div style="font-size:11.5px;color:var(--muted);margin-top:3px">${esc(r.suggest)}</div>`:''}</td>
   </tr>`).join('');
   $('#noCov').style.display=rows.length?'none':'block';
@@ -868,9 +891,9 @@ function downloadBlob(name, blob){
 function exportPlan(){
   if(tab==='cov'){
     const R=window.__covAll||{notAuto:[],orphans:[],guesses:[],undocumented:[]};
-    const sheets=[{ name:'Tổng hợp', statusCol:4, widths:[16,34,30,26,20,11,9,42],
-      head:['REQ ID','Mô tả','Test case','Automation','Trạng thái','TC đã automate','Tổng TC','Đề xuất'],
-      rows:(window.__cov||[]).map(r=>[r.req,r.desc,r.tcs.join(', '),r.auto,RTM_ST[r.status],String(r.nAuto),String(r.nTc),r.suggest||''])}];
+    const sheets=[{ name:'Tổng hợp', statusCol:5, widths:[16,34,30,26,26,20,11,9,42],
+      head:['REQ ID','Mô tả','Test case','Automation','Checklist','Trạng thái','TC đã automate','Tổng TC','Đề xuất'],
+      rows:(window.__cov||[]).map(r=>[r.req,r.desc,r.tcs.join(', '),r.auto,(r.cls||[]).join(', '),RTM_ST[r.status],String(r.nAuto),String(r.nTc),r.suggest||''])}];
     if(R.notAuto.length) sheets.push({name:'TC chưa automate',widths:[24,12,50],
       head:['TC ID','Priority','Ghi chú'],rows:R.notAuto.map(i=>[i.id,i.priority,i.note])});
     if(R.orphans.length) sheets.push({name:'Orphan test',widths:[36,26,42],

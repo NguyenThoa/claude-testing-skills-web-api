@@ -37,13 +37,13 @@ Sử dụng skill này khi:
 # [BUG] <Tóm tắt ngắn gọn — module + hành vi sai>
 
 ## Thông tin chung
-- **ID:** BUG_<module>_<timestamp>_<TC_ID> — VD `BUG_login_1787226513_TC004`. `timestamp` = epoch giây lúc sinh (chống trùng mã), `TC_ID` = mã TC ngắn không dấu gạch dưới thừa (VD `TC004`, không phải `CRM_LOGIN_TC_004`) để nhìn tên file biết ngay thuộc TC nào. Liên quan nhiều TC thì lấy TC đầu tiên/quan trọng nhất làm hậu tố, TC còn lại ghi ở dòng "Test case liên quan" bên dưới và ở danh mục
+- **ID:** BUG_<module>_<timestamp>_<TC_ID> — VD `BUG_login_1787226513_TC004`. `timestamp` = epoch giây lúc sinh (chống trùng mã), `TC_ID` = mã TC ngắn không dấu gạch dưới thừa (VD `TC004`, không phải `CRM_LOGIN_TC_004`) để nhìn tên file biết ngay thuộc TC nào. Liên quan nhiều TC thì lấy TC đầu tiên/quan trọng nhất làm hậu tố, TC còn lại ghi ở dòng "Test case liên quan" bên dưới và ở danh mục. Bug từ **mục checklist**: hậu tố là `TC ID liên quan` của mục (rút gọn như trên); mục REQ-based không có TC thì hậu tố `CL<số mục>` (VD `BUG_customers_1787226513_CL03`)
 - **Severity:** 🔴 Critical / 🟠 Major / 🟡 Minor / 🟢 Trivial
 - **Priority:** P1 / P2 / P3
 - **Nền tảng:** `web` / `mobile` / `api` — quyết định thư mục `docs/bugs/<module>/<nền-tảng>/`. Bug của rule ở server tái hiện được trên nhiều nền tảng → vẫn **một** bug, đặt ở nền tảng phát hiện đầu tiên, ghi thêm *"Cũng tái hiện trên: …"*
 - **Môi trường:** <env> | <browser + version — hoặc thiết bị + OS + app version (mobile) — hoặc base URL môi trường (api)> | <OS> | <resolution>
 - **Build / Version:** <build đang test khi phát hiện lỗi — BẮT BUỘC, thiếu thì không retest được>
-- **Test case liên quan:** <TC ID hoặc test file path> — TC gộp thì ghi kèm **mã biến thể** fail (`CRM_LOGIN_TC_012-c`). TC ID phải đang có hiệu lực (không `@Deprecated`)
+- **Test case liên quan:** <TC ID hoặc test file path> — TC gộp thì ghi kèm **mã biến thể** fail (`CRM_LOGIN_TC_012-c`). TC ID phải đang có hiệu lực (không `@Deprecated`). Bug từ mục checklist ghi **cả** `TC ID liên quan` (nếu có) **và** mã mục (`CL-smoke_20261009-03`); checklist Release-readiness thì `<module>` của bug là cột `Module` của mục, **không** phải `_release`, evidence link về `docs/executions/_release/<nền-tảng>/run_*/evidence/`
 - **REQ ID liên quan:** <mã REQ — dùng để chọn phạm vi regression khi retest>
 - **Test data đã dùng:** <email/username/id — traceable>
 - **Ngày phát hiện:** <DD-MM-YYYY>
@@ -147,6 +147,8 @@ Danh mục là **điểm vào tầng bug** và cũng là file `scripts/bugs-view
 > **Giá trị cột `Trạng thái`** phải chứa một trong các từ khoá viewer nhận: `Đang mở` · `Đã fix` / `Chờ retest` · `rà lại` · `đóng`. Viết kiểu khác thì bug bị xếp mặc định là *Đang mở*.
 >
 > **Ai cập nhật cột này:** `/create-bug-report` ghi `🔴 **Đang mở**` · dev báo đã fix → `🟡 Chờ retest` · `/retest-fixed-bugs` ghi theo kết quả retest (bảng ánh xạ ở Bước 5 của workflow đó). Cột này phải khớp dòng mới nhất của **Lịch sử retest** trong file bug — viewer tính trạng thái file chi tiết từ Lịch sử retest, còn bug chỉ có trong danh mục thì đọc cột này, lệch nhau là hai nơi báo hai trạng thái.
+>
+> **Cột `TC liên quan` với bug từ mục checklist:** ghi `TC ID liên quan` của mục; mục REQ-based không có TC thì ghi mã mục (`CL-smoke_20261009-03`). Cột `Module` là module **của mục**, kể cả khi lần chạy là checklist release (`_release`).
 >
 > **Cột `Mã bug` nên bọc link Markdown** trỏ tới file bug tương ứng — viewer lấy mã từ trong `[...]`, và người đọc bấm được sang chi tiết.
 

@@ -241,7 +241,7 @@
 | Tiến độ kiểm thử | TC đã viết / đã review · TC đã chạy / chưa chạy · PASS · FAIL · BLOCKED — tách theo từng cặp module × nền tảng | `docs/testcases/` · `execution_report.md` | Báo cáo tiến độ · tiêu chí exit #3, #4, #5, #7 |
 | Tiến độ dự án | Công sức thực tế so với ước lượng 7.2 (E = 66,5 người-ngày) · mốc thực tế so với lịch 7.1 | Báo cáo tiến độ | Phát hiện trễ sớm |
 | Lỗi | Bug mới / đã fix / đang mở theo Severity · regression phát sinh · **bug quá thời hạn xử lý 9.4** | `docs/bugs/` · Jira | Tiêu chí exit #1, #2 · mục trở ngại của báo cáo tiến độ |
-| Độ phủ | REQ có TC · REQ mức Critical có TC PASS | `traceability_matrix.md` | Tiêu chí exit #6 |
+| Độ phủ | REQ có TC · REQ mức Critical có TC PASS | `docs/traceability/traceability_matrix.md` | Tiêu chí exit #6 |
 | Rủi ro | Trạng thái từng rủi ro ở 8.1 | Báo cáo tiến độ | Kiểm soát rủi ro |
 | Automation | Số TC đã automate · kết quả suite trên CI · số test chập chờn | `reports/` · GitHub Actions | Tiêu chí exit bổ sung #9 — **báo riêng**, không cộng vào pass rate manual |
 
@@ -321,6 +321,8 @@
 |---|---|---|
 | 8 | Mọi lỗi tìm thấy đã được báo cáo và đã phân loại Severity/Priority | 100% — không còn TC FAIL nào chưa có bug tương ứng |
 | 9 | Bộ Smoke của 3 module đã automate và chạy xanh trên CI | 3/3 module · 2 lần chạy liên tiếp xanh |
+
+> **Kết quả checklist được tính thế nào:** #3 · #4 · #5 · #7 chỉ tính trên **bộ TC**; #6 nhận mục checklist PASS **chỉ** cho REQ chưa có TC nào; cặp module × nền tảng chỉ có checklist là #7 **chưa đạt**.
 
 ☐ Bộ mặc định  ☑ **Bộ mặc định + bổ sung** — chốt ngày 24-09-2026, hiệu lực từ khi plan được duyệt 25-09-2026  ☐ Bộ tiêu chí riêng của dự án
 
@@ -571,7 +573,7 @@ TC FAIL ──/create-bug-report──→ 🔴 Đang mở ──Dev sửa──�
 | Bug report | `docs/bugs/<module>/web/` · Jira | `/create-bug-report` |
 | Automation framework · script · report | Project automation · `reports/` | `/generate-automation-framework` · `/generate-automation-web` |
 | Ma trận kết hợp cross-module | Theo workflow | `/generate-cross-module-test-plan` |
-| Ma trận truy vết | `traceability_matrix.md` | `/generate-traceability-matrix` |
+| Ma trận truy vết | `docs/traceability/traceability_matrix.md` | `/generate-traceability-matrix` |
 | Báo cáo tiến độ | `docs/executions/test_progress_crm_example_<YYYYMMDD>.md` | `/generate-test-progress-report` |
 | **Báo cáo tổng hợp** | `docs/executions/test_summary_crm_example_*.md` | `/generate-test-summary-report` |
 
