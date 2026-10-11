@@ -82,7 +82,7 @@ Hệ thống hiện thông báo **"Customer added successfully."** và mở hồ
 2. Gõ tên công ty vào ô **Search...** phía trên bên phải bảng. Bảng tự lọc, chỉ còn các khách hàng khớp.
 3. Nhấn tên công ty trong cột **Company**.
 
-   ![Bước 2–3 — ô Search... và tên công ty](images/p2-2-s2-3-tim-khach-hang.png)
+   ![Bước 1–3 — menu Customers, ô Search... và tên công ty](images/p2-2-s1-3-tim-khach-hang.png)
 
 Hồ sơ khách hàng mở ra ở tab **Profile**.
 
@@ -123,4 +123,5 @@ Hồ sơ khách hàng mở ra ở tab **Profile**.
 | Ngày | Phiên bản | Thay đổi |
 |---|---|---|
 | 12-10-2026 | v1.0 | Bản đầu tiên bằng `/generate-user-guide` **Mode VIDEO**, `lang` vi — 2 thủ tục, 6 ảnh có highlight, 2 video phần + 1 video trọn luồng (51 s), HTML nhúng ảnh + video. Khâu phụ (đăng nhập) chạy ngoài video |
+| 12-10-2026 | v1.0 | Ảnh mục 3.2 chụp lại thành `p2-2-s1-3-tim-khach-hang.png`: thêm khung số **1** ở menu **Customers** (bản cũ chỉ khoanh bước 2–3) |
 <!-- internal:end -->

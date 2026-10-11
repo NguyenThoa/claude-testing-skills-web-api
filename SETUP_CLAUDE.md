@@ -137,7 +137,8 @@ Kèm file `.claude/playwright-mcp-config.json`:
         "--test-type",
         "--window-position=0,0"
       ]
-    }
+    },
+    "initPage": ["playwright-mcp-init.cjs"]
   }
 }
 ```
@@ -146,6 +147,7 @@ Kèm file `.claude/playwright-mcp-config.json`:
 |---|---|
 | `--test-type` | Tắt thanh cảnh báo "Chrome đang bị điều khiển bởi phần mềm tự động" — đỡ chiếm chiều cao |
 | `--window-position=0,0` | Ghim cửa sổ về góc trên trái, khỏi bị lệch ra ngoài màn |
+| `initPage` → `.claude/playwright-mcp-init.cjs` | Tắt popup **Save password? · Change your password · Save address? · Save card?** của Chrome — Chrome không có cờ dòng lệnh cho các popup này nên script mở `chrome://settings` một lần lúc khởi động, đặt preference (`credentials_enable_service`, `profile.password_manager_leak_detection`, `autofill.profile_enabled`, `autofill.credit_card_enabled` = `false`). Đường dẫn tính theo thư mục file config |
 
 > 📂 **Không có `--output-dir`, và đó là cố ý.** Server khai trong `.mcp.json` chạy với cwd = gốc project, nên snapshot / console log / screenshot tự rơi vào `.playwright-mcp/` của **đúng project này**. Dùng server global thì cwd bám theo project nào khởi động server trước — evidence sẽ lạc sang project khác. File cũng không chứa đường dẫn tuyệt đối nên mang sang máy khác vẫn chạy.
 
@@ -758,11 +760,14 @@ Khi đã tin tưởng output, mở khoá gửi tự động. Ba nguyên tắc b�
         "--test-type",
         "--window-position=0,0"
       ]
-    }
+    },
+    "initPage": ["playwright-mcp-init.cjs"]
   }
 }
 ```
 
+> Kèm luôn **`.claude/playwright-mcp-init.cjs`** (tắt popup lưu mật khẩu / địa chỉ / thẻ của Chrome — xem bảng tham số ở [mục 1.4](#14-cấu-hình-khuyến-nghị-theo-rules-của-bộ-kit-này)).
+>
 > Dùng đường dẫn **tương đối** trong cả hai file để đồng đội trên máy khác vẫn chạy được. Không cần `--output-dir`: server chạy với cwd = gốc project nên output tự vào `.playwright-mcp/` đúng chỗ.
 >
 > `--viewport-size` tính theo màn hình của bạn — công thức `(W−17),(H−135)` ở [mục 1.4](#14-cấu-hình-khuyến-nghị-theo-rules-của-bộ-kit-này).
