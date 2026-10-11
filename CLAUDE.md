@@ -207,7 +207,7 @@ Agent sử dụng skills trong `.claude/skills/` tùy theo nhiệm vụ:
 | `skills-testcase-reviewer`      | Review chất lượng manual test cases — rubric 6 tiêu chí, coverage gaps · Mode AUTOMATION chấm TC nào làm automation được theo bảng tiêu chí |
 | `skills-coverage-traceability`  | Sinh ma trận truy vết RTM — Requirements ↔ Test Cases ↔ Automation                    |
 | `skills-api-mocking`            | Sinh mock/stub API (Playwright route, WireMock) — test UI độc lập backend             |
-| `skills-user-guide-writer`      | Sinh Hướng dẫn sử dụng cho người dùng cuối — viết theo việc cần làm, bám cấu trúc ISO/IEC/IEEE 26514 · 82079-1 |
+| `skills-user-guide-writer`      | Sinh Hướng dẫn sử dụng cho người dùng cuối — viết theo việc cần làm, bám cấu trúc ISO/IEC/IEEE 26514 · 82079-1. 3 mode DOC · LIVE · **VIDEO**, ngôn ngữ `lang` (vi/en…), mọi ảnh/video **có highlight** (khung đỏ + số thứ tự click), luôn xuất HTML nhúng ảnh + video — công cụ `scripts/user-guide/` |
 
 ## 6. Kế Hoạch Kiểm Thử (Plan Templates)
 
@@ -306,7 +306,9 @@ docs/
     ├── README.md                                ← DANH MỤC — module × role × phiên bản phần mềm
     └── <module>/
         ├── user_guide_<module>.md               ← INDEX — TÊN FILE BẤT BIẾN
-        ├── images/*.png                          ← ảnh minh hoạ, đặt tên theo việc
+        ├── user_guide_<module>.html             ← LUÔN xuất sau bản .md — ảnh + video nhúng sẵn (scripts/user-guide/md2html.py --standalone)
+        ├── images/*.png                          ← ảnh có highlight (khung đỏ + số thứ tự click), tên ASCII theo phần–việc–bước
+        ├── video/*.mp4                           ← Mode VIDEO: mỗi phần 1 video + full_walkthrough.mp4
         └── parts/part_NN_<slug>.md               ← chỉ khi > 15 việc
 ```
 
@@ -326,6 +328,7 @@ Ba trang tĩnh trong `scripts/`, mở bằng cách double-click, chạy offline,
 |---|---|---|
 | `scripts/testcases-viewer/bundle.html` | `test_cases_*.md` | Duyệt, lọc, xuất Excel test case |
 | `scripts/execution-viewer/bundle.html` | `execution_report.md` · `retest_report.md` · `docs/traceability/traceability_matrix.md` | Xem kết quả chạy (bộ TC lẫn checklist — nhãn `CHECKLIST` riêng), so sánh giữa các lần chạy, xem độ phủ automation, xuất CSV/Excel |
+| `scripts/user-guide/md2html.py` (chạy bằng Python) | `user_guide_<module>.md` | Xuất User Guide thành HTML 1 file nhúng ảnh + video (`--standalone --lang <vi\|en> [--release]`) — cùng thư mục có công cụ quay video/highlight, xem `scripts/user-guide/README.md` |
 | `scripts/bugs-viewer/bundle.html` | `docs/bugs/README.md` (danh mục) · `docs/bugs/<module>/<nền-tảng>/BUG_*.md` | Lọc bug theo Severity/Priority/Trạng thái, xem Lịch sử retest, xuất CSV/Excel |
 
 ### Quy tắc bất biến
@@ -547,4 +550,4 @@ Agent sử dụng workflows trong `.claude/commands/` qua slash commands:
 | `/review-testcases`                     | Review chất lượng manual TCs (3 modes: REVIEW/FIX/AUTOMATION — AUTOMATION chấm độc lập TC nào làm automation được theo `skills-rbt-manual-testing/references/automation_criteria.md`) |
 | `/generate-traceability-matrix`         | Sinh ma trận truy vết RTM 3 tầng (+ checklist làm nguồn phụ) → `docs/traceability/traceability_matrix.md` |
 | `/generate-api-mocks`                   | Sinh API mocks + tests cho edge cases                        |
-| `/generate-user-guide`                  | Sinh **Hướng dẫn sử dụng** cho người dùng cuối từ requirements + evidence đã khảo sát (2 modes: DOC/LIVE). KHÔNG phải tài liệu requirements viết lại giọng khác |
+| `/generate-user-guide`                  | Sinh **Hướng dẫn sử dụng** cho người dùng cuối từ requirements + evidence đã khảo sát (3 modes: DOC/LIVE/VIDEO · `lang` vi/en) — ảnh/video có highlight, luôn xuất HTML 1 file nhúng media. KHÔNG phải tài liệu requirements viết lại giọng khác |

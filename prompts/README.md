@@ -87,7 +87,7 @@ Thư mục này chứa các prompt mẫu dùng nhanh (copy → paste → gửi) 
 
 | # | File | Command Tương Ứng | Skill Tích Hợp | Mô Tả & Cải Tiến Mới |
 |---|------|-------------------|----------------|----------------------|
-| 28 | `prompt_28_generate_user_guide.txt` | `/generate-user-guide` | `skills-user-guide-writer` | **[Mới]** Hướng dẫn sử dụng cho **người dùng cuối** — tổ chức theo **việc cần làm**, bám cấu trúc ISO/IEC/IEEE 26514 · 82079-1. 2 modes DOC/LIVE |
+| 28 | `prompt_28_generate_user_guide.txt` | `/generate-user-guide` | `skills-user-guide-writer` | **[Mới]** Hướng dẫn sử dụng cho **người dùng cuối** — tổ chức theo **việc cần làm**, bám cấu trúc ISO/IEC/IEEE 26514 · 82079-1. 3 modes DOC/LIVE/VIDEO · `lang` vi/en · ảnh + video có **highlight** (khung đỏ + số thứ tự click) · luôn xuất HTML nhúng ảnh + video |
 
 > 📌 Đây là loại tài liệu **duy nhất** trong repo viết cho người ngoài đọc. Nó **dùng lại** kết quả recon của `prompt_01` nhưng **không** chép nội dung sang: requirements nói *hệ thống phải làm gì*, hướng dẫn nói *người dùng làm thế nào*. Module **chưa recon** thì chạy `prompt_01` trước — skill từ chối viết hướng dẫn cho màn hình chưa từng nhìn thấy.
 

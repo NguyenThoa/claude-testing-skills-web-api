@@ -10,7 +10,8 @@
 
 | Module | Đối tượng đọc | Áp dụng cho phiên bản | Số việc | Phiên bản tài liệu | Còn ⚠️ chưa xác minh | Trạng thái phát hành | Cập nhật |
 |---|---|---|---|---|---|---|---|
-| [Đăng nhập & Đăng xuất](login/user_guide_login.md) | Nhân viên nội bộ (`Admin`, `Project Manager`) | Trạng thái khảo sát 18-08-2026 | 3 thủ tục + 6 FAQ | v1.0 | **4** | 🟨 Nội bộ — chưa gỡ mục 6 | 09-09-2026 |
+| [Đăng nhập & Đăng xuất](login/user_guide_login.md) · [HTML](login/user_guide_login.html) | Nhân viên nội bộ (`Admin`, `Project Manager`) | Chạy thật 12-10-2026 | 3 thủ tục + 4 FAQ · 8 ảnh · 4 video (Mode VIDEO, `vi`) | v2.0 | **4** | 🟨 Nội bộ — bản gửi ngoài xuất `--release` | 12-10-2026 |
+| [Khách hàng](customers/user_guide_customers.md) · [HTML](customers/user_guide_customers.html) | Nhân viên nội bộ (`Admin`) | Chạy thật 12-10-2026 | 2 thủ tục + 1 FAQ · 6 ảnh · 3 video (Mode VIDEO, `vi`) | v1.0 | **4** | 🟨 Nội bộ — bản gửi ngoài xuất `--release` | 12-10-2026 |
 
 **Bảng mã trạng thái phát hành:** 🟨 Nội bộ (còn mục *Vùng chưa xác minh*) · ✅ Đã gỡ mục 6, sẵn sàng gửi ra ngoài · ⚠️ Nghi lỗi thời (UI đã đổi)
 
@@ -22,7 +23,6 @@ Chỉ viết được hướng dẫn cho module **đã recon** (xem `docs/requir
 
 | Module | Đã recon? | Ghi chú |
 |---|---|---|
-| Khách hàng (`CUST`) | ✅ 79 REQ | Viết được ngay |
 | Dự án (`PRJ`) | ✅ 104 REQ | Viết được ngay — module lớn, cân nhắc tách `parts/` |
 | 20 module còn lại | ⬜ Chưa khảo sát | Phải chạy `/generate-requirements-from-website` trước |
 
@@ -33,7 +33,9 @@ Chỉ viết được hướng dẫn cho module **đã recon** (xem `docs/requir
 | Quy tắc | Lý do |
 |---|---|
 | Tên file index **luôn** `user_guide_<module>.md` | Mọi tham chiếu đọc theo mẫu `docs/user-guides/<module>/user_guide_<module>.md` |
-| Ảnh nằm ở `<module>/images/`, đặt tên **theo việc** (`them-khach-hang-buoc-2.png`) | UI đổi thì nhìn tên biết ngay phải chụp lại tấm nào |
+| Ảnh nằm ở `<module>/images/`, đặt tên ASCII **theo phần–việc–bước** (`p1-2-s3-them-khach-hang.png`) | UI đổi thì nhìn tên biết ngay phải chụp lại tấm nào |
+| ⭐ **Mọi ảnh và video có highlight** — khung đỏ + số thứ tự click (+ nhãn, dải chú thích) | Người đọc nhìn là biết bấm vào đâu, theo thứ tự nào. Mode DOC vẽ bằng `scripts/user-guide/annotate.py`, LIVE/VIDEO bằng `ug-lib.js` |
+| **Luôn có `user_guide_<module>.html`** xuất ngay sau bản `.md` — ảnh + video nhúng sẵn | Gửi 1 file là xem được hết; bản phát hành xuất bằng `--release` (cắt khối `internal`) |
 | 🔒 Ảnh phải dùng **dữ liệu mẫu** | Tài liệu này phát ra ngoài. Ảnh có tên người, email, số tiền thật là rò rỉ dữ liệu |
 | Mục *Vùng chưa xác minh* là **nội bộ** — gỡ ở bản phát hành | Đừng gửi khách một tài liệu tự khai chỗ nào chưa kiểm |
 | Mỗi lần sửa: tăng **Phiên bản tài liệu** + cập nhật **Áp dụng cho phiên bản phần mềm** | Hai dòng này là cách duy nhất người đọc biết tài liệu còn dùng được không |
@@ -45,4 +47,5 @@ Chỉ viết được hướng dẫn cho module **đã recon** (xem `docs/requir
 
 | Ngày | Thay đổi |
 |---|---|
+| 12-10-2026 | `login` **viết lại từ đầu** (v2.0, bỏ bản Mode DOC cũ) và thêm `customers` (v1.0) bằng `/generate-user-guide` **Mode VIDEO**, `lang` vi — ảnh/video có highlight, HTML nhúng ảnh + video. Khách hàng mẫu tạo khi quay: `#15313`, `#15314` (cần dọn) |
 | 09-09-2026 | Khởi tạo danh mục. Viết hướng dẫn module `login` bằng `/generate-user-guide` Mode DOC — nguồn `REQUIREMENTS_LOGIN_SUMMARY.md` (43 REQ) + 9 ảnh evidence đã mở đủ, 4 ảnh được dùng lại |
