@@ -233,7 +233,7 @@ docs/executions/test_summary_<slug>_<timestamp>.md   ← báo cáo tổng hợp 
 | `docs/executions/<module>/<nền-tảng>/run_*/` · kiểu cũ `docs/executions/<module>/run_*/` | Module × nền tảng **đã từng chạy** | 2.1 |
 | `docs/bugs/README.md` → `BUG_*.md` (cả hai kiểu thư mục) | Bug đang mở theo Severity · Priority · trạng thái đang dùng | 4.1 · 4.2 · 8.1 · 9 |
 | `.claude/skills/skills-bug-reporter/SKILL.md` — *Severity & Priority Guide* · *4 trạng thái retest* | Thang Severity/Priority mặc định **nguyên văn** · kết quả retest | 9 |
-| `docs/traceability/traceability_matrix.md` (nếu có — RTM kiểu cũ ở chỗ khác vẫn đọc) | Độ phủ REQ ↔ TC ↔ Automation | 2.1 · 3.6 |
+| `docs/traceability/traceability_matrix.md` (nếu có — file chung: độ phủ theo module + ⬛ module ngoài RTM; cần từng REQ thì theo `## Bản đồ tài liệu` sang file module. RTM kiểu cũ ở chỗ khác vẫn đọc) | Độ phủ REQ ↔ TC ↔ Automation | 2.1 · 3.6 |
 | `docs/executions/test_summary_*.md` của **mốc trước** | *Yếu tố cản trở & Bài học* · **thời lượng thực tế** đợt trước (dữ liệu cho ước lượng `tỷ lệ`/`ngoại suy`) | 4.1 · 5 · 7.2 · 8.1 · 9 |
 | Project automation (`package.json` · `pom.xml` · `pyproject.toml`) · file CI (`.github/workflows/` · `.gitlab-ci.yml` · `Jenkinsfile`) | Đã có framework automation chưa · đã có pipeline chưa · số script hiện có | 3.2 · 3.7 · 5.3 · 8.1 |
 
@@ -482,7 +482,7 @@ File: `docs/test-plans/test_plan_<slug>.md` — thư mục **`docs/test-plans/`*
 | Tiến độ kiểm thử | TC đã viết / đã review · TC đã chạy / chưa chạy · PASS · FAIL · BLOCKED | `docs/testcases/` · `execution_report.md` | Báo cáo tiến độ · tiêu chí exit #3, #4, #5, #7 |
 | Tiến độ dự án | Công sức thực tế so với ước lượng 7.2 | Báo cáo tiến độ | Phát hiện trễ sớm |
 | Lỗi | Bug mới / đã fix / đang mở theo Severity · regression phát sinh | `docs/bugs/` · công cụ quản lý bug | Tiêu chí exit #1, #2 |
-| Độ phủ | REQ có TC · REQ Critical có TC PASS | `docs/traceability/traceability_matrix.md` | Tiêu chí exit #6 |
+| Độ phủ | REQ có TC · REQ Critical có TC PASS | `docs/traceability/traceability_matrix.md` (số tổng) + file module (cột `Kết quả gần nhất`) | Tiêu chí exit #6 |
 | Rủi ro | Trạng thái từng rủi ro ở 8.1 | Báo cáo tiến độ | Kiểm soát rủi ro |
 
 ### 3.7 Chiến lược tự động hoá

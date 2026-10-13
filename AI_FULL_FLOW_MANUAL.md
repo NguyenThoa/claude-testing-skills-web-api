@@ -362,12 +362,13 @@ TC FAIL → /create-bug-report → dev fix → /retest-fixed-bugs
 ## Chặng 6 — Ma trận truy vết (RTM)
 
 ```
-/generate-traceability-matrix
+/generate-traceability-matrix                     ← mọi module có REQ + TC
+/generate-traceability-matrix login, customers    ← chỉ các module chỉ định
 ```
 
 📋 Prompt mẫu: [`prompts/prompt_13_generate_traceability_matrix.txt`](prompts/prompt_13_generate_traceability_matrix.txt)
 
-**Ra 5 nhóm phát hiện:**
+**Ra 6 nhóm phát hiện:**
 
 | Ký hiệu | Nghĩa |
 |---|---|
@@ -376,8 +377,16 @@ TC FAIL → /create-bug-report → dev fix → /retest-fixed-bugs
 | 🟠 | REQ **chỉ có mục checklist**, chưa có TC — đã rà nhanh nhưng chưa có cách chạy lại được, **không** tính vào coverage |
 | 🟡 | TC chưa được automate |
 | ⚪ | Test mồ côi — không map về REQ nào |
+| ⏭️ | REQ **loại trừ có chủ đích** — có căn cứ trong tài liệu (quyết định PO, REQ chưa implement), **trừ khỏi mẫu số**. Không có căn cứ thì vẫn là 🔴 |
 
-**Đầu ra:** `docs/traceability/traceability_matrix.md` (toàn hệ thống) · `docs/traceability/<module>/traceability_matrix_<module>.md` (một module) — ghi đè tại chỗ, header có Ngày sinh · Phạm vi · Mốc git để chặng 7 biết RTM đã cũ hay chưa.
+**Đầu ra — luôn 2 tầng:**
+
+| File | Nội dung |
+|---|---|
+| `docs/traceability/traceability_matrix.md` | **File chung** — câu tóm tắt, ⬛ ngoài tầm nhìn, độ phủ theo module (thanh tiến độ), việc cần làm gộp mọi module, Bản đồ tài liệu (Ngày sinh + Mốc git từng module) |
+| `docs/traceability/<module>/traceability_matrix_<module>.md` | **Chi tiết** — ma trận nhóm theo Story, kết quả chạy gần nhất + 🐞 bug đang mở, TC chưa automate theo Priority, gap |
+
+Sinh lại một module chỉ thay **dòng của module đó** trong file chung — module khác giữ nguyên số và ngày sinh cũ, để chặng 7 biết module nào có RTM đã cũ.
 
 > ⚠️ **Đọc mục ⬛ trước mọi con số phần trăm.** Coverage 95% mà còn 3 module chưa ai khảo sát thì con số đó vô nghĩa — nó chỉ tính trên phần đã có tài liệu.
 
@@ -448,9 +457,10 @@ Không cần đọc file `.md` thô. Mở [`scripts/execution-viewer/bundle.html
 | Nạp file | Xem được gì |
 |---|---|
 | `execution_report.md` · `retest_report.md` (chặng 4–5) | Thống kê PASS/FAIL/BLOCKED/SKIPPED · **so sánh giữa các lần chạy** (🆕 mới fail · 🔁 fail liên tục · ✅ vừa được fix) · cảnh báo BLOCKED > 20%, nợ kiểm thử, data chưa dọn · lần chạy checklist mang nhãn **CHECKLIST**, nạp lẫn với bộ TC thì có cảnh báo trộn đơn vị |
-| `docs/traceability/traceability_matrix.md` (chặng 6) | **Độ phủ automation** — REQ nào chưa có TC, REQ **chỉ có checklist**, TC nào chưa automate, REQ mới automate **một phần**, orphan test |
 
 Xuất **CSV** hoặc **Excel** (nhiều sheet, ô trạng thái tô màu) đúng phần đang hiển thị.
+
+Ma trận truy vết (chặng 6) xem bằng [`scripts/traceability-viewer/bundle.html`](scripts/traceability-viewer/README.md) — kéo thả cả thư mục `docs/traceability/`: độ phủ REQ theo module và Story, REQ nào chưa có TC / **chỉ có checklist** / ⏭️ loại trừ, TC nào chưa automate, việc cần làm.
 
 Tương tự, [`scripts/testcases-viewer/bundle.html`](scripts/testcases-viewer/README.md) để duyệt và xuất Excel test case ở chặng 2–3.
 

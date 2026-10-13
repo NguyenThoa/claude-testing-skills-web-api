@@ -295,8 +295,8 @@ docs/
 │       └── analysis_<timestamp>.md             ← /analyze-test-report nhánh MANUAL
 │
 ├── traceability/                               ← /generate-traceability-matrix — ghi đè tại chỗ, bản cũ tra git
-│   ├── traceability_matrix.md                  ← RTM toàn hệ thống — TÊN FILE BẤT BIẾN, workflow phía sau đọc file này trước
-│   └── <module>/traceability_matrix_<module>.md ← RTM một module — KHÔNG đè file toàn hệ thống
+│   ├── traceability_matrix.md                  ← FILE CHUNG — TÊN FILE BẤT BIẾN: độ phủ theo module, ⬛ ngoài tầm nhìn, việc cần làm, Bản đồ tài liệu. Workflow phía sau đọc file này trước
+│   └── <module>/traceability_matrix_<module>.md ← chi tiết từng module — ma trận theo Story. Sinh 1 module chỉ thay dòng của module đó trong file chung
 │
 ├── bugs/                                       ← bug sinh từ TC FAIL
 │   ├── README.md                               ← DANH MỤC bug — có cột Nền tảng
@@ -322,12 +322,13 @@ docs/
 
 ### Xem kết quả bằng web viewer
 
-Ba trang tĩnh trong `scripts/`, mở bằng cách double-click, chạy offline, không cần cài gì:
+Các trang tĩnh trong `scripts/`, mở bằng cách double-click, chạy offline, không cần cài gì:
 
 | Trang | Nạp file gì | Dùng khi |
 |---|---|---|
 | `scripts/testcases-viewer/bundle.html` | `test_cases_*.md` | Duyệt, lọc, xuất Excel test case |
-| `scripts/execution-viewer/bundle.html` | `execution_report.md` · `retest_report.md` · `docs/traceability/traceability_matrix.md` | Xem kết quả chạy (bộ TC lẫn checklist — nhãn `CHECKLIST` riêng), so sánh giữa các lần chạy, xem độ phủ automation, xuất CSV/Excel |
+| `scripts/execution-viewer/bundle.html` | `execution_report.md` · `retest_report.md` | Xem kết quả chạy (bộ TC lẫn checklist — nhãn `CHECKLIST` riêng), so sánh giữa các lần chạy, xuất CSV/Excel |
+| `scripts/traceability-viewer/bundle.html` | cả thư mục `docs/traceability/` (file chung + file từng module) | Xem độ phủ REQ theo module · Story, lọc 🔴 🟠 🟡 🟣 ✅ ⏭️, TC chưa automate, gap, việc cần làm, xuất CSV/Excel |
 | `scripts/user-guide/md2html.py` (chạy bằng Python) | `user_guide_<module>.md` | Xuất User Guide thành HTML 1 file nhúng ảnh + video (`--standalone --lang <vi\|en> [--release]`) — cùng thư mục có công cụ quay video/highlight, xem `scripts/user-guide/README.md` |
 | `scripts/bugs-viewer/bundle.html` | `docs/bugs/README.md` (danh mục) · `docs/bugs/<module>/<nền-tảng>/BUG_*.md` | Lọc bug theo Severity/Priority/Trạng thái, xem Lịch sử retest, xuất CSV/Excel |
 
@@ -548,6 +549,6 @@ Agent sử dụng workflows trong `.claude/commands/` qua slash commands:
 | `/generate-test-progress-report`        | Báo cáo tiến độ **một kỳ** trong đợt — so thực tế với lịch plan, chỉ số trong kỳ, trở ngại, rủi ro mới, kế hoạch kỳ tới, đề xuất điều chỉnh. **Không** khuyến nghị go/no-go |
 | `/generate-test-summary-report`         | Báo cáo tổng hợp tại một mốc release/sprint — gộp mọi kết quả, đối chiếu tiêu chí exit, **khuyến nghị go/no-go** |
 | `/review-testcases`                     | Review chất lượng manual TCs (3 modes: REVIEW/FIX/AUTOMATION — AUTOMATION chấm độc lập TC nào làm automation được theo `skills-rbt-manual-testing/references/automation_criteria.md`) |
-| `/generate-traceability-matrix`         | Sinh ma trận truy vết RTM 3 tầng (+ checklist làm nguồn phụ) → `docs/traceability/traceability_matrix.md` |
+| `/generate-traceability-matrix`         | Sinh ma trận truy vết RTM 3 tầng (+ checklist, kết quả chạy, bug làm nguồn phụ) — file chung `docs/traceability/traceability_matrix.md` + file chi tiết từng module. Nhận danh sách module (`login, customers`) |
 | `/generate-api-mocks`                   | Sinh API mocks + tests cho edge cases                        |
 | `/generate-user-guide`                  | Sinh **Hướng dẫn sử dụng** cho người dùng cuối từ requirements + evidence đã khảo sát (3 modes: DOC/LIVE/VIDEO · `lang` vi/en) — ảnh/video có highlight, luôn xuất HTML 1 file nhúng media. KHÔNG phải tài liệu requirements viết lại giọng khác |

@@ -50,7 +50,7 @@ Glob theo bảng Input của skill, **ghi lại đường dẫn từng file** đ
 3. `docs/executions/<module>/<nền-tảng>/retest_*/retest_report.md` — bug đã verify + regression phát sinh
 4. `docs/bugs/README.md` (danh mục) rồi `docs/bugs/<module>/<nền-tảng>/BUG_*.md` — đọc `Severity`, `Lịch sử retest` để biết bug nào còn mở
 5. `docs/requirements/README.md` — **bắt buộc**, lấy module còn ⬜/🟨/⏸️
-6. `docs/traceability/traceability_matrix.md` — nếu có (không có thì file của module trong `docs/traceability/<module>/`; RTM kiểu cũ ở chỗ khác vẫn đọc). Đọc `Ngày sinh` / `Mốc git` ở header — RTM cũ hơn lần sửa TC cuối thì ghi rõ là đã cũ
+6. `docs/traceability/traceability_matrix.md` — nếu có: file chung, lấy độ phủ theo module + ⬛ module ngoài RTM (nhóm 📄 *có REQ, chưa có TC* phải nêu trong báo cáo); cần tới từng REQ thì theo `## Bản đồ tài liệu` sang file module. Không có file chung thì đọc thẳng `docs/traceability/<module>/`; RTM kiểu cũ ở chỗ khác vẫn đọc. Đọc `Ngày sinh` / `Mốc git` **từng module** ở Bản đồ tài liệu — module có RTM cũ hơn lần sửa TC cuối thì ghi rõ là đã cũ
 7. `reports/` — kết quả automation, nếu có
 
 > 📂 Mục 2–4 quét **cả** kiểu cũ không có tầng nền tảng (`docs/executions/<module>/run_*/` · `docs/bugs/<module>/BUG_*.md`) — tài liệu cũ không bị di chuyển, bỏ sót là mất lần chạy và bug.

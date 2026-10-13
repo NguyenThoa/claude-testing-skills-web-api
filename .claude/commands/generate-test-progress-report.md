@@ -53,7 +53,7 @@ Glob theo bảng **Input** của skill, **ghi lại đường dẫn từng file*
 3. `docs/executions/<module>/<nền-tảng>/run_*/` và `retest_*/` — **lọc theo epoch trong kỳ**; thêm `docs/executions/_release/<nền-tảng>/run_*/` (checklist Release-readiness). Phân loại từng lần chạy theo ô `Loại nguồn` — lần chạy checklist báo ở bảng riêng, không cộng vào số bộ TC
 4. `docs/bugs/README.md` → `BUG_*.md` — bug phát hiện trong kỳ (epoch trong tên file) · bug fix/đóng trong kỳ (Lịch sử retest)
 5. `docs/testcases/README.md` → index từng module trong phạm vi — Nhật ký thay đổi trong kỳ
-6. `docs/traceability/traceability_matrix.md` — nếu có (không có thì `docs/traceability/<module>/`; RTM kiểu cũ ở chỗ khác vẫn đọc)
+6. `docs/traceability/traceability_matrix.md` — nếu có: file chung, lấy độ phủ theo module + ⬛ module ngoài RTM; cần tới từng REQ thì theo `## Bản đồ tài liệu` sang `docs/traceability/<module>/traceability_matrix_<module>.md`. Không có file chung thì đọc thẳng file module; RTM kiểu cũ ở chỗ khác vẫn đọc
 7. `reports/` — automation, nếu có
 
 > 📂 Mục 3–4 quét **cả** kiểu cũ không có tầng nền tảng (`docs/executions/<module>/run_*/` · `docs/bugs/<module>/BUG_*.md`).

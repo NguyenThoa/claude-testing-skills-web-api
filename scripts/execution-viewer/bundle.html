@@ -52,7 +52,6 @@ section.content{flex:1;min-width:0}
 .file .rm:hover{color:var(--fail)}
 .tag{font-size:10px;padding:1px 5px;border-radius:4px;background:#eef2ff;color:#4338ca;flex:none}
 .tag.retest{background:#fef3c7;color:#92400e}
-.tag.rtm{background:#dcfce7;color:#166534}
 .tag.checklist{background:#ffedd5;color:#9a3412}
 .sub{margin-top:16px}
 .sub h4{font-size:13px;margin:0 0 7px}
@@ -103,10 +102,6 @@ td.id{font-family:ui-monospace,SFMono-Regular,Consolas,monospace;font-size:12px;
 .st.BLOCKED{background:#fef3c7;color:#92400e} .st.SKIPPED{background:#f1f5f9;color:#475569}
 .st.FIXED{background:#dcfce7;color:#166534} .st.NOT_FIXED{background:#fee2e2;color:#991b1b}
 .st.PARTIAL{background:#ede9fe;color:#5b21b6} .st.CANNOT_VERIFY{background:#fef3c7;color:#92400e}
-.st.FULL{background:#dcfce7;color:#166534} .st.MANUAL{background:#fef3c7;color:#92400e}
-.st.PARTIALCOV{background:#ede9fe;color:#5b21b6}
-.st.NOTCOVERED{background:#fee2e2;color:#991b1b}
-.st.CHECKLISTONLY{background:#ffedd5;color:#9a3412}
 .st.NEW{background:#fee2e2;color:#991b1b} .st.RECUR{background:#fef3c7;color:#92400e}
 .st.FIXEDTREND{background:#dcfce7;color:#166534} .st.TOBLOCKED{background:#fef3c7;color:#92400e}
 .st.UNBLOCKED{background:#e0f2fe;color:#075985}
@@ -202,7 +197,6 @@ footer{text-align:center;color:var(--muted);font-size:12px;padding:18px}
         <button class="tab on" data-tab="tc">Kết quả TC</button>
         <button class="tab" data-tab="trend">So sánh các lần chạy</button>
         <button class="tab" data-tab="bug">Verify bug (retest)</button>
-        <button class="tab" data-tab="cov">Độ phủ automation</button>
       </div>
 
       <div id="tab-tc">
@@ -243,29 +237,6 @@ footer{text-align:center;color:var(--muted);font-size:12px;padding:18px}
         </div>
       </div>
 
-      <div id="tab-cov" style="display:none">
-        <div id="covEmpty" class="empty">
-          Chưa nạp <code>traceability_matrix.md</code>.<br>
-          Sinh file này bằng <code>/generate-traceability-matrix</code> — nó quét code thật để biết TC nào đã có script.
-          <small style="display:block;margin-top:10px;color:var(--muted)">
-            ⚠️ Đừng dùng cột <code>Automation</code> trong file test case làm nguồn — đó là <b>dự định</b> lúc viết TC, không phải <b>thực tế</b> đã automate.
-          </small>
-        </div>
-        <div id="covBody" style="display:none">
-          <div id="covAlerts"></div>
-          <div class="stats" id="covStats"></div>
-          <div class="toolbar">
-            <input type="search" id="covQ" placeholder="Tìm theo REQ ID, mô tả, TC ID, script…">
-            <span id="covChips"></span>
-          </div>
-          <div class="tablewrap">
-            <table><thead><tr><th>REQ ID</th><th>Mô tả</th><th>Test case</th><th>Automation</th><th>Checklist</th><th>Trạng thái</th></tr></thead>
-            <tbody id="covRows"></tbody></table>
-            <div class="empty" id="noCov" style="display:none">Không có REQ nào khớp bộ lọc.</div>
-          </div>
-          <div id="covLists"></div>
-        </div>
-      </div>
     </div>
   </section>
 </main>
@@ -342,68 +313,14 @@ const colIdx=(header,re)=>header.findIndex(h=>re.test(h));
 const isKV=t=>t.header.length===2 && (t.header.every(h=>h==='') || /thông tin|thuộc tính/i.test(t.header[0]));
 function kvOf(t){ const o={}; for(const r of t.rows) if(r[0]) o[r[0].replace(/[*`]/g,'')]=stripMd(r[1]); return o; }
 
-/* --- Ma trận truy vết (RTM) --------------------------------------------
-   Chỉ số được TÍNH LẠI từ bảng "Ma trận chi tiết", không đọc từ bảng
-   "Tổng quan Coverage" — RTM có số tổng gõ sai vẫn hiện đúng.            */
-const RTM_ST={FULL:'Đã automate',PARTIALCOV:'Automate một phần',MANUAL:'Mới có TC thủ công',CHECKLISTONLY:'Chỉ có checklist',NOTCOVERED:'Chưa có TC'};
-function parseRtm(tables, fileName, title){
-  const rows=[], notAuto=[], orphans=[], guesses=[], undocumented=[]; const suggest={};
-  for(const t of tables){
-    const H=t.header;
-    const iReq=colIdx(H,/^REQ(\s*ID)?$/i), iTc=colIdx(H,/^TC\s*IDs?$/i);
-    const iAuto=colIdx(H,/automation|script/i), iSt=colIdx(H,/trạng thái/i);
-    const iDesc=colIdx(H,/mô tả/i), iSug=colIdx(H,/đề xuất/i);
-    const iTcId=colIdx(H,/^TC\s*ID$/i), iPrio=colIdx(H,/priority|ưu tiên/i);
-    const iTest=colIdx(H,/^test$/i), iFile=colIdx(H,/^file$/i);
-    const iBasis=colIdx(H,/căn cứ/i), iMod=colIdx(H,/^module$/i);
-    const iCl=colIdx(H,/^checklist$/i);
-
-    if(iReq>=0 && iTc>=0){                                   // Ma trận chi tiết
-      for(const r of t.rows){
-        const req=stripMd(r[iReq]); if(!req) continue;
-        const tcs=(iTc>=0?stripMd(r[iTc]):'').split(/[,;]/).map(s=>s.trim()).filter(Boolean);
-        const auto=iAuto>=0?stripMd(r[iAuto]):'';
-        const cls=(iCl>=0?stripMd(r[iCl]):'').split(/[,;]/).map(s=>s.trim()).filter(Boolean);
-        // "login.spec.ts (2/2)" → 2 trên 2 TC đã automate; không có ngoặc thì coi như automate hết TC của dòng
-        const m=auto.match(/\((\d+)\s*\/\s*(\d+)\)/);
-        const nAuto=auto? (m? +m[1] : tcs.length) : 0;
-        const nTc=m? +m[2] : tcs.length;
-        rows.push({req, desc:iDesc>=0?stripMd(r[iDesc]):'', tcs, cls, auto, nAuto, nTc,
-          declared:iSt>=0?stripMd(r[iSt]):'',
-          // "1/3 TC đã automate" KHÔNG phải "đã automate" — gộp hai cái làm một là thổi phồng độ phủ.
-          // REQ chỉ có mục checklist (0 TC) đã được rà nhưng chưa có TC để chạy lại — không phải "chưa phủ", cũng không phải "đã phủ".
-          status: tcs.length===0 ? (cls.length ? 'CHECKLISTONLY' : 'NOTCOVERED')
-                : nAuto===0      ? 'MANUAL'
-                : nAuto<nTc      ? 'PARTIALCOV' : 'FULL'});
-      }
-    } else if(iReq>=0 && iSug>=0){                            // 🔴 REQ chưa cover → lấy đề xuất
-      for(const r of t.rows){ const req=stripMd(r[iReq]); if(req) suggest[req]=stripMd(r[iSug]); }
-    } else if(iTcId>=0 && iPrio>=0){                          // 🟡 TC chưa automate
-      for(const r of t.rows){ const id=stripMd(r[iTcId]); if(id)
-        notAuto.push({id, priority:stripMd(r[iPrio]), note:stripMd(r[colIdx(H,/ghi chú/i)])}); }
-    } else if(iTest>=0 && iFile>=0){                          // ⚪ Orphan tests
-      for(const r of t.rows){ const n=stripMd(r[iTest]); if(n)
-        orphans.push({test:n, file:stripMd(r[iFile]), suggest:iSug>=0?stripMd(r[iSug]):''}); }
-    } else if(iBasis>=0){                                     // ⚠️ Mapping suy luận
-      for(const r of t.rows){ const a=stripMd(r[0]); if(a)
-        guesses.push({req:a, tc:stripMd(r[1]), basis:stripMd(r[iBasis])}); }
-    } else if(iMod>=0 && /⬛|chưa|khám phá|recon/i.test(t.heading)){  // ⬛ Module chưa có tài liệu
-      for(const r of t.rows){ const mo=stripMd(r[iMod]); if(mo)
-        undocumented.push({module:mo, note:t.rows.length?stripMd(r[1]):'' , risk:stripMd(r[2])}); }
-    }
-  }
-  for(const r of rows) if(suggest[r.req]) r.suggest=suggest[r.req];
-  return {kind:'rtm', fileName, title, module:title||fileName, runId:fileName,
-          build:'', meta:{}, tcs:[], bugs:[], dirty:0, rtm:{rows,notAuto,orphans,guesses,undocumented}};
-}
-
+const isRtm=(title,fileName)=>/ma trận truy vết|traceability|\bRTM\b/i.test(title)||/traceab|rtm/i.test(fileName);
 function parseReport(text, fileName){
   const lines=text.split(/\r?\n/);
   const titleLine=(lines.find(l=>/^#\s+/.test(l))||'').replace(/^#\s+/,'').trim();
   const isRetest=/retest/i.test(titleLine)||/retest/i.test(fileName);
   const tables=parseTables(lines);
-  if(/ma trận truy vết|traceability|\bRTM\b/i.test(titleLine)||/traceab|rtm/i.test(fileName))
-    return parseRtm(tables,fileName,titleLine);
+  // RTM có viewer riêng (scripts/traceability-viewer) — trả null để addFiles báo người dùng
+  if(isRtm(titleLine,fileName)) return null;
 
   // meta = key-value table trước mục "## 1"
   let meta={};
@@ -494,7 +411,7 @@ const ALL_ST=['PASS','FAIL','BLOCKED','SKIPPED'];
 const $=s=>document.querySelector(s);
 
 function save(){ try{ localStorage.setItem('execViewer', JSON.stringify(DOCS)); }catch(e){} }
-function load(){ try{ const r=localStorage.getItem('execViewer'); if(r) DOCS=JSON.parse(r); }catch(e){} }
+function load(){ try{ const r=localStorage.getItem('execViewer'); if(r) DOCS=JSON.parse(r).filter(d=>d.kind!=='rtm'); }catch(e){} }
 
 /* ---- Ảnh evidence ----------------------------------------------------
    Trình duyệt không đọc được đường dẫn tương đối trong file .md khi mở bằng
@@ -542,10 +459,13 @@ async function filesFromDrop(dt){
 function addFiles(fileList){
   const arr=[...fileList];
   const nImg=addImages(arr);
+  let nRtm=0;
   const jobs=arr.filter(f=>/\.(md|markdown)$/i.test(f.name)).map(f=>
-    f.text().then(t=>{ const d=parseReport(t,f.name); DOCS=DOCS.filter(x=>x.fileName!==d.fileName||x.runId!==d.runId); DOCS.push(d); }));
+    f.text().then(t=>{ const d=parseReport(t,f.name); if(!d){ nRtm++; return; }
+      DOCS=DOCS.filter(x=>x.fileName!==d.fileName||x.runId!==d.runId); DOCS.push(d); }));
   Promise.all(jobs).then(()=>{ save(); render();
-    if(nImg && !jobs.length) toast(`Đã nạp ${nImg} ảnh evidence`); });
+    if(nRtm) toast(`Bỏ qua ${nRtm} file ma trận truy vết — mở bằng scripts/traceability-viewer/bundle.html`);
+    else if(nImg && !jobs.length) toast(`Đã nạp ${nImg} ảnh evidence`); });
 }
 function toast(msg){
   const el=document.createElement('div');
@@ -597,8 +517,6 @@ function closeLightbox(){ $('#lightbox').classList.remove('open'); $('#lbImg').r
 /* ============================ DERIVED ============================ */
 const runNum=r=>{ const m=String(r).match(/(\d{6,})/); return m?+m[1]:0; };
 function visibleDocs(){ return activeFile? DOCS.filter(d=>d.fileName+'|'+d.runId===activeFile) : DOCS; }
-// RTM không phải kết quả chạy — tách khỏi mọi thống kê PASS/FAIL để không làm loãng số liệu.
-const runDocs = list => list.filter(d=>d.kind!=='rtm');
 // Cũ → mới theo số trong Run ID. Report không có số thì giữ thứ tự nạp (sort ổn định).
 const byRunOrder = list => [...list].sort((a,b)=>runNum(a.runId)-runNum(b.runId));
 const platformOf = d => String(d.meta?.['Nền tảng']||'').toLowerCase();
@@ -610,7 +528,7 @@ const platformOf = d => String(d.meta?.['Nền tảng']||'').toLowerCase();
    Khoá gộp = module + nền tảng + TC ID: cùng TC ID ở hai module/nền tảng khác nhau là hai TC. */
 function latestTcs(docs){
   const byKey=new Map();
-  for(const d of byRunOrder(runDocs(docs))){
+  for(const d of byRunOrder(docs)){
     const plat=platformOf(d);
     for(const t of d.tcs){
       const k=t.module+'|'+plat+'|'+t.id;
@@ -623,7 +541,6 @@ function latestTcs(docs){
 }
 const historyText = t => (t.history||[]).length>1 ? t.history.map(h=>`${h.st||'—'} (${h.run})`).join(' → ') : '';
 function allTcs(){ return latestTcs(visibleDocs()); }
-function rtmDocs(){ return visibleDocs().filter(d=>d.kind==='rtm'); }
 
 function filtered(list=allTcs()){
   const q=$('#q').value.trim().toLowerCase();
@@ -667,7 +584,7 @@ function rowCmp(key, dir){
 }
 function trendRows(){
   const out=[]; const byMod={};
-  for(const d of runDocs(DOCS)){ const k=d.module+'|'+platformOf(d); (byMod[k]=byMod[k]||[]).push(d); }
+  for(const d of DOCS){ const k=d.module+'|'+platformOf(d); (byMod[k]=byMod[k]||[]).push(d); }
   for(const docs of Object.values(byMod)){
     if(docs.length<2) continue;
     const mod=docs[0].module;
@@ -738,7 +655,7 @@ function render(){
   const al=[];
   // Cùng một module nạp nhiều lần chạy → số liệu đã được gộp theo kết quả MỚI NHẤT của từng TC.
   // Vẫn phải nói ra: người đọc cần biết con số không phải của riêng một lần chạy nào.
-  const dup=Object.values(runDocs(vis).reduce((a,d)=>{const k=d.module+'|'+platformOf(d);
+  const dup=Object.values(vis.reduce((a,d)=>{const k=d.module+'|'+platformOf(d);
     (a[k]=a[k]||{m:d.module,p:platformOf(d),n:0}).n++; return a},{})).filter(x=>x.n>1);
   if(dup.length){
     const changed=base.filter(t=>(t.history||[]).length>1);
@@ -747,7 +664,7 @@ function render(){
       `. ${changed.length} TC được chạy nhiều lần — kết quả cũ hiện mờ ngay dưới trạng thái. `+
       'Chọn <b>một</b> lần chạy ở thanh bên để xem số của riêng lần đó, hoặc sang tab <b>So sánh các lần chạy</b>.']);
   }
-  const srcs=new Set(runDocs(vis).filter(d=>!d.isRetest).map(d=>d.source||'tc'));
+  const srcs=new Set(vis.filter(d=>!d.isRetest).map(d=>d.source||'tc'));
   if(srcs.has('tc') && srcs.has('checklist'))
     al.push(['warn','Đang trộn lần chạy bộ TC với lần chạy checklist — Tổng TC và pass rate đang cộng hai loại đơn vị khác nhau',
       'Mục checklist (mã <code>CL-…</code>) là đơn vị rà nhanh, không phải test case. Báo cáo tổng hợp tách hai loại thành hai bảng — '+
@@ -792,76 +709,6 @@ function render(){
   $('#noBug').style.display=bugs.length?'none':'block';
   window.__bugs=bugs;
 
-  renderCoverage();
-}
-
-/* --- Tab Độ phủ automation --------------------------------------------- */
-const offCov=new Set(); const ALL_COV=['FULL','PARTIALCOV','MANUAL','CHECKLISTONLY','NOTCOVERED'];
-function renderCoverage(){
-  const docs=rtmDocs();
-  $('#covEmpty').style.display=docs.length?'none':'block';
-  $('#covBody').style.display=docs.length?'block':'none';
-  if(!docs.length) return;
-
-  const R={rows:[],notAuto:[],orphans:[],guesses:[],undocumented:[]};
-  for(const d of docs) for(const k of Object.keys(R)) R[k]=R[k].concat(d.rtm[k]||[]);
-  window.__covAll=R;
-
-  // ⬛ Module chưa có tài liệu đứng TRƯỚC mọi phần trăm — cùng luật với RTM:
-  // module chưa recon thì không có REQ nào để "chưa cover", coverage vẫn đẹp trong khi cả vùng đó chưa ai chạm.
-  const al=[];
-  if(R.undocumented.length) al.push(['danger',
-    `⬛ ${R.undocumented.length} module chưa có tài liệu — nằm NGOÀI phạm vi ma trận này`,
-    R.undocumented.map(u=>`<b>${esc(u.module)}</b>${u.note?' — '+esc(u.note):''}`).join(' · ')+
-    '. Mọi tỷ lệ bên dưới chỉ tính trên phần <b>đã có tài liệu</b>, không phải toàn hệ thống.']);
-  if(R.guesses.length) al.push(['warn',
-    `⚠️ ${R.guesses.length} mapping suy luận cần người xác nhận`,
-    'Những dòng này map theo tên/mô tả chứ không có ID — chưa được tính là bằng chứng truy vết cho tới khi có người duyệt.']);
-  $('#covAlerts').innerHTML=al.map(([k,t,d])=>`<div class="alert ${k}"><b>${t}</b><span>${d}</span></div>`).join('');
-
-  const total=R.rows.length;
-  const covered=R.rows.filter(r=>r.tcs.length>0).length;
-  const nTc=R.rows.reduce((s,r)=>s+r.nTc,0), nAuto=R.rows.reduce((s,r)=>s+r.nAuto,0);
-  const pct=(a,b)=>b?(a/b*100).toFixed(1)+'%':'—';
-  $('#covStats').innerHTML=[
-    ['rate','REQ có test case',`${covered}/${total}`,pct(covered,total)],
-    ['rate','TC đã automate',`${nAuto}/${nTc}`,pct(nAuto,nTc)],
-    ['fail','REQ chưa có TC',R.rows.filter(r=>r.status==='NOTCOVERED').length,''],
-    ['blocked','REQ chỉ có checklist',R.rows.filter(r=>r.status==='CHECKLISTONLY').length,''],
-    ['blocked','TC chưa automate',R.notAuto.length||Math.max(nTc-nAuto,0),''],
-    ['skip','Orphan test',R.orphans.length,'']
-  ].map(([cl,l,n,sub])=>`<div class="stat ${cl}"><div class="n">${n}</div><div class="l">${l}${sub?' · '+sub:''}</div></div>`).join('');
-
-  $('#covChips').innerHTML=ALL_COV.map(s=>
-    `<button class="chip ${offCov.has(s)?'':'on'}" data-cov="${s}">${RTM_ST[s]}</button>`).join(' ');
-
-  const q=$('#covQ').value.trim().toLowerCase();
-  const rows=R.rows.filter(r=>{
-    if(offCov.has(r.status)) return false;
-    if(!q) return true;
-    return [r.req,r.desc,r.auto,r.suggest,...r.tcs,...(r.cls||[])].some(v=>String(v||'').toLowerCase().includes(q));
-  });
-  $('#covRows').innerHTML=rows.map(r=>`<tr>
-    <td class="id">${esc(r.req)}</td><td>${esc(r.desc||'—')}</td>
-    <td class="id">${r.tcs.length?esc(r.tcs.join(', ')):'<span style="color:var(--fail)">chưa có</span>'}</td>
-    <td>${r.auto?esc(r.auto):'—'}</td>
-    <td class="id">${(r.cls||[]).length?esc(r.cls.join(', ')):'—'}</td>
-    <td><span class="st ${r.status}">${RTM_ST[r.status]}</span>${r.suggest?`<div style="font-size:11.5px;color:var(--muted);margin-top:3px">${esc(r.suggest)}</div>`:''}</td>
-  </tr>`).join('');
-  $('#noCov').style.display=rows.length?'none':'block';
-  window.__cov=rows;
-
-  const list=(title,hint,items,head,cells)=>!items.length?'':
-    `<div class="sub"><h4>${title} <span class="hint">${hint}</span></h4><div class="tablewrap"><table>
-     <thead><tr>${head.map(h=>`<th>${h}</th>`).join('')}</tr></thead>
-     <tbody>${items.map(i=>`<tr>${cells(i).map(c=>`<td>${c}</td>`).join('')}</tr>`).join('')}</tbody></table></div></div>`;
-  $('#covLists').innerHTML=
-    list('🟡 TC chưa automate','— xếp theo priority, đây là danh sách việc cần làm tiếp',R.notAuto,
-      ['TC ID','Priority','Ghi chú'],i=>[`<span class="id">${esc(i.id)}</span>`,esc(i.priority||'—'),esc(i.note||'—')])+
-    list('⚪ Orphan test','— test không map về REQ nào: test thừa, test cũ, hoặc REQ bị thiếu tài liệu',R.orphans,
-      ['Test','File','Đề xuất'],i=>[esc(i.test),`<span class="id">${esc(i.file||'—')}</span>`,esc(i.suggest||'—')])+
-    list('⚠️ Mapping suy luận','— map theo tên/mô tả, KHÔNG có ID. Cần người xác nhận trước khi tính là đã phủ',R.guesses,
-      ['REQ','TC / Test','Căn cứ suy luận'],i=>[`<span class="id">${esc(i.req)}</span>`,esc(i.tc||'—'),esc(i.basis||'—')]);
 }
 
 function openDetail(o,title,sub,fields){
@@ -889,22 +736,7 @@ function downloadBlob(name, blob){
 
 // Mỗi sheet tự khai cột + độ rộng + cột trạng thái (để tô màu trong Excel)
 function exportPlan(){
-  if(tab==='cov'){
-    const R=window.__covAll||{notAuto:[],orphans:[],guesses:[],undocumented:[]};
-    const sheets=[{ name:'Tổng hợp', statusCol:5, widths:[16,34,30,26,26,20,11,9,42],
-      head:['REQ ID','Mô tả','Test case','Automation','Checklist','Trạng thái','TC đã automate','Tổng TC','Đề xuất'],
-      rows:(window.__cov||[]).map(r=>[r.req,r.desc,r.tcs.join(', '),r.auto,(r.cls||[]).join(', '),RTM_ST[r.status],String(r.nAuto),String(r.nTc),r.suggest||''])}];
-    if(R.notAuto.length) sheets.push({name:'TC chưa automate',widths:[24,12,50],
-      head:['TC ID','Priority','Ghi chú'],rows:R.notAuto.map(i=>[i.id,i.priority,i.note])});
-    if(R.orphans.length) sheets.push({name:'Orphan test',widths:[36,26,42],
-      head:['Test','File','Đề xuất'],rows:R.orphans.map(i=>[i.test,i.file,i.suggest])});
-    if(R.guesses.length) sheets.push({name:'Mapping suy luận',widths:[18,30,48],
-      head:['REQ','TC / Test','Căn cứ suy luận'],rows:R.guesses.map(i=>[i.req,i.tc,i.basis])});
-    if(R.undocumented.length) sheets.push({name:'Module chưa có tài liệu',widths:[26,20,34],
-      head:['Module','Trạng thái','Rủi ro'],rows:R.undocumented.map(i=>[i.module,i.note,i.risk])});
-    return {base:'do_phu_automation', sheets};
-  }
-  /* Nút export phải xuất ĐÚNG bảng đang xem. Trước đây chỉ tab 'cov' được xử lý riêng,
+  /* Nút export phải xuất ĐÚNG bảng đang xem. Trước đây chỉ một tab được xử lý riêng,
      nên đứng ở tab "So sánh các lần chạy" hay "Verify bug (retest)" bấm Excel lại ra bảng
      Kết quả TC — người dùng không có cách nào biết mình vừa tải sai bảng. */
   if(tab==='trend'){
@@ -928,7 +760,7 @@ function exportPlan(){
   // Sheet Tổng hợp = mỗi TC một dòng, kết quả mới nhất (đúng bảng đang xem).
   // Sheet từng lần chạy = kết quả NGUYÊN BẢN của lần đó, không gộp — để đối chiếu với report gốc.
   const sheets=[{name:'Tổng hợp',statusCol:2,widths,head,rows:filtered().map(toRow)}];
-  const docs=byRunOrder(runDocs(visibleDocs()));
+  const docs=byRunOrder(visibleDocs());
   if(docs.length>1) for(const d of docs)
     sheets.push({name:d.runId,statusCol:2,widths,head,rows:filtered(d.tcs).map(toRow)});
   return {base:'execution_report', sheets};
@@ -1031,12 +863,12 @@ function toXlsx(){
 
 /* ============================ EVENTS ============================ */
 $('#btnReset').onclick=()=>{
-  DOCS=[]; activeFile=''; tab='tc'; sortKey='id'; sortDir=1; offStatus.clear(); offCov.clear();
+  DOCS=[]; activeFile=''; tab='tc'; sortKey='id'; sortDir=1; offStatus.clear();
   for(const url of IMAGES.values()) URL.revokeObjectURL(url);
   IMAGES.clear();
-  $('#q').value=''; $('#covQ').value='';
+  $('#q').value='';
   document.querySelectorAll('.tab').forEach(x=>x.classList.toggle('on',x.dataset.tab==='tc'));
-  ['tc','trend','bug','cov'].forEach(t=>$('#tab-'+t).style.display=(t==='tc')?'block':'none');
+  ['tc','trend','bug'].forEach(t=>$('#tab-'+t).style.display=(t==='tc')?'block':'none');
   try{ localStorage.removeItem('execViewer'); }catch(e){}
   $('#detail').classList.remove('open');
   render();
@@ -1049,9 +881,6 @@ $('#drop').onclick=()=>$('#folder').click();
 $('#btnCsv').onclick=toCsv; $('#btnXlsx').onclick=toXlsx;
 $('#btnClose').onclick=()=>$('#detail').classList.remove('open');
 $('#q').oninput=render; $('#fModule').onchange=render;
-$('#covQ').oninput=renderCoverage;
-$('#covChips').onclick=e=>{ const b=e.target.closest('[data-cov]'); if(!b) return;
-  const s=b.dataset.cov; offCov.has(s)?offCov.delete(s):offCov.add(s); renderCoverage(); };
 
 const dz=$('#drop');
 ['dragenter','dragover'].forEach(ev=>document.addEventListener(ev,e=>{e.preventDefault();dz.classList.add('over')}));
@@ -1078,7 +907,7 @@ $('#bugRows').onclick=e=>{ const tr=e.target.closest('[data-b]'); if(!tr) return
   const b=window.__bugs[+tr.dataset.b]; openDetail(b,b.bug,'Kết quả retest',BUG_FIELDS); };
 document.querySelectorAll('.tab').forEach(b=>b.onclick=()=>{
   tab=b.dataset.tab; document.querySelectorAll('.tab').forEach(x=>x.classList.toggle('on',x===b));
-  ['tc','trend','bug','cov'].forEach(t=>$('#tab-'+t).style.display=(t===tab)?'block':'none'); });
+  ['tc','trend','bug'].forEach(t=>$('#tab-'+t).style.display=(t===tab)?'block':'none'); });
 // Esc: đóng lightbox trước, chưa mở lightbox thì mới đóng drawer chi tiết.
 document.addEventListener('keydown',e=>{
   if(e.key!=='Escape') return;

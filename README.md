@@ -56,7 +56,8 @@ claude-testing-skills/
 ├── prompts/                 # 36 prompt mẫu dùng nhanh (copy → paste → gửi)
 ├── scripts/
 │   ├── testcases-viewer/    # Công cụ web xem/lọc test case
-│   ├── execution-viewer/    # Công cụ web xem kết quả chạy, so sánh các lần chạy & độ phủ automation
+│   ├── execution-viewer/    # Công cụ web xem kết quả chạy, so sánh các lần chạy
+│   ├── traceability-viewer/ # Công cụ web xem ma trận truy vết — độ phủ REQ theo module/Story, TC chưa automate, gap
 │   └── bugs-viewer/         # Công cụ web lọc bug theo Severity/Priority/Trạng thái, xem lịch sử retest
 ├── CLAUDE.md                # Rule chung cho AI Agent (Claude Code đọc tự động)
 ├── SETUP_CLAUDE.md          # Hướng dẫn cài Playwright MCP, Connectors & Cowork Schedule

@@ -282,11 +282,12 @@ Cùng một command với flow manual, nhưng ở đây đọc **tầng 3**: REQ
 |---|---|---|
 | 🔴 | REQ chưa có TC nào cover | Quay về flow manual chặng 2 |
 | 🟡 | **TC chưa được automate** | Quay lại chặng 1 của flow này |
+| 🟣 | REQ mới automate **một phần** — có script nhưng chưa phủ hết TC (`login.spec.ts (1/3)`) | Quay lại chặng 1, automate nốt TC còn lại |
 | ⚪ | **Test mồ côi** — script không map về TC/REQ nào | Gắn label `testId`, hoặc bổ sung TC gốc |
 
 > ⚪ thường sinh ra từ **mode FLOW** của `/generate-automation-web` / `-mobile` (viết script khi chưa có TC — `testId` = `FLOW_<MODULE>_<nnn>`) hoặc từ script quên gắn `testId`. Cả hai đều làm coverage automation thành số không kiểm chứng được — sinh TC cho flow đó rồi đổi label sang TC ID thật.
 
-Xem trực quan bằng [`scripts/execution-viewer/bundle.html`](scripts/execution-viewer/README.md) — kéo thả `docs/traceability/traceability_matrix.md` vào, nó chỉ ra REQ nào mới automate **một phần**.
+RTM gồm file chung `docs/traceability/traceability_matrix.md` (độ phủ theo module, việc cần làm) và file chi tiết từng module. Xem trực quan bằng [`scripts/traceability-viewer/bundle.html`](scripts/traceability-viewer/README.md) — kéo thả cả thư mục `docs/traceability/` vào, nó chỉ ra REQ nào mới automate **một phần** (🟣) và TC nào nên automate trước theo Priority.
 
 ---
 

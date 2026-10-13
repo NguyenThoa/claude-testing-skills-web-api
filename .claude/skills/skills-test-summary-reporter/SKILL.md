@@ -98,7 +98,7 @@ Mỗi tiêu chí chấm **Đạt / Không đạt / Không áp dụng**, kèm s�
 | `docs/executions/<module>/<nền-tảng>/retest_*/retest_report.md` · kiểu cũ `docs/executions/<module>/retest_*/` | Bug đã verify fix · regression phát sinh | Nếu có |
 | `docs/bugs/README.md` + `docs/bugs/<module>/<nền-tảng>/BUG_*.md` · kiểu cũ `docs/bugs/<module>/BUG_*.md` | Bug đang mở theo Severity · Lịch sử retest | ✅ |
 | `docs/requirements/README.md` | **Module chưa recon** — vùng mù, mục 1 của báo cáo | ✅ |
-| `docs/traceability/traceability_matrix.md` (không có thì `docs/traceability/<module>/traceability_matrix_<module>.md`; RTM kiểu cũ ở chỗ khác vẫn đọc) | Độ phủ REQ ↔ TC ↔ Automation · REQ 🟠 chỉ có checklist. **Kiểm `Ngày sinh` / `Mốc git` ở header** — RTM sinh trước lần sửa TC cuối cùng thì ghi *"RTM đã cũ, sinh ngày …"* ở mục 6 | Nếu có |
+| `docs/traceability/traceability_matrix.md` — file chung: độ phủ theo module, ⬛ module ngoài RTM; chi tiết theo `## Bản đồ tài liệu` sang file module (không có file chung thì đọc thẳng `docs/traceability/<module>/traceability_matrix_<module>.md`; RTM kiểu cũ ở chỗ khác vẫn đọc) | Độ phủ REQ ↔ TC ↔ Automation · REQ 🟠 chỉ có checklist · REQ ⏭️ loại trừ (đã trừ khỏi mẫu số — nêu số lượng). **Kiểm `Ngày sinh` / `Mốc git` từng module ở Bản đồ tài liệu** — module có RTM sinh trước lần sửa TC cuối cùng thì ghi *"RTM đã cũ, sinh ngày …"* ở mục 6 | Nếu có |
 | Report automation trong `reports/` | Kết quả suite tự động | Nếu có |
 
 > Thiếu `docs/bugs/` (đội dùng Jira) → lấy qua `skills-jira-integration`, đừng bỏ trống mục bug.

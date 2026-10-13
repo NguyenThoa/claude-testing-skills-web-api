@@ -97,7 +97,7 @@ Hai workflow trả lời **hai câu hỏi khác nhau**. Chạy sai cái là bỏ
 | Cách map | Độ tin cậy | Dấu hiệu |
 |---|---|---|
 | Cột `REQ ID` trong bảng TC | ✅ Chắc chắn | TC có cột truy vết về REQ |
-| RTM (`docs/traceability/traceability_matrix.md` · `docs/traceability/<module>/traceability_matrix_<module>.md`) | ✅ Chắc chắn | Tra ngược REQ → danh sách TC |
+| RTM — file module `docs/traceability/<module>/traceability_matrix_<module>.md` (tra qua `## Bản đồ tài liệu` của file chung `docs/traceability/traceability_matrix.md`) | ✅ Chắc chắn | Tra ngược REQ → danh sách TC (cột `TC IDs` của ma trận chi tiết) |
 | Bảng Đối Soát Coverage trong index | ✅ Chắc chắn | Mục "mọi REQ phải có ≥1 TC" |
 | So khớp mô tả TC ↔ nội dung REQ | ⚠️ Suy luận | **Cần user xác nhận trước khi sửa** |
 | Không tìm thấy TC nào | ❓ | REQ chưa có TC — chuyển sang nhóm ➕, KHÔNG sửa gì |

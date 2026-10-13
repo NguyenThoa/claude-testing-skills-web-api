@@ -1,7 +1,7 @@
 /generate-traceability-matrix
 
 # CONTEXT
-- Phạm vi: [Toàn dự án / Module cụ thể: ...]
+- Phạm vi: [Toàn dự án / Danh sách module, VD: login, customers]
 - Mục đích: [Báo cáo coverage trước release / Audit bộ test cũ / Đối soát sau khi sinh TC]
 
 # NGUỒN DỮ LIỆU (cần ít nhất 2 trong 3 nguồn)

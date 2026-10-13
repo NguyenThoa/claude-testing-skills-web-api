@@ -1,9 +1,11 @@
 # Execution Report Viewer
 
-Trang web nhỏ gọn để **xem và gộp kết quả kiểm thử từ file Markdown** — thống kê, lọc, so sánh giữa các lần chạy, và xem độ phủ automation.
+Trang web nhỏ gọn để **xem và gộp kết quả kiểm thử từ file Markdown** — thống kê, lọc, so sánh giữa các lần chạy.
 
 Dùng để đọc output của:
-`/execute-test-cases` (`execution_report.md` — chạy bộ TC lẫn chạy checklist) · `/retest-fixed-bugs` (`retest_report.md`) · `/generate-traceability-matrix` (`docs/traceability/traceability_matrix.md`)
+`/execute-test-cases` (`execution_report.md` — chạy bộ TC lẫn chạy checklist) · `/retest-fixed-bugs` (`retest_report.md`)
+
+> 📊 **Ma trận truy vết (RTM)** có viewer riêng: [`../traceability-viewer/`](../traceability-viewer/README.md). Kéo file RTM vào trang này sẽ bị bỏ qua kèm thông báo.
 
 ---
 
@@ -17,7 +19,6 @@ Kéo thả, hoặc bấm **+ Import thư mục** / **+ Import file .md** ở gó
 docs/executions/customers/web/run_1785700456/execution_report.md
 docs/executions/customers/web/retest_1785700999/retest_report.md
 docs/executions/_release/web/run_1786100000/execution_report.md      ← chạy checklist Release-readiness
-docs/traceability/traceability_matrix.md
 ```
 
 Nạp **nhiều file/thư mục** để gộp số liệu và so sánh giữa các lần chạy — mỗi thư mục `run_*` là 1 lần chạy.
@@ -37,40 +38,14 @@ Nạp **nhiều file/thư mục** để gộp số liệu và so sánh giữa c�
 | **Gộp nhiều lần chạy** | Cùng module + nền tảng nạp ≥ 2 report → **mỗi TC một dòng, lấy kết quả của lần chạy mới nhất** có chạy TC đó (xếp theo số trong Run ID). Kết quả cũ hiện mờ dưới trạng thái (`trước: BLOCKED`), đủ chuỗi trong panel chi tiết và cột `Lịch sử các lần chạy` khi export. Ví dụ: `run_A` chạy TC 001–010 có TC 010 BLOCKED, `run_B` chỉ chạy lại TC 010 → PASS ⇒ hiện **10 TC**, TC 010 = PASS, không phải 11 dòng |
 | **Cảnh báo tự động** | 5 loại — xem mục dưới |
 | **Xoá tất cả** | Nút **Xoá tất cả** cạnh **+ Import file .md** (chỉ hiện khi đã nạp ít nhất 1 file) — xoá hết report + ảnh evidence đã nạp (kể cả trong `localStorage`), quay về màn hình kéo thả trống |
-| **Sidebar** | Danh sách report đã nạp kèm nhãn `RUN` / `CHECKLIST` / `RETEST` / `RTM`; click để xem riêng một lần chạy, `×` để gỡ |
+| **Sidebar** | Danh sách report đã nạp kèm nhãn `RUN` / `CHECKLIST` / `RETEST`; click để xem riêng một lần chạy, `×` để gỡ |
 | **Lần chạy checklist** | Nhận diện qua ô `Loại nguồn` ở header (`Checklist <loại> · <Mã checklist>`), hoặc `Nguồn TC` nằm trong `docs/checklists/`, hoặc mọi ID đều là mã mục `CL-…-<nn>`. Checklist Release-readiness có cột `Module` → mỗi mục hiện đúng module của nó, không gom chung vào `_release` |
 | **Lọc** | Theo trạng thái (chip) · theo module · tìm toàn văn trên TC ID, kịch bản, ghi chú, nguyên nhân chặn, Expected/Actual |
 | **Sort** | Click header — TC ID sort theo số tự nhiên (`TC_002` trước `TC_010`) |
 | **Chi tiết** | Click một dòng để mở panel: REQ ID · Priority · bước fail · Expected vs Actual · nguyên nhân chặn · evidence · file nguồn |
 | **So sánh các lần chạy** | Tab riêng — 🆕 Mới fail · 🔁 Fail liên tục · ✅ Vừa được fix · ⚠️ Chuyển sang BLOCKED · 🔓 Hết BLOCKED |
 | **Verify bug** | Tab riêng cho kết quả retest: FIXED / NOT_FIXED / PARTIAL / CANNOT_VERIFY |
-| **Độ phủ automation** | Tab riêng, nạp `traceability_matrix.md` — xem mục dưới |
 | **Export** | **CSV** và **Excel (.xlsx)** — xuất **đúng tab đang mở** và **đúng phần đang hiển thị** sau lọc/tìm kiếm. Gộp nhiều lần chạy thì Excel có sheet `Tổng hợp` (kết quả mới nhất) + mỗi lần chạy một sheet giữ **nguyên bản** kết quả của lần đó |
-
----
-
-## Tab Độ phủ automation
-
-Trả lời câu hỏi *"test case manual nào đã có script automation"*.
-
-> ⚠️ **Nguồn phải là `traceability_matrix.md`** do `/generate-traceability-matrix` sinh ra — workflow đó quét **code thật** để biết TC nào có script.
-> **Đừng** dùng cột `Automation` trong file test case: đó là **dự định** lúc viết TC, không phải **thực tế** đã automate. Hai con số này lệch nhau rất nhanh.
-
-**Năm trạng thái, suy ra từ dữ liệu chứ không đọc cột `Trạng thái` của file:**
-
-| Trạng thái | Điều kiện |
-|---|---|
-| ✅ **Đã automate** | Mọi TC của REQ đều có script |
-| 🟣 **Automate một phần** | Có script nhưng chưa phủ hết TC — VD `customers.spec.ts (1/3)` |
-| 🟡 **Mới có TC thủ công** | Có TC, chưa có script nào |
-| 🟠 **Chỉ có checklist** | 0 TC nhưng có mục checklist (cột `Checklist`) — đã rà nhanh, chưa có TC để chạy lại. **Không** tính vào *REQ có test case* |
-| 🔴 **Chưa có TC** | REQ chưa được viết test case, cũng không có mục checklist |
-
-Trạng thái 🟣 là lý do phải tự suy thay vì đọc cột có sẵn: RTM ghi `🟡 Manual only` cho dòng đã automate 1/3, gộp vào một nhóm là **thổi phồng độ phủ**.
-
-**⬛ Module chưa có tài liệu đặt TRƯỚC mọi phần trăm** — cùng luật với RTM: module chưa recon thì không có REQ nào để "chưa cover", nên tỷ lệ vẫn đẹp trong khi cả vùng đó chưa ai chạm tới.
-
-Ngoài bảng chính còn 3 danh sách: 🟡 TC chưa automate (xếp theo priority — đây là việc cần làm tiếp) · ⚪ orphan test · ⚠️ mapping suy luận cần người xác nhận.
 
 ---
 
@@ -88,9 +63,8 @@ Hai nút `↓ CSV` và `↓ Excel` xuất **đúng tab đang mở**, đã áp b�
 | Tab | Sheet |
 |---|---|
 | Kết quả TC | `Tổng hợp` + mỗi **lần chạy** một sheet (khi nạp > 1 lần chạy) |
-| Độ phủ automation | `Tổng hợp` (có cột `Checklist`) + `TC chưa automate` + `Orphan test` + `Mapping suy luận` + `Module chưa có tài liệu` |
 
-Tên file dạng `execution_report_<yyyyMMdd-HHmmss>.xlsx` / `do_phu_automation_<...>.xlsx`.
+Tên file dạng `execution_report_<yyyyMMdd-HHmmss>.xlsx`.
 
 > File `.xlsx` được dựng thủ công bằng zip + Office Open XML (không dùng SheetJS — thư viện ~900 KB sẽ làm phình `bundle.html` vốn phải mở offline được). Zip ghi ở chế độ STORE (không nén) nên file to hơn bình thường.
 
@@ -123,10 +97,8 @@ Parser **không phụ thuộc số thứ tự mục** (`## 1.`, `## 2.`…) — 
 | Verify bug (retest) | bảng 2 cột có khoá `Bug` **và** khoá `Kết quả` | bug · kết quả retest · severity gốc · số lần lặp |
 | Dữ liệu đã dọn | có cột `Đã xoá?` | đếm số dòng chưa dọn |
 | Header lần chạy | bảng 2 cột đầu file (`Thông tin` / `Nội dung`) | Run ID · Retest ID · Build · `Loại nguồn` · môi trường… |
-| **Ma trận truy vết** | có cột `REQ ID` **và** cột `TC IDs` | REQ · mô tả · TC · script · số TC đã automate · mục checklist (cột `Checklist`) |
-| ⬛ Module chưa có tài liệu | có cột `Module`, heading chứa ⬛ / "chưa" / "recon" | module nằm ngoài phạm vi RTM |
 
-File được nhận là RTM khi tiêu đề hoặc tên file chứa `Ma trận truy vết` / `traceability` / `RTM`.
+File có tiêu đề hoặc tên chứa `Ma trận truy vết` / `traceability` / `RTM` bị **bỏ qua** — xem bằng [`traceability-viewer`](../traceability-viewer/README.md).
 
 **Quy ước khác:**
 

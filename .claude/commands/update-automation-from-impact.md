@@ -82,7 +82,7 @@ Mắt xích **cuối** của chuỗi delta 3 tầng: requirements đổi → TC 
 | **File test cases hiện hành** | ⭐ Agent tự mở | Index `TEST_CASES_<TÊN_MODULE>_SUMMARY.md` → `## Bản đồ tài liệu` → file nền tảng chứa từng TC trong delta. **Nguồn sự thật của kỳ vọng mới** |
 | **Mốc git trước khi sửa** | ⭕ Khuyến nghị | Hash commit của từng file nền tảng — ghi ở đầu Delta TC List. `git diff <hash> -- <file>` ra đúng ô đã đổi, khỏi đoán |
 | **Mã nguồn automation** | ⭐ Agent tự tìm | Grep TC ID trên project. Web · mobile · API có thể nằm ở **project khác nhau** — không thấy thì hỏi user đường dẫn, không kết luận "chưa automate" |
-| **RTM** | ⭕ Khuyến nghị | `docs/traceability/traceability_matrix.md` (hoặc `docs/traceability/<module>/traceability_matrix_<module>.md`) — có sẵn thì map nhanh và chắc hơn |
+| **RTM** | ⭕ Khuyến nghị | File module `docs/traceability/<module>/traceability_matrix_<module>.md` (tra qua `## Bản đồ tài liệu` của file chung `docs/traceability/traceability_matrix.md`) — cột `TC IDs` · `Automation` của ma trận chi tiết; có sẵn thì map nhanh và chắc hơn |
 | **Truy cập hệ thống** — chỉ hỏi cho nền tảng có trong delta | ⭐ khi cần recon hoặc chạy test | **web:** URL + tài khoản (`.env`) · **mobile:** file app / package id + device + Appium server chạy bộ test · **api:** base URL + tài khoản lấy token (`.env`), dòng `Gọi API` ở `docs/requirements/README.md` phải ✅ |
 
 > User đưa **Impact Report** thay cho Delta TC List → tìm `delta_tc_` **cùng hậu tố** trong `docs/testcases/<module>/impact/`: có → dùng file đó; không có → **DỪNG** như cảnh báo đầu file.

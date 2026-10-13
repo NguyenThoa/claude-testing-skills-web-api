@@ -91,7 +91,7 @@ Giáo trình ghi ISO/IEC/IEEE 29119-3 gọi loại tài liệu này là **test s
 | `docs/executions/<module>/<nền-tảng>/retest_*/retest_report.md` · kiểu cũ | Bug đã verify · regression phát sinh | Nếu có |
 | `docs/bugs/README.md` + `BUG_*.md` (cả hai kiểu thư mục) | Bug mới · đã fix · đang mở theo Severity | ✅ |
 | `docs/testcases/README.md` + index từng module | Số TC · Nhật ký thay đổi (TC viết/review trong kỳ) | ✅ |
-| `docs/traceability/traceability_matrix.md` (không có thì `docs/traceability/<module>/`; RTM kiểu cũ ở chỗ khác vẫn đọc) | Độ phủ REQ ↔ TC | Nếu có |
+| `docs/traceability/traceability_matrix.md` — file chung, độ phủ theo module (không có thì `docs/traceability/<module>/`; RTM kiểu cũ ở chỗ khác vẫn đọc) | Độ phủ REQ ↔ TC · ⬛ module ngoài RTM | Nếu có |
 | `reports/` | Kết quả automation trong kỳ | Nếu có |
 
 > 📂 Tài liệu sinh trước khi có tầng nền tảng **không** bị di chuyển — quét **cả** `<module>/<nền-tảng>/` lẫn `<module>/`.
