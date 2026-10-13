@@ -72,6 +72,11 @@ Checklist không chấm bảng đối soát 4 vòng, nhưng lấy mục **theo v
 4. **Ưu tiên theo rủi ro:** luồng liên quan **tiền, phân quyền, mất dữ liệu** luôn phải có mặt dù là loại checklist nào
 5. **Viết từng mục theo Quy Tắc Viết Mục Checklist** (mục kế tiếp)
 6. **Gắn metadata:** `Priority` (P1/P2/P3), `REQ ID` (nếu có), `TC ID liên quan` (nếu TC-based, không có ghi `—`)
+6b. **Gắn trạng thái từ execution đã có** — quét `docs/executions/<module>/<nền-tảng>/run_*/execution_report.md`, điền cột `Trạng thái` + `Execution ID` (luật đầy đủ ở skill, mục *Cột Trạng thái & Execution ID*):
+   - Nguồn 1: lần chạy **chính checklist này** (khớp mã mục `CL-…-<nn>`) · Nguồn 2 (chỉ TC-based): lần chạy **bộ TC** cùng module + nền tảng, theo `TC ID liên quan`. Checklist khác **không** là nguồn
+   - Mỗi TC lấy lần chạy mới nhất khác `SKIPPED`; mục nhiều TC lấy mức xấu nhất `FAIL` > `BLOCKED` > `SKIPPED` > `PASS`; còn TC chưa chạy mà phần còn lại PASS → `☐`
+   - `Execution ID` = `[<run_id>](../../../executions/<module>/<nền-tảng>/<run_id>/execution_report.md)<br><sub>DD-MM-YYYY</sub>` — lần chạy quyết định trạng thái, ngày chạy chữ nhỏ dưới ID. Chưa có kết quả → `☐` / `—`
+   - Header ghi dòng `Trạng thái lấy từ:` — số mục đã có kết quả + nguồn + các `run_id`
 7. **Nhóm theo Module → Nhóm chức năng**, đánh số liên tục để dễ đối chiếu khi báo cáo kết quả. Release-readiness thêm cột **`Module`** cho từng mục
 8. **Ghi `Mã checklist`** ở header = `CL-` + phần tên file sau `checklist_` (VD `checklist_smoke_20261009.md` → `CL-smoke_20261009`) — quy tắc đầy đủ ở skill, mục *Mã checklist & mã mục*
 9. **Chạy Checklist Quality Gate (5 tiêu chí)** — chưa đạt thì sửa, KHÔNG xuất
@@ -115,13 +120,14 @@ Nhánh `docs/checklists/`, có tầng nền tảng như `docs/testcases/`:
 **Nguồn:** TC-based (`docs/testcases/<module>/<nền-tảng>/test_cases_<module>_<nền-tảng>.md`) | REQ-based
 **Scope:** <module / luồng / role>
 **Mã checklist:** `CL-<phần tên file sau checklist_>` (VD `CL-smoke_20261009` · `CL-post-hotfix_CRM-812`) — mã mục khi chạy = `<Mã checklist>-<số mục 2 chữ số>`
+**Trạng thái lấy từ:** <n>/<tổng> mục đã có kết quả — <nguồn: lần chạy checklist này | lần chạy bộ TC> `<run_id>`, … | Chưa có lần chạy nào
 
 ### Nhóm: <Tên nhóm chức năng>
 
-| # | ✅ | Hạng mục kiểm tra | Kết quả kỳ vọng | Priority | REQ ID | TC ID liên quan |
-|---|---|---|---|---|---|---|
-| 1 | ☐ | Đăng nhập bằng tài khoản admin hợp lệ | Vào /dashboard, hiển thị tên user góc phải | P1 | REQ-LOGIN-01 | CRM_LOGIN_TC_001 |
-| 2 | ☐ | Đăng nhập sai mật khẩu 5 lần liên tiếp | Tài khoản bị khóa, hiện thông báo khóa | P1 | REQ-LOGIN-02 | CRM_LOGIN_TC_012 |
+| # | Trạng thái | Hạng mục kiểm tra | Kết quả kỳ vọng | Priority | REQ ID | TC ID liên quan | Execution ID |
+|---|---|---|---|---|---|---|---|
+| 1 | ✅ PASS | Đăng nhập bằng tài khoản admin hợp lệ | Vào /dashboard, hiển thị tên user góc phải | P1 | REQ-LOGIN-01 | CRM_LOGIN_TC_001 | [run_1787215085](../../../executions/login/web/run_1787215085/execution_report.md)<br><sub>20-08-2026</sub> |
+| 2 | ☐ | Đăng nhập sai mật khẩu 5 lần liên tiếp | Tài khoản bị khóa, hiện thông báo khóa | P1 | REQ-LOGIN-02 | CRM_LOGIN_TC_012 | — |
 
 ### Không áp dụng cho module này
 - <Component trong bảng chuẩn nhưng module không có> — lý do
@@ -139,15 +145,15 @@ Nhánh `docs/checklists/`, có tầng nền tảng như `docs/testcases/`:
 - [ ] **2. Critical path đủ:** Mọi luồng sống còn (đăng nhập, CRUD bản ghi chính, phân quyền, thanh toán nếu có) đều có ≥1 mục P1
 - [ ] **3. Component đủ:** Mỗi component có mặt trong module có ≥1 mục — component không có thì ghi vào phần "Không áp dụng", KHÔNG lặng lẽ bỏ qua
 - [ ] **4. Đúng quy mô:** Số mục nằm trong ngưỡng của loại checklist đã chọn
-- [ ] **5. Truy vết được:** Header có `Mã checklist` khớp tên file · mục nào có REQ thì điền `REQ ID` · TC-based thì điền `TC ID liên quan` · Release-readiness có cột `Module` ở **mọi** mục — thiếu là bug và RTM phía sau không quy được mục về đâu
+- [ ] **5. Truy vết được:** Header có `Mã checklist` khớp tên file · mục nào có REQ thì điền `REQ ID` · TC-based thì điền `TC ID liên quan` · Release-readiness có cột `Module` ở **mọi** mục · ô `Trạng thái` khác `☐` đều có `Execution ID` mở được đúng report — thiếu là bug và RTM phía sau không quy được mục về đâu
 
 ## Quy tắc quan trọng
 
-- Cột `✅` để trống ô tick `☐` — người chạy tự đánh dấu, agent KHÔNG tự tick
+- Cột `Trạng thái` chỉ khác `☐` khi truy được về một execution report thật — agent **không** tự chấm khi chưa chạy. Mục chưa có kết quả để `☐` cho người chạy tay đánh dấu
 - Checklist **không thay thế** bộ TC chi tiết — nó là lớp rà nhanh nằm trên bộ TC
-- Checklist là **ảnh chụp tại một thời điểm** — lần rà mới sinh file mới theo ngày / ticket / mốc, **không** sửa đè checklist của lần rà trước (có thể đã có người tick). Cùng ngày chạy lại đúng loại đó thì ghi đè file của ngày đó
+- Checklist là **ảnh chụp tại một thời điểm** — lần rà mới sinh file mới theo ngày / ticket / mốc, **không** sửa đè checklist của lần rà trước (có thể đã có người tick tay). Cùng ngày chạy lại đúng loại đó thì ghi đè file của ngày đó
 - Component không áp dụng phải **ghi rõ**, không bỏ im lặng
-- **Chạy checklist bằng `/execute-test-cases`** — kết quả nằm trong execution report (mỗi mục mang mã `CL-…-<nn>`), không tick vào file checklist. Từ đó RTM có cột `Checklist`, báo cáo tổng hợp có bảng kết quả checklist **riêng**, không cộng vào pass rate của bộ TC
+- **Chạy checklist bằng `/execute-test-cases`** — kết quả nằm trong execution report (mỗi mục mang mã `CL-…-<nn>`); chạy xong workflow đó cập nhật lại **đúng hai cột** `Trạng thái` · `Execution ID` của checklist. Cột này chỉ là bản sao để đọc — báo cáo tổng hợp, RTM vẫn đọc kết quả từ execution report. Từ đó RTM có cột `Checklist`, báo cáo tổng hợp có bảng kết quả checklist **riêng**, không cộng vào pass rate của bộ TC
 
 ## Khi nào chuyển sang mode khác
 

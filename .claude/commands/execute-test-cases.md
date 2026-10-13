@@ -79,6 +79,8 @@ Sau mỗi 5–10 TC, báo 1 dòng:
 ### Bước 7: Xuất report
 Xuất `execution_report.md` theo template trong skill, gồm 6 mục: Tổng kết · Kết quả từng TC · Chi tiết FAIL · TC BLOCKED · Dữ liệu đã tạo & dọn dẹp · Đề xuất bước tiếp theo.
 
+Nguồn là **checklist** → cập nhật lại cột `Trạng thái` · `Execution ID` và dòng `Trạng thái lấy từ:` của file checklist cho mọi mục đã chạy (luật 5, mục *Chạy checklist* của skill). Không đụng cột khác.
+
 ## Điều kiện DỪNG giữa chừng
 
 Agent chạy tiếp qua TC fail (fail-forward), **chỉ dừng** khi:

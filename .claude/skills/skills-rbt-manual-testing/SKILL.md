@@ -1216,6 +1216,7 @@ Checklist **không** chấm bảng đối soát 4 vòng (Gate #10 không áp d�
 4. **Ưu tiên theo rủi ro:** luồng liên quan tiền, phân quyền, mất dữ liệu → luôn nằm trong checklist dù loại nào
 5. **Viết mỗi mục theo Quy Tắc Viết Mục Checklist** (bên dưới)
 6. **Gắn metadata:** `Priority` (P1/P2/P3), `REQ ID` (nếu có), `TC ID liên quan` (nếu TC-based)
+6b. **Gắn trạng thái từ execution đã có** — quét `docs/executions/<module>/<nền-tảng>/run_*/execution_report.md`, điền cột `Trạng thái` + `Execution ID` theo [Cột Trạng thái & Execution ID](#cột-trạng-thái--execution-id) bên dưới. Chưa có kết quả → `☐` / `—`
 7. **Nhóm mục theo Module → Nhóm chức năng**, đánh số liên tục để dễ đối chiếu khi báo cáo
 8. **Ghi `Mã checklist`** ở header — xem [Mã checklist & mã mục](#mã-checklist--mã-mục) bên dưới
 9. **Chạy Checklist Quality Gate (5 tiêu chí)** trước khi xuất
@@ -1226,13 +1227,14 @@ Checklist **không** chấm bảng đối soát 4 vòng (Gate #10 không áp d�
 ## [Tên Module] — Checklist <Loại> (<số mục> mục · ~<thời gian> phút)
 
 **Mã checklist:** `CL-smoke_20261009`
+**Trạng thái lấy từ:** 1/2 mục đã có kết quả — lần chạy bộ TC `run_1787215085` (chưa có lần chạy nào của chính checklist này)
 
 ### Nhóm: <Tên nhóm chức năng>
 
-| # | ✅ | Hạng mục kiểm tra | Kết quả kỳ vọng | Priority | REQ ID | TC ID liên quan |
-|---|---|---|---|---|---|---|
-| 1 | ☐ | Đăng nhập bằng tài khoản admin hợp lệ | Vào /dashboard, hiển thị tên user góc phải | P1 | REQ-LOGIN-01 | CRM_LOGIN_TC_001 |
-| 2 | ☐ | Đăng nhập sai mật khẩu 5 lần liên tiếp | Tài khoản bị khóa, hiện thông báo khóa | P1 | REQ-LOGIN-02 | CRM_LOGIN_TC_012 |
+| # | Trạng thái | Hạng mục kiểm tra | Kết quả kỳ vọng | Priority | REQ ID | TC ID liên quan | Execution ID |
+|---|---|---|---|---|---|---|---|
+| 1 | ✅ PASS | Đăng nhập bằng tài khoản admin hợp lệ | Vào /dashboard, hiển thị tên user góc phải | P1 | REQ-LOGIN-01 | CRM_LOGIN_TC_001 | [run_1787215085](../../../executions/login/web/run_1787215085/execution_report.md)<br><sub>20-08-2026</sub> |
+| 2 | ☐ | Đăng nhập sai mật khẩu 5 lần liên tiếp | Tài khoản bị khóa, hiện thông báo khóa | P1 | REQ-LOGIN-02 | CRM_LOGIN_TC_012 | — |
 ```
 
 **Kết thúc checklist BẮT BUỘC kèm bảng ký nhận:**
@@ -1243,9 +1245,41 @@ Checklist **không** chấm bảng đối soát 4 vòng (Gate #10 không áp d�
 |  |  |  |  |  |
 ```
 
-> Cột `✅` để trống ô tick `☐` — người chạy tự đánh dấu. Cột `TC ID liên quan` ghi `—` khi checklist là REQ-based.
+> Cột `TC ID liên quan` ghi `—` khi checklist là REQ-based.
 >
 > **Checklist Release-readiness** cắt ngang nhiều module → thêm cột **`Module`** (tên thư mục module, VD `customers`) ngay sau `Hạng mục kiểm tra`. Lần chạy, bug và RTM phía sau dựa vào cột này để quy mỗi mục về đúng module — thiếu cột là bug sinh ra không biết đặt vào `docs/bugs/<module>/`.
+
+### Cột Trạng thái & Execution ID
+
+Checklist sinh ra **không** để trống mù: mục nào đã có kết quả chạy thì gắn luôn, người đọc biết ngay mục nào còn phải chạy.
+
+| Trường hợp | `Trạng thái` | `Execution ID` |
+|---|---|---|
+| Chưa có kết quả | `☐` — người chạy tay tự đánh dấu | `—` |
+| Có kết quả | Đúng nhãn của execution report: `✅ PASS` · `❌ FAIL` · `⚠️ BLOCKED` · `⏭️ SKIPPED` | `[<run_id>](<link tương đối tới execution_report.md>)<br><sub><ngày chạy DD-MM-YYYY></sub>` — ngày lấy ở ô `Bắt đầu → Kết thúc` của report, chữ nhỏ dưới ID |
+
+**Nguồn kết quả — xét theo thứ tự, gặp nguồn nào có thì dừng:**
+
+| # | Nguồn | Áp dụng | Cách lấy |
+|---|---|---|---|
+| 1 | Lần chạy **chính checklist này** — report có `Loại nguồn` = `Checklist <loại> · <Mã checklist>` | Mọi checklist | Khớp theo **mã mục** `<Mã checklist>-<nn>`, lấy lần chạy mới nhất |
+| 2 | Lần chạy **bộ TC** cùng module + nền tảng — report có `Loại nguồn` = `Bộ TC` (report cũ không có ô này coi là `Bộ TC`) | Chỉ TC-based | Theo từng `TC ID liên quan` — xem luật gộp bên dưới |
+
+Checklist **khác** (khác `Mã checklist`) **không** là nguồn — phạm vi mục khác nhau, mượn kết quả là sai nghĩa. Checklist REQ-based chỉ có nguồn 1.
+
+**Luật gộp khi lấy từ bộ TC (nguồn 2):**
+
+- Mỗi TC lấy **lần chạy mới nhất có kết quả khác `SKIPPED`** — lần sau bổ sung cho lần trước bị skip. Chỉ từng có `SKIPPED` → `⏭️ SKIPPED`
+- Mục gắn nhiều TC → lấy mức **xấu nhất**: `FAIL` > `BLOCKED` > `SKIPPED` > `PASS`. `✅ PASS` **chỉ** khi **mọi** TC liên quan đều PASS
+- Có TC liên quan **chưa từng chạy** mà các TC còn lại đều PASS → để `☐` — chưa đủ bằng chứng để nói mục đạt. Có TC đã FAIL/BLOCKED thì vẫn hiện mức đó
+- `Execution ID` = lần chạy chứa kết quả **quyết định** trạng thái (mức xấu nhất; bằng nhau → lần mới nhất). Chỉ ghi **một** ID mỗi mục
+- Link tương đối từ file checklist: `../../../executions/<module>/<nền-tảng>/<run_id>/execution_report.md` (checklist `_release/` cùng độ sâu)
+
+**Header ghi dòng `Trạng thái lấy từ:`** — `<số mục có kết quả>/<tổng> mục đã có kết quả` + nguồn nào, các `run_id` nào. Không có gì → `Chưa có lần chạy nào`.
+
+- 🚫 Agent **không** tự chấm trạng thái khi chưa chạy — mọi ô khác `☐` phải truy được về đúng một execution report
+- Trạng thái mượn từ bộ TC chỉ là **bản sao để đọc** — báo cáo tổng hợp, RTM vẫn đọc kết quả từ execution report, không đọc cột này, nên không đếm hai lần
+- Chạy checklist xong, `/execute-test-cases` cập nhật lại **đúng hai cột này** + dòng `Trạng thái lấy từ:` (nguồn 1 thay nguồn 2) — không đụng cột khác, không đụng bảng ký nhận
 
 ### Mã checklist & mã mục
 
@@ -1287,7 +1321,7 @@ Trước khi xuất, agent **BẮT BUỘC** tự rà:
 - [ ] **2. Critical path đủ:** Mọi luồng sống còn của module (đăng nhập, tạo/sửa/xóa bản ghi chính, phân quyền, thanh toán nếu có) đều có ≥1 mục P1
 - [ ] **3. Component đủ:** Mỗi component có mặt trong module (Table/List, CRUD, Permission, Modal, Notification, Status Flow) có ≥1 mục — component không có trong module thì ghi "Không áp dụng", KHÔNG lặng lẽ bỏ qua
 - [ ] **4. Đúng quy mô:** Số mục nằm trong ngưỡng của loại checklist. Vượt ngưỡng → tách theo module hoặc hạ scope, ghi rõ phần đã cắt
-- [ ] **5. Truy vết được:** Header có `Mã checklist` khớp tên file · mục có REQ thì điền `REQ ID` · TC-based thì điền `TC ID liên quan` · Release-readiness có cột `Module` ở **mọi** mục
+- [ ] **5. Truy vết được:** Header có `Mã checklist` khớp tên file · mục có REQ thì điền `REQ ID` · TC-based thì điền `TC ID liên quan` · Release-readiness có cột `Module` ở **mọi** mục · ô `Trạng thái` khác `☐` đều có `Execution ID` mở được đúng report
 
 ---
 
@@ -1391,7 +1425,8 @@ Vì vậy Mode DELTA đặt việc **bảo toàn TC ID** lên trên mọi mục 
 - ❌ CHECKLIST mode viết mục mơ hồ kiểu "Kiểm tra chức năng hoạt động đúng" (không verify được)
 - ❌ CHECKLIST mode liệt kê hết 15 loại validation cho mọi field → checklist phình to, mất tác dụng rà nhanh
 - ❌ Checklist Smoke vượt 20 mục hoặc Release-readiness vượt 60 mục mà không tách module
-- ❌ Xuất checklist thiếu cột tick `☐` hoặc thiếu bảng ký nhận (môi trường/build/người chạy)
+- ❌ Xuất checklist thiếu cột `Trạng thái` / `Execution ID` hoặc thiếu bảng ký nhận (môi trường/build/người chạy)
+- ❌ Ô `Trạng thái` khác `☐` mà không có `Execution ID` trỏ tới report thật — trạng thái bịa
 - ❌ Sinh checklist mới trong khi đã có bộ TC chi tiết mà không rút gọn từ bộ TC đó (gây lệch nội dung)
 - ❌ In toàn bộ bảng TC ra chat rồi mới ghi file (vi phạm Write-first — user chờ render 2 lần)
 - ❌ Dồn >40 TC vào 1 file mà không tách part, hoặc gộp nhiều module vào 1 file
@@ -1470,8 +1505,8 @@ Vì vậy Mode DELTA đặt việc **bảo toàn TC ID** lên trên mọi mục 
 
 | Output | Mô tả |
 |--------|--------|
-| Header checklist | Loại checklist + module + số mục + thời gian chạy ước tính + **Mã checklist** |
-| Bảng Checklist | Nhóm theo Module → Nhóm chức năng, có cột tick `☐`, Priority, REQ ID, TC ID liên quan — Release-readiness thêm cột `Module` |
+| Header checklist | Loại checklist + module + số mục + thời gian chạy ước tính + **Mã checklist** + dòng **Trạng thái lấy từ** |
+| Bảng Checklist | Nhóm theo Module → Nhóm chức năng, có cột `Trạng thái` (`☐` hoặc kết quả đã chạy), Priority, REQ ID, TC ID liên quan, `Execution ID` — Release-readiness thêm cột `Module` |
 | Ghi chú "Không áp dụng" | Component có trong bảng chuẩn nhưng module không có → nêu rõ, không bỏ im lặng |
 | Bảng ký nhận | Môi trường · Build/Version · Người thực hiện · Ngày · Kết quả |
 
