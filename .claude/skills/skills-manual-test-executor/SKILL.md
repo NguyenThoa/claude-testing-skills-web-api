@@ -124,7 +124,7 @@ Ghi vào report: `⏭️ SKIPPED — thao tác phá huỷ trên môi trường d
 | **`@NeedsVerify`** — Expected ghi `⚠️ chưa có evidence` | Chạy bình thường, **ghi lại nguyên văn** điều quan sát được ở chỗ chưa có evidence | Khớp Expected → `PASS`, ghi chú *"đã xác nhận trên UI — đề nghị gỡ `@NeedsVerify`"*. Lệch → `FAIL` kèm ghi chú *"Expected chưa có evidence — đối chiếu lại TC trước khi báo bug"*; mục Đề xuất trỏ `/review-testcases`, **không** trỏ thẳng `/create-bug-report` |
 | **Mục checklist** (nguồn `checklist_*.md`) | Mỗi mục `#` là một đơn vị chạy — thao tác theo cột `Hạng mục kiểm tra`, đối chiếu cột `Kết quả kỳ vọng` | Xem mục **Chạy checklist** ngay dưới. Kết quả ghi vào execution report; chạy xong cập nhật **đúng hai cột** `Trạng thái` · `Execution ID` của checklist (luật 5). Bảng ký nhận của checklist do người chịu trách nhiệm tự điền |
 
-### Chạy checklist — 4 luật để kết quả nối được về sau
+### Chạy checklist — 5 luật để kết quả nối được về sau
 
 | # | Luật | Vì sao |
 |---|---|---|

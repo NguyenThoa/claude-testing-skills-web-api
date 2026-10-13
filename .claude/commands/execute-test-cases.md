@@ -57,7 +57,7 @@ Với mỗi TC theo thứ tự:
 1. **Kiểm tra Auto-Skip** — TC có tag `@PersonalOnly` (`Automation = No` **không** phải lý do bỏ qua — vẫn chạy bình thường), hoặc steps chứa Mass Delete / Select All / xoá qua URL GET / upload `.exe` / import hàng loạt → `⏭️ SKIPPED` + ghi lý do, sang TC tiếp. **Nhập chuỗi dài vào một field** (TC biên `max+1`) **không** phải lý do skip
 2. **Dựng Pre-Condition** — không dựng được → `⚠️ BLOCKED` + ghi nguyên nhân
 3. **Thực hiện đúng từng bước** trong Test Steps — không tự thêm/bớt bước
-4. **Verify từng Expected** bằng `snapshot` sau mỗi bước có kết quả quan sát được. TC đặc biệt chạy theo bảng **TC đặc biệt** của skill: TC gộp chạy **từng biến thể** (FAIL ghi mã `<TC ID>-<mã>`) · `@TechCheck` chấm phần chính, phần `🔧` kiểm nếu làm được · `@NeedsVerify` lệch thì ghi chú đối chiếu lại TC · mục checklist ghi **mã mục** `<Mã checklist>-<nn>` (VD `CL-smoke_20261009-03`), **không** ghi `#3` trần — đủ 4 luật ở mục *Chạy checklist* của skill
+4. **Verify từng Expected** bằng `snapshot` sau mỗi bước có kết quả quan sát được. TC đặc biệt chạy theo bảng **TC đặc biệt** của skill: TC gộp chạy **từng biến thể** (FAIL ghi mã `<TC ID>-<mã>`) · `@TechCheck` chấm phần chính, phần `🔧` kiểm nếu làm được · `@NeedsVerify` lệch thì ghi chú đối chiếu lại TC · mục checklist ghi **mã mục** `<Mã checklist>-<nn>` (VD `CL-smoke_20261009-03`), **không** ghi `#3` trần — đủ 5 luật ở mục *Chạy checklist* của skill
 5. **Chấm trạng thái:**
    - Mọi Expected khớp → `✅ PASS`
    - Có Expected không khớp → `❌ FAIL` + **screenshot ngay tại bước fail** + ghi Actual vs Expected
