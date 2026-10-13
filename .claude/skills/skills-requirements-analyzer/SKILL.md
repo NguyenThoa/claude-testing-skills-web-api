@@ -931,7 +931,7 @@ Mở đầu tài liệu bằng bảng metadata, trong đó **BẮT BUỘC** có 
 Với **nhánh UI Recon**, bảng metadata còn **BẮT BUỘC** thêm một dòng nữa:
 
 ```markdown
-| **Trình duyệt khảo sát** | Google Chrome (Playwright MCP), viewport `1600×770`. Mọi AC dựa trên thông báo mặc định của trình duyệt **chỉ đúng với trình duyệt này** |
+| **Trình duyệt khảo sát** | Google Chrome (Playwright MCP), viewport `1600×750`. Mọi AC dựa trên thông báo mặc định của trình duyệt **chỉ đúng với trình duyệt này** |
 ```
 
 Thiếu dòng này thì không ai biết AC nào phụ thuộc trình duyệt, và mọi kết luận về hiển thị/responsive mất ngữ cảnh viewport — xem mục **4.3.6** và **4.3.5**.

@@ -33,12 +33,12 @@ Tôi cho phép Claude đọc file `.env` trong root project để lấy thông t
 
 | Chế độ | Viewport | Lý do |
 |---|---|---|
-| **Headed (debug)** | **`1600×770`** — đúng bằng `--viewport-size` lúc khởi chạy | Cửa sổ **không nở được sau khi launch**. Đặt viewport lớn hơn cửa sổ → trang bị **cắt**, tester không nhìn thấy phần bên phải |
+| **Headed (debug)** | **`1600×750`** — đúng bằng `--viewport-size` lúc khởi chạy | Cửa sổ **không nở được sau khi launch**. Đặt viewport lớn hơn cửa sổ → trang bị **cắt**, tester không nhìn thấy phần bên phải |
 | **Headless (CI)** | `1920×1080` | Không có khung trình duyệt nên đặt bao nhiêu cũng đúng |
 
 > ⚠️ **KHÔNG gọi `browser_resize` để phóng viewport vượt cửa sổ.** `browser_resize` chỉ đổi **viewport**, **không** đổi cửa sổ OS. Ép lên 1920×1080 khi cửa sổ chỉ 1614 → mất **306px bên phải** khỏi tầm nhìn tester (ảnh chụp vẫn đủ, nhưng hỏng mục đích của headed mode). Mặc định **không cần resize** — viewport đã đúng từ lúc launch.
 >
-> 📊 **Số đo thực tế** (Windows, màn hình 1920×1080, Google Chrome): viewport `1600×770` → cửa sổ `1614×905`. Khung chiếm **+135 dọc** (ổn định) và **+14…17 ngang** (dao động theo scrollbar của trang). Muốn cửa sổ vừa màn hình `W×H` → viewport ≈ `(W−17) × (H−135)` — trừ 17 cho chắc.
+> 📊 **Số đo thực tế** (Windows, màn hình 1920×1080, Google Chrome): viewport `1600×750` → cửa sổ `1614×885`. Khung chiếm **+135 dọc** (ổn định) và **+14…17 ngang** (dao động theo scrollbar của trang). Muốn cửa sổ vừa màn hình `W×H` → viewport ≈ `(W−17) × (H−135)` — trừ 17 cho chắc.
 >
 > 📌 **Đổi viewport headed ở đâu:** `--viewport-size` của MCP server `playwright` trong **`.mcp.json` ở gốc project** (cấu hình riêng của project này, đè lên `%APPDATA%\Claude\claude_desktop_config.json`). **Phải khởi động lại Claude Code** mới có hiệu lực.
 >

@@ -24,5 +24,5 @@ Thay vì con người phải thủ công Inspect DOM, bước này giao nhiệm 
 
 - AI sẽ dùng **Accessibility Tree** và **DOM inspection** để tìm locator — không đoán.
 - Nếu cần đăng nhập, cung cấp tài khoản test trong prompt.
-- Viewport headed lấy từ `--viewport-size` lúc launch MCP server (mặc định **1600×770**) — AI **không** gọi `browser_resize`. Xem bảng viewport ở `.claude/rules/playwright_rules.md` mục 1.
+- Viewport headed lấy từ `--viewport-size` lúc launch MCP server (mặc định **1600×750**) — AI **không** gọi `browser_resize`. Xem bảng viewport ở `.claude/rules/playwright_rules.md` mục 1.
 - AI ưu tiên locator theo thứ tự trong `.claude/rules/locator_strategy.md`.

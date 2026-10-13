@@ -143,7 +143,7 @@
   UG.record = async (name, fn, rec) => {
     rec = rec || {};
     const browser = page.context().browser();
-    const vp = o.viewport || page.viewportSize() || { width: 1600, height: 780 };
+    const vp = o.viewport || page.viewportSize() || { width: 1600, height: 750 };
     let st;
     if (typeof rec.login === 'function') {
       const lc = await browser.newContext({ viewport: vp });

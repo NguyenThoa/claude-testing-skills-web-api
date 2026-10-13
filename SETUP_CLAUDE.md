@@ -105,7 +105,7 @@ Mở nhanh trên Windows (dán vào Run — `Win + R`):
 
 | Chế độ | Viewport | Ghi chú |
 |---|---|---|
-| **Headed (debug)** | **`1600×770`** | Vừa màn hình 1920×1080. Đây là giá trị mặc định của bộ kit |
+| **Headed (debug)** | **`1600×750`** | Vừa màn hình 1920×1080. Đây là giá trị mặc định của bộ kit |
 | **Headless (CI)** | `1920×1080` | Không có khung trình duyệt nên đặt bao nhiêu cũng đúng |
 
 Cấu hình `.mcp.json` mà bộ kit đang dùng (đặt ở **gốc project**):
@@ -118,7 +118,7 @@ Cấu hình `.mcp.json` mà bộ kit đang dùng (đặt ở **gốc project**):
       "args": [
         "-y",
         "@playwright/mcp",
-        "--viewport-size=1600,770",
+        "--viewport-size=1600,750",
         "--config",
         ".claude/playwright-mcp-config.json"
       ]
@@ -151,10 +151,10 @@ Kèm file `.claude/playwright-mcp-config.json`:
 
 > 📂 **Không có `--output-dir`, và đó là cố ý.** Server khai trong `.mcp.json` chạy với cwd = gốc project, nên snapshot / console log / screenshot tự rơi vào `.playwright-mcp/` của **đúng project này**. Dùng server global thì cwd bám theo project nào khởi động server trước — evidence sẽ lạc sang project khác. File cũng không chứa đường dẫn tuyệt đối nên mang sang máy khác vẫn chạy.
 
-> 🖥️ **Màn hình không phải Full HD?** Tính lại theo công thức đo thực tế (Windows, Google Chrome): viewport `1600×770` → cửa sổ `1614×905`. Khung chiếm **+135 dọc** (ổn định) và **+14…17 ngang** (dao động theo scrollbar của trang).
+> 🖥️ **Màn hình không phải Full HD?** Tính lại theo công thức đo thực tế (Windows, Google Chrome): viewport `1600×750` → cửa sổ `1614×885`. Khung chiếm **+135 dọc** (ổn định) và **+14…17 ngang** (dao động theo scrollbar của trang).
 >
 > Muốn cửa sổ vừa màn hình `W×H` → `--viewport-size=(W−17),(H−135)`.
-> - Màn 1920×1080 → `1600,770` (mặc định, đã trừ dư cho thoáng)
+> - Màn 1920×1080 → `1600,750` (mặc định, đã trừ dư cho thoáng)
 > - Màn 1366×768 → `1349,633`
 >
 > Sửa xong **phải khởi động lại Claude Code** mới có hiệu lực.
@@ -162,8 +162,8 @@ Kèm file `.claude/playwright-mcp-config.json`:
 > 🚫 **Màn hình 1920×1080 KHÔNG thể cho viewport headed 1920×1080** — thanh tab + thanh địa chỉ ăn mất chiều cao. Cần đúng `1920×1080` thì chạy **headless**.
 
 > 💡 **Hai kiểu viết tham số đều chạy** — chọn kiểu nào cũng được, miễn nhất quán:
-> - Gộp bằng dấu `=`: `"--viewport-size=1600,770"` (1 phần tử)
-> - Tách rời: `"--viewport-size", "1600,770"` (2 phần tử)
+> - Gộp bằng dấu `=`: `"--viewport-size=1600,750"` (1 phần tử)
+> - Tách rời: `"--viewport-size", "1600,750"` (2 phần tử)
 >
 > Kiểu `=` gọn hơn và ít nhầm hơn khi sửa tay.
 
@@ -173,7 +173,7 @@ Kèm file `.claude/playwright-mcp-config.json`:
 |---|---|---|
 | `--browser chrome` | Dùng Chrome thật thay Chromium bundled | Muốn giống môi trường user thật |
 | `--browser msedge` / `firefox` / `webkit` | Đổi browser | Cross-browser testing |
-| `--viewport-size "1600,770"` | Đặt viewport ngay lúc launch | **Bắt buộc theo rule dự án** — tính theo màn hình, xem công thức ở trên |
+| `--viewport-size "1600,750"` | Đặt viewport ngay lúc launch | **Bắt buộc theo rule dự án** — tính theo màn hình, xem công thức ở trên |
 | `--config <path>` | Nạp file cấu hình JSON (launch args của browser…) | Bộ kit dùng `.claude/playwright-mcp-config.json` |
 | `--headless` | Chạy ẩn, không hiện cửa sổ | **CHỈ dùng cho CI** — rule cấm headless khi debug |
 | `--isolated` | Mỗi phiên một profile sạch, không lưu state | Test luồng đăng nhập từ đầu |
@@ -196,7 +196,7 @@ Claude Code **không đọc** `claude_desktop_config.json`. Phải khai báo ri�
 **Thêm cho riêng dự án này (khuyến nghị — cả team dùng chung):**
 
 ```bash
-claude mcp add --scope project playwright -- npx -y @playwright/mcp --viewport-size "1600,770" --config ".claude/playwright-mcp-config.json"
+claude mcp add --scope project playwright -- npx -y @playwright/mcp --viewport-size "1600,750" --config ".claude/playwright-mcp-config.json"
 ```
 
 Lệnh trên sinh ra file `.mcp.json` ở thư mục gốc dự án:
@@ -209,7 +209,7 @@ Lệnh trên sinh ra file `.mcp.json` ở thư mục gốc dự án:
       "args": [
         "-y",
         "@playwright/mcp",
-        "--viewport-size=1600,770",
+        "--viewport-size=1600,750",
         "--config",
         ".claude/playwright-mcp-config.json"
       ]
@@ -721,7 +721,7 @@ Khi đã tin tưởng output, mở khoá gửi tự động. Ba nguyên tắc b�
       "args": [
         "-y", "@playwright/mcp@latest",
         "--browser=chrome",
-        "--viewport-size=1600,770",
+        "--viewport-size=1600,750",
         "--output-dir=D:\\ANHTESTER\\ClaudeCode\\claude-testing-skills\\.playwright-mcp"
       ]
     }
@@ -741,7 +741,7 @@ Khi đã tin tưởng output, mở khoá gửi tự động. Ba nguyên tắc b�
       "args": [
         "-y",
         "@playwright/mcp",
-        "--viewport-size=1600,770",
+        "--viewport-size=1600,750",
         "--config",
         ".claude/playwright-mcp-config.json"
       ]

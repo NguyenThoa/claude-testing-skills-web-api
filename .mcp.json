@@ -5,7 +5,7 @@
       "args": [
         "-y",
         "@playwright/mcp",
-        "--viewport-size=1600,780",
+        "--viewport-size=1600,750",
         "--config",
         ".claude/playwright-mcp-config.json"
       ]

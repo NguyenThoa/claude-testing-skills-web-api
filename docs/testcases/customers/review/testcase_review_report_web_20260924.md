@@ -59,7 +59,7 @@ Thang điểm: C1 Rõ ràng · C2 Kết quả đo được · C3 Độc lập ·
 | 3 | `TC_028` | Mang tag `@DecisionTable`, trong khi Bảng 4 vòng ghi `Decision Table` là `➖` | Bỏ tag `@DecisionTable` (TC này là EP hai cột AND/OR, đúng như dòng `➖` giải thích) |
 | 4 | `TC_028`, `TC_060` | Mang `@NeedsVerify` nhưng kết quả không có dòng `⚠️` nào. Người chạy không biết bước nào chưa có evidence | `TC_028` bước 4: thêm `⚠️ kết quả lọc sau Apply chưa có evidence`. `TC_060` bước 3: thêm `⚠️` trước *"ghi nguyên văn"* |
 | 5 | Bảng 4 vòng · dòng `Validation — mục cố ý bỏ` | Ghi *"Quyết định: QA (agent đề xuất), 19-09-2026 — **chờ QA lead duyệt**"*. `⏭️` phải có **người chịu trách nhiệm đã quyết**; đề xuất chưa duyệt thì chưa phải quyết định | Lấy tên QA lead duyệt ba mục (dung lượng CSV, năm nhuận Reminder, chặn dán mật khẩu Vault). Chưa duyệt thì tạm chấm `🔴` và ghi *"chờ duyệt"* |
-| 6 | Header 5 part + index | Viewport chuẩn ghi `1600×750`. Quy ước dự án (`CLAUDE.md`) là `1600×770` | Đổi thành `1600×770` khi sửa file lần tới. Không ảnh hưởng kết quả TC |
+| 6 | Header 5 part + index | Viewport chuẩn ghi `1600×750`. Quy ước dự án (`CLAUDE.md`) lúc review là `1600×770` | ✅ Không cần sửa — quy ước dự án đã đổi về `1600×750` (14-10-2026), header khớp |
 
 ---
 

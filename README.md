@@ -224,10 +224,10 @@ Copy `.claude` vào dự án là AI đã có **Rule / Skill / Command**. Nhưng 
 > ⚡ **Cài nhanh nhất:** nếu chỉ cần Playwright MCP cho Claude Code CLI, chạy đúng 1 lệnh ở thư mục gốc dự án:
 >
 > ```bash
-> claude mcp add --scope project playwright -- npx -y @playwright/mcp --viewport-size "1600,770" --config ".claude/playwright-mcp-config.json"
+> claude mcp add --scope project playwright -- npx -y @playwright/mcp --viewport-size "1600,750" --config ".claude/playwright-mcp-config.json"
 > ```
 >
-> `1600×770` là viewport headed vừa màn hình 1920×1080 — cửa sổ browser **không nở được sau khi launch**, nên đặt ở đây chứ không resize sau. Màn hình khác thì tính lại theo công thức trong [SETUP_CLAUDE.md](SETUP_CLAUDE.md) mục 1.4.
+> `1600×750` là viewport headed vừa màn hình 1920×1080 — cửa sổ browser **không nở được sau khi launch**, nên đặt ở đây chứ không resize sau. Màn hình khác thì tính lại theo công thức trong [SETUP_CLAUDE.md](SETUP_CLAUDE.md) mục 1.4.
 
 ---
 
