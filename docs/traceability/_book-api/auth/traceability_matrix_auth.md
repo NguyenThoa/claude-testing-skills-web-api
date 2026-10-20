@@ -4,9 +4,9 @@
 
 | Thông tin | Nội dung |
 |---|---|
-| Ngày sinh | 20-10-2026 09:36 |
+| Ngày sinh | 20-10-2026 10:48 |
 | Phạm vi | Module `AUTH` · Web · API · Android |
-| Mốc git | `13563ce` — TC/REQ sửa sau mốc này thì RTM đã cũ |
+| Mốc git | `ed6525b` — TC/REQ sửa sau mốc này thì RTM đã cũ |
 | Nguồn đã quét | REQ: `requirements/_book-api/auth/` (126 REQ) · TC: 8 file ở `testcases/_book-api/auth/` (210 TC) · Automation: không tìm thấy script (cột ẩn) · Checklist: chưa có (cột ẩn) · Kết quả chạy: chưa có (cột ẩn) · Bug: `docs/bugs/_book-api/README.md` — chưa nối được vì TC chưa chạy |
 | Tổng hợp | [../traceability_matrix.md](../traceability_matrix.md) — ⬛ module ngoài tầm nhìn của RTM nằm ở đó |
 

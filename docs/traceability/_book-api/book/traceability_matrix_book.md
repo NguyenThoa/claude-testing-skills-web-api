@@ -1,34 +1,34 @@
 # Ma Trận Truy Vết (RTM) — Sách (`BOOK`) · hệ thống Book
 
-> **Tóm tắt:** 157/157 REQ đã có TC (100%) · **0/190 TC có script automation** · **chưa chạy lần nào** · 30 TC `@KnownBug` chờ Dev sửa lỗi
+> **Tóm tắt:** 158/158 REQ đã có TC (100%) · **0/191 TC có script automation** · **chưa chạy lần nào** · 30 TC `@KnownBug` chờ Dev sửa lỗi
 
 | Thông tin | Nội dung |
 |---|---|
-| Ngày sinh | 20-10-2026 09:36 |
+| Ngày sinh | 20-10-2026 10:48 |
 | Phạm vi | Module `BOOK` · Web · API · Android |
-| Mốc git | `13563ce` — TC/REQ sửa sau mốc này thì RTM đã cũ |
-| Nguồn đã quét | REQ: `requirements/_book-api/book/` (157 REQ) · TC: 7 file ở `testcases/_book-api/book/` (190 TC) · Automation: không tìm thấy script (cột ẩn) · Checklist: chưa có (cột ẩn) · Kết quả chạy: chưa có (cột ẩn) · Bug: `docs/bugs/_book-api/README.md` — chưa nối được vì TC chưa chạy |
+| Mốc git | `ed6525b` — TC/REQ sửa sau mốc này thì RTM đã cũ |
+| Nguồn đã quét | REQ: `requirements/_book-api/book/` (158 REQ) · TC: 7 file ở `testcases/_book-api/book/` (191 TC) · Automation: không tìm thấy script (cột ẩn) · Checklist: chưa có (cột ẩn) · Kết quả chạy: chưa có (cột ẩn) · Bug: `docs/bugs/_book-api/README.md` — chưa nối được vì TC chưa chạy |
 | Tổng hợp | [../traceability_matrix.md](../traceability_matrix.md) — ⬛ module ngoài tầm nhìn của RTM nằm ở đó |
 
 ## 1. Tổng quan
 
 | Chỉ số | Tiến độ | Giá trị |
 |---|---|---|
-| Requirement Coverage | `▰▰▰▰▰▰▰▰▰▰` | **157/157** (100%) REQ trong phạm vi |
+| Requirement Coverage | `▰▰▰▰▰▰▰▰▰▰` | **158/158** (100%) REQ trong phạm vi |
 | Platform Coverage · Web | `▰▰▰▰▰▰▰▰▰▰` | 52/52 cặp REQ × nền tảng (100%) |
 | Platform Coverage · API | `▰▰▰▰▰▰▰▰▰▰` | 98/98 cặp REQ × nền tảng (100%) |
-| Platform Coverage · Android | `▰▰▰▰▰▰▰▰▰▰` | 53/53 cặp REQ × nền tảng (100%) |
-| Automation Coverage | `▱▱▱▱▱▱▱▱▱▱` | **0/190** TC (0%) — chưa có script |
+| Platform Coverage · Android | `▰▰▰▰▰▰▰▰▰▰` | 54/54 cặp REQ × nền tảng (100%) |
+| Automation Coverage | `▱▱▱▱▱▱▱▱▱▱` | **0/191** TC (0%) — chưa có script |
 
 **Phân bổ REQ theo trạng thái:**
 
 | ✅ Đã automate | 🟣 Automate một phần | 🟡 Thủ công | 🟠 Chỉ checklist | 🔴 Chưa có TC | ⏭️ Loại trừ |
 |:-:|:-:|:-:|:-:|:-:|:-:|
-| 0 | 0 | 157 | 0 | 0 | 0 |
+| 0 | 0 | 158 | 0 | 0 | 0 |
 
 ## 2. Việc cần làm
 
-1. ▶️ **190 TC chưa từng chạy** → `/execute-test-cases` (Web) — Android / API chạy tay theo file TC · 30 TC `@KnownBug` dự kiến FAIL, đã có bug đang mở
+1. ▶️ **191 TC chưa từng chạy** → `/execute-test-cases` (Web) — Android / API chạy tay theo file TC · 30 TC `@KnownBug` dự kiến FAIL, đã có bug đang mở
 2. 🟡 **Bắt đầu automate:** 83 TC Critical/High đã chấm `Automation = Yes` → `/generate-automation-from-testcases`
 
 ## 3. Ma trận chi tiết
@@ -82,7 +82,7 @@
 
 ### 3.4. Tạo sách (STORY-BK-BOOK-04)
 
-`▰▰▰▰▰` 24/24 REQ có TC
+`▰▰▰▰▰` 25/25 REQ có TC
 
 | REQ ID | Yêu cầu | Nền tảng | TC IDs | Trạng thái |
 |---|---|---|---|---|
@@ -110,6 +110,7 @@
 | REQ-BK-BOOK-150 | Chọn ảnh bìa qua trình chọn ảnh của hệ thống | Android | BK_BOOK_TC_142 | 🟡 Thủ công |
 | REQ-BK-BOOK-156 | Dữ liệu form Create book giữ nguyên khi app xuống nền | Android | BK_BOOK_TC_189 | 🟡 Thủ công |
 | REQ-BK-BOOK-157 | Back hệ thống ở Create a new book quay về danh sách, không hỏi xác nhận | Android | BK_BOOK_TC_190 | 🟡 Thủ công |
+| REQ-BK-BOOK-158 | Bàn phím ở form Create a new book không che ô đang nhập; ô giá dùng bàn phím số | Android | BK_BOOK_TC_191 | 🟡 Thủ công |
 
 ### 3.5. Trang chi tiết (STORY-BK-BOOK-05)
 
@@ -287,11 +288,11 @@
 |---|:-:|:-:|:-:|:-:|
 | Critical | 10 | 0 | 0 | 10 |
 | High | 73 | 0 | 0 | 73 |
-| Medium | 83 | 3 | 0 | 86 |
+| Medium | 84 | 3 | 0 | 87 |
 | Low | 20 | 1 | 0 | 21 |
-| **Tổng** | **186** | **4** | **0** | **190** |
+| **Tổng** | **187** | **4** | **0** | **191** |
 
-<details><summary>Danh sách đầy đủ 190 TC (xếp theo Priority)</summary>
+<details><summary>Danh sách đầy đủ 191 TC (xếp theo Priority)</summary>
 
 | TC ID | Nền tảng | Priority | Automation dự kiến | Ghi chú |
 |---|---|---|---|---|
@@ -464,6 +465,7 @@
 | BK_BOOK_TC_186 | Android | Medium | Yes | — |
 | BK_BOOK_TC_189 | Android | Medium | Yes | — |
 | BK_BOOK_TC_190 | Android | Medium | Yes | — |
+| BK_BOOK_TC_191 | Android | Medium | Yes | — |
 | BK_BOOK_TC_011 | Web | Low | Yes | — |
 | BK_BOOK_TC_015 | Web | Low | Yes | — |
 | BK_BOOK_TC_018 | Web | Low | Yes | `@NeedsVerify` |
