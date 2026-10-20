@@ -37,6 +37,7 @@ Thư mục này chứa các prompt mẫu dùng nhanh (copy → paste → gửi) 
 | 15 | `prompt_15_generate_checklist.txt` | `/generate-checklist-test` | `skills-rbt-manual-testing` | Sinh checklist tick tay (CHECKLIST mode) — 4 loại Smoke/Post-hotfix/Regression/Release-readiness, nguồn TC-based hoặc REQ-based |
 | 12 | `prompt_12_review_testcases.txt` | `/review-testcases` | `skills-testcase-reviewer` | Review chất lượng manual TCs theo rubric 6 tiêu chí — 3 modes REVIEW/FIX/AUTOMATION (AUTOMATION: chấm TC nào làm automation được) |
 | 16 | `prompt_16_execute_test_cases.txt` | `/execute-test-cases` | `skills-manual-test-executor` | Thực thi manual TC qua Playwright MCP — chấm PASS/FAIL/BLOCKED/SKIPPED, thu evidence, xuất execution report |
+| 33 | `prompt_33_compare_ui_from_figma_design.txt` | `/compare-ui-from-figma-design` | `skills-figma-design-comparator` · `skills-mobile-debug-agent` · `skills-ui-debug-agent` | **[Mới]** So bản thiết kế **Figma** với UI thật — mode **WEB** / **MOBILE**. Chỉ đọc Figma, đo lệch chữ · vị trí · khoảng cách · màu theo dp/pt/px, xác nhận trên ảnh đặt cạnh nhau rồi ghi `DIFF` có loại · mức độ · ai xử lý vào `docs/design-reviews/`. Kiểu chạy: đầy đủ · `nhanh` · `bổ sung` · `khung=còn-mở` |
 
 ### 🏗️ Framework & Sinh Script Automation
 

@@ -9,6 +9,7 @@ spec.json (một object hoặc mảng object; đường dẫn tương đối the
   "image": "../../requirements/login/web/evidence/login-form.png",
   "out": "images/p1-1-s2-sign-in.png",
   "caption": "Part 1 · Sign in · Step 2 — Enter your email",        // tuỳ chọn
+  "scale": 2.5,                                                      // tuỳ chọn — phóng chữ/nét cho ảnh độ phân giải cao
   "marks": [ {"box": [x, y, w, h], "n": 2, "label": "Email"},       // toạ độ theo PIXEL ẢNH gốc
              {"box": [x, y, w, h], "n": 3, "label": "Password"} ]
 }
@@ -52,34 +53,35 @@ def hit(a, b):
 def draw(spec, base):
     im = Image.open(base / spec['image']).convert('RGB')
     d = ImageDraw.Draw(im, 'RGBA')
-    fb, fl, fc = font(15), font(12), font(15)
-    cap_h = 40 if spec.get('caption') else 0
+    k = spec.get('scale', 1)                      # tuỳ chọn: ảnh chụp máy thật độ phân giải cao (VD 1344 px) → phóng chữ/nét theo
+    fb, fl, fc = font(round(15 * k)), font(round(12 * k)), font(round(15 * k))
+    cap_h = round(40 * k) if spec.get('caption') else 0
     boxes = []
     for m in spec['marks']:
-        x, y, w, h = m['box']; p = 4
+        x, y, w, h = m['box']; p = 4 * k
         r = (x - p, y - p, x + w + p, y + h + p); boxes.append(r)
-        d.rounded_rectangle((r[0] - 4, r[1] - 4, r[2] + 4, r[3] + 4), 9, outline=RED + (46,), width=4)
-        d.rounded_rectangle(r, 6, outline=RED, width=3)
+        d.rounded_rectangle((r[0] - 4 * k, r[1] - 4 * k, r[2] + 4 * k, r[3] + 4 * k), 9 * k, outline=RED + (46,), width=round(4 * k))
+        d.rounded_rectangle(r, 6 * k, outline=RED, width=round(3 * k))
     placed = []
     for m, r in zip(spec['marks'], boxes):
         if m.get('n') is not None:
-            t = str(m['n']); tw = d.textlength(t, font=fb); bw = max(26, tw + 12)
-            bx, by = max(2, r[0] - 14), max(2, r[1] - 14)
-            d.rounded_rectangle((bx, by, bx + bw, by + 26), 13, fill=RED)
-            d.text((bx + (bw - tw) / 2, by + 4), t, fill=WHITE, font=fb)
+            t = str(m['n']); tw = d.textlength(t, font=fb); bw = max(26 * k, tw + 12 * k)
+            bx, by = max(2, r[0] - 14 * k), max(2, r[1] - 14 * k)
+            d.rounded_rectangle((bx, by, bx + bw, by + 26 * k), 13 * k, fill=RED)
+            d.text((bx + (bw - tw) / 2, by + 4 * k), t, fill=WHITE, font=fb)
         if m.get('label'):
-            tw = d.textlength(m['label'], font=fl) + 16; th = 24
+            tw = d.textlength(m['label'], font=fl) + 16 * k; th = 24 * k
             others = [o for o in boxes if o is not r]
-            for cx, cy in ((r[0], r[3] + 8), (r[2] + 10, r[1]), (r[0], r[1] - th - 10), (r[2] - tw - 6, r[1] + 6)):
+            for cx, cy in ((r[0], r[3] + 8 * k), (r[2] + 10 * k, r[1]), (r[0], r[1] - th - 10 * k), (r[2] - tw - 6 * k, r[1] + 6 * k)):
                 c = (min(max(4, cx), im.width - tw - 4), cy, 0, 0); c = (c[0], c[1], c[0] + tw, c[1] + th)
                 if c[1] >= 4 and c[3] <= im.height - cap_h - 6 and not any(hit(c, o) for o in others + placed):
                     break
             placed.append(c)
-            d.rounded_rectangle(c, 5, fill=DARK); d.text((c[0] + 8, c[1] + 5), m['label'], fill=WHITE, font=fl)
+            d.rounded_rectangle(c, 5 * k, fill=DARK); d.text((c[0] + 8 * k, c[1] + 5 * k), m['label'], fill=WHITE, font=fl)
     if cap_h:
         d.rectangle((0, im.height - cap_h, im.width, im.height), fill=DARK + (235,))
-        d.line((0, im.height - cap_h, im.width, im.height - cap_h), fill=RED, width=3)
-        d.text((16, im.height - cap_h + 10), spec['caption'], fill=WHITE, font=fc)
+        d.line((0, im.height - cap_h, im.width, im.height - cap_h), fill=RED, width=round(3 * k))
+        d.text((16 * k, im.height - cap_h + 10 * k), spec['caption'], fill=WHITE, font=fc)
     out = base / spec['out']; out.parent.mkdir(parents=True, exist_ok=True); im.save(out)
     print('OK', out)
 

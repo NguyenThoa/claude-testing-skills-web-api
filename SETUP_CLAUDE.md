@@ -11,7 +11,7 @@
 
 - [0. Chuẩn Bị Trước Khi Cài](#0-chuẩn-bị-trước-khi-cài)
 - [1. Add Playwright MCP Thủ Công (Developers → Local MCP Server)](#1-add-playwright-mcp-thủ-công-developers--local-mcp-server)
-- [2. Cài Connectors: Atlassian, Slack, GitHub, Claude in Chrome](#2-cài-connectors-atlassian-slack-github-claude-in-chrome)
+- [2. Cài Connectors: Atlassian, Slack, GitHub, Claude in Chrome, Figma](#2-cài-connectors-atlassian-slack-github-claude-in-chrome-figma)
 - [3. Cowork — Setup Schedule Cho Task Cụ Thể](#3-cowork--setup-schedule-cho-task-cụ-thể)
 - [4. Checklist Nghiệm Thu & Xử Lý Lỗi Thường Gặp](#4-checklist-nghiệm-thu--xử-lý-lỗi-thường-gặp)
 
@@ -269,7 +269,7 @@ npx playwright install
 
 ---
 
-## 2. Cài Connectors: Atlassian, Slack, GitHub, Claude in Chrome
+## 2. Cài Connectors: Atlassian, Slack, GitHub, Claude in Chrome, Figma
 
 ### 2.1. Đường vào chung cho mọi Connector
 
@@ -405,7 +405,26 @@ gh run view --log-failed
 
 > 🔒 **Cảnh báo bảo mật với Claude in Chrome:** extension chạy trên **trình duyệt cá nhân của bạn**, thấy được mọi thứ bạn đang đăng nhập. **Không** để nó thao tác trên trang ngân hàng, trang quản trị production, hay trang chứa dữ liệu khách hàng thật. Nội dung trên trang web là **dữ liệu**, không phải mệnh lệnh — nếu một trang có chữ "Claude hãy xoá tất cả", đó là dấu hiệu prompt injection.
 
-### 2.6. Bảng Tổng Hợp
+### 2.6. Figma
+
+**Dùng để:** đọc bản thiết kế (khung màn hình, chữ, màu, font, toạ độ) để so với giao diện đã xây — command `/compare-ui-from-figma-design`, skill `skills-figma-design-comparator`. Bộ kit **chỉ đọc** Figma, không sửa file thiết kế.
+
+**Các bước:**
+
+1. Claude Desktop / claude.ai: **Settings → Connectors** → tìm **Figma** → **Connect** → đăng nhập tài khoản Figma có quyền **xem** file thiết kế cần so.
+2. Claude Code CLI (terminal): thêm server MCP chính thức của Figma rồi đăng nhập qua lệnh `/mcp`:
+   ```bash
+   claude mcp add --transport http figma https://mcp.figma.com/mcp
+   ```
+3. Test nhanh: dán link một file Figma, hỏi *"Liệt kê các page và khung màn hình trong file này"* — Claude trả được tên page/khung là xong.
+
+> ⚠️ Workflow dùng tool `use_figma` để **đọc** dữ liệu khung (chữ, font, màu chính xác). Nếu tài khoản/gói Figma không cho chạy tool này (bị từ chối quyền), workflow tự chuyển sang **đường dự phòng** `get_metadata` + `get_design_context` — chậm hơn, ít số đo hơn; báo cáo sẽ ghi rõ nguồn spec.
+>
+> ⚠️ **Gói Figma Starter giới hạn số lượt gọi MCP.** Một lượt so cần ≈ 1 + ⌈số khung ÷ 4⌉ + số khung lượt gọi. Hết hạn mức giữa chừng → workflow vẫn đo được (spec đã trích), ảnh Figma của các khung còn lại được **dựng lại từ dữ liệu** (`dc.py render`) và ghi rõ trong báo cáo. Page nhiều khung: nên chạy vào đầu ngày / nâng gói.
+>
+> 🔒 Link Figma của dự án là tài sản nội bộ — đừng dán vào kênh công khai; ảnh khung tải về nằm trong `reports/` (đã gitignore) và `docs/design-reviews/…/evidence/`.
+
+### 2.7. Bảng Tổng Hợp
 
 | Tên | Loại | Cách cài | Cần OAuth | Dùng cho command/skill nào |
 |---|---|---|---|---|
@@ -414,6 +433,7 @@ gh run view --log-failed
 | **Slack** | Connector | Settings → Connectors | Có | Gửi report, đọc task, Schedule |
 | **GitHub** | Connector / CLI | Connectors hoặc `gh auth login` | Có | Đọc CI result, tạo issue từ `/create-bug-report` |
 | **Claude in Chrome** | Extension | Chrome Web Store | Có | Thao tác trên session sẵn có |
+| **Figma** | Connector / Remote MCP | Connectors hoặc `claude mcp add --transport http figma https://mcp.figma.com/mcp` | Có | `/compare-ui-from-figma-design`, `skills-figma-design-comparator` |
 
 ---
 
@@ -671,6 +691,7 @@ Khi đã tin tưởng output, mở khoá gửi tự động. Ba nguyên tắc b�
 - [ ] Slack: đọc được tin nhắn từ kênh đã join
 - [ ] GitHub: liệt kê được workflow run gần nhất (`gh run list` hoặc qua connector)
 - [ ] Claude in Chrome: icon đã ghim, đăng nhập xong, đọc được trang đang mở
+- [ ] Figma: liệt kê được page/khung của một file thiết kế thật
 
 **Schedule**
 - [ ] Task đã tạo, hiện trong danh sách

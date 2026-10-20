@@ -21,7 +21,7 @@ skills:
 
 | Input | Bắt buộc? |
 |---|---|
-| Test fail (test file + error log, HOẶC mô tả manual TC fail) | ⭐ Bắt buộc |
+| Test fail (test file + error log, HOẶC mô tả manual TC fail) **hoặc** mã DIFF `Dev` trong báo cáo `/compare-ui-from-figma-design` | ⭐ Bắt buộc — bug từ DIFF đặt mã theo skill (hậu tố = mã DIFF thay TC_ID) |
 | Requirement/spec liên quan (để viết Expected có căn cứ) | Khuyến nghị |
 | Môi trường (env, browser, account test) | Khuyến nghị — agent tự thu thập nếu thiếu |
 

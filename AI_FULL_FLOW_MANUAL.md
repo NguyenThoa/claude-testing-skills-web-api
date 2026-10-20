@@ -517,6 +517,7 @@ Cột **`TC cần xử lý`** trong Nhật ký thay đổi của tài liệu req
 | ⊹ | `/generate-master-test-plan` | [`prompt_25`](prompts/prompt_25_generate_master_test_plan.txt) | 1 lần / đợt — khi cần kế hoạch chính thức, **trước chặng 4** · gọi lại khi phạm vi/lịch đổi |
 | ⊹ | `/generate-test-progress-report` | [`prompt_32`](prompts/prompt_32_generate_test_progress_report.txt) | **Mỗi kỳ** theo lịch plan (thường hằng tuần) — trong chặng 4–6 |
 | ⊹ | `/generate-user-guide` | [`prompt_28`](prompts/prompt_28_generate_user_guide.txt) | Khi bàn giao — tài liệu cho **người dùng cuối**, không phải cho QA |
+| ⊹ | `/compare-ui-from-figma-design` | [`prompt_33`](prompts/prompt_33_compare_ui_from_figma_design.txt) | Khi có bản thiết kế Figma và một bản build chạy được — sau khi dev báo "đã làm theo design", trước release, hoặc khi designer cập nhật Figma · gọi lại với `khung=còn-mở` sau khi dev/designer sửa · hỏi nhanh một màn: `nhanh` · xem kết quả: `scripts/design-review-viewer/bundle.html` |
 
 **Biến thể của chặng 1–2** (không nằm trên luồng chính): `/analyze-requirement-document` → [`prompt_20`](prompts/prompt_20_analyze_requirement_document.txt) · `/generate-testcases-from-requirements` → [`prompt_22`](prompts/prompt_22_generate_testcases_quick.txt).
 
