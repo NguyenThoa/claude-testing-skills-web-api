@@ -1,15 +1,15 @@
-# Test Cases — Module Sách (`BOOK`) · Book — tổng 190 TC · 3 nền tảng (Web · API · Mobile Android) · độ hạt GỘP
+# Test Cases — Module Sách (`BOOK`) · Book — tổng 191 TC · 3 nền tảng (Web · API · Mobile Android) · độ hạt GỘP
 
 | Thông tin | Nội dung |
 |---|---|
 | **Hệ thống** | AnhTester Book Management — mã hệ thống `BK` (namespace `_book-api/`) · danh mục TC: [../README.md](../README.md) |
 | **Module** | Sách — `Book Management` · prefix `BOOK` |
-| **Nguồn requirement** | Index [REQUIREMENTS_BOOK_SUMMARY.md](../../../requirements/_book-api/book/REQUIREMENTS_BOOK_SUMMARY.md) (dùng chung: 4 REQ mục 3.1 — `01` · `42` · `51` là `Android · Web · API` · 39 REQ `Android · Web` mục 3.2) · [web/requirements_book_web.md](../../../requirements/_book-api/book/web/requirements_book_web.md) (9 REQ) · [api/requirements_book_api.md](../../../requirements/_book-api/book/api/requirements_book_api.md) (94 REQ) · [mobile/requirements_book_mobile.md](../../../requirements/_book-api/book/mobile/requirements_book_mobile.md) (11 REQ) — **0 AMB treo** (chốt 25-09-2026 `DEMO-AMB-2509` · `DEMO-AMB-2509B` · 26-09-2026 `DEMO-AMB-2609` · 20-10-2026 `DEMO-AMB-2010`) |
+| **Nguồn requirement** | Index [REQUIREMENTS_BOOK_SUMMARY.md](../../../requirements/_book-api/book/REQUIREMENTS_BOOK_SUMMARY.md) (dùng chung: 4 REQ mục 3.1 — `01` · `42` · `51` là `Android · Web · API` · 39 REQ `Android · Web` mục 3.2) · [web/requirements_book_web.md](../../../requirements/_book-api/book/web/requirements_book_web.md) (9 REQ) · [api/requirements_book_api.md](../../../requirements/_book-api/book/api/requirements_book_api.md) (94 REQ) · [mobile/requirements_book_mobile.md](../../../requirements/_book-api/book/mobile/requirements_book_mobile.md) (12 REQ) — **0 AMB treo** (chốt 25-09-2026 `DEMO-AMB-2509` · `DEMO-AMB-2509B` · 26-09-2026 `DEMO-AMB-2609` · 20-10-2026 `DEMO-AMB-2010`) |
 | **Mode sinh** | QUICK (`/generate-testcases-from-requirements`) · độ hạt **GỘP** (mặc định) · Mobile: chế độ **BỔ SUNG** (module đã có bộ TC Web + API) |
 | **Ngày sinh** | Web · API 25-09-2026 · Mobile 26-09-2026 · Mobile bổ sung 20-10-2026 |
-| **Dải TC ID** | `BK_BOOK_TC_001` → `BK_BOOK_TC_190` (Web `001`→`059` · API `060`→`135` · **Mobile `136`→`190`** — `181`→`190` bổ sung 20-10-2026; `090`→`135` bổ sung 25-09-2026 khi có REQ mặt API — nối tiếp, không chèn giữa) |
-| **Mã kế tiếp** | `BK_BOOK_TC_191` — **KHÔNG đánh lại từ 001** |
-| **Phạm vi REQ** | Web: 52/52 REQ (9 chỉ Web + 39 `Android · Web` + 4 mục 3.1). API: **98/98** REQ (94 riêng API + 4 dùng chung) — 5 endpoint `/api/book*`. **Mobile (Android): 53/53** REQ (39 `Android · Web` + `01` · `42` · `51` + 11 chỉ Android). Ngoài phạm vi viết TC: quản lý danh mục ⚙ (module `CAT`) · **tạo / sửa khuyến mãi** (module `PROMO` — khuyến mãi tác động lên giá bán của **mọi** sách nên TC **không** tạo) · tải ảnh bìa (module `FILE`) · mở khoá slug bằng `Change` · Android: REQ **chưa khai** nền tảng Android — `39` · `40` · `46` · `47` · `52` (**bị chặn** bởi REQ-147 — tạo sách Android lỗi) · `08` · `19` · `43` (dựa vào URL) · `35` · `36` (chọn tệp — thay bằng REQ-150), [requirements mobile mục 2](../../../requirements/_book-api/book/mobile/requirements_book_mobile.md#2-bản-đồ-phủ-tài-liệu) · iOS chưa khảo sát |
+| **Dải TC ID** | `BK_BOOK_TC_001` → `BK_BOOK_TC_191` (Web `001`→`059` · API `060`→`135` · **Mobile `136`→`191`** — `181`→`191` bổ sung 20-10-2026; `090`→`135` bổ sung 25-09-2026 khi có REQ mặt API — nối tiếp, không chèn giữa) |
+| **Mã kế tiếp** | `BK_BOOK_TC_192` — **KHÔNG đánh lại từ 001** |
+| **Phạm vi REQ** | Web: 52/52 REQ (9 chỉ Web + 39 `Android · Web` + 4 mục 3.1). API: **98/98** REQ (94 riêng API + 4 dùng chung) — 5 endpoint `/api/book*`. **Mobile (Android): 54/54** REQ (39 `Android · Web` + `01` · `42` · `51` + 12 chỉ Android). Ngoài phạm vi viết TC: quản lý danh mục ⚙ (module `CAT`) · **tạo / sửa khuyến mãi** (module `PROMO` — khuyến mãi tác động lên giá bán của **mọi** sách nên TC **không** tạo) · tải ảnh bìa (module `FILE`) · mở khoá slug bằng `Change` · Android: REQ **chưa khai** nền tảng Android — `39` · `40` · `46` · `47` · `52` (**bị chặn** bởi REQ-147 — tạo sách Android lỗi) · `08` · `19` · `43` (dựa vào URL) · `35` · `36` (chọn tệp — thay bằng REQ-150), [requirements mobile mục 2](../../../requirements/_book-api/book/mobile/requirements_book_mobile.md#2-bản-đồ-phủ-tài-liệu) · iOS chưa khảo sát |
 | **Mức rủi ro · độ sâu** | `Cao` → **Đầy đủ** — đủ 6 nhánh V1, mọi nhánh V2 có điều kiện kích hoạt, V3/V4 chấm từng nhánh.<br>Căn cứ chấm Cao: đụng **giá tiền** (giá gốc, giá bán sau khuyến mãi — đang có lỗi giá âm) · thao tác **không hồi lại được** (xoá sách) · mọi người dùng sửa/xoá được sách người khác.<br>**Hạ xuống Tiêu chuẩn khi:** không bao giờ — module có tiền luôn giữ mức Cao |
 | **Môi trường** | `https://book.anhtester.com` — **production, server duy nhất**. **Không** dùng chung (user chốt 14-08-2026) nhưng chỉ ghi/xoá sách do chính lượt chạy tạo |
 | **Trình duyệt chuẩn** | Google Chrome (desktop) · viewport `1600×750` · `en-US` |
@@ -117,7 +117,7 @@ Setup    : POST /api/register TK-MB → tạo SM-A (web hoặc API) → POST /ap
 N0       : TC_181 → 182 (khách) → tester đăng nhập TK-MB trên app (gom 1 lượt)
 V1       : TC_136 → 141 → 142 → 143 (@KnownBug) → 144 → 145 → 146
 V2       : TC_147 → 159 (form tạo — mỗi TC mở form mới) → 160 → 173 (danh sách / lọc) → 174 → 177 (Modify SM-A — không lưu) → 183 → 186 → 190 → 187 (@KnownBug) → 188 (xoá SM-C)
-V3 · V4  : TC_178 → 179 (tắt / bật mạng) → 180 (xoay — trả về dọc khi xong) → 189 (xuống nền)
+V3 · V4  : TC_178 → 179 (tắt / bật mạng) → 180 (xoay — trả về dọc khi xong) → 189 (xuống nền) → 191 (bàn phím — bật / trả `show_ime_with_hard_keyboard`)
 Teardown : xoá SM-A trên WEB (Modify → Delete — hộp xác nhận web hiện đúng tên sách chưa đổi tên) hoặc DELETE /api/book/{id} bằng token TK-MB
            → tìm sách chứa `17901508` (chỉ tồn tại nếu TC_143 / form tạo lưu được ngoài dự kiến) → xoá danh mục `amcat17901508…` nếu có (module CAT)
            → xoá TK-MB bằng API (token của chính nó) → báo số tạo / dọn / còn sót (kể cả ảnh bìa — RISK-BK-BOOK-03)
@@ -139,10 +139,10 @@ Teardown : xoá SM-A trên WEB (Modify → Delete — hộp xác nhận web hi�
 | API | [api/parts/part_02_api_tao.md](api/parts/part_02_api_tao.md) | `POST /api/book` | 32 | 066–077 · 102–121 | `REQ-BK-BOOK-51` · `52` · `83 → 113` · `137` · `139` · `140` · `142` · `143` |
 | API | [api/parts/part_03_api_sua_xoa.md](api/parts/part_03_api_sua_xoa.md) | `PATCH` · `DELETE /api/book/{id}` · quy ước chung | 23 | 081–089 · 122–135 | `REQ-BK-BOOK-114 → 136` (trừ `137+`) · `138` · `141` |
 | Mobile (Android) | [mobile/parts/part_01_mobile_danh_sach.md](mobile/parts/part_01_mobile_danh_sach.md) | Khách · danh sách · thẻ · nhãn New · sắp xếp · tab danh mục · Filter · chi tiết · lượt xem · mất mạng · xoay ngang | 27 | 136–139 · 144 · 160–173 · 178–184 · 186 | `REQ-BK-BOOK-01 → 07` · `09 → 18` · `20` · `21` · `41` · `42` · `51` · `149` · `151 → 153` |
-| Mobile (Android) | [mobile/parts/part_02_mobile_tao_sua_xoa.md](mobile/parts/part_02_mobile_tao_sua_xoa.md) | Form Create (Photo Picker · validation · Promotion · xuống nền · Back) · Modify · lưu · Confirm delete · xoá · điều hướng | 28 | 140–143 · 145–159 · 174–177 · 185 · 187–190 | `REQ-BK-BOOK-22 → 34` · `37` · `38` · `44` · `45` · `48 → 50` · `147` · `148` · `150` · `154 → 157` |
+| Mobile (Android) | [mobile/parts/part_02_mobile_tao_sua_xoa.md](mobile/parts/part_02_mobile_tao_sua_xoa.md) | Form Create (Photo Picker · validation · Promotion · xuống nền · Back) · Modify · lưu · Confirm delete · xoá · điều hướng | 29 | 140–143 · 145–159 · 174–177 · 185 · 187–191 | `REQ-BK-BOOK-22 → 34` · `37` · `38` · `44` · `45` · `48 → 50` · `147` · `148` · `150` · `154 → 158` |
 | iOS | — | Chưa khảo sát — không sinh TC | — | — | — |
 
-Tổng Web: **59 TC · 73 biến thể** + **10 mục Bảng kiểm**. Tổng API: **76 TC** (`060`→`135`, 3 part vì > 40 TC). Tổng Mobile: **55 TC · 69 biến thể** + **33 mục Bảng kiểm** (2 part ở `mobile/parts/` — vượt ngưỡng 50 TC của độ hạt GỘP nên tách ngày 20-10-2026, cắt theo nhóm chức năng). Toàn module **190 TC**.
+Tổng Web: **59 TC · 73 biến thể** + **10 mục Bảng kiểm**. Tổng API: **76 TC** (`060`→`135`, 3 part vì > 40 TC). Tổng Mobile: **56 TC · 70 biến thể** + **33 mục Bảng kiểm** (2 part ở `mobile/parts/` — vượt ngưỡng 50 TC của độ hạt GỘP nên tách ngày 20-10-2026, cắt theo nhóm chức năng). Toàn module **191 TC**.
 
 > **Neo REQ mặt API:** từ 25-09-2026 module `BOOK` **có REQ mặt API** (94 REQ + 4 dùng chung) — mọi TC API neo **1:1** vào REQ API. TC gộp nhiều REQ (`TC_061` · `064` · `065` · `073` · `098` · `108` · `109` · `126` …) ghi **biến thể → REQ** ở cột Expected; biến thể FAIL map về đúng REQ. 20 TC `@KnownBug` (`068` · `070` · `073` · `097` · `098` · `101` · `102` · `103` · `105` · `107` · `116` · `117` · `118` · `119` · `121` · `122` · `127` · `131` · `132` · `133`) theo kỳ vọng đã chốt bằng `DEMO-AMB-2509B`; 1 TC `@NeedsVerify` (`120`).
 
@@ -347,7 +347,7 @@ Tổng Web: **59 TC · 73 biến thể** + **10 mục Bảng kiểm**. Tổng AP
 
 ---
 
-## Bảng Đối Soát Coverage (Mobile Android 53/53 REQ)
+## Bảng Đối Soát Coverage (Mobile Android 54/54 REQ)
 
 REQ dùng chung có TC ở **mọi** nền tảng đã khai — cột Web dẫn TC web hiện có.
 
@@ -406,9 +406,10 @@ REQ dùng chung có TC ở **mọi** nền tảng đã khai — cột Web dẫn 
 | REQ-BK-BOOK-155 | Lưu thất bại báo lỗi có nội dung | TC_187 | Kỳ vọng chưa đạt · `@KnownBug` | — (chỉ Android) |
 | REQ-BK-BOOK-156 | Form Create giữ dữ liệu khi xuống nền | TC_189 | Reliability | — |
 | REQ-BK-BOOK-157 | Back ở form Create về danh sách, không hỏi | TC_190 | Error Guessing | — |
+| REQ-BK-BOOK-158 | Bàn phím ở form Create không che ô đang nhập | TC_191 | UI Stability | — |
 | REQ-BK-BOOK-08 · 19 · 35 · 36 · 39 · 40 · 43 · 46 · 47 · 52 | URL · chọn tệp · tạo / sửa thành công · sách mới đầu Newest · danh mục mới | — | ⚪ **Chưa khai Android** — `39` · `40` · `46` · `47` · `52` **bị chặn** bởi REQ-147 · `08` · `19` · `43` · `35` · `36` không áp dụng trên app (URL / chọn tệp — [requirements mobile mục 2](../../../requirements/_book-api/book/mobile/requirements_book_mobile.md#2-bản-đồ-phủ-tài-liệu)). Không phải thiếu TC | TC web hiện có |
 
-**Tổng Mobile:** 53/53 REQ có ≥ 1 TC ✅ · không REQ nào 🔴 · 7 TC `@KnownBug` (`143` · `162` · `173` · `175` · `176` · `177` · `187`). Phép thử 6b trên file Mobile: TC gánh ≥ 2 REQ duy nhất là `TC_155` (`29` · `30` · `31`) — `29` và `30` có TC_153 · 154 chống lưng, chỉ `31` dựa vào riêng TC_155 ✅.
+**Tổng Mobile:** 54/54 REQ có ≥ 1 TC ✅ · không REQ nào 🔴 · 7 TC `@KnownBug` (`143` · `162` · `173` · `175` · `176` · `177` · `187`). Phép thử 6b trên file Mobile: TC gánh ≥ 2 REQ duy nhất là `TC_155` (`29` · `30` · `31`) — `29` và `30` có TC_153 · 154 chống lưng, chỉ `31` dựa vào riêng TC_155 ✅.
 
 ### Bảng trạng thái — sách (mặt Android)
 
@@ -455,7 +456,7 @@ Phủ một phần: **AVAILABLE → (đã xoá)** TC_188 (trên sách mồ côi 
 
 ### Bảng Đối Soát Evidence — Mobile (Android)
 
-Đã mở **27/27** ảnh ở [`requirements/_book-api/book/mobile/evidence/`](../../../requirements/_book-api/book/mobile/evidence/) — ảnh chỉ có sách công khai và dữ liệu test, không có email người dùng.
+Đã mở **29/29** ảnh ở [`requirements/_book-api/book/mobile/evidence/`](../../../requirements/_book-api/book/mobile/evidence/) — ảnh chỉ có sách công khai và dữ liệu test, không có email người dùng.
 
 | Ảnh evidence | Màn hình / trạng thái | TC dựa vào | Đầy đủ? |
 |---|---|---|---|
@@ -483,6 +484,8 @@ Phủ một phần: **AVAILABLE → (đã xoá)** TC_188 (trên sách mồ côi 
 | `android_book_create_promotion_open.png` | Khối Promotion `1–5 of 24` | TC_185 | ✅ |
 | `android_book_modify_save_error_empty.png` | Thông báo `!` không chữ sau `Save changes` | TC_187 (hiện trạng) | ✅ |
 | `android_book_delete_success_toast.png` | `Deleted successfully.` · `No Data` (khung hình chuyển cảnh) | TC_188 | ✅ |
+| `android_book_create_keyboard_price.png` | Bàn phím số ở ô giá | TC_191 bước 2–3 | ✅ |
+| `android_book_create_keyboard_categories.png` | Bàn phím chữ ở ô Categories, gợi ý mở | TC_191 bước 4 | ✅ |
 | *(đọc thuộc tính, không ảnh — số liệu ghi trong AC)* | Cuộn > 36 thẻ · tìm `doraemon` · gợi ý giá · lọc giá từ · Create book bật · slug · slug khoá · giá biên · sửa tên → slug · Cancel xoá · Sort về Feature · mô tả cận dưới | TC_164 · 167 `a` `b` · 169-a · 170 · 147 (bước 4) · 148 · 149 · 153 · 154-a · 155 `a` `b` `d` · 174 · 146 · 163 · 171 | ✅ theo số liệu trong AC |
 
 **Vùng chưa có evidence (Mobile) — gắn `@NeedsVerify`:** TC_144 (nút `Back` · tên / email tác giả) · 154-b · 159-b (28 ký tự) · 160 (bước 4 `Sort By: Newest`) · 167-c (tìm theo slug) · 169-b (`Price to`) · 178 (chuỗi tấn công). Đề xuất recon bổ sung: 1 ảnh / trạng thái — đặc biệt trang chi tiết của `SM-A` chụp **từ đầu trang** để thấy nút `Back` và khối `Author by` có tên.
@@ -571,7 +574,7 @@ Phủ một phần: **AVAILABLE → (đã xoá)** TC_188 (trên sách mồ côi 
 | 4 | Performance | ➖ | Không có ngưỡng cam kết — đội hiệu năng (chưa phân công). Cuộn vô tận chỉ quan sát ở TC_164 |
 | 4 | Regression | ➖ | `docs/bugs/_book-api/` chưa có bug nào được đóng |
 | 4 | E2E | ✅ / ⏭️ | Setup tạo `SM-A` trên web / API → đọc trên app (TC_137 · 144 · 145 — xuyên nền tảng). Tạo trên app → thấy trên web: ⏭️ chặn bởi REQ-147 |
-| — | Đặc thù mobile (mất mạng · xoay · quyền · vòng đời · Back) | ✅ | TC_179 · 180 · 142 (Photo Picker không xin quyền bộ nhớ) · 189 (xuống nền) · 190 (Back). Bàn phím ở form sách: ⏭️ chưa đo được (bàn phím emulator thu gọn) · deep link · push: ➖ ([requirements mobile mục 6](../../../requirements/_book-api/book/mobile/requirements_book_mobile.md#6-yêu-cầu-riêng-của-mobile-skill-353)) |
+| — | Đặc thù mobile (mất mạng · xoay · quyền · vòng đời · Back) | ✅ | TC_179 · 180 · 142 (Photo Picker không xin quyền bộ nhớ) · 189 (xuống nền) · 190 (Back). Bàn phím ở form sách: TC_191 · deep link · push: ➖ ([requirements mobile mục 6](../../../requirements/_book-api/book/mobile/requirements_book_mobile.md#6-yêu-cầu-riêng-của-mobile-skill-353)) |
 
 #### Đối soát Validation theo bảng 15 loại field — form tạo sách (Android)
 
@@ -623,7 +626,7 @@ Phủ một phần: **AVAILABLE → (đã xoá)** TC_188 (trên sách mồ côi 
 |---|---|---|---|---|
 | Web | 57 | 2 | 0 | 17 (`@NeedsVerify` — nằm trong Yes / Partial) |
 | API | 75 | 1 | 0 | 1 (`TC_120` `@NeedsVerify`) — 20 TC `@KnownBug` chạy được, **dự kiến FAIL** |
-| Mobile (Android) | 54 | 1 | 0 | 7 (`@NeedsVerify` — nằm trong Yes) · 7 TC `@KnownBug` vẫn automate |
+| Mobile (Android) | 55 | 1 | 0 | 7 (`@NeedsVerify` — nằm trong Yes) · 7 TC `@KnownBug` vẫn automate |
 
 ### Điều kiện cần chuẩn bị
 
@@ -665,7 +668,7 @@ Phủ một phần: **AVAILABLE → (đã xoá)** TC_188 (trên sách mồ côi 
 | Lỗi đã biết | TC_013 · 020 · 055 | ~10 phút | `@KnownBug` — mở bug bằng `/create-bug-report` |
 | `@TechCheck` | TC_005 · 025 · 048 · 049 · 054 · 056 | — | Phần 🔧 cần DevTools → Network |
 | **Smoke Mobile** (V1 Android) | TC_181 (khách) → 136 → 146 | ~27 phút | Cần `SM-A` + ảnh test trong máy từ setup · TC_181 chạy **trước** khi đăng nhập · TC_143 dự kiến FAIL |
-| Regression Mobile | TC_181 · 182 → 136 → 190 | ~1 giờ 50 phút | Teardown xoá `SM-A` trên web / API rồi `TK-MB` (và `SM-C` nếu TC_188 chưa xoá được) |
+| Regression Mobile | TC_181 · 182 → 136 → 191 | ~1 giờ 50 phút | Teardown xoá `SM-A` trên web / API rồi `TK-MB` (và `SM-C` nếu TC_188 chưa xoá được) |
 | Mobile `@KnownBug` | TC_143 · 162 · 173 · 175 · 176 · 177 · 187 | ~14 phút | Chạy riêng — dự kiến FAIL · mở bug bằng `/create-bug-report` |
 
 ---
@@ -674,6 +677,7 @@ Phủ một phần: **AVAILABLE → (đã xoá)** TC_188 (trên sách mồ côi 
 
 | Ngày | Thay đổi | Mốc git |
 |---|---|---|
+| 20-10-2026 | Bổ sung theo REQ-BK-BOOK-158 (đo bàn phím sau khi khởi động lại emulator): **+1 TC** `BK_BOOK_TC_191` (part_02) · phủ Mobile **54/54**. Đóng gap #1 của báo cáo review | `79ed070` |
 | 20-10-2026 | `/review-testcases` (REVIEW + sửa lỗi nhỏ user cho phép) — [review/testcase_review_report_mobile_20261020.md](review/testcase_review_report_mobile_20261020.md): viết lại bước 1 của `BK_BOOK_TC_184` cho từng biến thể (biến thể `b` không gõ tìm kiếm). Không đổi số TC | `10d27c5` (trước khi sửa) |
 | 20-10-2026 | `/generate-testcases-from-requirements` Mode QUICK chế độ **BỔ SUNG** (Mobile lượt 2) — theo REQ Android 20-10-2026: **+10 TC · +11 biến thể** (`BK_BOOK_TC_181` → `190`): khách (`01` · `20`) · High to Low (`07`) · nhãn New (`03`, 2 biến thể) · Promotion (`37`) · lượt xem (`42`) · lưu thay đổi lỗi (`155` — `@KnownBug`) · xoá thành công (`50`) · xuống nền (`156`) · Back (`157`). **Sửa Expected** `TC_142` (không chấm biểu tượng / ảnh thu nhỏ — REQ-150) · `TC_143` (thông báo đang tải có thể là `Uploading book...` — REQ-147). Phủ Mobile **53/53** REQ. Thêm trạng thái `N0` · tài khoản `TK-MC` · sách mồ côi `SM-C`. Mở 7/7 ảnh mới, không xung đột. File Mobile 55 TC vượt ngưỡng 50 (GỘP) → **tách** `mobile/test_cases_book_mobile.md` thành `mobile/parts/part_01_mobile_danh_sach.md` (27 TC) · `part_02_mobile_tao_sua_xoa.md` (28 TC), TC ID giữ nguyên, nội dung TC cũ không đổi | `13bdfb6` (trước khi sửa) |
 | 26-09-2026 | `/generate-testcases-from-requirements` Mode QUICK chế độ **BỔ SUNG** — thêm mặt **Mobile (Android)**: **45 TC · 58 biến thể · 33 mục Bảng kiểm** (`BK_BOOK_TC_136` → `180`, 1 file `mobile/test_cases_book_mobile.md`), độ hạt GỘP giữ theo bộ đang có, rủi ro Cao → Đầy đủ. Phủ **43/43** REQ khai Android (34 `Android · Web` + `REQ-51` + 8 chỉ Android). Đã mở 20/20 ảnh evidence Android — không xung đột nội dung (ảnh chi tiết thiếu góc chụp nút `Back` → `ASM-BK-BOOK-08`). 6 TC `@KnownBug` (`143` · `162` · `173` · `175` · `176` · `177`) · 7 `@NeedsVerify` · 5 `@TechCheck`. Thêm `ASM-BK-BOOK-07` → `11`, trạng thái `N1` / `N1f`, dữ liệu `TK-MB` · `SM-A` (tạo trên web / API vì tạo trên app lỗi). **Không** chạm TC Web / API | `1c4898d` (trước khi ghi) |

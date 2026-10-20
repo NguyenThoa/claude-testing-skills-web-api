@@ -6,7 +6,7 @@
 | **Nguồn requirement** | [requirements_book_mobile.md](../../../../../requirements/_book-api/book/mobile/requirements_book_mobile.md) (11 REQ chỉ Android) · REQ dùng chung ở index [REQUIREMENTS_BOOK_SUMMARY.md](../../../../../requirements/_book-api/book/REQUIREMENTS_BOOK_SUMMARY.md) mục 3.2 (39 REQ `Android · Web`) và mục 3.1 (`REQ-BK-BOOK-01` · `42` · `51` `Android · Web · API`) |
 | **Nền tảng** | Android — emulator `Pixel_10_Pro_XL_API_37` · Android 17 · màn hình `1344×2992` · **hướng dọc** (trừ TC_180) · locale `en-US` · app `book.anhtester.com` `1.0 (versionCode 1)`. iOS **chưa khảo sát** — không chạy bộ này trên iOS |
 | **TC trong part này** | 27 TC — `BK_BOOK_TC_` 136 · 137 · 138 · 139 · 144 · 160 · 161 · 162 · 163 · 164 · 165 · 166 · 167 · 168 · 169 · 170 · 171 · 172 · 173 · 178 · 179 · 180 · 181 · 182 · 183 · 184 · 186 · REQ `01 · 02 · 03 · 04 · 05 · 06 · 07 · 09 · 10 · 11 · 12 · 13 · 14 · 15 · 16 · 17 · 18 · 20 · 21 · 41 · 42 · 51 · 149 · 151 · 152 · 153` |
-| **Dải TC ID** | `BK_BOOK_TC_136` → `BK_BOOK_TC_190` (`181` → `190` bổ sung 20-10-2026) — dải chung toàn module `BOOK` (Web `001`→`059` · API `060`→`135`) |
+| **Dải TC ID** | `BK_BOOK_TC_136` → `BK_BOOK_TC_191` (`181` → `191` bổ sung 20-10-2026) — dải chung toàn module `BOOK` (Web `001`→`059` · API `060`→`135`) |
 | **Part còn lại** | [part_02_mobile_tao_sua_xoa.md](part_02_mobile_tao_sua_xoa.md) — form Create · Modify · xoá |
 | **File liền kề** | Web: [../../web/parts/part_01_web_danh_sach.md](../../web/parts/part_01_web_danh_sach.md) · [../../web/parts/part_02_web_tao_sua_xoa.md](../../web/parts/part_02_web_tao_sua_xoa.md) |
 

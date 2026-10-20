@@ -12,9 +12,9 @@
 | **Ngày phân tích** | 25-09-2026 (Web · API) · 26-09-2026 · 20-10-2026 (Android — emulator Android 17, app `book.anhtester.com` 1.0) |
 | **Tài khoản dùng khảo sát** | Web: khách + tài khoản tự tạo `auto_web_<timestamp>_a@auto.test` (đã xoá cuối phiên) · Android 26-09: tài khoản test (tester đăng nhập sẵn) — không sách nào được tạo, không sửa/xoá sách có sẵn · Android 20-10: khách + tài khoản test do tester đăng nhập — tạo thử `Auto Mobile Book <timestamp>` (không tạo được), sửa thử rồi **xoá** sách test còn sót `Auto BKAPI NoPrice <timestamp>` (đã dọn) |
 | **Môi trường dùng chung** | **KHÔNG** (user chốt 14-08-2026) — vẫn chỉ ghi/xoá bản ghi do phiên tạo |
-| **Tổng số REQ** | **157** — `web/` 9 · `api/` 94 · `mobile/` 11 · dùng chung 43 (4 ở mục 3.1 — `01` · `42` · `51` là `Android · Web · API`, `52` `Web · API` · 39 `Android · Web`) |
-| **Dải mã đã dùng** | `REQ-BK-BOOK-01` → `REQ-BK-BOOK-154` (đợt 1 Web `01 → 50` · đợt 2 chốt AMB `DEMO-AMB-2509` `51 → 52`) · đợt 3 API `53 → 146` (`53 → 136` sinh từ spec + gọi thật · `137 → 146` sinh khi chốt AMB `DEMO-AMB-2509B`) · đợt 4 Android `147 → 154` · đợt 5 Android bổ sung `155 → 157` · `AMB-BK-BOOK-01` → `AMB-BK-BOOK-40` · `RISK-BK-BOOK-01` → `RISK-BK-BOOK-10` · `STORY-BK-BOOK-01` → `13` |
-| **Mã kế tiếp** | Đợt phân tích sau bắt đầu từ `REQ-BK-BOOK-158` · `AMB-BK-BOOK-41` · `RISK-BK-BOOK-11` — **KHÔNG đánh lại từ 01** |
+| **Tổng số REQ** | **158** — `web/` 9 · `api/` 94 · `mobile/` 12 · dùng chung 43 (4 ở mục 3.1 — `01` · `42` · `51` là `Android · Web · API`, `52` `Web · API` · 39 `Android · Web`) |
+| **Dải mã đã dùng** | `REQ-BK-BOOK-01` → `REQ-BK-BOOK-158` (đợt 1 Web `01 → 50` · đợt 2 chốt AMB `DEMO-AMB-2509` `51 → 52`) · đợt 3 API `53 → 146` (`53 → 136` sinh từ spec + gọi thật · `137 → 146` sinh khi chốt AMB `DEMO-AMB-2509B`) · đợt 4 Android `147 → 154` · đợt 5 Android bổ sung `155 → 158` · `AMB-BK-BOOK-01` → `AMB-BK-BOOK-40` · `RISK-BK-BOOK-01` → `RISK-BK-BOOK-10` · `STORY-BK-BOOK-01` → `13` |
+| **Mã kế tiếp** | Đợt phân tích sau bắt đầu từ `REQ-BK-BOOK-159` · `AMB-BK-BOOK-41` · `RISK-BK-BOOK-11` — **KHÔNG đánh lại từ 01** |
 | **Ambiguity còn treo** | **0** — 40/40 AMB đã chốt (`38 → 40` ngày 20-10-2026 theo `DEMO-AMB-2010` · `34 → 37` ngày 26-09-2026 theo `DEMO-AMB-2609`) · 33 chốt 25-09-2026 (`01 → 17`: `DEMO-AMB-2509` · `18 → 33`: `DEMO-AMB-2509B` — cùng là dữ liệu dạy học demo) · AMB cấp hệ thống tham chiếu (`AMB-BK-01` · `02` · `03` · `05`) cũng đã chốt |
 
 ---
@@ -53,10 +53,10 @@ Mặt **API** (`/api/book*`) có thêm hai điều mà giao diện che đi: **gi
 | Chung `Web · API` (`01` · `42` · `51` thêm Android) | Index — mục 3.1 | STORY-BK-BOOK-01 · 04 · 05 | `REQ-BK-BOOK-01` · `42` · `51` · `52` (4) |
 | Chung `Android · Web` | Index — mục 3.2 | STORY-BK-BOOK-01 → 07 | `02 → 07` · `09 → 18` · `20 → 34` · `37` · `38` · `41` · `44` · `45` · `48 → 50` (39) |
 | Web | [web/requirements_book_web.md](web/requirements_book_web.md) | STORY-BK-BOOK-01 · 02 · 04 · 05 · 06 | `08` · `19` · `35` · `36` · `39` · `40` · `43` · `46` · `47` (9) |
-| Mobile (Android) | [mobile/requirements_book_mobile.md](mobile/requirements_book_mobile.md) | STORY-BK-BOOK-01 · 02 · 04 · 06 | `REQ-BK-BOOK-147` → `157` (11) |
+| Mobile (Android) | [mobile/requirements_book_mobile.md](mobile/requirements_book_mobile.md) | STORY-BK-BOOK-01 · 02 · 04 · 06 | `REQ-BK-BOOK-147` → `158` (12) |
 | API | [api/requirements_book_api.md](api/requirements_book_api.md) | STORY-BK-BOOK-08 → 13 | `REQ-BK-BOOK-53` → `REQ-BK-BOOK-146` (94) |
 
-Tự kiểm: `4 + 39 + 9 + 94 + 11 = 157` = dải `01 → 157` ✔ — mỗi REQ nằm ở đúng 1 file.
+Tự kiểm: `4 + 39 + 9 + 94 + 12 = 158` = dải `01 → 158` ✔ — mỗi REQ nằm ở đúng 1 file.
 
 | Nội dung | Ở đâu |
 |---|---|
@@ -216,7 +216,7 @@ Entity sách có `status` (`AVAILABLE` / `UNAVAILABLE`) — điều khiển bằ
 | STORY-BK-BOOK-01 | Danh sách & sắp xếp | REQ-BK-BOOK-01 → 09 · 51 · 149 · 151 · 152 | 13 | AMB-BK-BOOK-01 · 03 · 09 · 36 · RISK-BK-BOOK-01 · 02 | Thẻ sách · nhãn New · Sort By · cuộn tải thêm · Android: mất mạng, xoay |
 | STORY-BK-BOOK-02 | Danh mục & bộ lọc | REQ-BK-BOOK-10 → 19 · 153 | 11 | AMB-BK-BOOK-02 · 14 | Tab danh mục · Search · khoảng giá · URL |
 | STORY-BK-BOOK-03 | Quyền thao tác theo trạng thái đăng nhập | REQ-BK-BOOK-20 → 21 | 2 | AMB-BK-BOOK-15 | New book · bút sửa · ⚙ |
-| STORY-BK-BOOK-04 | Tạo sách | REQ-BK-BOOK-22 → 40 · 52 · 147 · 150 · 156 · 157 | 24 | AMB-BK-BOOK-04 · 05 · 06 · 12 · 34 · 39 · RISK-BK-BOOK-03 · 09 | Form, slug, giá, danh mục, ảnh, khuyến mãi, trạng thái · Android: tạo lỗi, Photo Picker, xuống nền, Back |
+| STORY-BK-BOOK-04 | Tạo sách | REQ-BK-BOOK-22 → 40 · 52 · 147 · 150 · 156 → 158 | 25 | AMB-BK-BOOK-04 · 05 · 06 · 12 · 34 · 39 · RISK-BK-BOOK-03 · 09 | Form, slug, giá, danh mục, ảnh, khuyến mãi, trạng thái · Android: tạo lỗi, Photo Picker, xuống nền, Back, bàn phím |
 | STORY-BK-BOOK-05 | Trang chi tiết | REQ-BK-BOOK-41 → 43 | 3 | AMB-BK-BOOK-13 · 17 | Chi tiết · lượt xem · sách không tồn tại |
 | STORY-BK-BOOK-06 | Sửa sách | REQ-BK-BOOK-44 → 47 · 148 · 154 · 155 | 7 | AMB-BK-BOOK-07 · 10 · 37 · 38 | Modify book · slug sinh lại · trạng thái · Android: điều hướng, breadcrumb, lưu lỗi |
 | STORY-BK-BOOK-07 | Xoá sách | REQ-BK-BOOK-48 → 50 | 3 | AMB-BK-BOOK-08 · 11 · 16 · 40 | Confirm delete |
@@ -227,7 +227,7 @@ Entity sách có `status` (`AVAILABLE` / `UNAVAILABLE`) — điều khiển bằ
 | STORY-BK-BOOK-12 | Xoá sách — API | REQ-BK-BOOK-131 → 135 | 5 | — | `DELETE /api/book/{id}` |
 | STORY-BK-BOOK-13 | Quy ước chung của module — API | REQ-BK-BOOK-136 | 1 | — | Error envelope 422 |
 
-**Tổng: 13 Story / 157 REQ** — Web · Android `13 + 11 + 2 + 24 + 3 + 7 + 3 = 63` · API `27 + 6 + 36 + 19 + 5 + 1 = 94` → `63 + 94 = 157 ✔` · mọi REQ thuộc đúng một Story, không mồ côi, không trùng.
+**Tổng: 13 Story / 158 REQ** — Web · Android `13 + 11 + 2 + 25 + 3 + 7 + 3 = 64` · API `27 + 6 + 36 + 19 + 5 + 1 = 94` → `64 + 94 = 158 ✔` · mọi REQ thuộc đúng một Story, không mồ côi, không trùng.
 
 ### Đối chiếu AMB / RISK
 
@@ -330,6 +330,7 @@ Entity sách có `status` (`AVAILABLE` / `UNAVAILABLE`) — điều khiển bằ
 
 | Ngày | Nguồn | REQ ảnh hưởng | Loại | Tóm tắt thay đổi | TC cần xử lý |
 |---|---|---|---|---|---|
+| 20-10-2026 | UI recon Android bổ sung (đo bàn phím sau khi khởi động lại emulator) | REQ-BK-BOOK-158 | 🟢 Thêm | Bàn phím ở form Create: ô đang nhập luôn trên bàn phím · ô giá bàn phím số · thanh điều hướng nổi trên bàn phím · gợi ý danh mục che `Create book` khi bàn phím mở. 2 ảnh | viết mới cho Android |
 | 20-10-2026 | UI recon Android bổ sung · `/generate-requirements-from-mobile` · DEMO-AMB-2010 | REQ-BK-BOOK-155 → 157 | 🟢 Thêm | `155` lưu thay đổi thất bại phải báo lỗi có nội dung — kỳ vọng, **chưa đạt** · `156` form Create giữ dữ liệu khi app xuống nền · `157` Back ở form Create về danh sách không hỏi. Chốt `AMB-BK-BOOK-38 → 40`. 7 ảnh mới. Xoá sách test còn sót `Auto BKAPI NoPrice` (`RISK-BK-BOOK-10`) | viết mới cho Android · `155` `@KnownBug` |
 | 20-10-2026 | UI recon Android bổ sung | REQ-BK-BOOK-01 · 03 · 07 · 20 · 37 · 42 · 50 | 🟢 Thêm | **Mở rộng nền tảng: + Android** — `01` · `42` → `Android · Web · API` (mục 3.1) · `03` · `07` · `20` · `37` · `50` chuyển từ `web/` lên mục 3.2. `03` vế > 7 ngày lần đầu **kiểm chứng thực tế** (Android) · `37` đọc được nội dung bảng khuyến mãi (24 mã còn hiệu lực = API) | viết mới cho Android · TC web giữ nguyên |
 | 20-10-2026 | UI recon Android bổ sung | REQ-BK-BOOK-147 · 150 | 🟡 Sửa | `147` thử lại 2/2 — **vẫn lỗi**, thông báo nay là `Uploading book...` (26-09: `Uploading image...`) · `150` ô ảnh sau khi chọn hiện **ảnh thu nhỏ** (26-09: biểu tượng chung) — cùng bản build `1.0` cài 22-09-2026; AC bỏ assert kiểu hiển thị | `BK_BOOK_TC` của `147` · `150` → review Expected |

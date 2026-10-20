@@ -11,7 +11,7 @@
 | **Tầng network** | ❌ Không quan sát được — chưa dựng proxy, WebView không bật gỡ lỗi. Rule phía server lấy từ web và [api/requirements_book_api.md](../api/requirements_book_api.md) |
 | **Phương pháp** | Thao tác thật trên app ngày 26-09-2026 và 20-10-2026 — đọc thuộc tính phần tử, nhập thử (ô số nhập bằng bàn phím `adb shell input text`), chọn ảnh qua trình chọn ảnh hệ thống, tắt mạng bằng `adb shell svc wifi/data disable`, xoay bằng `settings put system user_rotation`, đưa app xuống nền bằng `appium_app_lifecycle background`, quay màn hình / chụp liên tục để đọc thông báo nổi. Kết quả ghi dữ liệu đối chiếu bằng **đọc công khai** `GET /api/book?search=` · `GET /api/book/<id>` · `GET /api/promotion-book` (không token) |
 | **Tài khoản** | 26-09: tài khoản test do tester đăng nhập — user cho phép tạo/sửa/xoá sách test `Auto Mobile Book <timestamp>`; form sửa chỉ mở trên sách test còn sót, **không** lưu · 20-10: **khách** (app đang chưa đăng nhập) rồi tài khoản test do tester đăng nhập; tạo thử lại sách test, sửa thử rồi **xoá** sách test còn sót `Auto BKAPI NoPrice <timestamp>`. Mục 10 |
-| **REQ trong file này** | **11** — `REQ-BK-BOOK-147` → `157` (chỉ áp Android). Cộng 39 REQ web kiểm khớp trên Android, chuyển lên [index mục 3.2](../REQUIREMENTS_BOOK_SUMMARY.md#32-dùng-chung-android--web) (`Android · Web`) và `REQ-01` · `42` · `51` mở rộng thành `Android · Web · API` |
+| **REQ trong file này** | **12** — `REQ-BK-BOOK-147` → `158` (chỉ áp Android). Cộng 39 REQ web kiểm khớp trên Android, chuyển lên [index mục 3.2](../REQUIREMENTS_BOOK_SUMMARY.md#32-dùng-chung-android--web) (`Android · Web`) và `REQ-01` · `42` · `51` mở rộng thành `Android · Web · API` |
 
 > **Thang `Nguồn`:** `Kiểm chứng thực tế` = đã thao tác trên app và xác nhận bằng ảnh (danh mục mục 9) hoặc số liệu thuộc tính ghi trong AC. Mọi AC chỉ đúng với **thiết bị + hướng màn hình** ở bảng trên.
 
@@ -57,6 +57,7 @@ Không có tài liệu nào cho app — toàn bộ REQ sinh từ khảo sát th�
 | REQ-BK-BOOK-150 | Chọn ảnh bìa qua trình chọn ảnh của hệ thống | Android | Thay REQ-35 · 36 (chọn tệp) trên app | Bấm vùng `Drop or select a files` → trình chọn ảnh của hệ thống mở (cho chọn nhiều, cần bấm `Done`) → quay lại form: dưới vùng chọn có **1 ô ảnh** kèm nút × · nút `Remove all` · lỗi `You must upload at least 1 file` mất. **Không** assert nội dung ô ảnh — cùng bản build, 26-09 hiện biểu tượng ảnh chung, 20-10 hiện ảnh thu nhỏ của ảnh đã chọn. Chuỗi của trình chọn ảnh do hệ điều hành sinh — **cấm** dùng làm assertion | 🟢 | 20-10-2026 · sửa AC | Kiểm chứng thực tế · `android_book_create_filled_part1.png` (26-09) · `android_book_create_filled_thumbnail.png` (20-10) |
 | REQ-BK-BOOK-156 | Dữ liệu form Create book giữ nguyên khi app xuống nền | Android | Vòng đời app | Điền Book name · 1 ảnh · giá `50000` · danh mục `Technology` → đưa app xuống nền 5 giây → mở lại → vẫn ở `Create a new book` · Book name · Slug · ô ảnh · `50.000 VNĐ` · chip `Technology` còn nguyên | 🟢 | — | Kiểm chứng thực tế (20-10-2026) · đọc `text` các ô sau khi quay lại |
 | REQ-BK-BOOK-157 | Back hệ thống ở Create a new book quay về danh sách, không hỏi xác nhận | Android | Nút Back (`AMB-BK-BOOK-39` ✅ chấp nhận hiện trạng) | Form đang có dữ liệu (bàn phím đóng) → nút Back hệ thống → về `Book Management` **ngay**, **không** có hộp hỏi xác nhận · không tạo sách (API công khai 0 bản ghi) · mở lại `New book` → form trống | 🟢 | — | Kiểm chứng thực tế (20-10-2026) · đọc cây phần tử sau Back · đọc lại API công khai |
+| REQ-BK-BOOK-158 | Bàn phím ở form Create a new book không che ô đang nhập; ô giá dùng bàn phím số | Android | Bàn phím (đo với bàn phím ảo **neo đáy** — Gboard, `show_ime_with_hard_keyboard=1`) | (1) Chạm `Book name` → bàn phím chữ mở (mép trên `y 1825` / `2992`), ô nằm trên bàn phím · (2) cuộn tới `Regular price` (ô đang ở dưới mép bàn phím) → chạm → trang **tự cuộn**, ô hiện trọn phía trên bàn phím · bàn phím chuyển sang **bàn phím số** (`0–9` · `,` · `.` · `−`) · (3) chạm `Categories` → bàn phím chữ, ô trên bàn phím, danh sách gợi ý danh mục mở · (4) khi bàn phím mở, **thanh điều hướng đáy** (`Dashboard` … `File`) nổi ngay trên bàn phím; danh sách gợi ý đang mở **che** nút `Create book` → đóng bàn phím (nút ⌄) → `Create book` · `Reset` hiện lại ở đáy form | 🟢 | — | Kiểm chứng thực tế (20-10-2026) · `android_book_create_keyboard_price.png` · `android_book_create_keyboard_categories.png` · `dumpsys input_method` (`mInputShown=true`, `visibleTopInsets=1825`) |
 
 ### 3.4. Sửa sách (STORY-BK-BOOK-06)
 
@@ -66,7 +67,7 @@ Không có tài liệu nào cho app — toàn bộ REQ sinh từ khảo sát th�
 | REQ-BK-BOOK-154 | Breadcrumb Modify book ghi đúng tên màn hình | Android | Kỳ vọng — hiện **chưa đạt** (`AMB-BK-BOOK-37` ✅ chốt là lỗi). Web chưa kiểm | Nút bút trên thẻ → tiêu đề `Modify book` · breadcrumb `Book management / Modify book`. **Hiện tại:** breadcrumb `Book management / Create a new book` | 🟢 | — | Kiểm chứng thực tế — ❌ lệch · `android_book_modify_default_part1.png` |
 | REQ-BK-BOOK-155 | Lưu thay đổi thất bại thì báo lỗi có nội dung | Android | Kỳ vọng — hiện **chưa đạt** (`AMB-BK-BOOK-38` ✅ chốt là lỗi) | `Modify book` → sửa Book name → `Save changes` mà server **không** lưu → thông báo nổi có **chữ** mô tả lỗi, form giữ dữ liệu vừa sửa. **Hiện tại** (sách test còn sót, tác giả đã bị xoá): thông báo nổi chỉ có biểu tượng `!` đỏ và nút ×, **không có chữ** · tên không đổi (đọc lại API công khai) · tái hiện **2/2**. Lưu thành công trên Android (REQ-46) chưa kiểm — cần sách do phiên tạo | 🟢 | — | Kiểm chứng thực tế (20-10-2026) — ❌ lệch · `android_book_modify_save_error_empty.png` (chụp liên tục 14 khung) |
 
-**Tổng trong file: 11 REQ** — Danh sách 3 (`149` · `151` · `152`) · Lọc 1 (`153`) · Tạo 4 (`147` · `150` · `156` · `157`) · Sửa 3 (`148` · `154` · `155`) → `3 + 1 + 4 + 3 = 11 ✔`
+**Tổng trong file: 11 REQ** — Danh sách 3 (`149` · `151` · `152`) · Lọc 1 (`153`) · Tạo 5 (`147` · `150` · `156` · `157` · `158`) · Sửa 3 (`148` · `154` · `155`) → `3 + 1 + 5 + 3 = 12 ✔`
 
 ---
 
@@ -116,7 +117,7 @@ Không có tài liệu nào cho app — toàn bộ REQ sinh từ khảo sát th�
 | Vòng đời app | Form `Create a new book` giữ toàn bộ dữ liệu khi xuống nền 5 giây | REQ-156 |
 | Mất mạng | `No Data`, không báo lỗi mạng | REQ-151 · `AMB-BK-BOOK-36` |
 | Xoay màn hình | Lưới 4 cột, hàng tab có nút cuộn | REQ-152 |
-| Bàn phím | **Chưa đo được** — Gboard trên emulator đang ở chế độ **bàn phím nổi thu gọn** (chỉ một bong bóng ≡, `visibleTopInsets=2833`; vẫn vậy khi bật `show_ime_with_hard_keyboard`) nên không chiếm chỗ — không đại diện bàn phím neo đáy. Cần tắt chế độ nổi trong cài đặt Gboard rồi đo lại | — |
+| Bàn phím | Ô đang nhập luôn hiện trên bàn phím (trang tự cuộn) · ô giá dùng bàn phím số · thanh điều hướng nổi trên bàn phím · danh sách gợi ý danh mục che `Create book` cho tới khi đóng bàn phím. Đo ngày 20-10-2026 sau khi bật `show_ime_with_hard_keyboard=1` **và** khởi động lại Gboard (mặc định emulator có bàn phím vật lý → Gboard chỉ hiện bong bóng ≡) | REQ-158 |
 | Deep link | **Không áp dụng** — app không khai scheme/host | — |
 | Push notification | **Không áp dụng** | — |
 | Phiên bản tối thiểu | Ghi ở `AUTH` (`AMB-BK-AUTH-19`) | — |
@@ -156,6 +157,7 @@ Khách ─ tab Book ─► danh sách (không New book, không bút, không ⚙ 
 | Thông báo nổi mất trong ~1–2 giây | Chụp liên tục (`screencap` lặp) hoặc quay màn hình ngay khi bấm; `Uploading book...` và thông báo lỗi rỗng rất dễ chụp hụt |
 | Kiểm kết quả ghi dữ liệu | Đối chiếu bằng đọc công khai `GET /api/book?search=<tên>` · `GET /api/book/<id>` (404 sau khi xoá) — app không lộ request |
 | Dữ liệu cho TC sửa / xoá | Tạo sách bằng **API** ở setup (REQ-147 chặn việc tạo trên app) |
+| Bàn phím ảo trên emulator | Emulator mặc định có bàn phím vật lý → Gboard chỉ hiện bong bóng ≡. Trước TC bàn phím: `adb shell settings put secure show_ime_with_hard_keyboard 1` rồi `adb shell am force-stop com.google.android.inputmethod.latin`; trả `0` khi xong |
 
 ---
 
@@ -188,6 +190,8 @@ Thư mục [`evidence/`](evidence/). **Mọi ảnh đã mở lại xác nhận �
 | `android_book_create_uploading_book_no_result.png` | Create a new book | `Uploading book...` ngay sau khi bấm | 147 |
 | `android_book_create_promotion_open.png` | Create a new book | Khối Promotion mở — `1–5 of 24` | 37 |
 | `android_book_modify_save_error_empty.png` | Modify book | Sau `Save changes` — thông báo `!` không chữ | 155 |
+| `android_book_create_keyboard_price.png` | Create a new book | Bàn phím số ở ô giá — ô hiện trọn, thanh điều hướng nổi trên bàn phím | 158 |
+| `android_book_create_keyboard_categories.png` | Create a new book | Bàn phím chữ ở ô Categories — danh sách gợi ý mở | 158 |
 | `android_book_delete_success_toast.png` | Danh sách | Khung hình chuyển cảnh — `Deleted successfully.` · `No Data` (trích từ video) | 50 |
 
 REQ không có ảnh riêng, truy bằng số liệu thuộc tính trong AC: 07 · 09 · 13 · 15 · 16 · 23 · 24 · 25 · 29 → 31 · 42 · 45 · 49 · 149 · 153 · 156 · 157.

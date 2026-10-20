@@ -39,7 +39,7 @@
 | 3 | Permission | ✅ | Cột *Khách* của ma trận Android: TC_181 · 182 — ma trận đủ 8/8 ô |
 | 3 | Security | ✅ | TC_182 |
 | 4 | Vòng đời app | ✅ | TC_189 |
-| 4 | Bàn phím (form sách) | ⏭️ | Chưa đo được — bàn phím emulator đang thu gọn; rà lại sau khi đo |
+| 4 | Bàn phím (form sách) | ✅ | Đã đo cùng ngày → `REQ-BK-BOOK-158` · `BK_BOOK_TC_191` |
 
 Đối soát bảng 15 loại field: ➖ — 10 TC không thêm ô nhập mới (form Create đã đối soát ở báo cáo bộ TC gốc).
 
@@ -47,7 +47,7 @@
 
 | # | Kịch bản thiếu | Vòng / Nhánh | Priority đề xuất |
 |---|---|---|---|
-| 1 | Bàn phím mở ở ô `Regular price` / `Categories` không che ô và nút `Create book` | V4 · Bàn phím | Medium — sinh sau khi đo lại với bàn phím đầy đủ |
+| 1 | Bàn phím mở ở ô `Regular price` / `Categories` không che ô và nút `Create book` | V4 · Bàn phím | ✅ **Đã đóng** cùng ngày — `REQ-BK-BOOK-158` · `BK_BOOK_TC_191` |
 
 ## TC trùng lặp — đề xuất merge
 
@@ -56,5 +56,5 @@ Không có. TC_188 (xoá thật) và TC_146 (huỷ xoá) khác kết quả kiể
 ## Kết luận & Khuyến nghị
 
 - 10/10 TC 🟢; sửa diễn đạt bước 1 của TC_184
-- Đo lại bàn phím ở form sách rồi sinh TC cho gap #1
+- Gap #1 (bàn phím form sách) đã đóng: `REQ-BK-BOOK-158` · `BK_BOOK_TC_191`
 - Khi Dev sửa REQ-147 / 155: khai Android cho REQ-39 · 40 · 46 · 47 · 52, tách kịch bản lưu thành công khỏi TC_187
