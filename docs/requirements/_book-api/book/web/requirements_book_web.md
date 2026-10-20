@@ -10,7 +10,7 @@
 | **Trình duyệt khảo sát** | Google Chrome 153 (Playwright MCP, headed), viewport đo được `1600 × 750`, `navigator.language = en-US`. Mọi AC về hiển thị **chỉ đúng với trình duyệt + viewport này** |
 | **Tầng network** | ✅ Quan sát **thụ động** request do UI phát sinh. **Không** gọi API trực tiếp |
 | **Phương pháp** | Thao tác thật ngày 25-09-2026 — khách và tài khoản tự tạo `auto_web_<timestamp>_a@auto.test`. Tạo / sửa / xoá **chỉ** trên 1 cuốn sách do phiên tạo; sách của người khác chỉ xem, **không** mở trang chi tiết (tránh làm tăng lượt xem) |
-| **REQ trong file này** | **14** — `03` · `07` · `08` · `19` · `20` · `35` · `36` · `37` · `39` · `40` · `43` · `46` · `47` · `50`. 34 REQ khác kiểm khớp trên Android ngày 26-09-2026 → **chuyển lên** [index mục 3.2](../REQUIREMENTS_BOOK_SUMMARY.md#32-dùng-chung-android--web) (`Android · Web`). Trước đó: **48** — `REQ-BK-BOOK-02` → `50` trừ `42`. 4 REQ `01` · `42` · `51` · `52` kiểm chứng khớp trên API (25-09-2026) → **chuyển lên index** (dùng chung `Web · API`), mã giữ nguyên |
+| **REQ trong file này** | **9** — `08` · `19` · `35` · `36` · `39` · `40` · `43` · `46` · `47`. `03` · `07` · `20` · `37` · `50` kiểm khớp trên Android ngày 20-10-2026 → **chuyển lên** index mục 3.2. Trước đó **14** — 34 REQ khác kiểm khớp trên Android ngày 26-09-2026 → **chuyển lên** [index mục 3.2](../REQUIREMENTS_BOOK_SUMMARY.md#32-dùng-chung-android--web) (`Android · Web`). Trước đó: **48** — `REQ-BK-BOOK-02` → `50` trừ `42`. 4 REQ `01` · `42` · `51` · `52` kiểm chứng khớp trên API (25-09-2026) → **chuyển lên index** (dùng chung `Web · API`), mã giữ nguyên |
 
 > **Thang `Nguồn`:** `Kiểm chứng thực tế` = đã thao tác và xác nhận bằng ảnh hoặc số liệu DOM/network ghi trong AC · `API · <METHOD> <path>` = quan sát thụ động request do UI gửi · `❌ lệch (AMB-…)` = AC ghi hành vi **kỳ vọng**, hệ thống hiện chưa đạt.
 
@@ -28,8 +28,6 @@ Không có tài liệu nào cho màn hình này — toàn bộ REQ sinh từ kh�
 
 | REQ ID | Tên yêu cầu | Mô tả | Acceptance Criteria | Trạng thái | Cập nhật lần cuối | Nguồn |
 |---|---|---|---|---|---|---|
-| REQ-BK-BOOK-03 | Sách tạo trong vòng 7 ngày có nhãn New | Tiêu chí "mới" = tạo trong vòng **7 ngày** (`AMB-BK-BOOK-03` ✅) | Sách vừa tạo trong ngày hiển thị nhãn `New` ở góc thẻ (danh sách) và `NEW` ở trang chi tiết · sách có ngày tạo (hiện trên thẻ) cách ngày hiện tại **quá 7 ngày** **không** có nhãn `New` | 🟡 | 25-09-2026 · DEMO-AMB-2509 | Kiểm chứng thực tế (vế trong ngày) · `web_book_modify_success_toast_viewport.png` · `web_book_detail_own_viewport.png` · vế > 7 ngày: quyết định PO — **chưa kiểm chứng** |
-| REQ-BK-BOOK-07 | Price: High to Low sắp theo giá bán giảm dần | | Chọn `Price: High to Low` → request `sort=currentPrice&sortBy=desc` | 🟢 | — | Kiểm chứng thực tế · API · GET /api/book (tham số) |
 | REQ-BK-BOOK-08 | Kiểu sắp xếp ghi lên URL và áp dụng lại khi mở URL | | Chọn `Price: Low to High` → URL thêm `?sort=Price%3A+Low+to+High`. Mở thẳng `/book-management?sort=Price%3A+High+to+Low` → nút hiện `Sort By: Price: High to Low` · request `sort=currentPrice&sortBy=desc` | 🟢 | — | Kiểm chứng thực tế · đọc URL + nhãn nút |
 
 ### 3.2. Danh mục & bộ lọc (STORY-BK-BOOK-02)
@@ -42,17 +40,15 @@ Không có tài liệu nào cho màn hình này — toàn bộ REQ sinh từ kh�
 
 | REQ ID | Tên yêu cầu | Mô tả | Acceptance Criteria | Trạng thái | Cập nhật lần cuối | Nguồn |
 |---|---|---|---|---|---|---|
-| REQ-BK-BOOK-20 | Khách không có nút tạo, sửa, quản lý danh mục | | Chưa đăng nhập → **không** có `New book` · thẻ sách **không** có nút bút · cuối hàng tab **không** có icon ⚙ | 🟢 | — | Kiểm chứng thực tế · `web_book_list_guest_viewport.png` · đọc DOM (0 nút trong thẻ) |
 
 ### 3.4. Tạo sách (STORY-BK-BOOK-04)
 
-> ↗️ 34 REQ (`02` · `04 → 06` · `09 → 18` · `21 → 34` · `38` · `41` · `44` · `45` · `48` · `49`) **đã chuyển lên index** mục 3.2 ngày 26-09-2026 (kiểm khớp trên Android). REQ còn lại ở file này chưa kiểm được trên Android — lý do ở [../mobile/requirements_book_mobile.md mục 2](../mobile/requirements_book_mobile.md#2-bản-đồ-phủ-tài-liệu).
+> ↗️ 34 REQ (`02` · `04 → 06` · `09 → 18` · `21 → 34` · `38` · `41` · `44` · `45` · `48` · `49`) **đã chuyển lên index** mục 3.2 ngày 26-09-2026 (kiểm khớp trên Android) · thêm `03` · `07` · `20` · `37` · `50` ngày 20-10-2026. REQ còn lại ở file này chưa kiểm được trên Android — lý do ở [../mobile/requirements_book_mobile.md mục 2](../mobile/requirements_book_mobile.md#2-bản-đồ-phủ-tài-liệu).
 
 | REQ ID | Tên yêu cầu | Mô tả | Acceptance Criteria | Trạng thái | Cập nhật lần cuối | Nguồn |
 |---|---|---|---|---|---|---|
 | REQ-BK-BOOK-35 | Tệp không phải ảnh không được thêm | | Chọn tệp `.txt` qua `browse` → **không** có ảnh xem trước, lỗi `You must upload at least 1 file` vẫn còn · **không** có thông báo riêng (`AMB-BK-BOOK-12`). Ô tệp có `accept` = 7 định dạng ảnh | 🟢 | — | Kiểm chứng thực tế · đọc DOM sau khi chọn tệp |
 | REQ-BK-BOOK-36 | Ảnh hợp lệ hiện xem trước, tải lên khi tạo sách | | Chọn ảnh PNG → hiện ảnh xem trước + nút `Remove all` · lỗi Picture mất · **chưa** tải lên. Bấm `Create book` → `POST /api/file` (200) rồi `POST /api/book` với `pictures` = `["/$book-image/<slug>/<tên tệp>_<4 ký tự>.png"]` | 🟢 | — | Kiểm chứng thực tế · `web_book_create_filled_fullpage.png` · API · POST /api/file → 200 |
-| REQ-BK-BOOK-37 | Chọn khuyến mãi chỉ từ khuyến mãi còn hiệu lực | | Mở khối `Promotion` → request `GET /api/promotion-book?limit=5&page=1` với điều kiện `endDate ≥ thời điểm hiện tại` **và** `isActive = true`, kèm ô tìm theo `name` / `code` | 🟢 | — | API · GET /api/promotion-book (tham số) — nội dung bảng chưa đọc |
 | REQ-BK-BOOK-39 | Tạo sách thành công | | Điền hợp lệ → `Create book` → thông báo `Book created successfully.` · quay về `/book-management` **giữ** bộ lọc lúc bấm New book (VD `?category=+Test`). Network: `POST /api/book` → **200** | 🟢 | — | Kiểm chứng thực tế · `web_book_create_success_toast_viewport.png` |
 | REQ-BK-BOOK-40 | Sách mới xuất hiện đầu danh sách Newest | Tác tạo dùng được (skill 4.3.8) | Sau REQ-39 → `Sort By: Newest` → thẻ đầu là sách vừa tạo, nhãn `New`, đúng tên, ảnh, giá `50.000 ₫` | 🟢 | — | Kiểm chứng thực tế · đọc thẻ đầu bằng DOM (ảnh `web_book_modify_success_toast_viewport.png` là cùng vị trí sau khi đã đổi tên) |
 
@@ -73,9 +69,8 @@ Không có tài liệu nào cho màn hình này — toàn bộ REQ sinh từ kh�
 
 | REQ ID | Tên yêu cầu | Mô tả | Acceptance Criteria | Trạng thái | Cập nhật lần cuối | Nguồn |
 |---|---|---|---|---|---|---|
-| REQ-BK-BOOK-50 | Xác nhận xoá gỡ sách | | `Delete` trong hộp → thông báo `Deleted successfully.` · về danh sách · sách **không** còn. Network: `DELETE /api/book/<id>` → **200** · mở lại URL chi tiết → REQ-43 | 🟢 | — | Kiểm chứng thực tế · `web_book_delete_success_toast_viewport.png` |
 
-**Tổng đợt Web: 52 REQ** (14 còn ở file này + 4 ở index 3.1 + 34 ở index 3.2) — Danh sách 10 (`01 → 09` · `51`) · Danh mục & lọc 10 (`10 → 19`) · Quyền 2 (`20 · 21`) · Tạo 20 (`22 → 40` · `52`) · Chi tiết 3 (`41 → 43`) · Sửa 4 (`44 → 47`) · Xoá 3 (`48 → 50`) → `10 + 10 + 2 + 20 + 3 + 4 + 3 = 52 ✔`
+**Tổng đợt Web: 52 REQ** (9 còn ở file này + 4 ở index 3.1 + 39 ở index 3.2) — Danh sách 10 (`01 → 09` · `51`) · Danh mục & lọc 10 (`10 → 19`) · Quyền 2 (`20 · 21`) · Tạo 20 (`22 → 40` · `52`) · Chi tiết 3 (`41 → 43`) · Sửa 4 (`44 → 47`) · Xoá 3 (`48 → 50`) → `10 + 10 + 2 + 20 + 3 + 4 + 3 = 52 ✔`
 
 > ↑ `REQ-BK-BOOK-01` · `42` · `51` · `52` **đã chuyển lên index** [`../REQUIREMENTS_BOOK_SUMMARY.md` mục 3](../REQUIREMENTS_BOOK_SUMMARY.md#31-web--api) ngày 25-09-2026 — kiểm chứng khớp trên API, `Nền tảng` = `Web · API`. Mã giữ nguyên; ảnh evidence ở lại `web/evidence/`. Tổng module: 52 REQ web = 48 ở file này + 4 ở index.
 

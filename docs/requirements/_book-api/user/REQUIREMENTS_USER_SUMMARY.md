@@ -7,15 +7,15 @@
 | **Hệ thống** | AnhTester Book Management — mã hệ thống `BK` (namespace `_book-api/`) |
 | **Module** | Người dùng — quản lý tài khoản người dùng (danh sách, tìm/lọc, thêm, sửa, khoá/mở, xoá). Hồ sơ **của chính mình** (My Profile, Setting account) thuộc module `AUTH` |
 | **Prefix** | `USER` → mã REQ `REQ-BK-USER-<nn>` · TC ID `BK_USER_TC_<nnn>` |
-| **Nền tảng** | **Web** ✅ (25-09-2026) · **API** ✅ (25-09-2026 — 5 operation `GET/POST /api/user` · `GET/PATCH/DELETE /api/user/{id}`) · **Android** 🟨 (26-09-2026 — danh sách · lọc · validation ✅; thêm/sửa/khoá/xoá thành công ❔ — cần tester nhập mật khẩu) · iOS ❔ |
-| **Nguồn phân tích** | Web: thao tác thật trên `https://book.anhtester.com/user-management` (Chrome, Playwright MCP) ngày 25-09-2026 · API: spec OpenAPI (snapshot 19-09-2026, `sha256` trùng bản tải lại 25-09-2026) + ≈ 360 request gọi thật ngày 25-09-2026 · Android: thao tác thật trên app `book.anhtester.com` 1.0 (emulator Android 17) ngày 26-09-2026 — chi tiết ở file nền tảng |
-| **Ngày phân tích** | 25-09-2026 (Web · API) · 26-09-2026 (Android) |
-| **Tài khoản dùng khảo sát** | Web: khách + 2 tài khoản tự tạo `auto_web_<timestamp>_a|b@auto.test` — sửa/xoá **chỉ** trên 2 tài khoản này · Android: tài khoản test `auto_demo_account_<timestamp>` (tester đăng nhập sẵn), không tạo/sửa/xoá tài khoản nào |
+| **Nền tảng** | **Web** ✅ (25-09-2026) · **API** ✅ (25-09-2026 — 5 operation `GET/POST /api/user` · `GET/PATCH/DELETE /api/user/{id}`) · **Android** 🟨 (26-09-2026 — danh sách · lọc · validation ✅ · 20-10-2026 — khách ✅ · xoá ✅ · **sửa / khoá lỗi** (REQ-129) · thêm thành công · email trùng ❔ — cần nhập mật khẩu) · iOS ❔ |
+| **Nguồn phân tích** | Web: thao tác thật trên `https://book.anhtester.com/user-management` (Chrome, Playwright MCP) ngày 25-09-2026 · API: spec OpenAPI (snapshot 19-09-2026, `sha256` trùng bản tải lại 25-09-2026) + ≈ 360 request gọi thật ngày 25-09-2026 · Android: thao tác thật trên app `book.anhtester.com` 1.0 (emulator Android 17) ngày 26-09-2026 và 20-10-2026 — chi tiết ở file nền tảng |
+| **Ngày phân tích** | 25-09-2026 (Web · API) · 26-09-2026 · 20-10-2026 (Android) |
+| **Tài khoản dùng khảo sát** | Web: khách + 2 tài khoản tự tạo `auto_web_<timestamp>_a|b@auto.test` — sửa/xoá **chỉ** trên 2 tài khoản này · Android 26-09: tài khoản test (tester đăng nhập sẵn), không tạo/sửa/xoá · Android 20-10: khách + tài khoản test do tester đăng nhập; **sửa thử rồi xoá** tài khoản test còn sót `auto_web_<timestamp>_b@auto.test` (đã dọn). Agent không nhập mật khẩu, không tạo tài khoản |
 | **Môi trường dùng chung** | **KHÔNG** (user chốt 14-08-2026) — vẫn chỉ ghi/xoá bản ghi do phiên tạo |
-| **Tổng số REQ** | **128** — `web/` 7 · `api/` 77 · `mobile/` 9 · dùng chung 35 (4 `Web · API` · 31 `Android · Web`) |
-| **Dải mã đã dùng** | `REQ-BK-USER-01` → `REQ-BK-USER-128` (đợt 1 Web `01 → 42` · đợt 2 API `43 → 115` · đợt 3 chốt AMB `DEMO-AMB-2509B` `116 → 119` · đợt 4 Android `120 → 128`) · `AMB-BK-USER-01` → `AMB-BK-USER-20` · `RISK-BK-USER-01` → `RISK-BK-USER-09` · `STORY-BK-USER-01` → `12` |
-| **Mã kế tiếp** | Đợt phân tích sau bắt đầu từ `REQ-BK-USER-129` · `AMB-BK-USER-21` · `RISK-BK-USER-10` — **KHÔNG đánh lại từ 01** |
-| **Ambiguity còn treo** | **0** — 20/20 AMB đã chốt (`18 → 20` ngày 26-09-2026 theo `DEMO-AMB-2609`) · 17 chốt 25-09-2026 (`01 → 07`: `DEMO-AMB-2509` · `08 → 17`: `DEMO-AMB-2509B` — cùng là dữ liệu dạy học demo) · AMB cấp hệ thống tham chiếu (`AMB-BK-01` · `02` · `08` · `12`) cũng đã chốt |
+| **Tổng số REQ** | **130** — `web/` 5 · `api/` 77 · `mobile/` 11 · dùng chung 37 (4 ở mục 3.1 — `01` là `Android · Web · API`, 3 `Web · API` · 33 `Android · Web`) |
+| **Dải mã đã dùng** | `REQ-BK-USER-01` → `REQ-BK-USER-130` (đợt 1 Web `01 → 42` · đợt 2 API `43 → 115` · đợt 3 chốt AMB `DEMO-AMB-2509B` `116 → 119` · đợt 4 Android `120 → 128` · đợt 5 Android bổ sung `129 → 130`) · `AMB-BK-USER-01` → `AMB-BK-USER-21` · `RISK-BK-USER-01` → `RISK-BK-USER-09` · `STORY-BK-USER-01` → `12` |
+| **Mã kế tiếp** | Đợt phân tích sau bắt đầu từ `REQ-BK-USER-131` · `AMB-BK-USER-22` · `RISK-BK-USER-10` — **KHÔNG đánh lại từ 01** |
+| **Ambiguity còn treo** | **0** — 21/21 AMB đã chốt (`21` ngày 20-10-2026 theo `DEMO-AMB-2010` · `18 → 20` ngày 26-09-2026 theo `DEMO-AMB-2609`) · 17 chốt 25-09-2026 (`01 → 07`: `DEMO-AMB-2509` · `08 → 17`: `DEMO-AMB-2509B` — cùng là dữ liệu dạy học demo) · AMB cấp hệ thống tham chiếu (`AMB-BK-01` · `02` · `08` · `12`) cũng đã chốt |
 
 ---
 
@@ -40,7 +40,8 @@ Người dùng có một trạng thái nghiệp vụ: **Active / Inactive** (cô
 | My Profile · Setting account | Thuộc module `AUTH` (REQ-BK-AUTH-101 → 119) dù nằm dưới breadcrumb `User management` |
 | Tải ảnh đại diện (Upload photo) | Quy tắc đã chốt (3.0 MB · 7 định dạng) nhưng **để ngoài phạm vi** đợt kiểm thử web này — khảo sát cùng module `FILE` (`AMB-BK-USER-05` ✅) |
 | Bộ lọc với Field kiểu ngày (`Created At` · `Updated At`) và `Is Active` | Chưa thử — chỉ thử `Email` và `Phone` |
-| Android: khách chưa đăng nhập · thêm/sửa/khoá/xoá thành công · email trùng (REQ-01 · 19 · 32 · 33 · 34 · 35 · 37 → 40 · 42) | Chưa kiểm ở lượt 26-09-2026 — cần tester nhập mật khẩu / tạo tài khoản (agent không làm trên hệ thống thật). Chi tiết [mobile/ mục 2](mobile/requirements_user_mobile.md#2-bản-đồ-phủ-tài-liệu) |
+| Android: thêm người dùng · email trùng · mật khẩu xác nhận · đăng nhập tài khoản vừa tạo (REQ-32 · 33 · 34 · 35) | Cần nhập mật khẩu / tạo tài khoản — agent không làm trên hệ thống production. Chi tiết [mobile/ mục 2](mobile/requirements_user_mobile.md#2-bản-đồ-phủ-tài-liệu) |
+| Android: sửa · khoá / mở · để trống mật khẩu khi sửa (REQ-37 · 38 · 39 · 40) | **Bị chặn** — Update user trên Android lỗi (REQ-129, 20-10-2026). Kiểm lại khi REQ-129 sửa xong |
 | Tải lên ảnh đại diện qua API (`/api/file`) | Thuộc module `FILE` |
 | Vai trò khác ngoài "người dùng tự đăng ký" | Hệ thống **không có** mô hình vai trò — `AMB-BK-01` · `AMB-BK-USER-01` ✅ chốt 25-09-2026 |
 
@@ -50,13 +51,13 @@ Người dùng có một trạng thái nghiệp vụ: **Active / Inactive** (cô
 
 | Nền tảng | File | Story | REQ bao phủ |
 |---|---|---|---|
-| Chung `Web · API` | Index — mục 3.1 | STORY-BK-USER-01 · 04 · 05 | `REQ-BK-USER-01` · `33` · `35` · `38` (4) |
-| Chung `Android · Web` | Index — mục 3.2 | STORY-BK-USER-01 → 06 | `02 → 18` · `20 → 31` · `36` · `41` (31) |
-| Web | [web/requirements_user_web.md](web/requirements_user_web.md) | STORY-BK-USER-03 → 06 | `19` · `32` · `34` · `37` · `39` · `40` · `42` (7) |
-| Mobile (Android) | [mobile/requirements_user_mobile.md](mobile/requirements_user_mobile.md) | STORY-BK-USER-01 · 02 · 04 | `REQ-BK-USER-120` → `128` (9) |
+| Chung `Web · API` (`01` thêm Android) | Index — mục 3.1 | STORY-BK-USER-01 · 04 · 05 | `REQ-BK-USER-01` · `33` · `35` · `38` (4) |
+| Chung `Android · Web` | Index — mục 3.2 | STORY-BK-USER-01 → 06 | `02 → 31` · `36` · `41` · `42` (33) |
+| Web | [web/requirements_user_web.md](web/requirements_user_web.md) | STORY-BK-USER-04 · 05 | `32` · `34` · `37` · `39` · `40` (5) |
+| Mobile (Android) | [mobile/requirements_user_mobile.md](mobile/requirements_user_mobile.md) | STORY-BK-USER-01 · 02 · 04 · 05 | `REQ-BK-USER-120` → `130` (11) |
 | API | [api/requirements_user_api.md](api/requirements_user_api.md) | STORY-BK-USER-07 → 12 | `REQ-BK-USER-43` → `REQ-BK-USER-119` (77) |
 
-Tự kiểm: `4 + 31 + 7 + 77 + 9 = 128` = dải `01 → 128` ✔ — mỗi REQ nằm ở đúng 1 file.
+Tự kiểm: `4 + 33 + 5 + 77 + 11 = 130` = dải `01 → 130` ✔ — mỗi REQ nằm ở đúng 1 file.
 
 | Nội dung | Ở đâu |
 |---|---|
@@ -69,20 +70,20 @@ Tự kiểm: `4 + 31 + 7 + 77 + 9 = 128` = dải `01 → 128` ✔ — mỗi REQ 
 
 ## 3. Yêu cầu dùng chung
 
-### 3.1. Web · API
+### 3.1. Web · API (`REQ-01` thêm Android)
 
-Bốn REQ dưới đây sinh ở đợt Web (25-09-2026), **chuyển lên index** cùng ngày khi kiểm khớp trên API; mã giữ nguyên, AC viết lại ở mức **rule** rồi thêm vế **Web** / **API**. Ảnh evidence ở lại `web/evidence/`.
+Bốn REQ dưới đây sinh ở đợt Web (25-09-2026), **chuyển lên index** cùng ngày khi kiểm khớp trên API; mã giữ nguyên, AC viết lại ở mức **rule** rồi thêm vế **Web** / **API**. Ảnh evidence ở lại `web/evidence/`. `REQ-01` kiểm khớp trên Android ngày 20-10-2026 → `Android · Web · API`.
 
 | REQ ID | Tên yêu cầu | Nền tảng | Mô tả | Acceptance Criteria | Trạng thái | Cập nhật lần cuối | Nguồn |
 |---|---|---|---|---|---|---|---|
-| REQ-BK-USER-01 | Không cần đăng nhập vẫn xem được danh sách người dùng | Web · API | Hành vi hiện tại — **cùng bản chất F-01** (`AMB-BK-02` ✅ cố ý) | Chưa đăng nhập / không gửi token → danh sách người dùng trả về, mỗi bản ghi có tên · **email** · **số điện thoại** · **địa chỉ**. **Web:** mở `/user-management` → bảng hiển thị; network `GET /api/user?sortBy=desc&sort=updatedAt&page=1&limit=5&search=` → 200 (không token). **API:** `GET /api/user?limit=2&page=1` không `Authorization` → **200** · `list` có đủ các khoá (REQ-43) | 🟢 | 25-09-2026 · + API | Web: Kiểm chứng thực tế · `web_user_list_guest_viewport.png` · API: Spec (`security: []`) + kiểm chứng thực tế · GET /api/user → 200 (K-01) |
+| REQ-BK-USER-01 | Không cần đăng nhập vẫn xem được danh sách người dùng | Android · Web · API | Hành vi hiện tại — **cùng bản chất F-01** (`AMB-BK-02` ✅ cố ý) | Chưa đăng nhập / không gửi token → danh sách người dùng trả về, mỗi bản ghi có tên · **email** · **số điện thoại** · **địa chỉ**. **Web:** mở `/user-management` → bảng hiển thị; network `GET /api/user?sortBy=desc&sort=updatedAt&page=1&limit=5&search=` → 200 (không token). **API:** `GET /api/user?limit=2&page=1` không `Authorization` → **200** · `list` có đủ các khoá (REQ-43) · **Android:** chưa đăng nhập (Dashboard hiện thẻ `Book management sign in`) → tab `User` → `User Management` hiện 5 dòng (tên + email), vuốt ngang thấy `Phone` · `Address` · `Active` · `Created` · `Updated` · phân trang nhiều trang | 🟢 | 25-09-2026 · + API · 20-10-2026 · + Android | Web: Kiểm chứng thực tế · `web_user_list_guest_viewport.png` · API: Spec (`security: []`) + kiểm chứng thực tế · GET /api/user → 200 (K-01) · Android: Kiểm chứng thực tế · `android_user_list_guest_hscroll_end.png` |
 | REQ-BK-USER-33 | Email đã tồn tại bị từ chối khi tạo người dùng | Web · API | Rule do server quyết định | Tạo người dùng với email của tài khoản **đã có** (kể cả viết HOA) → bị từ chối với thông báo `Email already exists.`, **không** tạo bản thứ hai. **Web:** `Save` → dưới ô Email `Email already exists.` + thông báo nổi cùng câu · hộp thoại **vẫn mở**, dữ liệu giữ nguyên · `POST /api/user` → **422**. **API:** `POST /api/user` (Bearer hợp lệ) → **422** · `msg` = `Email already exists.` · `fields.email` chứa cùng câu · mật khẩu của tài khoản có sẵn **không** đổi | 🟢 | 25-09-2026 · + API | Web: Kiểm chứng thực tế · `web_user_add_email_exists_viewport.png` · API: Spec + kiểm chứng thực tế · POST /api/user → 422 (K-42) |
 | REQ-BK-USER-35 | Tài khoản vừa tạo đăng nhập được bằng mật khẩu đã đặt | Web · API | Tác tạo dùng được (skill 4.3.8) | Tài khoản tạo (Active bật) → đăng nhập đúng email + mật khẩu đã đặt lúc tạo → thành công. **Web:** Sign in → Dashboard · `Login successfully.` · **API:** `POST /api/login` → **200** | 🟢 | 25-09-2026 · + API | Web: Kiểm chứng thực tế · API · POST /api/login → 200 · API: Kiểm chứng thực tế · POST /api/login → 200 (K-35) |
 | REQ-BK-USER-38 | Để trống mật khẩu khi cập nhật thì mật khẩu không đổi | Web · API | Rule do server quyết định | (1) Cập nhật người dùng với `password` rỗng → (2) đăng nhập bằng mật khẩu **cũ** → đăng nhập được. **Web:** 2 ô mật khẩu trống → request gửi `password: ""`. **API:** `PATCH /api/user/{id}` body `{name, email, password: ""}` → **200** → `POST /api/login` mật khẩu cũ → **200** | 🟢 | 25-09-2026 · + API | Web: Kiểm chứng thực tế · API · POST /api/login → 200 sau Update · API: Kiểm chứng thực tế · PATCH → 200 (K-67) |
 
 ### 3.2. Dùng chung Android · Web
 
-REQ sinh ở đợt Web (25-09-2026), **chuyển lên index** ngày 26-09-2026 khi kiểm khớp trên app Android; mã giữ nguyên, AC Web giữ nguyên văn và thêm vế **Android**. Ảnh Web ở lại `web/evidence/`, ảnh Android ở `mobile/evidence/`. REQ Web chưa kiểm được trên Android (khách chưa đăng nhập · thêm/sửa/khoá/xoá thành công — cần tester nhập mật khẩu) vẫn ở `web/` — lý do ở [mobile/requirements_user_mobile.md mục 2](mobile/requirements_user_mobile.md#2-bản-đồ-phủ-tài-liệu).
+REQ sinh ở đợt Web (25-09-2026), **chuyển lên index** ngày 26-09-2026 khi kiểm khớp trên app Android; mã giữ nguyên, AC Web giữ nguyên văn và thêm vế **Android**. Ảnh Web ở lại `web/evidence/`, ảnh Android ở `mobile/evidence/`. `19` · `42` chuyển lên ngày 20-10-2026. REQ Web chưa kiểm được trên Android (thêm người dùng — cần nhập mật khẩu · sửa/khoá — Update user Android lỗi, REQ-129) vẫn ở `web/` — lý do ở [mobile/requirements_user_mobile.md mục 2](mobile/requirements_user_mobile.md#2-bản-đồ-phủ-tài-liệu).
 
 | REQ ID | Tên yêu cầu | Nền tảng | Mô tả | Acceptance Criteria | Trạng thái | Cập nhật lần cuối | Nguồn |
 |---|---|---|---|---|---|---|---|
@@ -103,6 +104,7 @@ REQ sinh ở đợt Web (25-09-2026), **chuyển lên index** ngày 26-09-2026 k
 | REQ-BK-USER-16 | Add filter thêm điều kiện nối AND/OR | Android · Web |  | **Web:** Bấm `Add filter` → thêm dòng điều kiện mới (Field `Name`, Operator `Equals (=)`) có ô nối ở đầu dòng mặc định `AND`, mở ra có `AND` · `OR` **Android:** `Add filter` → dòng mới `Name` · `Equals (=)` · ô nối `AND` (id `mui-component-select-mode`) — mở ra `AND` · `OR` | 🟢 | 26-09-2026 · + Android | Web: Kiểm chứng thực tế · `web_user_filter_two_conditions_viewport.png` · đọc `role=option` · Android: Kiểm chứng thực tế · android_user_filter_two_conditions.png |
 | REQ-BK-USER-17 | Clear filter xoá điều kiện và đóng bảng lọc | Android · Web |  | **Web:** Có điều kiện lọc → `Clear filter` → bảng lọc đóng · ô `Search user…` hiện lại · danh sách trở về đầy đủ (số trang như trước khi lọc) **Android:** `Clear filter` → bảng lọc đóng · ô tìm kiếm hiện lại · phân trang trở lại số trang ban đầu | 🟢 | 26-09-2026 · + Android | Web: Kiểm chứng thực tế · đọc DOM sau thao tác · Android: Kiểm chứng thực tế · đọc cây phần tử sau thao tác |
 | REQ-BK-USER-18 | Icon cạnh tiêu đề cột mở bảng lọc theo cột đó | Android · Web |  | **Web:** Bấm icon lọc cạnh tiêu đề `Phone` → bảng lọc mở với Field = `Phone` **Android:** vuốt ngang bảng → icon lọc cạnh tiêu đề `Phone` → bảng lọc mở với Field `Phone` | 🟢 | 26-09-2026 · + Android | Web: Kiểm chứng thực tế · đọc giá trị combobox Field · Android: Kiểm chứng thực tế · đọc `text` combobox Field |
+| REQ-BK-USER-19 | Khách không có nút tạo và nút thao tác dòng | Android · Web |  | **Web:** Chưa đăng nhập → **không** có nút `New user` · **không** có cột nút ⋮ **Android:** chưa đăng nhập → tab `User`: cạnh tiêu đề `User Management` **không** có nút `New user` · vuốt ngang bảng tới cột cuối `Updated` → **không** có cột nút ⋮ (cây phần tử chỉ có nút avatar · icon lọc · nút tiêu đề cột · nút phân trang) | 🟢 | 20-10-2026 · + Android | Web: Kiểm chứng thực tế · `web_user_list_guest_viewport.png` · đọc DOM · Android: Kiểm chứng thực tế · `android_user_list_guest_hscroll_end.png` · đọc cây phần tử |
 | REQ-BK-USER-20 | Đã đăng nhập có nút New user và nút ⋮ mỗi dòng | Android · Web |  | **Web:** Đăng nhập → nút `New user` cạnh tiêu đề `User Management` · mỗi dòng có nút ⋮ ở cột cuối **Android:** đã đăng nhập → nút `New user` cạnh tiêu đề · mỗi dòng có nút ⋮ (không nhãn) | 🟢 | 26-09-2026 · + Android | Web: Kiểm chứng thực tế · `web_user_row_menu_other_enabled_viewport.png` · Android: Kiểm chứng thực tế · android_user_row_menu_other_enabled.png |
 | REQ-BK-USER-21 | Dòng của chính mình có nhãn "You" | Android · Web |  | **Web:** Dòng của tài khoản đang đăng nhập hiện nhãn `You` cạnh tên **Android:** dòng của tài khoản đang đăng nhập hiện `You` cạnh tên | 🟢 | 26-09-2026 · + Android | Web: Kiểm chứng thực tế · `web_user_row_menu_self_disabled_viewport.png` · Android: Kiểm chứng thực tế · android_user_search_self_you.png |
 | REQ-BK-USER-22 | Không sửa/xoá chính mình từ danh sách | Android · Web |  | **Web:** Dòng có nhãn `You` → bấm ⋮ → menu có `Edit` · `Delete` đều **khoá** (`aria-disabled=true`) **Android:** ⋮ ở dòng `You` → `Edit` · `Delete` (`android.view.MenuItem`) `enabled=false` | 🟢 | 26-09-2026 · + Android | Web: Kiểm chứng thực tế · `web_user_row_menu_self_disabled_viewport.png` · đọc `aria-disabled` · Android: Kiểm chứng thực tế · android_user_row_menu_self_disabled.png · đọc `enabled` |
@@ -117,8 +119,9 @@ REQ sinh ở đợt Web (25-09-2026), **chuyển lên index** ngày 26-09-2026 k
 | REQ-BK-USER-31 | Add user: Email sai định dạng bị chặn | Android · Web |  | **Web:** Email `khong-phai-email` → `Invalid email address` **Android:** `Invalid email address` | 🟢 | 26-09-2026 · + Android | Web: Kiểm chứng thực tế · đọc lỗi bằng DOM · Android: Kiểm chứng thực tế · android_user_add_invalid_fields.png |
 | REQ-BK-USER-36 | Hộp thoại Update user điền sẵn dữ liệu | Android · Web |  | **Web:** ⋮ → `Edit` → hộp thoại `Update user` cùng bố cục Add user: Name · Phone · Email · `Active for login` **điền sẵn** giá trị hiện tại · `Password` và `Password Confirmation` **trống, không có dấu `*`** · nút `Cancel` · `Update` **Android:** (app vừa mở lại) ⋮ → `Edit` → `Update user` điền sẵn Name · Phone · Email · Password và Password Confirmation trống, **không** `*` · công tắc hiển thị bật · `Cancel` · `Update`. Mở sau khi đã có lỗi ở Add user thì mang lỗi cũ — REQ-124 | 🟢 | 26-09-2026 · + Android | Web: Kiểm chứng thực tế · `web_user_update_dialog_default_viewport.png` · đọc `value` + `required` · Android: Kiểm chứng thực tế · android_user_update_dialog_default_part1.png · android_user_update_dialog_default_part2.png |
 | REQ-BK-USER-41 | Xoá cần xác nhận | Android · Web |  | **Web:** ⋮ → `Delete` → hộp thoại `Confirm delete` nội dung `Confirm you want to delete user "<Name>".` (đúng Name hiện tại) · nút `Cancel` · `Delete` **Android:** ⋮ → `Delete` → `Confirm delete` · `Confirm you want to delete user "<Name>".` · `Cancel` (id `dialog-delete-cancel`) · `Delete` (id `dialog-delete-action`). Bấm `Cancel` → hộp đóng, dòng còn nguyên | 🟢 | 26-09-2026 · + Android | Web: Kiểm chứng thực tế · `web_user_delete_confirm_viewport.png` · Android: Kiểm chứng thực tế · android_user_delete_confirm.png |
+| REQ-BK-USER-42 | Xác nhận xoá gỡ người dùng khỏi danh sách | Android · Web |  | **Web:** `Delete` trong hộp xác nhận → thông báo `Deleted successfully.` · dòng biến mất khỏi danh sách. Network: `DELETE /api/user/<id>` → **200** **Android:** tìm theo email tài khoản test → ⋮ → `Delete` → `Delete` (id `dialog-delete-action`) → thông báo `Deleted successfully.` (biểu tượng ✓ xanh) · hộp đóng · vùng bảng `No Data` với cùng từ khoá. Đọc lại công khai `GET /api/user?search=<email>` → 0 bản ghi | 🟢 | 20-10-2026 · + Android | Web: Kiểm chứng thực tế · API · DELETE /api/user/{id} → 200 · đọc danh sách sau xoá · Android: Kiểm chứng thực tế · `android_user_delete_success.png` · đọc lại qua API công khai |
 
-**Mục 3.2: 31 REQ** — mọi dòng `Nền tảng` = `Android · Web`.
+**Mục 3.2: 33 REQ** — mọi dòng `Nền tảng` = `Android · Web`.
 
 ---
 
@@ -147,16 +150,16 @@ Và cột "Vai trò khác" × 6 hành động — hệ thống không có vai tr
 
 | Hành động (Android) | Khách | Đã đăng nhập (tài khoản test) | Vai trò khác |
 |---|---|---|---|
-| Xem · tìm · lọc · sắp xếp danh sách | ❔ (bản đồ khám phá 19-09-2026 ghi thấy được — chưa kiểm ở mức REQ) | ✅ (REQ-02 → 18) | — |
-| Thấy `New user` · nút ⋮ | ❔ | ✅ (REQ-20) | — |
-| Edit · Delete người dùng **khác** (mở được) | ❔ | ✅ (REQ-23) | — |
+| Xem · tìm · lọc · sắp xếp danh sách | ✅ (REQ-01) | ✅ (REQ-02 → 18) | — |
+| Thấy `New user` · nút ⋮ | ❌ — không có (REQ-19) | ✅ (REQ-20) | — |
+| Edit · Delete người dùng **khác** (mở được) | ❌ — không có ⋮ (REQ-19) | ✅ (REQ-23) · Delete lưu được (REQ-42) · Update **lỗi** — không phải phân quyền (REQ-129) | — |
 | Edit · Delete **chính mình** | — | ❌ khoá (REQ-22) | — |
 
 ```
-Tổng 12 ô = Đã kiểm chứng 4 · Suy diễn 0 · Chưa rõ 3 · Không áp dụng 5
-Ô "chưa rõ": cột Khách — lượt 26-09-2026 chỉ có phiên đã đăng nhập (không mở AMB mới: web đã kiểm, bản đồ khám phá đã thấy).
+Tổng 12 ô = Đã kiểm chứng 7 · Suy diễn 0 · Chưa rõ 0 · Không áp dụng 5
 Ô "không áp dụng": [chính mình × Khách] · cột "Vai trò khác" × 4 (AMB-BK-01 ✅).
-Chỉ **mở** menu / hộp thoại trên dòng người khác, không lưu hay xoá.
+Cột Khách kiểm ngày 20-10-2026 (app đang ở trạng thái chưa đăng nhập).
+Lưu / xoá chỉ thử trên tài khoản test còn sót `auto_web_<timestamp>_b` — đã xoá cuối lượt.
 ```
 
 ### Ma trận phân quyền — mặt API
@@ -210,11 +213,11 @@ Phiên **đang mở** của người dùng vừa bị chuyển Inactive **không
 
 | Story ID | Tên Story | REQ bao phủ | Số REQ | AMB / RISK liên quan | Ghi chú phạm vi |
 |---|---|---|---|---|---|
-| STORY-BK-USER-01 | Danh sách · tìm kiếm · sắp xếp · phân trang | REQ-BK-USER-01 → 10 · 120 · 121 · 125 · 128 | 14 | AMB-BK-USER-04 · 07 · 20 · RISK-BK-USER-01 · 02 · 03 · 09 | Khách và người dùng đăng nhập · Android: cuộn ngang, điều hướng, mất mạng |
+| STORY-BK-USER-01 | Danh sách · tìm kiếm · sắp xếp · phân trang | REQ-BK-USER-01 → 10 · 120 · 121 · 125 · 128 · 130 | 15 | AMB-BK-USER-04 · 07 · 20 · RISK-BK-USER-01 · 02 · 03 · 09 | Khách và người dùng đăng nhập · Android: cuộn ngang, điều hướng, mất mạng, xoay ngang |
 | STORY-BK-USER-02 | Bộ lọc nâng cao | REQ-BK-USER-11 → 18 · 122 · 123 | 10 | AMB-BK-USER-06 · 18 | Field · Operator · Value · AND/OR |
 | STORY-BK-USER-03 | Quyền thao tác theo trạng thái đăng nhập | REQ-BK-USER-19 → 23 | 5 | AMB-BK-USER-01 | Nút New user · ⋮ · khoá thao tác trên chính mình |
 | STORY-BK-USER-04 | Thêm người dùng | REQ-BK-USER-24 → 35 · 124 · 126 · 127 | 15 | AMB-BK-USER-02 · 05 · 19 | Hộp thoại Add user (Android: lỗi dính, xuống nền, bàn phím) |
-| STORY-BK-USER-05 | Sửa người dùng · khoá/mở | REQ-BK-USER-36 → 40 | 5 | AMB-BK-USER-03 | Hộp thoại Update user · `Active for login` |
+| STORY-BK-USER-05 | Sửa người dùng · khoá/mở | REQ-BK-USER-36 → 40 · 129 | 6 | AMB-BK-USER-03 · 21 | Hộp thoại Update user · `Active for login` · Android: lưu lỗi |
 | STORY-BK-USER-06 | Xoá người dùng | REQ-BK-USER-41 → 42 | 2 | RISK-BK-USER-04 | Hộp thoại Confirm delete |
 | STORY-BK-USER-07 | Danh sách · tìm kiếm · sắp xếp · phân trang — API | REQ-BK-USER-43 → 65 · 116 → 119 | 27 | AMB-BK-USER-08 · 12 · 14 · RISK-BK-USER-05 · 06 · 08 | `GET /api/user` — mặt API |
 | STORY-BK-USER-08 | Chi tiết người dùng — API | REQ-BK-USER-66 → 68 | 3 | — | `GET /api/user/{id}` |
@@ -223,13 +226,13 @@ Phiên **đang mở** của người dùng vừa bị chuyển Inactive **không
 | STORY-BK-USER-11 | Xoá người dùng — API | REQ-BK-USER-110 → 114 | 5 | AMB-BK-USER-17 · RISK-BK-USER-07 | `DELETE /api/user/{id}` |
 | STORY-BK-USER-12 | Quy ước chung của module — API | REQ-BK-USER-115 | 1 | — | Error envelope 422 |
 
-**Tổng: 12 Story / 128 REQ** — Web · Android `14 + 10 + 5 + 15 + 5 + 2 = 51` · API `27 + 3 + 22 + 19 + 5 + 1 = 77` → `51 + 77 = 128 ✔` · mọi REQ thuộc đúng một Story, không mồ côi, không trùng.
+**Tổng: 12 Story / 130 REQ** — Web · Android `15 + 10 + 5 + 15 + 6 + 2 = 53` · API `27 + 3 + 22 + 19 + 5 + 1 = 77` → `53 + 77 = 130 ✔` · mọi REQ thuộc đúng một Story, không mồ côi, không trùng.
 
 ### Đối chiếu AMB / RISK
 
 | Nhóm | Mã | Nằm ở đâu |
 |---|---|---|
-| AMB thuộc Story | AMB-BK-USER-01 → 20 | phân bổ ở bảng Story |
+| AMB thuộc Story | AMB-BK-USER-01 → 21 | phân bổ ở bảng Story |
 | AMB cấp Epic | — | — |
 | RISK thuộc Story | RISK-BK-USER-01 → 09 | phân bổ ở bảng Story |
 | RISK cấp Epic | — | — |
@@ -249,7 +252,7 @@ Phiên **đang mở** của người dùng vừa bị chuyển Inactive **không
 4. **STORY-BK-USER-06 Xoá** — dùng để dọn dữ liệu cuối mỗi TC
 5. **Mặt API (Story 07 → 12):** cùng thứ tự — `09 Tạo` trước để có dữ liệu cho `10` · `11` · `08`; `07` (đọc) chạy trước cùng với `08`; REQ ghi `❌ lệch` chạy như `@KnownBug`
 6. **STORY-BK-USER-02 Bộ lọc** · **STORY-BK-USER-03 Quyền** — `AMB-BK-USER-01` ✅ chốt: không có vai trò, hành vi hiện tại là thiết kế — TC viết theo hiện trạng
-7. **Android:** cùng thứ tự; Story 04 → 06 trên Android còn ❔ ở vế ghi dữ liệu (tester nhập mật khẩu). `REQ-120` · `124` kỳ vọng FAIL — TC `@KnownBug`
+7. **Android:** cùng thứ tự; Story 04 trên Android còn ❔ ở vế tạo (cần nhập mật khẩu) · Story 05 **bị chặn** bởi `REQ-129` (Update user lỗi) · Story 06 xoá ✅. `REQ-120` · `124` · `129` kỳ vọng FAIL — TC `@KnownBug`
 
 ---
 
@@ -279,6 +282,7 @@ Phiên **đang mở** của người dùng vừa bị chuyển Inactive **không
 | AMB-BK-USER-18 | Trên Android hàng điều kiện lọc rộng hơn màn hình — `Value` chỉ lộ 24 px, `Add filter` · `Clear filter` nằm ngoài, phải vuốt ngang (REQ-122). Chấp nhận? | Người dùng không thấy ô Value, tưởng bộ lọc hỏng | 🟡 | Chấp nhận — cuộn ngang được | ✅ Đã chốt 26-09-2026 | **Chấp nhận hiện trạng** ở bản 1.0 — trùng Assumption. REQ-122 giữ nguyên (DEMO-AMB-2609) |
 | AMB-BK-USER-19 | Trên Android, lỗi validation của Add user còn nguyên khi mở lại Add user và lan sang Update user (dữ liệu hợp lệ vẫn báo đỏ, kể cả `Password is required.`) | Người dùng không sửa được người dùng khác; tưởng dữ liệu sai | 🟠 | Là **lỗi** — mỗi lần mở hộp thoại phải sạch lỗi | ✅ Đã chốt 26-09-2026 | **Lỗi** — trùng Assumption. **Sinh `REQ-BK-USER-124`** (kỳ vọng, chưa đạt). Web chưa kiểm — cần tester thử trên web (DEMO-AMB-2609) |
 | AMB-BK-USER-20 | Mất mạng trên Android: danh sách hiện `No Data` như khi không có kết quả, không có thông báo lỗi mạng | Người dùng tưởng hệ thống không còn người dùng nào | 🟡 | Chấp nhận — cùng kết luận `AMB-BK-AUTH-16` | ✅ Đã chốt 26-09-2026 | **Chấp nhận hiện trạng** ở bản 1.0 — REQ-125 ghi hành vi quan sát (DEMO-AMB-2609) |
+| AMB-BK-USER-21 | Update user trên **Android** báo `Error in processing request`, hộp thoại vẫn mở, người dùng không đổi (3/3 — đổi Name; đổi Name + tắt `Active for login`). Web cập nhật được với cùng thao tác (REQ-37). Delete trên Android lại chạy được (REQ-42) | Không sửa / khoá / mở khoá được người dùng trên app | 🔴 | Là **lỗi app Android** — cùng họ Save Profile (`AMB-BK-AUTH-34`) và Create book (`AMB-BK-BOOK-34`): thao tác **gửi dữ liệu** đều lỗi, thao tác xoá thì không | ✅ Đã chốt 20-10-2026 | **Lỗi Android** — trùng Assumption. **Sinh `REQ-BK-USER-129`** (kỳ vọng, chưa đạt). Nguyên nhân **cần Dev xác minh** — không quan sát được request. REQ-37 · 38 · 39 · 40 trên Android **bị chặn** tới khi sửa (DEMO-AMB-2010) |
 
 **AMB cấp hệ thống tham chiếu** (sở hữu ở [`api_map.md` mục 4](../_discovery/api_map.md#4-khoảng-trống-của-spec-amb--cần-chốt-trước-khi-sinh-tc) · [`system_map.md` mục 8](../_discovery/system_map.md#8-ambiguity-cấp-hệ-thống-phát-sinh-ở-mặt-mobile)) — **đều đã chốt 25-09-2026**: `AMB-BK-01` không có mô hình vai trò · `AMB-BK-02` danh sách người dùng công khai là **cố ý** (REQ-01 là hành vi đúng) · `AMB-BK-12` lỗi điều hướng Android (không áp dụng web) — cấp `REQ-BK-USER-120` ngày 26-09-2026 như kết luận đã ghi.
 
@@ -303,6 +307,9 @@ Phiên **đang mở** của người dùng vừa bị chuyển Inactive **không
 
 | Ngày | Nguồn | REQ ảnh hưởng | Loại | Tóm tắt thay đổi | TC cần xử lý |
 |---|---|---|---|---|---|
+| 20-10-2026 | UI recon Android bổ sung · `/generate-requirements-from-mobile` · DEMO-AMB-2010 | REQ-BK-USER-129 · 130 | 🟢 Thêm | `129` Update user lưu thành công trên Android — kỳ vọng, **chưa đạt** (`Error in processing request`, 3/3) · `130` xoay ngang tab User. Chốt `AMB-BK-USER-21`. 4 ảnh mới. Xoá tài khoản test còn sót `auto_web_<timestamp>_b` (dọn xong — mục 10 file mobile) | viết mới cho Android · `129` `@KnownBug` |
+| 20-10-2026 | UI recon Android bổ sung | REQ-BK-USER-01 · 19 · 42 | 🟢 Thêm | **Mở rộng nền tảng: + Android** — `01` → `Android · Web · API` (ở mục 3.1) · `19` · `42` chuyển từ `web/` lên mục 3.2 (`Android · Web`). Mã giữ nguyên | viết mới cho Android · TC web giữ nguyên |
+| 20-10-2026 | UI recon Android bổ sung | REQ-BK-USER-32 · 33 · 34 · 35 · 37 → 40 | ✏️ Biên tập | Vẫn chưa khai Android: `32 → 35` cần nhập mật khẩu / tạo tài khoản (agent không làm trên production) · `37 → 40` **bị chặn** bởi REQ-129. Ma trận phân quyền Android đủ 7/7 ô kiểm chứng | — |
 | 26-09-2026 | UI recon Android · `/generate-requirements-from-mobile` · DEMO-AMB-2609 | REQ-BK-USER-120 → 128 | 🟢 Thêm | Khởi tạo mặt Android: 9 REQ ở `mobile/` (`120` tab User không về danh sách — kỳ vọng, `AMB-BK-12` · `121` bảng cuộn ngang · `122` bảng lọc cuộn ngang · `123` đổi Field xoá Value · `124` lỗi dính giữa các hộp thoại — kỳ vọng · `125` mất mạng · `126` xuống nền · `127` bàn phím · `128` Back) · 23 ảnh (dòng người khác làm mờ) · chốt `AMB-BK-USER-18 → 20` · thêm `RISK-BK-USER-09` | viết mới cho Android (tag `@Android`) · `120` · `124` `@KnownBug` |
 | 26-09-2026 | UI recon Android | REQ-BK-USER-02 → 18 · 20 → 31 · 36 · 41 | 🟢 Thêm | **Mở rộng nền tảng: + Android** — chuyển 31 dòng từ `web/` lên index mục 3.2 (`Android · Web`), AC web giữ nguyên + thêm vế Android, mã giữ nguyên. `30` Android cũng chưa đạt biên 191 | viết mới cho Android · TC web giữ nguyên |
 | 26-09-2026 | UI recon Android | — | ✏️ Biên tập | Mục 3 tách `3.1 Web · API` · `3.2 Android · Web` · thêm ma trận phân quyền Android · Bản đồ tài liệu · bảng Story (01 → 14 · 02 → 10 · 04 → 15 REQ) | — |

@@ -1,15 +1,15 @@
-# Test Cases — Module Người dùng (`USER`) · Book — tổng 149 TC · 3 nền tảng (Web · API · Mobile Android) · độ hạt GỘP
+# Test Cases — Module Người dùng (`USER`) · Book — tổng 154 TC · 3 nền tảng (Web · API · Mobile Android) · độ hạt GỘP
 
 | Thông tin | Nội dung |
 |---|---|
 | **Hệ thống** | AnhTester Book Management — mã hệ thống `BK` (namespace `_book-api/`) · danh mục TC: [../README.md](../README.md) |
 | **Module** | Người dùng — màn hình `User Management` · prefix `USER` |
-| **Nguồn requirement** | Index [REQUIREMENTS_USER_SUMMARY.md](../../../requirements/_book-api/user/REQUIREMENTS_USER_SUMMARY.md) (dùng chung: 4 REQ `Web · API` mục 3.1 · 31 REQ `Android · Web` mục 3.2) · [web/requirements_user_web.md](../../../requirements/_book-api/user/web/requirements_user_web.md) (7 REQ) · [api/requirements_user_api.md](../../../requirements/_book-api/user/api/requirements_user_api.md) (77 REQ) · [mobile/requirements_user_mobile.md](../../../requirements/_book-api/user/mobile/requirements_user_mobile.md) (9 REQ) — **0 AMB treo** (chốt 25-09-2026 `DEMO-AMB-2509` · `DEMO-AMB-2509B` · 26-09-2026 `DEMO-AMB-2609`) |
+| **Nguồn requirement** | Index [REQUIREMENTS_USER_SUMMARY.md](../../../requirements/_book-api/user/REQUIREMENTS_USER_SUMMARY.md) (dùng chung: 4 REQ mục 3.1 — `01` là `Android · Web · API` · 33 REQ `Android · Web` mục 3.2) · [web/requirements_user_web.md](../../../requirements/_book-api/user/web/requirements_user_web.md) (5 REQ) · [api/requirements_user_api.md](../../../requirements/_book-api/user/api/requirements_user_api.md) (77 REQ) · [mobile/requirements_user_mobile.md](../../../requirements/_book-api/user/mobile/requirements_user_mobile.md) (11 REQ) — **0 AMB treo** (chốt 25-09-2026 `DEMO-AMB-2509` · `DEMO-AMB-2509B` · 26-09-2026 `DEMO-AMB-2609` · 20-10-2026 `DEMO-AMB-2010`) |
 | **Mode sinh** | QUICK (`/generate-testcases-from-requirements`) · độ hạt **GỘP** (mặc định) · Mobile: chế độ **BỔ SUNG** (module đã có bộ TC Web + API) |
-| **Ngày sinh** | Web · API 25-09-2026 · Mobile 26-09-2026 |
-| **Dải TC ID** | `BK_USER_TC_001` → `BK_USER_TC_149` (Web `001`→`050` · API `051`→`107` · **Mobile `108`→`149`**; `082`→`107` bổ sung 25-09-2026 khi có REQ mặt API — nối tiếp, không chèn giữa) |
-| **Mã kế tiếp** | `BK_USER_TC_150` — **KHÔNG đánh lại từ 001** |
-| **Phạm vi REQ** | Web: 42/42 REQ (7 chỉ Web + 31 `Android · Web` + 4 `Web · API`). API: **81/81** REQ (77 riêng API + 4 dùng chung) — 5 endpoint `/api/user*`. **Mobile (Android): 40/40** REQ (31 dùng chung `Android · Web` + 9 chỉ Android). Ngoài phạm vi: **tải ảnh đại diện** (`AMB-BK-USER-05` ✅ — module `FILE`) · Android: REQ **chưa khai** nền tảng Android — `01` · `33` · `35` · `38` (`Web · API`) · `19` · `32` · `34` · `37` · `39` · `40` · `42` (chỉ Web — cần tester nhập mật khẩu / tạo tài khoản, [requirements mobile mục 2](../../../requirements/_book-api/user/mobile/requirements_user_mobile.md#2-bản-đồ-phủ-tài-liệu)) · iOS chưa khảo sát |
+| **Ngày sinh** | Web · API 25-09-2026 · Mobile 26-09-2026 · Mobile bổ sung 20-10-2026 |
+| **Dải TC ID** | `BK_USER_TC_001` → `BK_USER_TC_154` (Web `001`→`050` · API `051`→`107` · **Mobile `108`→`154`** — `150`→`154` bổ sung 20-10-2026; `082`→`107` bổ sung 25-09-2026 khi có REQ mặt API — nối tiếp, không chèn giữa) |
+| **Mã kế tiếp** | `BK_USER_TC_155` — **KHÔNG đánh lại từ 001** |
+| **Phạm vi REQ** | Web: 42/42 REQ (5 chỉ Web + 33 `Android · Web` + 4 dùng chung mục 3.1). API: **81/81** REQ (77 riêng API + 4 dùng chung) — 5 endpoint `/api/user*`. **Mobile (Android): 45/45** REQ (33 dùng chung `Android · Web` + `01` `Android · Web · API` + 11 chỉ Android). Ngoài phạm vi: **tải ảnh đại diện** (`AMB-BK-USER-05` ✅ — module `FILE`) · Android: REQ **chưa khai** nền tảng Android — `32` · `33` · `34` · `35` (cần nhập mật khẩu / tạo tài khoản) · `37` · `38` · `39` · `40` (**bị chặn** bởi REQ-129 — Update user Android lỗi), [requirements mobile mục 2](../../../requirements/_book-api/user/mobile/requirements_user_mobile.md#2-bản-đồ-phủ-tài-liệu) · iOS chưa khảo sát |
 | **Mức rủi ro · độ sâu** | `Cao` → **Đầy đủ** — đủ 6 nhánh V1, mọi nhánh V2 có điều kiện kích hoạt, V3/V4 chấm từng nhánh.<br>Căn cứ chấm Cao: chạm **dữ liệu cá nhân** (email · SĐT · địa chỉ công khai) · có thao tác **không hồi lại được** (xoá người dùng) · khoá / mở tài khoản ảnh hưởng đăng nhập.<br>**Hạ xuống Tiêu chuẩn khi:** không bao giờ — module quản lý tài khoản luôn giữ mức Cao |
 | **Môi trường** | `https://book.anhtester.com` — **production, server duy nhất**. **Không** dùng chung (user chốt 14-08-2026) nhưng vẫn áp luật: chỉ ghi/xoá bản ghi do chính lượt chạy tạo |
 | **Trình duyệt chuẩn** | Google Chrome (desktop) · viewport `1600×750` · `en-US`. Trình duyệt khác: chưa khảo sát |
@@ -91,6 +91,7 @@ Teardown: xoá qua giao diện mọi người dùng `auto_user_<T+nn>` còn lạ
 
 | Ký hiệu | Trạng thái | Cách đưa app về |
 |---|---|---|
+| `M0` | App **chưa đăng nhập** — Dashboard hiện thẻ `Book management sign in`, hướng dọc, có mạng | Avatar → `Logout` (nếu đang đăng nhập). Chạy các TC `M0` **trước** bước tester đăng nhập `TK-M` |
 | `M1` | **`TK-M` đang đăng nhập** trên app, hướng dọc, có mạng, bàn phím đóng | Mở app → avatar → đăng nhập `TK-M` → bấm tab theo Pre-Condition của TC |
 | `M1r` | Như `M1` nhưng app **vừa tắt hẳn và mở lại** — chưa mở `Add user` / `Update user` lần nào trong phiên | Vuốt app khỏi danh sách ứng dụng gần đây → mở lại (phiên đăng nhập được giữ) → tab `User`. **Bắt buộc** cho mọi TC mở hộp thoại, vì lỗi validation dính giữa các lần mở (REQ-BK-USER-124 — `TC_141` `@KnownBug`) |
 
@@ -100,21 +101,23 @@ Teardown: xoá qua giao diện mọi người dùng `auto_user_<T+nn>` còn lạ
 |---|---|---|---|---|---|
 | `TK-M` | `Auto Mobile User 1790150700` | `auto_mobile_user_1790150700@auto.test` | `Auto@12345` | `POST /api/register` ở setup (hoặc Sign up trên app) — **tester** đăng nhập trên app | `M1` · dòng `You` (TC_113 · 121-a · 144) |
 | `U-M2` | `Auto Mobile User B 1790150701` · Phone `0900000701` · **không** địa chỉ | `auto_mobile_user_1790150701_b@auto.test` | `Auto@12345` | `POST /api/register` ở setup | Dòng người khác: TC_109 · 116 · 117 · 121 · 129 · 130 · 141 · 145 |
+| `U-M3` | `Auto Mobile User C 1790150704` · `Active` | `auto_mobile_user_1790150704_c@auto.test` | `Auto@12345` | `POST /api/register` ở setup | Bị **sửa** (TC_152) rồi **xoá** (TC_153) — tách khỏi `U-M2` để các TC chỉ đọc không bị ảnh hưởng |
 
 Số `17901507xx` = mốc mẫu `1790150700` + độ lệch `xx` — khi chạy thay bằng `T + xx`, ghi `T` vào đầu execution report. Chuỗi không tạo bản ghi (`…90` · `…91` · `…702` · `…703`) chỉ để truy vết.
 
 ### Chuẩn bị & thứ tự chạy
 
 ```
-Setup    : POST /api/register TK-M · U-M2 → tester đăng nhập TK-M trên app (gom 1 lượt, không hỏi từng bước)
+Setup    : POST /api/register TK-M · U-M2 · U-M3 → app ở trạng thái khách (M0)
+M0       : TC_150 → 151 (khách) → tester đăng nhập TK-M trên app (gom 1 lượt, không hỏi từng bước)
 V1       : TC_108 → 113 · 117 (không cần M1r) → tắt/mở app → 114 → 115 → 116 (mỗi TC mở hộp thoại: tắt/mở app trước)
-V2       : TC_118 → 133 (bảng lọc — tuần tự 124 → 125) → 134 → 141 (mỗi TC: M1r) → 142 → 143
-V3 · V4  : TC_144 → 146 → 147 (tắt/bật mạng) → 148 → 149
-Teardown : đăng nhập API bằng U-M2 → DELETE /api/user/{id} (token của CHÍNH nó) → làm tương tự với TK-M
+V2       : TC_118 → 133 (bảng lọc — tuần tự 124 → 125) → 134 → 141 (mỗi TC: M1r) → 142 → 143 → 152 (@KnownBug) → 153 (xoá U-M3)
+V3 · V4  : TC_144 → 146 → 147 (tắt/bật mạng) → 148 → 149 → 154 (xoay — trả về dọc khi xong)
+Teardown : đăng nhập API bằng U-M2 → DELETE /api/user/{id} (token của CHÍNH nó) → làm tương tự với TK-M · U-M3 (nếu TC_153 chưa xoá được)
            → tìm hậu tố `_1790150799_x@auto.test` (chỉ tồn tại nếu TC_134 → 137 cho tạo ngoài dự kiến) → báo số tạo / dọn / còn sót
 ```
 
-🚫 **Không** mở menu ⋮, sửa, khoá hay xoá người dùng nào không có tiền tố `auto_mobile_user_`. **Không** bấm `Save` / `Update` / `Delete` trên dòng người khác — bộ TC Mobile chỉ **mở rồi Cancel**. Ảnh chụp có dòng không phải dữ liệu test phải **làm mờ** (`RISK-BK-USER-01`).
+🚫 **Không** mở menu ⋮, sửa, khoá hay xoá người dùng nào không có tiền tố `auto_mobile_user_`. Chỉ `U-M3` được **lưu / xoá thật** (TC_152 · 153) — mọi dòng khác chỉ **mở rồi Cancel**. Ảnh chụp có dòng không phải dữ liệu test phải **làm mờ** (`RISK-BK-USER-01`).
 
 ---
 
@@ -128,10 +131,10 @@ Teardown : đăng nhập API bằng U-M2 → DELETE /api/user/{id} (token của 
 | API | [api/parts/part_01_api_doc_danh_sach_chi_tiet.md](api/parts/part_01_api_doc_danh_sach_chi_tiet.md) | `GET /api/user` · `GET /api/user/{id}` (đọc công khai) | 18 | 051–056 · 067–069 · 082–090 | `REQ-BK-USER-01` · `43 → 68` · `116 → 119` |
 | API | [api/parts/part_02_api_tao.md](api/parts/part_02_api_tao.md) | `POST /api/user` | 17 | 057–066 · 091–097 | `REQ-BK-USER-33` · `35` · `69 → 90` |
 | API | [api/parts/part_03_api_sua_xoa.md](api/parts/part_03_api_sua_xoa.md) | `PATCH` · `DELETE /api/user/{id}` · quy ước chung | 22 | 070–081 · 098–107 | `REQ-BK-USER-38` · `91 → 115` |
-| Mobile (Android) | [mobile/test_cases_user_mobile.md](mobile/test_cases_user_mobile.md) | Danh sách · cuộn ngang · tìm kiếm · bộ lọc · Add / Update user (validation) · Confirm delete · điều hướng · mất mạng · xuống nền · bàn phím | 42 | 108–149 | `REQ-BK-USER-02 → 18` · `20 → 31` · `36` · `41` · `120 → 128` |
+| Mobile (Android) | [mobile/test_cases_user_mobile.md](mobile/test_cases_user_mobile.md) | Khách · danh sách · cuộn ngang · tìm kiếm · bộ lọc · Add / Update user (validation · lưu) · xoá · điều hướng · mất mạng · xuống nền · bàn phím · xoay | 47 | 108–154 | `REQ-BK-USER-01 → 31` · `36` · `41` · `42` · `120 → 130` |
 | iOS | — | Chưa khảo sát — không sinh TC | — | — | — |
 
-Tổng Web: **50 TC · 65 biến thể** + **8 mục Bảng kiểm**. Tổng API: **57 TC** (`051`→`107`, 3 part vì > 40 TC). Tổng Mobile: **42 TC · 58 biến thể** + **26 mục Bảng kiểm** (1 file — dưới ngưỡng 50 TC của độ hạt GỘP). Toàn module **149 TC**.
+Tổng Web: **50 TC · 65 biến thể** + **8 mục Bảng kiểm**. Tổng API: **57 TC** (`051`→`107`, 3 part vì > 40 TC). Tổng Mobile: **47 TC · 64 biến thể** + **26 mục Bảng kiểm** (1 file — dưới ngưỡng 50 TC của độ hạt GỘP). Toàn module **154 TC**.
 
 > **Neo REQ mặt API:** từ 25-09-2026 module `USER` **có REQ mặt API** (77 REQ + 4 dùng chung) — mọi TC API neo **1:1** vào REQ API. TC gộp nhiều REQ (`TC_053` · `055` · `057` · `094` · `098` …) ghi **biến thể → REQ** ở cột Expected; biến thể FAIL map về đúng REQ, không chẻ nhỏ. 9 TC `@KnownBug` (`061` · `062` · `071` · `088` · `089` · `090` · `092` · `097` · `105`) theo kỳ vọng đã chốt bằng `DEMO-AMB-2509B`.
 
@@ -316,7 +319,7 @@ Tổng Web: **50 TC · 65 biến thể** + **8 mục Bảng kiểm**. Tổng API
 
 ---
 
-## Bảng Đối Soát Coverage (Mobile Android 40/40 REQ)
+## Bảng Đối Soát Coverage (Mobile Android 45/45 REQ)
 
 REQ dùng chung `Android · Web` có TC ở **cả hai** nền tảng — cột Web dẫn TC web hiện có.
 
@@ -362,13 +365,18 @@ REQ dùng chung `Android · Web` có TC ở **cả hai** nền tảng — cột 
 | REQ-BK-USER-126 | Add user giữ dữ liệu khi xuống nền | TC_148 | Reliability | — |
 | REQ-BK-USER-127 | Bàn phím không che Email / Save | TC_149 | UI Stability | — |
 | REQ-BK-USER-128 | Back hệ thống về màn hình trước | TC_143 | P | — |
-| REQ-BK-USER-01 · 19 · 32 · 33 · 34 · 35 · 37 · 38 · 39 · 40 · 42 | Khách · tạo / sửa / khoá / xoá thành công · email trùng | — | ⚪ **Chưa khai Android** — REQ vẫn `Web` / `Web · API`, chưa kiểm được trên app (cần tester nhập mật khẩu / tạo tài khoản — [requirements mobile mục 2](../../../requirements/_book-api/user/mobile/requirements_user_mobile.md#2-bản-đồ-phủ-tài-liệu)). Không phải thiếu TC — sinh bổ sung khi `/generate-requirements-from-mobile user` lượt 2 chuyển lên `Android · Web` | TC web hiện có |
+| REQ-BK-USER-01 | Khách xem danh sách (`Android · Web · API`) | TC_150 | P | TC_002 |
+| REQ-BK-USER-19 | Khách không có New user / ⋮ | TC_151 | Permission | TC_003 |
+| REQ-BK-USER-42 | Xoá gỡ khỏi danh sách | TC_153 | P | TC_015 · 049 |
+| REQ-BK-USER-129 | Update user lưu thành công trên Android | TC_152 (2) | Kỳ vọng chưa đạt · `@KnownBug` | — (chỉ Android; web: TC_013) |
+| REQ-BK-USER-130 | Xoay ngang tab User | TC_154 | UI Stability | — |
+| REQ-BK-USER-32 · 33 · 34 · 35 · 37 · 38 · 39 · 40 | Mật khẩu xác nhận · email trùng · tạo · đăng nhập tài khoản mới · sửa · khoá / mở | — | ⚪ **Chưa khai Android** — `32 → 35` cần nhập mật khẩu / tạo tài khoản (agent không làm trên production) · `37 → 40` **bị chặn** bởi REQ-129 ([requirements mobile mục 2](../../../requirements/_book-api/user/mobile/requirements_user_mobile.md#2-bản-đồ-phủ-tài-liệu)). Không phải thiếu TC — sinh bổ sung khi REQ chuyển lên `Android · Web` | TC web hiện có |
 
-**Tổng Mobile:** 40/40 REQ có ≥ 1 TC ✅ · không REQ nào 🔴 · 3 TC `@KnownBug` (`139` · `141` · `142`). Phép thử 6b trên file Mobile: không TC nào gánh ≥ 2 REQ ✅.
+**Tổng Mobile:** 45/45 REQ có ≥ 1 TC ✅ · không REQ nào 🔴 · 4 TC `@KnownBug` (`139` · `141` · `142` · `152`). Phép thử 6b trên file Mobile: không TC nào gánh ≥ 2 REQ ✅.
 
 ### Bảng trạng thái — người dùng (mặt Android)
 
-➖ Không sinh — chuyển trạng thái (tạo · khoá · mở · xoá) chưa khai Android. Chỉ phủ các **chuyển bị chặn**: dòng `You` → Edit / Delete khoá (TC_144).
+Phủ một phần: **Active → (đã xoá)** TC_153 · **Active → Inactive** TC_152-b (`@KnownBug` — Update lỗi, REQ-129) · chuyển bị chặn: dòng `You` → Edit / Delete khoá (TC_144). Tạo mới → Active và Inactive → Active: ➖ chưa khai Android (REQ-34 · 40).
 
 ---
 
@@ -409,7 +417,7 @@ REQ dùng chung `Android · Web` có TC ở **cả hai** nền tảng — cột 
 
 ### Bảng Đối Soát Evidence — Mobile (Android)
 
-Đã mở **23/23** ảnh ở [`requirements/_book-api/user/mobile/evidence/`](../../../requirements/_book-api/user/mobile/evidence/) — dòng của người dùng khác đã được làm mờ sẵn trong ảnh.
+Đã mở **27/27** ảnh ở [`requirements/_book-api/user/mobile/evidence/`](../../../requirements/_book-api/user/mobile/evidence/) — dòng của người dùng khác đã được làm mờ sẵn trong ảnh (4 ảnh 20-10-2026 không chứa dòng người khác).
 
 | Ảnh evidence | Màn hình / trạng thái | TC dựa vào | Đầy đủ? |
 |---|---|---|---|
@@ -434,6 +442,10 @@ REQ dùng chung `Android · Web` có TC ở **cả hai** nền tảng — cột 
 | `android_user_add_keyboard_open.png` | Bàn phím mở ở ô Email | TC_149 | ✅ |
 | `android_user_list_offline.png` | Mất mạng — vùng trạng thái rỗng | TC_147 | 🟡 Chỉ thấy chữ `No` (khung lệch do bảng cuộn ngang) — `ASM-BK-USER-09` |
 | `android_profile_tab_user_stays.png` | Bấm tab User khi ở My Profile — vẫn hồ sơ | TC_142-a | ✅ |
+| `android_user_list_guest_hscroll_end.png` | Khách — vuốt tới `Updated`, không cột ⋮ | TC_150 · 151 | ✅ — không thấy nút `New user` trong ảnh vì ảnh chụp sau khi vuốt; vế này chấm theo cây phần tử |
+| `android_user_list_landscape.png` | Xoay ngang — 5 tiêu đề cột | TC_154 bước 2 | ✅ — bước 3 (cuộn dọc) không lưu ảnh vì có email người khác |
+| `android_user_update_error_processing.png` | `Error in processing request` sau Update | TC_152-a (hiện trạng) | ✅ — biến thể `b` cùng thông báo, không ảnh riêng |
+| `android_user_delete_success.png` | `Deleted successfully.` · `No Data` | TC_153 | ✅ |
 | *(đọc thuộc tính, không ảnh — số liệu ghi trong AC)* | Đổi số dòng · số dòng về 5 · sort Name · Operator · reset Operator · xoá Value · Clear filter · icon cột Phone · biên Name 192 · xuống nền · Back | TC_119-a · 120 · 123 · 127 · 128 · 129 · 132 · 133-a · 139-a · 148 · 143 | ✅ theo số liệu trong AC |
 
 **Vùng chưa có evidence (Mobile) — gắn `@NeedsVerify`:** TC_109 mục `4` (ô `Active`) · 119-b (100 dòng) · 121 `c` `d` (tìm theo tên / SĐT) · 127 (nhãn Operator) · 130 `b` `c` · 133-b · 140 `b` `c` `d` · 142-b (Setting account) · 146 (chuỗi tấn công). Đề xuất recon bổ sung: 1 ảnh / trạng thái, cùng góc chụp với ảnh gốc.
@@ -493,9 +505,9 @@ REQ dùng chung `Android · Web` có TC ở **cả hai** nền tảng — cột 
 | 1 | UI cơ bản | ✅ | TC_108 · 109 · 111 · 112 · 114 · 115 · 116 (7 TC · 22 mục Bảng kiểm; thêm 4 mục ở TC_124 thuộc V2) — nhãn nguyên văn, thứ tự cột / ô, trạng thái mặc định (số dòng `5`, Active bật, Ward / Address khoá, mật khẩu trống ở Update) |
 | 1 | Open form | ✅ | TC_114 (Add user) · 116 (Update user) · 117 (Confirm delete) — đóng bằng `Cancel`. Đóng bằng Back hệ thống / chạm ngoài: ➖ chưa có REQ Android |
 | 1 | Display | ✅ | TC_109 (ngày `dd ThMM yyyy` + giờ AM/PM) · 110 · 113 (nhãn `You`) · 122 (trạng thái rỗng `No Data`) |
-| 1 | Input valid data | ⏭️ Cố ý bỏ | Nhập đủ bộ hợp lệ rồi lưu chưa khai Android (REQ-34 chỉ Web). Một phần có ở TC_148 (nhập Name, không lưu). **Quyết định:** phạm vi REQ `/generate-requirements-from-mobile` 26-09-2026 — agent không nhập mật khẩu trên hệ thống thật. **Rà lại khi:** tester chạy REQ ❔ và REQ-34 · 37 · 42 chuyển lên `Android · Web` |
-| 1 | Save | ⏭️ Cố ý bỏ | Như trên — tạo / sửa / xoá thành công (REQ-34 · 37 · 42) chưa khai Android. **Rà lại khi:** như trên. ⚠️ Save Profile và Create book đều **thất bại** trên Android — nguy cơ Add / Update user cũng lỗi |
-| 1 | Verify data | ⏭️ Cố ý bỏ | Như trên |
+| 1 | Input valid data | ✅ / ⏭️ | Sửa dữ liệu hợp lệ rồi lưu: TC_152 (`@KnownBug` — REQ-129). Tạo mới với dữ liệu hợp lệ: ⏭️ REQ-34 chưa khai Android — cần nhập mật khẩu. **Rà lại khi:** tester chạy REQ-32 → 35 trên app |
+| 1 | Save | ✅ / ⏭️ | Update: TC_152 (`@KnownBug` — `Error in processing request`) · Delete: TC_153 ✅. Tạo (REQ-34): ⏭️ như trên |
+| 1 | Verify data | ✅ | TC_152 bước 6 · 153 bước 5–6 (tìm lại theo email) · 🔧 đọc lại `GET /api/user?search=` |
 | 2 | UI Behavior | ✅ | TC_118 · 124 · 125 · 131 · 132 (5 TC) — bảng / hàng lọc cuộn ngang, bảng lọc thay chỗ ô tìm kiếm |
 | 2 | Required | ✅ | TC_134 · 135 · 136 · 137 (4 TC — từng ô) |
 | 2 | Validation | ✅ | TC_138 · 139 · 140 (3 TC · 9 biến thể) + Required — đối soát theo bảng 15 loại ở mục con bên dưới |
@@ -503,12 +515,12 @@ REQ dùng chung `Android · Web` có TC ở **cả hai** nền tảng — cột 
 | 2 | Boundary Value Analysis | ✅ | TC_138 · 139 (2 TC · 5 biến thể) — `190` · **`191`** · **`192`** · `250` · `251` |
 | 2 | Business Rule | ✅ | Không tự sửa / xoá TC_144 · Password bắt buộc trên app TC_136 · số dòng về 5 TC_120 |
 | 2 | Decision Table | ➖ | Không có ≥ 3 điều kiện kết hợp — bộ lọc 2 điều kiện × `AND`/`OR` chỉ kiểm giao diện ô nối (TC_131) |
-| 2 | State Transition | ➖ | Chuyển Active / Inactive / xoá chưa khai Android — chỉ có chuyển bị chặn ở dòng `You` (TC_144) |
+| 2 | State Transition | ✅ / ➖ | Active → xoá TC_153 · Active → Inactive TC_152-b (`@KnownBug`) · chuyển bị chặn TC_144. Inactive → Active: ➖ REQ-40 chưa khai Android |
 | 2 | Dependency | ✅ | TC_128 (Field → Operator) · 129 (Field → Value) · 114 bước 4–5 (Division trống → Ward / Address khoá) |
-| 2 | Use Case / Scenario | ⏭️ Cố ý bỏ | Chuỗi tạo → sửa → khoá → xoá cần lưu thành công — chưa khai Android. **Rà lại khi:** như nhánh Save |
-| 2 | Save / Edit / Delete | ⏭️ Cố ý bỏ | Chỉ có nhánh **huỷ**: TC_116 (Cancel Update) · 117 (Cancel xoá). Lưu / xoá thật: như nhánh Save |
+| 2 | Use Case / Scenario | ⏭️ Cố ý bỏ | Chuỗi tạo → sửa → khoá → xoá cần tạo (REQ-34 — nhập mật khẩu) và sửa thành công (REQ-129 đang lỗi). Có đoạn sửa → xoá: TC_152 → 153. **Rà lại khi:** REQ-129 sửa xong và tester chạy REQ-34 |
+| 2 | Save / Edit / Delete | ✅ | Huỷ: TC_116 · 117 · Lưu: TC_152 (`@KnownBug`) · Xoá thật: TC_153 |
 | 2 | Error Guessing | ✅ | TC_141 (mở lại hộp thoại sau lỗi — `@KnownBug`) · 142 (tab khi đang ở hồ sơ — `@KnownBug`) · 143 (Back hệ thống) · 148 (xuống nền giữa chừng) |
-| 3 | Permission | ✅ | TC_108 · 144 · 145 — đủ **4/4** ô *đã kiểm chứng* của ma trận Android. Cột *Khách*: ⏭️ lượt khảo sát chỉ có phiên đăng nhập (REQ-19 chưa khai Android) — rà lại khi recon lượt 2. *Vai trò khác*: ➖ không có vai trò (`AMB-BK-01` ✅) |
+| 3 | Permission | ✅ | TC_108 · 144 · 145 · 150 · 151 · 153 — đủ **7/7** ô *đã kiểm chứng* của ma trận Android (cột *Khách*: TC_150 · 151). *Vai trò khác*: ➖ không có vai trò (`AMB-BK-01` ✅) |
 | 3 | Security | ✅ | TC_144 (không tự sửa / xoá) · 145 (quyền sửa người khác là thiết kế) · 146 (chuỗi tấn công ở ô tìm kiếm) · 136 (mật khẩu bắt buộc) |
 | 3 | API | ✅ (mặt API riêng) | Không kiểm lại qua app — mặt API có 57 TC (`051` → `107`) |
 | 3 | Database | ➖ | QA **không** có quyền truy vấn CSDL (user chốt 20-09-2026) — đội Dev xác minh |
@@ -519,8 +531,8 @@ REQ dùng chung `Android · Web` có TC ở **cả hai** nền tảng — cột 
 | 4 | Accessibility | ⏭️ Cố ý bỏ | Chưa có REQ trợ năng; đã biết nút ⋮ và icon lọc **không có nhãn** (`RISK-BK-USER-09`) → TalkBack không đọc được. **Quyết định:** cần QA lead / PO xác nhận. **Rà lại khi:** dev thêm nhãn truy cập |
 | 4 | Performance | ➖ | Không có ngưỡng thời gian cam kết — đội hiệu năng (chưa phân công) |
 | 4 | Regression | ➖ | `docs/bugs/_book-api/` chưa có bug nào được đóng |
-| 4 | E2E | ✅ / ⏭️ | TC_142 (hồ sơ `AUTH` ↔ tab User) · 143 (Dashboard ↔ User). Khoá tài khoản → không đăng nhập được: ⏭️ cần Update thành công (chưa khai Android) |
-| — | Đặc thù mobile (mất mạng · vòng đời · bàn phím) | ✅ | TC_147 · 148 · 149. Quyền runtime · deep link · push: ➖ app không có ([requirements mobile mục 6](../../../requirements/_book-api/user/mobile/requirements_user_mobile.md#6-yêu-cầu-riêng-của-mobile-skill-353)) |
+| 4 | E2E | ✅ / ⏭️ | TC_142 (hồ sơ `AUTH` ↔ tab User) · 143 (Dashboard ↔ User). Khoá tài khoản → không đăng nhập được: ⏭️ cần Update thành công (REQ-129 đang lỗi) |
+| — | Đặc thù mobile (mất mạng · vòng đời · bàn phím · xoay) | ✅ | TC_147 · 148 · 149 · 154. Quyền runtime · deep link · push: ➖ app không có ([requirements mobile mục 6](../../../requirements/_book-api/user/mobile/requirements_user_mobile.md#6-yêu-cầu-riêng-của-mobile-skill-353)) |
 
 #### Đối soát Validation theo bảng 15 loại field — Add user (Android)
 
@@ -572,7 +584,7 @@ REQ dùng chung `Android · Web` có TC ở **cả hai** nền tảng — cột 
 |---|---|---|---|---|
 | Web | 49 | 1 | 0 | 14 (`@NeedsVerify` — nằm trong Yes / Partial) |
 | API | 57 | 0 | 0 | 0 — mọi TC đã gọi thật; 9 TC `@KnownBug` chạy được, **dự kiến FAIL** |
-| Mobile (Android) | 41 | 1 | 0 | 9 (`@NeedsVerify` — nằm trong Yes) · 3 TC `@KnownBug` vẫn automate — test FAIL là thứ phơi bug |
+| Mobile (Android) | 46 | 1 | 0 | 9 (`@NeedsVerify` — nằm trong Yes) · 4 TC `@KnownBug` vẫn automate — test FAIL là thứ phơi bug |
 
 ### Điều kiện cần chuẩn bị
 
@@ -607,9 +619,9 @@ REQ dùng chung `Android · Web` có TC ở **cả hai** nền tảng — cột 
 | Regression đầy đủ | TC_001 → 050 | ~2 giờ | Kết thúc bằng teardown |
 | Bảo mật | TC_003 · 030 · 031 · 034 · 041 · 048 | ~15 phút | `@Security` |
 | `@TechCheck` | TC_009 · 018 | — | Phần 🔧 cần DevTools → Network |
-| **Smoke Mobile** (V1 Android) | TC_108 → 117 | ~20 phút | Tắt / mở app trước TC_114 · 115 · 116 |
-| Regression Mobile | TC_108 → 149 | ~1 giờ 15 phút | Teardown xoá `U-M2` · `TK-M` bằng API |
-| Mobile `@KnownBug` | TC_139 · 141 · 142 | ~8 phút | Chạy riêng — dự kiến FAIL |
+| **Smoke Mobile** (V1 Android) | TC_150 (khách) → 108 → 117 | ~22 phút | TC_150 · 151 chạy **trước** khi đăng nhập · tắt / mở app trước TC_114 · 115 · 116 |
+| Regression Mobile | TC_150 · 151 → 108 → 149 → 152 → 154 | ~1 giờ 25 phút | Teardown xoá `U-M2` · `TK-M` (và `U-M3` nếu còn) bằng API |
+| Mobile `@KnownBug` | TC_139 · 141 · 142 · 152 | ~10 phút | Chạy riêng — dự kiến FAIL |
 
 ---
 
@@ -617,6 +629,7 @@ REQ dùng chung `Android · Web` có TC ở **cả hai** nền tảng — cột 
 
 | Ngày | Thay đổi | Mốc git |
 |---|---|---|
+| 20-10-2026 | `/generate-testcases-from-requirements` Mode QUICK chế độ **BỔ SUNG** (Mobile lượt 2) — theo REQ Android 20-10-2026: **+5 TC · +6 biến thể** (`BK_USER_TC_150` → `154`): khách xem danh sách (`01`) · khách không có nút ghi (`19`) · Update user (`129` — `@KnownBug`, 2 biến thể) · xoá thành công (`42`) · xoay ngang (`130`). Phủ Mobile **45/45** REQ. Thêm trạng thái `M0` (khách) · người dùng `U-M3` (bị sửa / xoá thật). Mở 4/4 ảnh mới, không xung đột tài liệu ↔ ảnh. **Không** sửa TC cũ | `13bdfb6` (trước khi sửa) |
 | 26-09-2026 | `/generate-testcases-from-requirements` Mode QUICK chế độ **BỔ SUNG** — thêm mặt **Mobile (Android)**: **42 TC · 58 biến thể · 26 mục Bảng kiểm** (`BK_USER_TC_108` → `149`, 1 file `mobile/test_cases_user_mobile.md`), độ hạt GỘP giữ theo bộ đang có, rủi ro Cao → Đầy đủ. Phủ **40/40** REQ khai Android (31 `Android · Web` + 9 chỉ Android). Đã mở 23/23 ảnh evidence Android — không xung đột tài liệu ↔ ảnh. 3 TC `@KnownBug` (`139` · `141` · `142`) · 9 `@NeedsVerify` · 7 `@TechCheck`. Thêm `ASM-BK-USER-07` → `11`, trạng thái `M1` / `M1r`, tài khoản `TK-M` · `U-M2`. **Không** chạm TC Web / API | `1c4898d` (trước khi ghi) |
 | 25-09-2026 | **Chỉnh bộ TC API theo REQ mặt API** (`/generate-requirements-from-api user` + `DEMO-AMB-2509B`): 31 → **57 TC** (`BK_USER_TC_051` → `107`; thêm `082` → `107` = 26 TC), tách `api/test_cases_user_api.md` thành **3 part** ở `api/parts/` (> 40 TC). Neo **1:1** REQ API — bỏ mọi dòng `⚠️ Chưa có REQ`. Phủ **81/81** REQ. Thêm 9 TC / chuyển 4 TC sang `@KnownBug`: `061` · `062` · `071` · `088` · `089` · `090` · `092` · `097` · `105`. Bỏ `@NeedsVerify` ở các biến thể đã gọi thật. `066` bỏ biến thể name 10.000 ký tự (→ `091`, server trả **400**, không phải 201/422). **Web:** `TC_036` · `037` đổi biên **250/251 → 191/192** theo `REQ-BK-USER-30` 🟡 (`037` `@KnownBug`) | `b30eb57` (trước khi sửa) |
 | 25-09-2026 | `/generate-testcases-api user` — thêm mặt **API**: **31 TC** (`BK_USER_TC_051` → `081`, 1 file `api/`), độ hạt GỘP. Kiểm chứng ~30 request thật (dữ liệu tự tạo + dọn sạch). Neo tạm REQ Web (18 REQ) · 12 TC `⚠️ Chưa có REQ`. Phát hiện mới F-26 · F-27 (ghi `api_map.md`). @KnownBug: `062` (mật khẩu mặc định F-07) · `071` (PATCH thiếu email F-27). Module `USER` **81 TC** | `b30eb57` (trước khi tạo) |

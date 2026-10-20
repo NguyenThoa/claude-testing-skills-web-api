@@ -27,8 +27,8 @@
 | Module | Mã | Nền tảng | Số endpoint | Trạng thái | Tài liệu | REQ đã dùng | Mã kế tiếp | AMB treo | Story | Cập nhật |
 |---|---|---|---|---|---|---|---|---|---|---|
 | Xác thực & Phiên đăng nhập | `AUTH` | API ✅ · **Android ✅** (Sign in · Sign up · Logout — 19-09 · Profile · Settings · Exit app — 26-09; cập nhật hồ sơ thành công ❔ — REQ-122 lỗi) · **Web ✅** | 6 | ✅ Đã có tài liệu — 3 mặt | [auth/REQUIREMENTS_AUTH_SUMMARY.md](auth/REQUIREMENTS_AUTH_SUMMARY.md) | `REQ-BK-AUTH-01` → `126` (126) | `REQ-BK-AUTH-127` · `AMB-BK-AUTH-36` · `RISK-BK-AUTH-12` | **0** — 35/35 đã chốt (`DEMO-AMB-2509` · `2509B` · `2609`) | 6 | 26-09-2026 |
-| Người dùng | `USER` | **API ✅** · **Android 🟨** (đọc · lọc · validation ✅ — thêm/sửa/khoá/xoá thành công ❔) · **Web ✅** | 5 | 🟨 Đang khảo sát — Android còn vế ghi dữ liệu (cần tester nhập mật khẩu) | [user/REQUIREMENTS_USER_SUMMARY.md](user/REQUIREMENTS_USER_SUMMARY.md) | `REQ-BK-USER-01` → `128` (128) | `REQ-BK-USER-129` · `AMB-BK-USER-21` · `RISK-BK-USER-10` | **0** — 20/20 đã chốt | 12 | 26-09-2026 |
-| Sách | `BOOK` | **API ✅** · **Android 🟨** (đọc · lọc · form · validation ✅ — tạo sách **lỗi** REQ-147, sửa/xoá ❔) · **Web ✅** | 5 | 🟨 Đang khảo sát — Android còn vế ghi dữ liệu | [book/REQUIREMENTS_BOOK_SUMMARY.md](book/REQUIREMENTS_BOOK_SUMMARY.md) | `REQ-BK-BOOK-01` → `154` (154) | `REQ-BK-BOOK-155` · `AMB-BK-BOOK-38` · `RISK-BK-BOOK-11` | **0** — 37/37 đã chốt | 13 | 26-09-2026 |
+| Người dùng | `USER` | **API ✅** · **Android 🟨** (đọc · lọc · validation · khách · xoá ✅ — sửa/khoá **lỗi** REQ-129 · thêm người dùng ❔ cần nhập mật khẩu) · **Web ✅** | 5 | 🟨 Đang khảo sát — Android còn REQ-32 → 35 (cần tester nhập mật khẩu / tạo tài khoản) | [user/REQUIREMENTS_USER_SUMMARY.md](user/REQUIREMENTS_USER_SUMMARY.md) | `REQ-BK-USER-01` → `130` (130) | `REQ-BK-USER-131` · `AMB-BK-USER-22` · `RISK-BK-USER-10` | **0** — 21/21 đã chốt | 12 | 20-10-2026 |
+| Sách | `BOOK` | **API ✅** · **Android ✅** (đọc · lọc · form · validation · khách · lượt xem · Promotion · xoá ✅ — tạo sách **lỗi** REQ-147, lưu thay đổi **lỗi** REQ-155; vế tạo/sửa thành công chặn bởi lỗi) · **Web ✅** | 5 | ✅ Đã có tài liệu — 3 mặt (vế ❔ còn lại chặn bởi REQ-147) | [book/REQUIREMENTS_BOOK_SUMMARY.md](book/REQUIREMENTS_BOOK_SUMMARY.md) | `REQ-BK-BOOK-01` → `157` (157) | `REQ-BK-BOOK-158` · `AMB-BK-BOOK-41` · `RISK-BK-BOOK-11` | **0** — 40/40 đã chốt | 13 | 20-10-2026 |
 | Danh mục sách | `CAT` | API 🟨 · Android ⬜ | 4 | 🟨 Đã lập bản đồ | — | — | `REQ-BK-CAT-01` | 0 — `AMB-BK-05` ✅ | — | 19-09-2026 |
 | Khuyến mãi | `PROMO` | API 🟨 · Android ⬜ | 5 | 🟨 Đã lập bản đồ | — | — | `REQ-BK-PROMO-01` | 0 — `AMB-BK-04` · `09` ✅ | — | 19-09-2026 |
 | Tệp tin | `FILE` | API 🟨 · Android ⬜ | 7 | 🟨 Đã lập bản đồ | — | — | `REQ-BK-FILE-01` | 0 — `AMB-BK-07` ✅ | — | 19-09-2026 |
@@ -39,7 +39,7 @@
 
 **Bảng mã trạng thái:** ⬜ Chưa khảo sát · 🟨 Đã lập bản đồ (có catalog / bản đồ màn hình, chưa có REQ) · ✅ Đã có tài liệu REQ · ⏸️ Hoãn
 
-**Cột Nền tảng** mang trạng thái **riêng từng mặt**: `Android ⬜` = mới có bản đồ màn hình ở [`system_map.md`](_discovery/system_map.md), chưa sinh REQ · `Android 🟨` = có REQ nhưng còn vế chưa kiểm. Module chỉ ✅ khi **mọi** mặt đã ✅ — `AUTH` lên ✅ ngày 26-09-2026 (vế ❔ còn lại chặn bởi REQ-122, đã ghi rõ ở index module).
+**Cột Nền tảng** mang trạng thái **riêng từng mặt**: `Android ⬜` = mới có bản đồ màn hình ở [`system_map.md`](_discovery/system_map.md), chưa sinh REQ · `Android 🟨` = có REQ nhưng còn vế chưa kiểm. Module chỉ ✅ khi **mọi** mặt đã ✅ — `AUTH` lên ✅ ngày 26-09-2026 (vế ❔ còn lại chặn bởi REQ-122) · `BOOK` lên ✅ ngày 20-10-2026 (vế ❔ còn lại chặn bởi REQ-147). `USER` giữ 🟨 vì REQ-32 → 35 chưa kiểm được do **thiếu người nhập mật khẩu**, không phải do lỗi.
 
 ### Prefix đã chiếm trong hệ thống `BK`
 
@@ -53,17 +53,19 @@ Prefix của hệ thống CRM (`LOGIN`, `CUST`, `PRJ`…) **không liên quan** 
 
 ## 2. Trạng thái REQ toàn hệ thống
 
-Đã lập bản đồ **9/9 module** (8 mặt API · 8 mặt Android — `DASH` chỉ có Android, `SYS` chỉ có API) · có tài liệu REQ **3/9** (`AUTH` — API · Web · Android đủ màn hình · `USER` · `BOOK` — Web **và API** đủ, **Android** có REQ từ 26-09-2026 nhưng còn vế ghi dữ liệu ❔). Mặt **Web** mới recon 3 module (25-09-2026), chưa có bản đồ tầng khám phá.
+Đã lập bản đồ **9/9 module** (8 mặt API · 8 mặt Android — `DASH` chỉ có Android, `SYS` chỉ có API) · có tài liệu REQ **3/9** (`AUTH` · `BOOK` — đủ 3 mặt, vế ❔ còn lại chặn bởi lỗi Android · `USER` — Web và API đủ, **Android** còn REQ-32 → 35 ❔ cần nhập mật khẩu). Mặt **Web** mới recon 3 module (25-09-2026), chưa có bản đồ tầng khám phá.
 
 | Trạng thái | `AUTH` | `USER` | `BOOK` | Toàn hệ thống |
 |---|---|---|---|---|
-| 🟢 Active | 124 (API 40 · Android 14 · Web 23 · dùng chung `Android · API · Web` 8 · `Android · Web` 39 — trừ `73` · `97`) | 127 (Web 7 · API 77 · Android 9 · dùng chung `Web · API` 4 · `Android · Web` 30 — trừ `30`) | 152 (Web 13 · API 94 · Android 8 · dùng chung 4 · `Android · Web` 33 — trừ `03` · `34`) | 403 |
+| 🟢 Active | 124 (API 40 · Android 14 · Web 23 · dùng chung `Android · API · Web` 8 · `Android · Web` 39 — trừ `73` · `97`) | 129 (Web 5 · API 77 · Android 11 · dùng chung 3.1 4 · `Android · Web` 32 — trừ `30`) | 155 (Web 9 · API 94 · Android 11 · dùng chung 3.1 4 · `Android · Web` 37 — trừ `03` · `34`) | 408 |
 | 🟡 Changed | 2 (`73` · `97`) | 1 (`30`) | 2 (`03` · `34`) | 5 |
 | 🔴 Deprecated | 0 | 0 | 0 | 0 |
 | ⚪ Chưa implement | 0 | 0 | 0 | 0 |
 | Endpoint chưa sinh REQ (mặt API) | — | 0 | 0 | 19 (6 module còn lại) |
-| **Tổng** | **126 REQ** | **128 REQ** | **154 REQ** | **408 REQ** |
+| **Tổng** | **126 REQ** | **130 REQ** | **157 REQ** | **413 REQ** |
 
+> 20-10-2026 (Android lượt 3 · `DEMO-AMB-2010`): thêm REQ kỳ vọng chưa đạt (`@KnownBug`) — `REQ-BK-USER-129` (Update user lỗi `Error in processing request`) · `REQ-BK-BOOK-155` (lưu thay đổi lỗi, thông báo không chữ). `REQ-BK-BOOK-147` thử lại — **vẫn lỗi**. Quan sát chung: trên Android mọi thao tác **gửi dữ liệu** đã thử (Save Profile · Create book · Update user · Save changes) đều lỗi, **Delete** thì chạy — cần Dev xác minh.
+>
 > 26-09-2026 (Android · `DEMO-AMB-2609`): thêm **REQ Android ghi hành vi kỳ vọng mà app chưa đạt** (`@KnownBug`) — `REQ-BK-AUTH-122` (Save Profile lỗi) · `REQ-BK-USER-120` (tab User không về danh sách) · `124` (lỗi validation dính giữa các hộp thoại) · `REQ-BK-BOOK-147` (tạo sách lỗi) · `148` (tab Book không về danh sách) · `154` (breadcrumb Modify sai). REQ web mở rộng sang Android mà Android cũng chưa đạt: `REQ-BK-AUTH-118` · `REQ-BK-USER-30` · `REQ-BK-BOOK-17` · `48` · `51`.
 >
 > 25-09-2026 (`DEMO-AMB-2509B`): thêm **REQ mặt API ghi hành vi kỳ vọng mà hệ thống chưa đạt** (`@KnownBug`) — `USER`: `75` · `79` · `90` · `92` · `109` · `116 → 119` · `BOOK`: `51` (mở rộng `Web · API`) · `82` · `83` · `85` · `88` · `95` · `101` · `104` · `111` · `114` · `123` · `130` · `137` · `138` · `139` · `140` · `141` · `143` · `145` · `146` (`142` `@NeedsVerify`). Riêng `REQ-BK-USER-116` (F-32) **cần Dev xác minh**.
@@ -168,6 +170,7 @@ docs/
 
 | Ngày | Thay đổi |
 |---|---|
+| 20-10-2026 | `/generate-requirements-from-mobile` (Android lượt 3, bổ sung) cho `USER` · `BOOK` — khảo sát vai **khách** (app đang chưa đăng nhập) và các vế ghi dữ liệu sau khi tester đăng nhập. **+5 REQ** Android-only (`USER-129` · `130` · `BOOK-155 → 157`) · **10 REQ web mở rộng sang Android** (`USER` `01` · `19` · `42` · `BOOK` `01` · `03` · `07` · `20` · `37` · `42` · `50`). Chốt 4 AMB bằng `DEMO-AMB-2010` (1 🔴 `AMB-BK-USER-21`). 11 ảnh mới. Dọn 2 bản ghi test còn sót (`auto_web_<timestamp>_b` · `Auto BKAPI NoPrice`). `BOOK` lên ✅. `USER` còn REQ-32 → 35 ❔ (agent không nhập mật khẩu trên production). Tổng hệ thống **413 REQ** |
 | 26-09-2026 | `/generate-requirements-from-mobile` (Android lượt 2) cho `AUTH` (My Profile · Setting account · Exit app) · `USER` · `BOOK` — tổng **+22 REQ** Android-only (`AUTH-122 → 126` · `USER-120 → 128` · `BOOK-147 → 154`) và **76 REQ web mở rộng sang Android** (chuyển lên index: `AUTH` 11 · `USER` 31 · `BOOK` 34; `BOOK-51` thành `Android · Web · API`). Tạo `user/mobile/` · `book/mobile/` · 55 ảnh (dòng người khác làm mờ). Chốt 9 AMB mới bằng `DEMO-AMB-2609` (1 🔴 `AMB-BK-BOOK-34`). Phát hiện: **Save Profile** và **Create book** trên Android đều thất bại · lỗi validation dính giữa các hộp thoại User · hộp xoá sách hiện tên form khác · tab User/Book không về danh sách từ màn con (`AMB-BK-12`). **Chưa kiểm được trên Android**: mọi luồng cần nhập mật khẩu / tạo tài khoản (agent không làm trên hệ thống thật) — chờ tester. Tổng hệ thống 386 → **408 REQ**. Không tạo/xoá bản ghi nào; phát hiện 2 bản ghi test sót cũ (`auto_web_<timestamp>_b` · sách `Auto BKAPI NoPrice <timestamp>`) |
 | 25-09-2026 | `/generate-requirements-from-api user` · `book` — sinh REQ **mặt API** cho `USER` (73 REQ `43 → 115`) và `BOOK` (84 REQ `53 → 136`); 4 + 4 REQ web kiểm khớp trên API chuyển lên index (`Web · API`). Spec không đổi (`sha256` trùng). ≈ 800 request gọi thật, dữ liệu tự tạo đã dọn (có thể sót 1 danh mục tên rỗng). Chốt 26 AMB mới bằng `DEMO-AMB-2509B` (`USER` `08 → 17` · `BOOK` `18 → 33`) + `AMB-BK-AUTH-33` → sinh thêm `USER` `116 → 119` · `BOOK` `137 → 146`; sửa `REQ-BK-USER-30` · `REQ-BK-AUTH-73` (Name 250 → 191). Hệ thống **386 REQ**. Phát hiện **F-32 → F-46** (2 🔴). Đã chỉnh bộ TC API `USER` · `BOOK` (xem [`docs/testcases/_book-api/README.md`](../../testcases/_book-api/README.md)) |
 | 25-09-2026 | `/update-requirements-from-ticket` — **chốt toàn bộ AMB** bằng quyết định giả lập `DEMO-AMB-2509` (user yêu cầu, dữ liệu dạy học demo): `AUTH` 29 · `USER` 7 · `BOOK` 17 · cấp hệ thống `AMB-BK-01` → `12` — **0 AMB treo**. REQ: `AUTH` +2 (`120` · `121`) · 🟡 `97` · `BOOK` +2 (`51` · `52`) · 🟡 `03` · `34` · `USER` không đổi → hệ thống **215 REQ**. Impact Report: `auth/` · `user/` · `book/impact/impact_DEMO-AMB-2509.md` |

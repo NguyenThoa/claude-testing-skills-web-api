@@ -10,7 +10,7 @@
 | **Trình duyệt khảo sát** | Google Chrome 153 (Playwright MCP, headed), viewport đo được `1600 × 750`, `navigator.language = en-US`. Mọi AC về hiển thị **chỉ đúng với trình duyệt + viewport này** |
 | **Tầng network** | ✅ Quan sát **thụ động** request do UI phát sinh. **Không** gọi API trực tiếp |
 | **Phương pháp** | Thao tác thật ngày 25-09-2026 — khách và 2 tài khoản tự tạo; sửa/xoá **chỉ** trên 2 tài khoản đó. Ảnh chụp danh sách **làm mờ** mọi dòng không phải tài khoản test (chèn CSS `filter: blur` tạm thời trước khi chụp — không đổi dữ liệu) |
-| **REQ trong file này** | **7** — `19` · `32` · `34` · `37` · `39` · `40` · `42`. 31 REQ khác kiểm khớp trên Android ngày 26-09-2026 → **chuyển lên** [index mục 3.2](../REQUIREMENTS_USER_SUMMARY.md#32-dùng-chung-android--web) (`Android · Web`). Trước đó: **38** — `REQ-BK-USER-02` → `42` trừ `33` · `35` · `38`. 4 REQ `01` · `33` · `35` · `38` kiểm chứng khớp trên API (25-09-2026) → **chuyển lên index** (dùng chung `Web · API`), mã giữ nguyên. `REQ-BK-USER-30` sửa 25-09-2026 (`DEMO-AMB-2509B`) |
+| **REQ trong file này** | **5** — `32` · `34` · `37` · `39` · `40`. `19` · `42` kiểm khớp trên Android ngày 20-10-2026 → **chuyển lên** index mục 3.2. Trước đó **7** — 31 REQ khác kiểm khớp trên Android ngày 26-09-2026 → **chuyển lên** [index mục 3.2](../REQUIREMENTS_USER_SUMMARY.md#32-dùng-chung-android--web) (`Android · Web`). Trước đó: **38** — `REQ-BK-USER-02` → `42` trừ `33` · `35` · `38`. 4 REQ `01` · `33` · `35` · `38` kiểm chứng khớp trên API (25-09-2026) → **chuyển lên index** (dùng chung `Web · API`), mã giữ nguyên. `REQ-BK-USER-30` sửa 25-09-2026 (`DEMO-AMB-2509B`) |
 
 > **Thang `Nguồn`:** `Kiểm chứng thực tế` = đã thao tác trên web và xác nhận bằng ảnh hoặc số liệu DOM/network ghi trong AC · `API · <METHOD> <path> → <status>` = quan sát thụ động request do UI gửi.
 
@@ -38,11 +38,10 @@ Không có tài liệu nào cho màn hình này — toàn bộ REQ sinh từ kh�
 
 | REQ ID | Tên yêu cầu | Mô tả | Acceptance Criteria | Trạng thái | Cập nhật lần cuối | Nguồn |
 |---|---|---|---|---|---|---|
-| REQ-BK-USER-19 | Khách không có nút tạo và nút thao tác dòng | | Chưa đăng nhập → **không** có nút `New user` · **không** có cột nút ⋮ | 🟢 | — | Kiểm chứng thực tế · `web_user_list_guest_viewport.png` · đọc DOM |
 
 ### 3.4. Thêm người dùng (STORY-BK-USER-04)
 
-> ↗️ 31 REQ (`02 → 18` · `20 → 31` · `36` · `41`) **đã chuyển lên index** mục 3.2 ngày 26-09-2026 (kiểm khớp trên Android). REQ còn lại ở file này chưa kiểm được trên Android — lý do ở [../mobile/requirements_user_mobile.md mục 2](../mobile/requirements_user_mobile.md#2-bản-đồ-phủ-tài-liệu).
+> ↗️ 31 REQ (`02 → 18` · `20 → 31` · `36` · `41`) **đã chuyển lên index** mục 3.2 ngày 26-09-2026 (kiểm khớp trên Android) · thêm `19` · `42` ngày 20-10-2026. REQ còn lại ở file này chưa kiểm được trên Android — lý do ở [../mobile/requirements_user_mobile.md mục 2](../mobile/requirements_user_mobile.md#2-bản-đồ-phủ-tài-liệu).
 
 | REQ ID | Tên yêu cầu | Mô tả | Acceptance Criteria | Trạng thái | Cập nhật lần cuối | Nguồn |
 |---|---|---|---|---|---|---|
@@ -61,9 +60,8 @@ Không có tài liệu nào cho màn hình này — toàn bộ REQ sinh từ kh�
 
 | REQ ID | Tên yêu cầu | Mô tả | Acceptance Criteria | Trạng thái | Cập nhật lần cuối | Nguồn |
 |---|---|---|---|---|---|---|
-| REQ-BK-USER-42 | Xác nhận xoá gỡ người dùng khỏi danh sách | | `Delete` trong hộp xác nhận → thông báo `Deleted successfully.` · dòng biến mất khỏi danh sách. Network: `DELETE /api/user/<id>` → **200** | 🟢 | — | Kiểm chứng thực tế · API · DELETE /api/user/{id} → 200 · đọc danh sách sau xoá |
 
-**Tổng đợt Web: 42 REQ** (7 còn ở file này + 4 ở index 3.1 + 31 ở index 3.2) — Danh sách 10 (`01 → 10`) · Bộ lọc 8 (`11 → 18`) · Quyền 5 (`19 → 23`) · Thêm 12 (`24 → 35`) · Sửa 5 (`36 → 40`) · Xoá 2 (`41 → 42`) → `10 + 8 + 5 + 12 + 5 + 2 = 42 ✔`
+**Tổng đợt Web: 42 REQ** (5 còn ở file này + 4 ở index 3.1 + 33 ở index 3.2) — Danh sách 10 (`01 → 10`) · Bộ lọc 8 (`11 → 18`) · Quyền 5 (`19 → 23`) · Thêm 12 (`24 → 35`) · Sửa 5 (`36 → 40`) · Xoá 2 (`41 → 42`) → `10 + 8 + 5 + 12 + 5 + 2 = 42 ✔`
 
 > ↑ `REQ-BK-USER-01` · `33` · `35` · `38` **đã chuyển lên index** [`../REQUIREMENTS_USER_SUMMARY.md` mục 3](../REQUIREMENTS_USER_SUMMARY.md#31-web--api) ngày 25-09-2026 — kiểm chứng khớp trên API, `Nền tảng` = `Web · API`. Mã giữ nguyên; ảnh evidence ở lại `web/evidence/`. Tổng module: 42 REQ web = 38 ở file này + 4 ở index.
 
