@@ -10,7 +10,7 @@
 | **Trình duyệt khảo sát** | Google Chrome 153 (Playwright MCP, headed), viewport đo được `1600 × 750`, `navigator.language = en-US`. Mọi AC về hiển thị **chỉ đúng với trình duyệt + viewport này** |
 | **Tầng network** | ✅ Quan sát **thụ động** request do UI phát sinh. **Không** gọi API trực tiếp |
 | **Phương pháp** | Thao tác thật ngày 25-09-2026 — khách và 2 tài khoản tự tạo; sửa/xoá **chỉ** trên 2 tài khoản đó. Ảnh chụp danh sách **làm mờ** mọi dòng không phải tài khoản test (chèn CSS `filter: blur` tạm thời trước khi chụp — không đổi dữ liệu) |
-| **REQ trong file này** | **5** — `32` · `34` · `37` · `39` · `40`. `19` · `42` kiểm khớp trên Android ngày 20-10-2026 → **chuyển lên** index mục 3.2. Trước đó **7** — 31 REQ khác kiểm khớp trên Android ngày 26-09-2026 → **chuyển lên** [index mục 3.2](../REQUIREMENTS_USER_SUMMARY.md#32-dùng-chung-android--web) (`Android · Web`). Trước đó: **38** — `REQ-BK-USER-02` → `42` trừ `33` · `35` · `38`. 4 REQ `01` · `33` · `35` · `38` kiểm chứng khớp trên API (25-09-2026) → **chuyển lên index** (dùng chung `Web · API`), mã giữ nguyên. `REQ-BK-USER-30` sửa 25-09-2026 (`DEMO-AMB-2509B`) |
+| **REQ trong file này** | **3** — `37` · `39` · `40` (Android bị chặn bởi REQ-129). `32` · `34` mở rộng sang Android theo giả định ngày 20-10-2026 (`AMB-BK-USER-22`) → **chuyển lên** index mục 3.2. Trước đó **5** — `19` · `42` kiểm khớp trên Android ngày 20-10-2026 → **chuyển lên** index mục 3.2. Trước đó **7** — 31 REQ khác kiểm khớp trên Android ngày 26-09-2026 → **chuyển lên** [index mục 3.2](../REQUIREMENTS_USER_SUMMARY.md#32-dùng-chung-android--web) (`Android · Web`). Trước đó: **38** — `REQ-BK-USER-02` → `42` trừ `33` · `35` · `38`. 4 REQ `01` · `33` · `35` · `38` kiểm chứng khớp trên API (25-09-2026) → **chuyển lên index** (dùng chung `Web · API`), mã giữ nguyên. `REQ-BK-USER-30` sửa 25-09-2026 (`DEMO-AMB-2509B`) |
 
 > **Thang `Nguồn`:** `Kiểm chứng thực tế` = đã thao tác trên web và xác nhận bằng ảnh hoặc số liệu DOM/network ghi trong AC · `API · <METHOD> <path> → <status>` = quan sát thụ động request do UI gửi.
 
@@ -45,8 +45,6 @@ Không có tài liệu nào cho màn hình này — toàn bộ REQ sinh từ kh�
 
 | REQ ID | Tên yêu cầu | Mô tả | Acceptance Criteria | Trạng thái | Cập nhật lần cuối | Nguồn |
 |---|---|---|---|---|---|---|
-| REQ-BK-USER-32 | Add user: mật khẩu xác nhận phải khớp | | Password `a` · Confirmation `b` → `Password confirmation does not match.` | 🟢 | — | Kiểm chứng thực tế · đọc lỗi bằng DOM |
-| REQ-BK-USER-34 | Tạo người dùng thành công | | Điền hợp lệ → `Save` → thông báo `Created successfully.` · hộp thoại đóng · người dùng mới ở **đầu** danh sách, cột Active `Active`. Network: `POST /api/user` → **201**, body gồm `name` · `email` · `password` · `phone` · `address` · `isActive` | 🟢 | — | Kiểm chứng thực tế · `web_user_add_success_toast_viewport.png` · API · POST /api/user → 201 |
 
 ### 3.5. Sửa người dùng (STORY-BK-USER-05)
 
@@ -61,7 +59,7 @@ Không có tài liệu nào cho màn hình này — toàn bộ REQ sinh từ kh�
 | REQ ID | Tên yêu cầu | Mô tả | Acceptance Criteria | Trạng thái | Cập nhật lần cuối | Nguồn |
 |---|---|---|---|---|---|---|
 
-**Tổng đợt Web: 42 REQ** (5 còn ở file này + 4 ở index 3.1 + 33 ở index 3.2) — Danh sách 10 (`01 → 10`) · Bộ lọc 8 (`11 → 18`) · Quyền 5 (`19 → 23`) · Thêm 12 (`24 → 35`) · Sửa 5 (`36 → 40`) · Xoá 2 (`41 → 42`) → `10 + 8 + 5 + 12 + 5 + 2 = 42 ✔`
+**Tổng đợt Web: 42 REQ** (3 còn ở file này + 4 ở index 3.1 + 35 ở index 3.2) — Danh sách 10 (`01 → 10`) · Bộ lọc 8 (`11 → 18`) · Quyền 5 (`19 → 23`) · Thêm 12 (`24 → 35`) · Sửa 5 (`36 → 40`) · Xoá 2 (`41 → 42`) → `10 + 8 + 5 + 12 + 5 + 2 = 42 ✔`
 
 > ↑ `REQ-BK-USER-01` · `33` · `35` · `38` **đã chuyển lên index** [`../REQUIREMENTS_USER_SUMMARY.md` mục 3](../REQUIREMENTS_USER_SUMMARY.md#31-web--api) ngày 25-09-2026 — kiểm chứng khớp trên API, `Nền tảng` = `Web · API`. Mã giữ nguyên; ảnh evidence ở lại `web/evidence/`. Tổng module: 42 REQ web = 38 ở file này + 4 ở index.
 

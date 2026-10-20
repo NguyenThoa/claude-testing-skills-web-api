@@ -1,14 +1,14 @@
-# Test Cases — Module Xác thực & Phiên đăng nhập (`AUTH`) · Book — tổng 193 TC · 3 nền tảng (Mobile Android · API · Web) · độ hạt GỘP
+# Test Cases — Module Xác thực & Phiên đăng nhập (`AUTH`) · Book — tổng 210 TC · 3 nền tảng (Mobile Android · API · Web) · độ hạt GỘP
 
 | Thông tin | Nội dung |
 |---|---|
 | **Hệ thống** | AnhTester Book Management — mã hệ thống `BK` (namespace `_book-api/`) · danh mục TC: [../README.md](../README.md) |
 | **Module** | Xác thực & Phiên đăng nhập · prefix `AUTH` |
-| **Nguồn requirement** | Index [REQUIREMENTS_AUTH_SUMMARY.md](../../../requirements/_book-api/auth/REQUIREMENTS_AUTH_SUMMARY.md) (8 REQ dùng chung `Android · API · Web` · 29 REQ `Android · Web`) · [mobile/requirements_auth_mobile.md](../../../requirements/_book-api/auth/mobile/requirements_auth_mobile.md) (9 REQ) · [api/requirements_auth_api.md](../../../requirements/_book-api/auth/api/requirements_auth_api.md) (40 REQ) · [web/requirements_auth_web.md](../../../requirements/_book-api/auth/web/requirements_auth_web.md) (35 REQ) — **0 AMB treo** (chốt 25-09-2026, `DEMO-AMB-2509`) · bản đồ API [api_map.md](../../../requirements/_book-api/_discovery/api_map.md) |
-| **Mode sinh** | Mobile: QUICK (`/generate-testcases-from-requirements`) · API: `/generate-testcases-api` · Web: QUICK chế độ **BỔ SUNG** — cả ba **độ hạt GỘP** |
-| **Ngày sinh** | Mobile 20-09-2026 · API 20-09-2026 · Web 25-09-2026 |
-| **Dải TC ID** | `BK_AUTH_TC_001` → `BK_AUTH_TC_193` — **dải chung toàn module**: Mobile `001`→`058` · API `059`→`108` · Web `109`→`193` |
-| **Mã kế tiếp** | `BK_AUTH_TC_194` — **KHÔNG đánh lại từ 001** |
+| **Nguồn requirement** | Index [REQUIREMENTS_AUTH_SUMMARY.md](../../../requirements/_book-api/auth/REQUIREMENTS_AUTH_SUMMARY.md) (8 REQ dùng chung `Android · API · Web` · 40 REQ `Android · Web` — mục 3.2: 29 · mục 3.3: 11) · [mobile/requirements_auth_mobile.md](../../../requirements/_book-api/auth/mobile/requirements_auth_mobile.md) (14 REQ) · [api/requirements_auth_api.md](../../../requirements/_book-api/auth/api/requirements_auth_api.md) (40 REQ) · [web/requirements_auth_web.md](../../../requirements/_book-api/auth/web/requirements_auth_web.md) (24 REQ) — **0 AMB treo** (chốt 25-09-2026, `DEMO-AMB-2509`) · bản đồ API [api_map.md](../../../requirements/_book-api/_discovery/api_map.md) |
+| **Mode sinh** | Mobile: QUICK (`/generate-testcases-from-requirements`), lượt 2 chế độ **BỔ SUNG** (Part 03) · API: `/generate-testcases-api` · Web: QUICK chế độ **BỔ SUNG** — cả ba **độ hạt GỘP** |
+| **Ngày sinh** | Mobile 20-09-2026 (Part 03: 20-10-2026) · API 20-09-2026 · Web 25-09-2026 |
+| **Dải TC ID** | `BK_AUTH_TC_001` → `BK_AUTH_TC_210` — **dải chung toàn module**: Mobile `001`→`058` · `194`→`210` · API `059`→`108` · Web `109`→`193` |
+| **Mã kế tiếp** | `BK_AUTH_TC_211` — **KHÔNG đánh lại từ 001** |
 | **Mức rủi ro · độ sâu** | `Cao` → **Đầy đủ** — đủ 6 nhánh V1, mọi nhánh V2 có điều kiện kích hoạt, V3/V4 chấm từng nhánh.<br>Căn cứ chấm Cao (chỉ cần 1 dấu hiệu, ở đây có 3): đụng **xác thực** · là **cổng vào** mọi module khác (hỏng thì chặn cả đợt kiểm thử) · tạo bản ghi **người dùng** trên production.<br>**Hạ xuống Tiêu chuẩn khi:** không bao giờ — module xác thực luôn giữ mức Cao |
 | **Môi trường** | `https://book.anhtester.com` — **production, server duy nhất**. **Không** dùng chung (user chốt 14-08-2026) nhưng vẫn áp luật: chỉ ghi/xoá bản ghi do chính lượt chạy tạo |
 | **Thiết bị chuẩn** | Emulator `Pixel_10_Pro_XL_API_37` · Android 17 · `1344×2992` · dọc · locale `en-US` · app `1.0 (versionCode 1)` bản debug. **iOS chưa khảo sát** — bộ TC này **không** áp cho iOS |
@@ -38,6 +38,7 @@ Biến thể của **cùng một trường**, **cùng loại phản hồi** nằ
 |---|---|---|
 | `S0` | **Chưa đăng nhập**, có mạng, dọc | Đang đăng nhập thì avatar → `Logout`. Hoặc Cài đặt → Ứng dụng → `book.anhtester.com` → Bộ nhớ → **Xoá dữ liệu**, rồi mở lại app |
 | `S1` | **`TK-A` đang đăng nhập** | Từ `S0`: avatar → nhập email/mật khẩu của `TK-A` → `Login account` |
+| `S2` | **`TK-M` đang đăng nhập**, đang ở tab Dashboard — chỉ Part 03 | Từ `S0`: avatar → đăng nhập `TK-M` (dữ liệu ở đầu [Part 03](mobile/parts/part_03_mobile_ho_so.md)) |
 
 ---
 
@@ -73,6 +74,7 @@ TC đăng ký tạo tài khoản thật trên production. App **không** có ch�
 | `06` | `…_flow` | TC_054 |
 | `07` · `08` · `09` | `…_xss1` · `…_xss2` · `…_sqli` | TC_055 |
 | `10`, `14` | chỉ tạo khi app **cho qua** ngoài dự kiến (`TC_032-b`, `TC_040-e`) | — |
+| `19` | `auto_auth_<T+19>_profile@auto.test` (`TK-M` — sửa hồ sơ, Part 03) | setup Part 03 (Sign up đủ mọi trường hoặc `POST /api/register`) |
 
 🚫 **Không** đăng nhập, sửa hay xoá tài khoản nào không có tiền tố `auto_auth_` — đặc biệt `user@example.com` (`RISK-BK-AUTH-03`).
 
@@ -197,6 +199,7 @@ Bộ `@Smoke` Web: **TC_144 (tạo TK-W) → 109 → 115 · 130 · 141 → 143 �
 |---|---|---|---|---|---|
 | Mobile (Android) | [mobile/parts/part_01_mobile_dang_nhap.md](mobile/parts/part_01_mobile_dang_nhap.md) | Sign in · Dashboard sau đăng nhập · menu avatar · Đăng xuất · vòng đời phiên | 25 | 001–025 | `03 · 11 · 14 · 15 · 16 · 49 → 64` |
 | Mobile (Android) | [mobile/parts/part_02_mobile_dang_ky.md](mobile/parts/part_02_mobile_dang_ky.md) | Sign up · validation · địa chỉ Division/Ward · vòng đời form | 33 | 026–058 | `01 · 03 · 08 · 09 · 11 · 59 · 60 · 62 · 65 → 86` |
+| Mobile (Android) | [mobile/parts/part_03_mobile_ho_so.md](mobile/parts/part_03_mobile_ho_so.md) | My Profile · Setting account · Exit app (tài khoản riêng `TK-M`) | 17 | 194–210 | `101 · 102 · 105 → 108 · 113 · 116 → 119 · 122 → 126` |
 | API | [api/parts/part_01_api_dang_ky_dang_nhap.md](api/parts/part_01_api_dang_ky_dang_nhap.md) | `POST /api/register` · `POST /api/login` | 25 | 059–081 · 106–107 | `01 → 23` |
 | API | [api/parts/part_02_api_phien_ho_so.md](api/parts/part_02_api_phien_ho_so.md) | `POST /api/refetch-token` · `DELETE /api/logout` · `GET /api/me` · `PATCH /api/profile` · body lỗi chung | 25 | 082–105 · 108 | `24 → 48` |
 | Web | [web/parts/part_01_web_dang_nhap.md](web/parts/part_01_web_dang_nhap.md) | Sign in · Dashboard sau đăng nhập · menu tài khoản · phiên · chặn trang cần đăng nhập · Đăng xuất | 32 | 109–140 | `11 · 14 · 15 · 16 · 49 → 59 · 87 · 91 → 100 · 121` |
@@ -204,13 +207,13 @@ Bộ `@Smoke` Web: **TC_144 (tạo TK-W) → 109 → 115 · 130 · 141 → 143 �
 | Web | [web/parts/part_03_web_ho_so.md](web/parts/part_03_web_ho_so.md) | My Profile · đổi mật khẩu · Setting account | 22 | 172–193 | `96 · 101 → 120` |
 | iOS | — | Chưa khảo sát requirements — không sinh TC | — | — | — |
 
-Tổng Mobile: **58 TC · 95 biến thể** (TC không có Bảng biến thể tính 1) · thêm **17 mục Bảng kiểm** ở `TC_001` · `TC_005` · `TC_026`. Vượt ngưỡng 50 TC của độ hạt GỘP → tách 2 part, cắt tại ranh giới **Đăng nhập | Đăng ký**.
+Tổng Mobile: **75 TC · 118 biến thể** (TC không có Bảng biến thể tính 1) · thêm **30 mục Bảng kiểm** ở `TC_001` · `TC_005` · `TC_026` · `TC_194` · `TC_197`. Vượt ngưỡng 50 TC của độ hạt GỘP → tách 3 part, cắt tại ranh giới **Đăng nhập | Đăng ký | Hồ sơ**. Part 03 (lượt 2, 20-10-2026) mang dải `194`→`210` — nối sau Web vì dải `059`→`193` đã có chủ.
 
 Tổng API: **50 TC · 94 biến thể** · 6/6 endpoint · vượt ngưỡng 40 TC của file API → tách 2 part, cắt tại ranh giới **mở phiên | dùng phiên**.
 
 Tổng Web: **85 TC · 119 biến thể** · thêm **27 mục Bảng kiểm** ở `TC_109` · `114` · `141` · `172` · `177`. Vượt ngưỡng 50 TC → tách 3 part, cắt tại ranh giới **Đăng nhập | Đăng ký | Hồ sơ**.
 
-**Tổng module: 193 TC · 308 biến thể.**
+**Tổng module: 210 TC · 331 biến thể.**
 
 ---
 
@@ -220,7 +223,7 @@ Tổng Web: **85 TC · 119 biến thể** · thêm **27 mục Bảng kiểm** �
 |---|---|---|---|
 | ASM-BK-AUTH-01 | Nhãn nhóm trên Sign up là `Infomation` (thiếu chữ `r`) — lỗi chính tả hay cố ý? | TC ghi **đúng nguyên văn** `Infomation` theo ảnh `android_signup_default_part1.png`. Dev sửa thành `Information` → sửa mục `3` Bảng kiểm `TC_026`. Đề nghị đưa vào AMB | TC_026 |
 | ASM-BK-AUTH-02 | Email có khoảng trắng đầu/cuối khi đăng nhập — app cắt bỏ hay báo sai định dạng? Chưa khảo sát | App **cắt bỏ** khoảng trắng đầu/cuối rồi đăng nhập bình thường | TC_017-c |
-| ASM-BK-AUTH-03 | Name chỉ gồm khoảng trắng — app coi là trống hay hợp lệ? Chưa khảo sát | App coi là **trống** → `Name is required.` | TC_032-b |
+| ASM-BK-AUTH-03 | Name chỉ gồm khoảng trắng — app coi là trống hay hợp lệ? Chưa khảo sát | App coi là **trống** → `Name is required.` | TC_032-b · TC_198-b (My Profile) |
 | ASM-BK-AUTH-04 | Phạm vi nền tảng | Lượt 1 chỉ Mobile (user hỏi về "Mobile Book"). **Lượt 2 (20-09-2026) bổ sung API** — 8 REQ dùng chung nay có TC ở **cả hai** nền tảng | — (đã khép) |
 | ASM-BK-AUTH-06 | Web: email sai dạng khác `khong-phai-email` · mật khẩu khác hoa thường / thừa khoảng trắng · chuỗi tấn công — chưa khảo sát trên web | Bị chặn / từ chối **như** biến thể đã khảo sát (cùng bộ kiểm định dạng phía trang và cùng máy chủ với Android) | TC_119 · 122 · 138 · 139 · 155 · 156 |
 | ASM-BK-AUTH-07 | Web: khách mở thẳng URL My Profile / Setting account — ma trận Web ghi *chưa thử* | Bị đưa về Sign in như trang tạo sách (REQ-96) | TC_193 |
@@ -231,7 +234,7 @@ Tổng Web: **85 TC · 119 biến thể** · thêm **27 mục Bảng kiểm** �
 
 ---
 
-## Bảng Đối Soát Coverage (Mobile 46/46 · API 48/48 · Web 72/72 — 121/121 REQ)
+## Bảng Đối Soát Coverage (Mobile 62/62 · API 48/48 · Web 72/72 — 126/126 REQ)
 
 > REQ khai nhiều nền tảng phải có TC ở **mỗi** nền tảng đã khai. Cột ❌ là **thiếu thật**, không được tính "đã phủ" nhờ TC nền tảng khác.
 
@@ -290,8 +293,31 @@ Tổng Web: **85 TC · 119 biến thể** · thêm **27 mục Bảng kiểm** �
 | REQ-BK-AUTH-84 | Xuống nền giữ dữ liệu | 1 | TC_056 | P |
 | REQ-BK-AUTH-85 | Xoay ngang giữ dữ liệu | 1 | TC_057 | P |
 | REQ-BK-AUTH-86 | Bàn phím không che ô | 1 | TC_058 | P |
+| REQ-BK-AUTH-122 | Save Profile trên Android thành công | 1 | TC_196 (2) | P · 🐞 `@KnownBug` — [BUG_auth_1792454704_REQ122](../../../bugs/_book-api/auth/mobile/BUG_auth_1792454704_REQ122.md) |
+| REQ-BK-AUTH-123 | Back ở My Profile | 1 | TC_203 (2) | P |
+| REQ-BK-AUTH-124 | Reset về theme lúc mở màn hình | 1 | TC_207 | P · State |
+| REQ-BK-AUTH-125 | Theme / màu giữ khi rời màn hình | 1 | TC_208 | P |
+| REQ-BK-AUTH-126 | Exit app giữ phiên | 1 | TC_210 (2) | P · Lifecycle |
 
-**Tổng Mobile:** 46/46 REQ có ≥ 1 TC ✅ · không REQ nào 🔴.
+### REQ dùng chung `Android · Web` (index mục 3.3) — cột Mobile
+
+11 REQ chuyển lên index ngày 26-09-2026 khi kiểm khớp trên Android. Cột Web giữ ở bảng *REQ chỉ Web* bên dưới (lập trước khi chuyển — mã không đổi).
+
+| REQ ID | Mô tả ngắn | Mobile — TC (số biến thể) | Loại case (Mobile) |
+|---|---|---|---|
+| REQ-BK-AUTH-101 | My Profile hiển thị | TC_194 · 209 | UI (Bảng kiểm 8 mục) · Security |
+| REQ-BK-AUTH-102 | Save / Reset mờ khi chưa sửa | TC_195 | UI Behavior |
+| REQ-BK-AUTH-105 | Profile: Name bắt buộc | TC_198 (2) | N |
+| REQ-BK-AUTH-106 | Profile: Email sai định dạng | TC_199 (2) | N |
+| REQ-BK-AUTH-107 | Old Password bắt buộc | TC_200 | N · Security |
+| REQ-BK-AUTH-108 | Profile: Confirmation khớp | TC_201 (2) | N |
+| REQ-BK-AUTH-113 | Reset | TC_202 | P |
+| REQ-BK-AUTH-116 | Setting account hiển thị | TC_197 | UI (Bảng kiểm 5 mục) |
+| REQ-BK-AUTH-117 | Theme / màu áp dụng ngay | TC_204 | P |
+| REQ-BK-AUTH-118 | Save cấu hình | TC_205 | P · 🐞 `@KnownBug` — `AMB-BK-AUTH-35` |
+| REQ-BK-AUTH-119 | Reset theme về System | TC_206 | P |
+
+**Tổng Mobile:** 62/62 REQ có ≥ 1 TC ✅ (8 dùng chung ba nền tảng · 40 `Android · Web` · 14 chỉ Android) · không REQ nào 🔴. REQ My Profile chỉ khai `Web` (`103` · `104` · `109 → 112` · `114` · `120`) **không** tính — chưa kiểm được trên Android vì REQ-122.
 
 ### REQ chỉ API (`api/`)
 
@@ -338,7 +364,7 @@ Tổng Web: **85 TC · 119 biến thể** · thêm **27 mục Bảng kiểm** �
 | REQ-BK-AUTH-47 | Mật khẩu cũ bị từ chối | TC_104 | N · Security | 🐞 `@KnownBug` F-16 |
 | REQ-BK-AUTH-48 | Hình dạng body lỗi | TC_105 (6) | N | |
 
-**Tổng API:** 48/48 REQ có ≥ 1 TC ✅ (40 REQ chỉ API + vế API của 8 REQ dùng chung). **Toàn module: 121/121 REQ** — REQ dùng chung có TC ở **mọi** nền tảng đã khai. ⚠️ `REQ-120` · `121` mới chỉ khai `Web`.
+**Tổng API:** 48/48 REQ có ≥ 1 TC ✅ (40 REQ chỉ API + vế API của 8 REQ dùng chung). **Toàn module: 126/126 REQ** — REQ dùng chung có TC ở **mọi** nền tảng đã khai. ⚠️ `REQ-120` · `121` mới chỉ khai `Web`.
 
 ### REQ dùng chung `Android · Web` (index mục 3.2) — cột Web
 
@@ -416,7 +442,7 @@ Cột Mobile của 29 REQ này nằm ở bảng *REQ chỉ Android* bên dưới
 | REQ-BK-AUTH-120 🆕 | Profile: email trùng | TC_188 | N · Security | `@NeedsVerify` — quyết định PO chưa kiểm chứng |
 | REQ-BK-AUTH-121 🆕 | Khoá + sai mật khẩu | TC_135 | N | |
 
-**Tổng Web:** 72/72 REQ (8 dùng chung ba nền tảng + 29 dùng chung `Android · Web` + 35 chỉ Web) có ≥ 1 TC Web ✅. Phép thử 6b trên file Web: TC gánh ≥ 2 REQ (`TC_118` · `140` · `157` · `158` · `171`) — không TC nào có ≥ 2 REQ chỉ dựa vào nó ✅.
+**Tổng Web:** 72/72 REQ (8 dùng chung ba nền tảng + 40 dùng chung `Android · Web` + 24 chỉ Web — 11 REQ `101` · `102` · `105 → 108` · `113` · `116 → 119` nằm ở bảng *REQ chỉ Web* nhưng nay là `Android · Web`) có ≥ 1 TC Web ✅. Phép thử 6b trên file Web: TC gánh ≥ 2 REQ (`TC_118` · `140` · `157` · `158` · `171`) — không TC nào có ≥ 2 REQ chỉ dựa vào nó ✅.
 
 ### Bao phủ mã HTTP (API)
 
@@ -447,7 +473,7 @@ Cột Mobile của 29 REQ này nằm ở bảng *REQ chỉ Android* bên dưới
 
 ## Bảng Đối Soát Evidence
 
-Đã mở **31/31** ảnh: 28 ảnh ở [`requirements/_book-api/auth/mobile/evidence/`](../../../requirements/_book-api/auth/mobile/evidence/) + 3 ảnh tổng quan ở `_discovery/evidence/` (`android_auth_overview` · `android_auth_account_menu` · `android_dash_overview`).
+Đã mở **31/31** ảnh: 28 ảnh ở [`requirements/_book-api/auth/mobile/evidence/`](../../../requirements/_book-api/auth/mobile/evidence/) + 3 ảnh tổng quan ở `_discovery/evidence/` (`android_auth_overview` · `android_auth_account_menu` · `android_dash_overview`). **Part 03 (20-10-2026):** mở thêm **14/14** ảnh lượt 2 (`android_profile_*` 5 · `android_settings_*` 7 · `android_exit_app_*` 2) — không xung đột tài liệu ↔ ảnh.
 
 | Ảnh evidence | Màn hình / trạng thái | TC dựa vào | Đầy đủ? |
 |---|---|---|---|
@@ -481,7 +507,18 @@ Cột Mobile của 29 REQ này nằm ở bảng *REQ chỉ Android* bên dưới
 | `android_signup_reopen_data_retained.png` | Sign up mở lại, còn dữ liệu | TC_052 | ✅ |
 | `android_signup_landscape.png` | Sign up xoay ngang | TC_057 | 🟡 Ảnh đã cuộn qua ô Name — giá trị Name xác nhận bằng **đọc chữ trong ô**, không thấy trong ảnh |
 | `android_signup_keyboard_open.png` | Bàn phím mở ở Password Confirmation | TC_058 | ✅ |
-| *(đọc phần tử, không ảnh)* | Link Sign in trên Sign up · Name 250/251 · `enabled` của Ward/Address · text sau khi xuống nền | TC_028 · 038-b · 038-c · 048 · 056 | ✅ theo lần đọc phần tử ghi trong AC |
+| `android_profile_default_part1.png` · `…_part2.png` | My Profile mặc định (2 phần — cuộn), hai nút mờ | TC_194 · 195 (bước 1) | 🟡 Tài khoản khảo sát **chưa có địa chỉ** — 3 ô Division · Ward · Address trống; mục `4` Bảng kiểm `TC_194` (địa chỉ điền sẵn) chưa có ảnh |
+| `android_profile_invalid_fields.png` | Name trống + Email `khong-phai-email` | TC_198-a · 199-a · 202 (bước 2) | ✅ |
+| `android_profile_old_password_required.png` | Old Password trống, Password có giá trị, Confirmation trống · `Save Profile` sáng | TC_200 (bước 4) · 201-a · 195 (bước 4) | 🟡 Với TC_200: Confirmation **trống** nên ảnh có thêm lỗi `does not match` — bước 5 (Confirmation khớp, không lỗi) chưa có ảnh |
+| `android_profile_save_error_toast.png` | Save Profile → `Error in processing request` | TC_196 (hiện trạng `@KnownBug`) | ✅ — chứng minh **lỗi**, không phải kỳ vọng |
+| `android_settings_default_part1.png` · `…_part2.png` | Setting account mặc định (2 phần), `System` được chọn | TC_197 | ✅ |
+| `android_settings_dark_theme.png` | Chọn `Dark`, nền tối | TC_204 (bước 2) · 207 (bước 3) | ✅ |
+| `android_settings_save_no_feedback.png` | `Dark` + chấm vàng ✓, sau Save — không thông báo | TC_204 (bước 4) · 205 (hiện trạng) | ✅ |
+| `android_settings_reset_back_to_loaded.png` | Sau Reset → `System`, nền sáng, chấm vàng vẫn ✓ | TC_206 | ✅ |
+| `android_settings_theme_kept_other_tab.png` | Tab Book nền tối, tab + viền avatar vàng | TC_208 (bước 3) | ✅ |
+| `android_exit_app_result.png` | Ngăn ứng dụng của máy sau `Exit app` | TC_210 (bước 2) | ✅ |
+| `android_exit_app_reopen.png` | Dashboard `Welcome …` sau khi mở lại | TC_210-a (bước 3–4) | ✅ |
+| *(đọc phần tử, không ảnh)* | Link Sign in trên Sign up · Name 250/251 · `enabled` của Ward/Address · text sau khi xuống nền · `enabled` Reset/Save Profile · Reset My Profile · Back ở My Profile · `selected` 3 tab theme sau Reset | TC_028 · 038-b · 038-c · 048 · 056 · 195 · 202 · 203-a · 207 | ✅ theo lần đọc phần tử ghi trong AC |
 
 ### Vùng chưa có evidence — TC / biến thể gắn `@NeedsVerify`
 
@@ -498,6 +535,9 @@ Cột Mobile của 29 REQ này nằm ở bảng *REQ chỉ Android* bên dưới
 | TC_032-b · 034 · 037 `a` `b` `c` | Name chỉ khoảng trắng · Password trống kèm Confirmation có giá trị · Name 1 / 190 / 191 ký tự | Chốt ASM-BK-AUTH-03 |
 | TC_043 `b` `c` · 044 · 045 | Confirmation lệch hoa thường / khoảng trắng · nút mắt trên Sign up | 1 ảnh / trạng thái |
 | TC_046 `a` `b` · 047 bước 3 · 050-b · 057 bước 5 | Phone hợp lệ · lọc Division · xoá Division bằng `×` · xoay về dọc | 1 ảnh / trạng thái |
+| TC_194 mục `4` · TC_196-b | My Profile của tài khoản **có** địa chỉ · sửa Address rồi Save | Khảo sát bằng `TK-M`; `196-b` chỉ có ý nghĩa sau khi REQ-122 được sửa |
+| TC_198-b · 199-b · 200 bước 5 · 201-b | Name chỉ khoảng trắng · `auto_auth@` · Confirmation khớp · cặp `a`/`b` | 1 ảnh / trạng thái — tester gõ mật khẩu |
+| TC_203-b · 204 bước 5 · 208 bước 5 · 210-b | Back từ tab Book · chọn `Light` · ✓ màu sau khi quay lại · mở lại từ danh sách gần đây | 1 ảnh / trạng thái |
 
 ### Evidence mặt Web
 
@@ -555,32 +595,32 @@ Cột Mobile của 29 REQ này nằm ở bảng *REQ chỉ Android* bên dưới
 
 | Vòng | Nhánh | Trạng thái | TC ID / Lý do |
 |---|---|---|---|
-| 1 | UI cơ bản | ✅ | TC_001 · 026 (2 TC · 14 mục Bảng kiểm) — nhãn nguyên văn · thứ tự ô · trạng thái mặc định · dấu `*` · biểu tượng mắt |
-| 1 | Open form | ✅ | TC_002 · 003 · 027 · 028 (4 TC · 8 biến thể) — mọi lối vào Sign in / Sign up. Đóng bằng Back: TC_018 · 051 |
+| 1 | UI cơ bản | ✅ | TC_001 · 026 · 194 · 197 (4 TC · 27 mục Bảng kiểm) — nhãn nguyên văn · thứ tự ô · trạng thái mặc định · dấu `*` · biểu tượng mắt · theme mặc định `System` |
+| 1 | Open form | ✅ | TC_002 · 003 · 027 · 028 (4 TC · 8 biến thể) — mọi lối vào Sign in / Sign up · My Profile / Setting account qua menu avatar (TC_194 · 197). Đóng bằng Back: TC_018 · 051 · 203 |
 | 1 | Display | ✅ | TC_004 (Welcome + chữ cái avatar) · 005 (menu, cắt `…`) · 006 (vòng xoay đang xử lý) — 3 TC |
 | 1 | Input valid data | ✅ | TC_029 (tối thiểu — chỉ ô bắt buộc) · 030 (đầy đủ mọi ô) |
-| 1 | Save | ✅ | TC_029 · 030 (đăng ký) · 004 (đăng nhập) — thông báo đúng + điều hướng đúng |
-| 1 | Verify data | ✅ | TC_031 · 004 — Name / email hiện đúng sau khi lưu. Phone / địa chỉ chỉ đối chiếu được qua API (🔧 TC_031) — Profile Android chưa khảo sát |
-| 2 | UI Behavior | ✅ | TC_011 · 012 · 016 · 044 · 045 · 047 (6 TC · 7 biến thể) |
-| 2 | Required | ✅ | TC_007 · 008 · 009 · 032 · 033 · 034 · 035 · 036 (8 TC · 9 biến thể) — từng ô + tất cả, cả 2 màn hình |
-| 2 | Validation | ✅ | TC_010 · 022 · 037 · 038 · 039 · 040 · 043 · 046 · 055 (9 TC · 32 biến thể) — đối soát theo bảng 15 loại ở mục con bên dưới |
+| 1 | Save | ✅ | TC_029 · 030 (đăng ký) · 004 (đăng nhập) — thông báo đúng + điều hướng đúng · TC_196 (Save Profile — 🐞 `@KnownBug` REQ-122) |
+| 1 | Verify data | ✅ | TC_031 · 004 — Name / email hiện đúng sau khi lưu · TC_194 — Phone + địa chỉ đã đăng ký hiện lại ở My Profile (mục `4` `@NeedsVerify`) · TC_196 bước 4–5 — dữ liệu sau khi sửa |
+| 2 | UI Behavior | ✅ | TC_011 · 012 · 016 · 044 · 045 · 047 · 195 · 204 · 206 (9 TC · 10 biến thể) |
+| 2 | Required | ✅ | TC_007 · 008 · 009 · 032 · 033 · 034 · 035 · 036 · 198 · 200 (10 TC · 12 biến thể) — từng ô + tất cả, cả 3 màn hình (Sign in · Sign up · My Profile) |
+| 2 | Validation | ✅ | TC_010 · 022 · 037 · 038 · 039 · 040 · 043 · 046 · 055 · 199 · 201 (11 TC · 36 biến thể) — đối soát theo bảng 15 loại ở mục con bên dưới |
 | 2 | Equivalence Partitioning | ✅ | TC_010 · 040 (lớp email sai) · 017 (lớp kiểu chữ) · 046 (lớp số điện thoại) |
 | 2 | Boundary Value Analysis | ✅ | TC_037 · 038 (2 TC · 7 biến thể) — `1` · `190` · **`191`** · **`192`** · `250` · `251` · `300` (biên 191/192 theo `REQ-73` 🟡) |
 | 2 | Business Rule | ✅ | TC_041 · 042 (email duy nhất) · 013 · 014 (quy tắc máy chủ) — mỗi rule có vế tuân thủ (TC_029 · 004) và vế vi phạm |
 | 2 | Decision Table | ✅ | Bảng quyết định Sign in 3 điều kiện → R0–R4, mỗi rule ≥ 1 TC (bảng ở mục Coverage) |
-| 2 | State Transition | ➖ | Không có entity ≥ 3 trạng thái (index requirements mục 7). Phiên chỉ có 2 trạng thái — chuyển qua lại đã phủ ở TC_004 · 006 · 021 · 024 |
+| 2 | State Transition | ➖ | Không có entity ≥ 3 trạng thái (index requirements mục 7). Phiên chỉ có 2 trạng thái — chuyển qua lại đã phủ ở TC_004 · 006 · 021 · 024 · 210. Theme 3 giá trị là **lựa chọn**, không phải vòng đời — chuyển qua lại phủ ở TC_204 · 206 · 207 |
 | 2 | Dependency | ✅ | TC_047 · 048 · 049 · 050 (4 TC · 5 biến thể) — Division → Ward → Address, đổi / xoá nguồn |
 | 2 | Use Case / Scenario | ✅ | TC_054 — đăng ký → đăng nhập → đăng xuất → đăng nhập lại |
-| 2 | Save / Edit / Delete | ➖ | Mặt Android lượt này không có sửa / xoá — My Profile · Setting account **chưa khảo sát**, chưa có REQ. Rà lại khi `/generate-requirements-from-mobile auth` lượt 2 |
-| 2 | Error Guessing | ✅ | TC_019 · 053 (bấm gửi 2 lần) · 052 (rời form sau lỗi) · 015 (thất bại giữ dữ liệu) |
+| 2 | Save / Edit / Delete | ✅ | Sửa: TC_196 (Save Profile — 🐞 `@KnownBug`) · 202 (Reset) · 205 (Save cấu hình — 🐞 `@KnownBug`). Xoá tài khoản thuộc `USER`. Đổi mật khẩu thành công / sai · email trùng · lưu lại sau lỗi: **chưa có REQ Android** (chặn bởi REQ-122) — rà lại khi bug được sửa |
+| 2 | Error Guessing | ✅ | TC_019 · 053 (bấm gửi 2 lần) · 052 (rời form sau lỗi) · 015 (thất bại giữ dữ liệu) · 201 (Old Password cố ý sai để lỗi validation không thành đổi mật khẩu thật) |
 | 3 | Permission | ✅ | Mobile: TC_002 · 020 · 021 — hệ thống **không** có vai trò (`AMB-BK-01`), quyền Android phân theo trạng thái chưa / đã đăng nhập: đủ 4/4 ô "đã kiểm chứng" của ma trận Android · API: ma trận *không token × Bearer hợp lệ* đủ 9/9 ô đã kiểm chứng (TC_059 · 069 · 082 công khai · 086/088 · 091/094 · 098/100). Cột "vai trò khác" → TC treo `AMB-BK-01` |
-| 3 | Security | ✅ | Mobile: TC_021 (phiên sau đăng xuất) · 022 · 023 · 055 (chuỗi tấn công 3 ô) · 014 (lộ email — `RISK-BK-AUTH-06`) · API: 21 TC `@Security` — gồm 3 `@KnownBug` bảo mật (TC_080 F-03 · 090 F-17 · 102 → 104 F-16) |
+| 3 | Security | ✅ | Mobile: TC_021 (phiên sau đăng xuất) · 022 · 023 · 055 (chuỗi tấn công 3 ô) · 014 (lộ email — `RISK-BK-AUTH-06`) · 200 (đổi mật khẩu phải có mật khẩu cũ) · 209 (My Profile không lẫn tài khoản) · chuỗi tấn công ở My Profile: chưa viết — Save đang lỗi (REQ-122) · API: 21 TC `@Security` — gồm 3 `@KnownBug` bảo mật (TC_080 F-03 · 090 F-17 · 102 → 104 F-16) |
 | 3 | API | ✅ | TC_059 → TC_108 (50 TC · 94 biến thể) — 6/6 endpoint · mã `200/201/400/401/404/422` + kiểm âm `500` · ma trận auth từng operation · OWASP: injection (064 · 068 · 081) · mass assignment (067) · auth bypass / token giả (089 · 095 · 096) · lộ dữ liệu nhạy cảm (092) · cờ cookie (078 · 080). `403` · `406/413/415` · `429` → **TC treo** (mục Dữ liệu dùng chung) |
 | 3 | Database | ➖ | QA **không** có quyền truy vấn CSDL (user chốt 20-09-2026, ghi ở `docs/requirements/_book-api/README.md`) — đội Dev xác minh phần chỉ CSDL mới thấy. Dữ liệu lưu được đối chiếu gián tiếp qua API đọc (🔧 TC_031 · 053) |
 | 3 | Integration | ➖ | Không có tích hợp bên thứ ba trong luồng đăng ký / đăng nhập — danh sách Division / Ward lấy từ module `ADDR` cùng hệ thống |
 | 3 | Logging / Audit | ➖ | Requirements không có yêu cầu nhật ký thao tác cho `AUTH` |
 | 4 | Compatibility | ⏭️ Cố ý bỏ | Chỉ 1 thiết bị chuẩn (emulator Android 17, `1344×2992`) — requirements khảo sát đúng 1 cấu hình; iOS chưa khảo sát. **Quyết định:** phạm vi khảo sát `/generate-requirements-from-mobile` 19-09-2026 — cần QA lead xác nhận danh sách máy. **Rà lại khi:** có máy thật / bản build iOS / danh sách thiết bị cam kết |
-| 4 | Responsive / UI Stability | ✅ | TC_057 (xoay ngang) · 058 (bàn phím không che ô) · 005 (chuỗi dài bị cắt `…`, không tràn) |
+| 4 | Responsive / UI Stability | ✅ | TC_057 (xoay ngang) · 058 (bàn phím không che ô) · 005 (chuỗi dài bị cắt `…`, không tràn) · 194 (email dài trong ô không tràn) · 208 (theme áp toàn app) · vòng đời: TC_024 · 056 · 210 (`Exit app`). Xoay · bàn phím ở My Profile / Setting account: ➖ requirements không thử lại (cùng khung form với REQ-85 · 86) |
 | 4 | Accessibility | ⏭️ Cố ý bỏ | Chưa có REQ trợ năng (TalkBack, cỡ chữ lớn). Đã biết nút avatar và nút mắt **không có nhãn** (`RISK-BK-AUTH-07`) → TalkBack sẽ không đọc được tên. **Quyết định:** đề xuất bỏ ở lượt này — **cần QA lead / PO xác nhận**. **Rà lại khi:** PO chốt yêu cầu trợ năng, hoặc dev thêm `content-desc` |
 | 4 | Performance | ➖ | Không có ngưỡng thời gian đã cam kết — đo tải thuộc đội hiệu năng (chưa có) |
 | 4 | Regression | ➖ | `docs/bugs/_book-api/` chưa có bug nào được đóng |
@@ -640,12 +680,12 @@ Cột Mobile của 29 REQ này nằm ở bảng *REQ chỉ Android* bên dưới
 
 | Đặc tính | Trạng thái | TC ID / Lý do |
 |---|---|---|
-| Functional Suitability | ✅ Có TC | TC_001 → TC_058 |
+| Functional Suitability | ✅ Có TC | TC_001 → TC_058 · TC_194 → TC_210 |
 | Performance Efficiency | ➖ Ngoài phạm vi | Không có ngưỡng cam kết, không có công cụ đo — ghi vào mục 2.2 Master Test Plan, đội hiệu năng (chưa phân công) |
 | Compatibility | ✅ Có TC (một phần) | API: 3 content-type đăng ký / đăng nhập (TC_060 · 070). Thiết bị: ➖ chỉ 1 emulator Android 17, iOS chưa khảo sát — QA lead chốt danh sách thiết bị |
 | Interaction Capability | ✅ Có TC | TC_007 → 011 · 016 · 041 · 051 · 058 (thông báo lỗi rõ, chặn thao tác sai, bàn phím không che ô). Trợ năng TalkBack: ➖ chưa có REQ — QA lead / PO |
-| Reliability | ✅ Có TC | Mobile: TC_025 (mất mạng) · 024 · 056 (vòng đời app) · 015 · 052 (giữ dữ liệu sau lỗi) · API: TC_068 · 081 (dữ liệu bất thường không gây `500`) |
-| Security | ✅ Có TC | Mobile: TC_020 → 023 · 055 · 014 · API: TC_064 · 067 · 068 · 071 · 078 · 080 · 081 · 085 · 087 → 090 · 092 · 094 → 097 · 100 · 102 → 104. Pentest / quét lỗ hổng: ➖ chưa có đội bảo mật — QA lead phân công |
+| Reliability | ✅ Có TC | Mobile: TC_025 (mất mạng) · 024 · 056 · 210 (vòng đời app) · 208 (theme giữ khi rời màn hình) · 015 · 052 (giữ dữ liệu sau lỗi) · API: TC_068 · 081 (dữ liệu bất thường không gây `500`) |
+| Security | ✅ Có TC | Mobile: TC_020 → 023 · 055 · 014 · 200 · 209 · API: TC_064 · 067 · 068 · 071 · 078 · 080 · 081 · 085 · 087 → 090 · 092 · 094 → 097 · 100 · 102 → 104. Pentest / quét lỗ hổng: ➖ chưa có đội bảo mật — QA lead phân công |
 | Maintainability | ➖ Không áp dụng | Đặc tính của mã nguồn, không kiểm bằng manual TC |
 | Flexibility | ✅ Có TC | TC_057 (xoay ngang) · 039 (Unicode / emoji). Đổi ngôn ngữ app: ➖ — app chỉ khảo sát locale `en-US`, QA lead |
 | Safety | ➖ Không áp dụng | Ứng dụng quản lý sách, lỗi không gây thiệt hại vật lý hay tài chính |
@@ -656,7 +696,7 @@ Cột Mobile của 29 REQ này nằm ở bảng *REQ chỉ Android* bên dưới
 
 | Nền tảng | Yes | Partial | No | ⏸️ Hoãn |
 |---|---|---|---|---|
-| Mobile (Android) | 56 | 2 | 0 | 25 (nằm trong Yes / Partial) |
+| Mobile (Android) | 70 | 5 | 0 | 35 (nằm trong Yes / Partial) |
 | API | 50 | 0 | 0 | 20 (18 `@NeedsVerify` · 2 ⚪ chờ `AMB-BK-AUTH-03`) — nằm trong Yes · ⚠️ 25-09-2026 `AMB-BK-AUTH-03` đã chốt là lỗi → TC_062 · 075 chuyển `@KnownBug`, xử lý ở `/update-testcases-from-impact` |
 | Web | 83 | 2 | 0 | 25 (`@NeedsVerify` — nằm trong Yes / Partial) |
 
@@ -667,7 +707,8 @@ Cột Mobile của 29 REQ này nằm ở bảng *REQ chỉ Android* bên dưới
 | 1 | Gọi API để dọn tài khoản test và đối chiếu dữ liệu (`POST /api/login` · `DELETE /api/user/{id}` · `GET /api/me`) | QA | ✅ Đã có (năng lực QA 19-09-2026) | TC_029 · 030 · 031 · 039 · 053 · 054 · 055 (teardown) |
 | 2 | Tắt / bật mạng trên emulator (`mobile: setConnectivity` hoặc `adb shell svc`) | QA | ✅ Đã có | TC_025 |
 | 4 | Tài khoản test tự đăng ký qua API + dọn bằng token chính chủ (setup / teardown) | QA | ✅ Đã có | Mọi TC API cần `userA` · `userB` · `userE` |
-| 3 | Định danh ổn định cho nút avatar và nút mắt (`content-desc`) — hiện không có nhãn, `resource-id` ô nhập tự sinh | Dev app | ⏳ Chưa có — tạm bắt theo quan hệ với ô nhập (`RISK-BK-AUTH-07`) | TC_001 · 002 · 005 · 006 · 012 · 020 · 044 · 045 |
+| 3 | Định danh ổn định cho nút avatar và nút mắt (`content-desc`) — hiện không có nhãn, `resource-id` ô nhập tự sinh | Dev app | ⏳ Chưa có — tạm bắt theo quan hệ với ô nhập (`RISK-BK-AUTH-07`) | TC_001 · 002 · 005 · 006 · 012 · 020 · 044 · 045 · mọi TC Part 03 (mở menu avatar) |
+| 5 | Nhãn truy cập (`aria-label`) cho 133 chấm màu ở Setting account — hiện **không** có trong cây phần tử | Dev app | ⏳ Chưa có — chỉ bấm được theo toạ độ (`RISK-BK-AUTH-11`) | TC_204 · 205 · 208 |
 
 ### TC Partial · No · Hoãn
 
@@ -675,7 +716,9 @@ Cột Mobile của 29 REQ này nằm ở bảng *REQ chỉ Android* bên dưới
 |---|---|---|---|---|
 | BK_AUTH_TC_019 | Android | Partial | 2 · Chạy lại có cùng kết quả | Bấm 2 lần dưới 1 giây phụ thuộc tốc độ công cụ bấm vào WebView (`RISK-BK-AUTH-08`) — automation assert kết quả, lần tái hiện đầu kiểm tay · ⏸️ Hoãn — `@NeedsVerify` |
 | BK_AUTH_TC_053 | Android | Partial | 2 · Chạy lại có cùng kết quả | Như TC_019; đếm số tài khoản qua API · ⏸️ Hoãn — `@NeedsVerify` |
-| BK_AUTH_TC_010 · 011 · 012 · 016 · 017 · 018 · 021 · 022 · 023 · 030 · 032 · 034 · 037 · 039 · 040 · 043 · 044 · 045 · 046 · 047 · 050 · 055 · 057 | Android | Yes · ⏸️ Hoãn | — | `@NeedsVerify` — chờ recon bổ sung (bảng "Vùng chưa có evidence"). Biến thể đã có evidence automate được ngay |
+| BK_AUTH_TC_204 · 208 | Android | Partial | 1 · Locator ổn định | Bấm chấm màu theo toạ độ (điều kiện #5) — phần theme automate được, chọn màu kiểm tay tới khi có `aria-label` · ⏸️ Hoãn — `@NeedsVerify` |
+| BK_AUTH_TC_205 | Android | Partial | 1 · Locator ổn định | Như TC_204 · `@KnownBug` — vẫn automate phần theme + Save |
+| BK_AUTH_TC_010 · 011 · 012 · 016 · 017 · 018 · 021 · 022 · 023 · 030 · 032 · 034 · 037 · 039 · 040 · 043 · 044 · 045 · 046 · 047 · 050 · 055 · 057 · 194 · 196 · 198 · 199 · 200 · 201 · 203 · 210 | Android | Yes · ⏸️ Hoãn | — | `@NeedsVerify` — chờ recon bổ sung (bảng "Vùng chưa có evidence"). Biến thể đã có evidence automate được ngay |
 
 | BK_AUTH_TC_060 · 061 · 064 · 066 · 067 · 068 · 070 · 072 · 073 · 077 · 081 · 085 · 089 · 093 · 095 · 101 · 107 · 108 | API | Yes · ⏸️ Hoãn | — | `@NeedsVerify` — biến thể chưa gọi thật. Biến thể đã kiểm chứng automate ngay |
 | BK_AUTH_TC_062 · 075 | API | Yes · ⏸️ Hoãn | — | ⚪ Chờ chốt `AMB-BK-AUTH-03` (F-19) |
@@ -683,7 +726,7 @@ Cột Mobile của 29 REQ này nằm ở bảng *REQ chỉ Android* bên dưới
 | BK_AUTH_TC_136 · 168 | Web | Partial | 2 · Chạy lại có cùng kết quả | Bấm 2 lần dưới 1 giây phụ thuộc tốc độ công cụ — assert kết quả cuối (vào Dashboard · số tài khoản); lần tái hiện đầu kiểm tay · ⏸️ Hoãn — `@NeedsVerify` |
 | BK_AUTH_TC_110 · 119 · 120 · 121 · 122 · 125 · 126 · 129 · 138 · 139 · 140 · 148 · 155 · 156 · 164 · 165 · 169 · 170 · 178 · 179 · 188 · 189 · 193 | Web | Yes · ⏸️ Hoãn | — | `@NeedsVerify` — biến thể đã có evidence automate ngay |
 
-ℹ️ 7 TC `@KnownBug` API (TC_080 · 090 · 098 · 099 · 102 · 103 · 104), 1 TC `@KnownBug` Mobile (TC_038) và 5 TC `@KnownBug` Web (TC_131 · 154 · 176 · 183 · 190) **vẫn automate** — test FAIL chính là thứ phơi bug (tiêu chí Automation mục 6).
+ℹ️ 7 TC `@KnownBug` API (TC_080 · 090 · 098 · 099 · 102 · 103 · 104), 3 TC `@KnownBug` Mobile (TC_038 · 196 · 205) và 5 TC `@KnownBug` Web (TC_131 · 154 · 176 · 183 · 190) **vẫn automate** — test FAIL chính là thứ phơi bug (tiêu chí Automation mục 6).
 
 **Thứ tự ưu tiên automate:** `@Smoke` · `@CriticalPath` (TC_001 → 006 · 026 → 031 · 054) → TC nhiều biến thể ở Validation / BVA (TC_010 · 037 · 038 · 040 · 043) → phần còn lại.
 
@@ -694,12 +737,14 @@ Cột Mobile của 29 REQ này nằm ở bảng *REQ chỉ Android* bên dưới
 | Bộ | TC | Thời gian ước tính | Ghi chú |
 |---|---|---|---|
 | **Smoke** (V1) | **TC_029 trước tiên** (tạo `TK-A`) → 026 · 027 · 028 · 030 · 031 → 001 → 006 | ~20 phút | Fail ở đây → dừng, mọi TC V2 BLOCKED |
-| Regression đầy đủ | Toàn bộ 58 TC theo thứ tự Part 02 V1 → Part 01 → Part 02 V2 → V3 → V4 | ~3 giờ | Kết thúc bằng **dọn dữ liệu** |
+| Regression đầy đủ | Toàn bộ 75 TC theo thứ tự Part 02 V1 → Part 01 → Part 02 V2 → V3 → V4 → setup `TK-M` → Part 03 | ~4 giờ | Kết thúc bằng **dọn dữ liệu** (gồm `TK-M`) và Xoá dữ liệu app để trả màu chủ đạo về mặc định |
+| Mobile hồ sơ | Setup `TK-M` → TC_194 → 210 (Part 03) | ~60 phút | Chạy sau Part 01 · 02 (`TC_209` cần `TK-A`) |
+| Mobile lỗi đã biết | TC_038 · 196 · 205 | ~10 phút | `@KnownBug` — TC_196 ↔ [BUG_auth_1792454704_REQ122](../../../bugs/_book-api/auth/mobile/BUG_auth_1792454704_REQ122.md) |
 | Bảo mật | TC_014 · 020 → 023 · 055 | ~25 phút | Gắn `@Security` |
-| Đặc thù mobile | TC_024 · 025 · 056 · 057 · 058 | ~15 phút | Cần quyền tắt mạng, xoay máy |
+| Đặc thù mobile | TC_024 · 025 · 056 · 057 · 058 · 210 | ~20 phút | Cần quyền tắt mạng, xoay máy |
 | API `@Smoke` | TC_059 · 106 · 069 · 071 · 082 · 086 · 091 | ~2 phút (automation) | Chạy trước mọi TC API |
 | API đầy đủ | TC_059 → 108 theo **Dependencies & Execution Order** | ~10 phút (automation) | Kết thúc bằng teardown dọn tài khoản |
-| `@TechCheck` | TC_001 · 012 · 024 · 025 · 031 · 038 · 048 · 053 · 056 · 057 · 058 | — | Phần 🔧 cần Appium Inspector / `adb` / API |
+| `@TechCheck` | TC_001 · 012 · 024 · 025 · 031 · 038 · 048 · 053 · 056 · 057 · 058 · 195 · 197 · 202 · 203 · 206 · 207 · 210 | — | Phần 🔧 cần Appium Inspector / `adb` / API |
 | **Web Smoke** | TC_144 (tạo `TK-W`) → 109 → 115 · 130 · 141 → 143 · 145 · 146 · 172 → 175 · 177 | ~30 phút | Fail ở đây → dừng |
 | Web đầy đủ | TC_109 → 193 theo *Setup / Part* ở Dữ liệu dùng chung (Web) | ~3,5 giờ | Kết thúc bằng teardown |
 | Web lỗi đã biết | TC_131 · 154 · 176 · 183 · 190 | ~15 phút | `@KnownBug` — mở bug bằng `/create-bug-report` |
@@ -711,6 +756,7 @@ Cột Mobile của 29 REQ này nằm ở bảng *REQ chỉ Android* bên dưới
 
 | Ngày | Thay đổi | Mốc git |
 |---|---|---|
+| 20-10-2026 | Bổ sung **Part 03 Mobile (Android) — My Profile · Setting account · Exit app** bằng `/generate-testcases-from-requirements` Mode QUICK chế độ **BỔ SUNG**, độ hạt GỘP, rủi ro Cao → Đầy đủ. **17 TC · 23 biến thể · 13 mục Bảng kiểm** ở `mobile/parts/part_03_mobile_ho_so.md`, nối dải `BK_AUTH_TC_194` → `210` (sau Web `193` — không đánh lại). Phủ 5 REQ chỉ Android `122 → 126` **và** vế Android của 11 REQ `Android · Web` ở index mục 3.3 (`101` · `102` · `105 → 108` · `113` · `116 → 119` — chuyển lên index 26-09-2026 nhưng chưa có TC Android) → Mobile **62/62**, module **126/126**. Đã mở 14/14 ảnh lượt 2, không xung đột. 2 TC `@KnownBug`: `TC_196` (REQ-122 ↔ [BUG_auth_1792454704_REQ122](../../../bugs/_book-api/auth/mobile/BUG_auth_1792454704_REQ122.md)) · `TC_205` (REQ-118, `AMB-BK-AUTH-35`). 10 `@NeedsVerify` · 7 `@TechCheck` · 3 Partial (chấm màu không có node). Tài khoản mới `TK-M` (độ lệch `19`), trạng thái `S2`. **Không** chạm dòng TC cũ — chỉ thêm link part kế tiếp ở Part 02 | `13bdfb6` (trước khi sửa) |
 | 25-09-2026 | **Chỉnh biên `Name`** theo `REQ-BK-AUTH-73` 🟡 (250 → **191**, `AMB-BK-AUTH-33` ✅ · `DEMO-AMB-2509B`; phát hiện khi kiểm `USER` API): `TC_037` · `038` (Mobile) · `TC_153` · `154` (Web) đổi biến thể `1 · 249 · 250 · 251 · 300` → `1 · 190 · 191` (hợp lệ) và `192 · 250 · 251 · 300` (bị chặn). `TC_038` · `154` thêm `@KnownBug`: biến thể `192` · `250` **dự kiến FAIL** — app / web chỉ chặn từ 251 ký tự, server từ chối từ 192 (`POST /api/register` → 422 `fields.fields`). Số TC **không** đổi (Mobile 58 · Web 85) | `b30eb57` (trước khi sửa) |
 | 25-09-2026 | Sinh bộ TC **Web** bằng `/generate-testcases-from-requirements` Mode QUICK chế độ **BỔ SUNG** (module đã có TC Mobile + API), độ hạt GỘP giữ theo bộ đang có, rủi ro Cao → Đầy đủ. **85 TC · 119 biến thể · 27 mục Bảng kiểm**, 3 part ở `web/parts/`, nối dải `BK_AUTH_TC_109` → `193`. Phủ **72/72** REQ khai `Web` (gồm `97` 🟡 · `120` · `121` mới của `DEMO-AMB-2509`). Đã mở 29/29 ảnh evidence web, không xung đột. 4 TC `@KnownBug` · 25 `@NeedsVerify` · 8 `@TechCheck` · 3 Assumption mới (`ASM-BK-AUTH-06` → `08`). **Không** chạm dòng TC Mobile / API — ảnh hưởng của `DEMO-AMB-2509` lên TC API (TC_062 · 075 · TC treo) chờ `/update-testcases-from-impact` | `b30eb57` |
 | 21-09-2026 | Đổi tên file index `test_cases_auth.md` → `TEST_CASES_AUTH_SUMMARY.md` — quy ước mới: index IN HOA để khác hẳn file nền tảng. Nội dung, mã REQ/TC không đổi; mọi link trỏ tới đã sửa | `e985e9d` |

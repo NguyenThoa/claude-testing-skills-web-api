@@ -116,7 +116,7 @@ Không có tài liệu nào cho app — toàn bộ REQ sinh từ khảo sát th�
 | Vòng đời app | Form `Create a new book` giữ toàn bộ dữ liệu khi xuống nền 5 giây | REQ-156 |
 | Mất mạng | `No Data`, không báo lỗi mạng | REQ-151 · `AMB-BK-BOOK-36` |
 | Xoay màn hình | Lưới 4 cột, hàng tab có nút cuộn | REQ-152 |
-| Bàn phím | **Chưa đo được** — lượt 20-10-2026 bàn phím ảo của emulator ở chế độ **thu gọn / nổi** (chỉ một nút ≡, `visibleTopInsets=2833`) nên không chiếm chỗ; ô giá vẫn nằm trọn trong màn hình. Cần đo lại với bàn phím đầy đủ | — |
+| Bàn phím | **Chưa đo được** — Gboard trên emulator đang ở chế độ **bàn phím nổi thu gọn** (chỉ một bong bóng ≡, `visibleTopInsets=2833`; vẫn vậy khi bật `show_ime_with_hard_keyboard`) nên không chiếm chỗ — không đại diện bàn phím neo đáy. Cần tắt chế độ nổi trong cài đặt Gboard rồi đo lại | — |
 | Deep link | **Không áp dụng** — app không khai scheme/host | — |
 | Push notification | **Không áp dụng** | — |
 | Phiên bản tối thiểu | Ghi ở `AUTH` (`AMB-BK-AUTH-19`) | — |

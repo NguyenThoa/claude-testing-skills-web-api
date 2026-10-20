@@ -6,7 +6,7 @@
 | **Nguồn requirement** | [requirements_auth_mobile.md](../../../../../requirements/_book-api/auth/mobile/requirements_auth_mobile.md) · REQ dùng chung ở index [REQUIREMENTS_AUTH_SUMMARY.md](../../../../../requirements/_book-api/auth/REQUIREMENTS_AUTH_SUMMARY.md) mục 3 |
 | **Nền tảng** | Android — emulator `Pixel_10_Pro_XL_API_37` · Android 17 · màn hình `1344×2992` · **hướng dọc** (trừ `TC_057`) · locale `en-US` · app `book.anhtester.com` `1.0 (versionCode 1)`. iOS **chưa khảo sát** |
 | **Dải TC ID** | `BK_AUTH_TC_026` → `BK_AUTH_TC_058` — dải chung toàn module `AUTH` |
-| **Part liền kề** | Trước: [part_01_mobile_dang_nhap.md](part_01_mobile_dang_nhap.md) (`TC_001` → `TC_025`) |
+| **Part liền kề** | Trước: [part_01_mobile_dang_nhap.md](part_01_mobile_dang_nhap.md) (`TC_001` → `TC_025`) · Tiếp theo: [part_03_mobile_ho_so.md](part_03_mobile_ho_so.md) (`TC_194` → `TC_210`) |
 
 > ⚠️ **TC đăng ký tạo tài khoản thật trên production** (server duy nhất `book.anhtester.com`). Mọi email dùng tiền tố `auto_auth_` và **phải dọn** sau khi chạy — xem mục **Dữ liệu dùng chung · Dọn dữ liệu** ở [index](../../TEST_CASES_AUTH_SUMMARY.md).
 >

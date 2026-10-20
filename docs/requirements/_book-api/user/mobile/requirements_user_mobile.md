@@ -6,12 +6,12 @@
 |---|---|
 | **Hệ thống** | AnhTester Book Management (mã hệ thống `BK`) |
 | **Module** | Người dùng — tab `User` (User Management): danh sách · tìm kiếm · bộ lọc · Add user · Update user · Confirm delete |
-| **Nền tảng** | **Android** 🟨 (đọc · validation · khách · xoá ✅ — sửa/khoá **lỗi** (REQ-129) · thêm thành công ❔) · iOS ❔ chưa khảo sát (máy Windows) |
+| **Nền tảng** | **Android** 🟨 (đọc · validation · khách · xoá ✅ — sửa/khoá **lỗi** (REQ-129) · thêm người dùng khai **theo giả định**, chưa kiểm chứng — `AMB-BK-USER-22`) · iOS ❔ chưa khảo sát (máy Windows) |
 | **Thiết bị khảo sát** | Emulator `Pixel_10_Pro_XL_API_37` · Android 17 · màn hình `1344×2992` · hướng **dọc** · locale `en-US` · app `book.anhtester.com` `1.0 (versionCode 1)` bản **debug** · `UiAutomator2` qua Appium MCP · loại app **Hybrid (Capacitor)** — WebView `153.0.8010.36`, khảo sát bằng cây `NATIVE_APP` (context `WEBVIEW_*` không liệt kê) |
 | **Tầng network** | ❌ Không quan sát được — chưa dựng proxy, WebView không bật gỡ lỗi. Rule phía server lấy từ web và [api/requirements_user_api.md](../api/requirements_user_api.md) |
 | **Phương pháp** | Thao tác thật trên app ngày 26-09-2026 và 20-10-2026 — đọc thuộc tính phần tử (`enabled` · `selected` · `checked` · `content-desc` · `bounds`), nhập thử từng ô, tắt mạng bằng `adb shell svc wifi/data disable`, xoay bằng `appium_orientation`, quay màn hình (`adb shell screenrecord`) để đọc thông báo nổi. Kết quả ghi dữ liệu đối chiếu bằng **đọc công khai** `GET /api/user?search=<email>` (không token). **Agent không nhập mật khẩu và không tạo tài khoản** trên hệ thống production |
 | **Tài khoản** | 26-09: tài khoản test do tester đăng nhập sẵn — chỉ mở menu / hộp thoại rồi Cancel · 20-10: **khách** (app đang chưa đăng nhập) rồi tài khoản test do tester đăng nhập; Update thử rồi **xoá** tài khoản test còn sót `auto_web_<timestamp>_b@auto.test`. Mục 10 |
-| **REQ trong file này** | **11** — `REQ-BK-USER-120` → `130` (chỉ áp Android). Cộng 33 REQ web kiểm khớp trên Android, chuyển lên [index mục 3.2](../REQUIREMENTS_USER_SUMMARY.md#32-dùng-chung-android--web) (`Android · Web`) · `REQ-01` mở rộng tại index mục 3.1 (`Android · Web · API`) |
+| **REQ trong file này** | **12** — `REQ-BK-USER-120` → `131` (chỉ áp Android). Cộng 35 REQ web dùng chung `Android · Web` ở [index mục 3.2](../REQUIREMENTS_USER_SUMMARY.md#32-dùng-chung-android--web) (33 kiểm khớp thực tế · `32` · `34` theo giả định) · `01` · `33` · `35` mở rộng tại index mục 3.1 (`Android · Web · API`; `33` · `35` theo giả định) |
 
 > **Thang `Nguồn`:** `Kiểm chứng thực tế` = đã thao tác trên app và xác nhận bằng ảnh (danh mục mục 9) hoặc số liệu thuộc tính ghi trong AC. Mọi AC chỉ đúng với **thiết bị + hướng màn hình** ở bảng trên.
 
@@ -27,7 +27,7 @@ Không có tài liệu nào cho app — toàn bộ REQ sinh từ khảo sát th�
 | ✅ Khớp → mở rộng tại index 3.1 | `01` → `Android · Web · API` (20-10-2026) | Khách xem được danh sách |
 | ❌ Android chạy khác → REQ riêng ở file này | `37` (Update thành công) → `REQ-129` | `Error in processing request` — `AMB-BK-USER-21` |
 | ⛔ **Bị chặn** bởi REQ-129 — giữ ở `web/` / index 3.1 | `37` · `38` · `39` · `40` | Mọi vế cần Update lưu thành công |
-| ❔ **Chưa kiểm được trên Android** — giữ ở `web/` / index 3.1 | `32` · `33` · `34` · `35` | Cần gõ mật khẩu và/hoặc **tạo tài khoản** thật — agent không làm trên hệ thống production (`book.anhtester.com`, IP công khai) |
+| 📐 **Khai Android theo giả định** — chuyển lên index (`32` · `34` mục 3.2 · `33` · `35` mục 3.1) | `32` · `33` · `34` · `35` | Chưa kiểm chứng thực tế (cần gõ mật khẩu / tạo tài khoản trên production) — `AMB-BK-USER-22` ✅ chốt theo hành vi web, TC `@NeedsVerify` |
 
 ⚠️ Thao tác **gửi dữ liệu** trên Android đều lỗi ở 3 màn hình đã thử: Save Profile (REQ-BK-AUTH-122) · Create book (REQ-BK-BOOK-147) · Update user (REQ-129); còn **Delete** (REQ-42) chạy được. Khi tester chạy các REQ ❔ ở trên (Add user), kết quả lệch web phải ghi thành REQ riêng + AMB.
 
@@ -62,8 +62,9 @@ Không có tài liệu nào cho app — toàn bộ REQ sinh từ khảo sát th�
 | REQ-BK-USER-126 | Dữ liệu Add user giữ nguyên khi app xuống nền | Android | Vòng đời app | `New user` → nhập Name `auto_mobile_bg_<timestamp>` → nút Home (app xuống nền 5 giây) → mở lại app → hộp `Add user` vẫn mở, Name giữ nguyên | 🟢 | — | Kiểm chứng thực tế · đọc `text` ô Name sau khi quay lại |
 | REQ-BK-USER-127 | Bàn phím không che ô đang nhập và nút Save của Add user | Android | Bàn phím | `New user` → chạm ô Email → bàn phím mở (`mInputShown=true`) → hộp thoại co lại: ô Email `[243,1416][1101,1587]` · `Cancel` · `Save` `y 1758–1869` đều nằm **trên** bàn phím | 🟢 | — | Kiểm chứng thực tế · `android_user_add_keyboard_open.png` · `dumpsys input_method` |
 | REQ-BK-USER-129 | Update user trên Android lưu thành công | Android | Kỳ vọng — hiện **chưa đạt** (`AMB-BK-USER-21` ✅ chốt là lỗi). Cùng hành vi web REQ-37 | App vừa mở lại (tránh REQ-124) → tìm theo email tài khoản test → ⋮ → `Edit` → sửa Name (2 ô mật khẩu **trống**) → `Update` → thông báo `Updated successfully.` · hộp thoại đóng · dòng hiện Name mới. **Hiện tại:** thông báo nổi `Error in processing request` (biểu tượng `!` đỏ) · hộp thoại **vẫn mở** · Name không đổi (đọc lại công khai `GET /api/user?search=<email>` → `name` cũ, `updatedAt` cũ). Tắt thêm `Active for login` rồi `Update` → cùng lỗi, `isActive` vẫn `true`. Tái hiện **3/3** | 🟢 | — | Kiểm chứng thực tế (20-10-2026) — ❌ lệch · `android_user_update_error_processing.png` · đọc lại qua API công khai |
+| REQ-BK-USER-131 | Xoay ngang khi đang mở Add user: dữ liệu giữ nguyên, hộp thoại chia 2 cột | Android | Xoay màn hình | `New user` → nhập Name → xoay `LANDSCAPE` (ảnh `2992×1344`) → hộp `Add user` vẫn mở, chia **2 cột** (*Infomation* bên trái · *Account* bên phải) · `Cancel` · `Save` cố định ở đáy, `enabled=true` · ô Name giữ nguyên chữ đã nhập → xoay lại `PORTRAIT` → bố cục 1 cột, Name vẫn giữ nguyên | 🟢 | — | Kiểm chứng thực tế (20-10-2026) · `android_user_add_landscape.png` · đọc `text` ô Name trước / sau khi xoay |
 
-**Tổng trong file: 11 REQ** — Danh sách 5 (`120` · `121` · `125` · `128` · `130`) · Bộ lọc 2 (`122` · `123`) · Thêm/sửa 4 (`124` · `126` · `127` · `129`) → `5 + 2 + 4 = 11 ✔`
+**Tổng trong file: 12 REQ** — Danh sách 5 (`120` · `121` · `125` · `128` · `130`) · Bộ lọc 2 (`122` · `123`) · Thêm/sửa 5 (`124` · `126` · `127` · `129` · `131`) → `5 + 2 + 5 = 12 ✔`
 
 ---
 
@@ -111,7 +112,7 @@ Validation giống hệt web. `Created successfully.` · `Email already exists.`
 | Quyền runtime | **Không áp dụng** — Manifest chỉ khai `INTERNET`; `Upload photo` mở trình chọn ảnh hệ thống (không cần quyền) — chưa thử ở màn hình này | — |
 | Vòng đời app | Hộp Add user và dữ liệu giữ khi xuống nền 5 giây | REQ-126 |
 | Mất mạng | Danh sách hiện `No Data`, không báo lỗi mạng | REQ-125 · `AMB-BK-USER-20` |
-| Xoay màn hình | Bảng hiện nhiều cột, tiêu đề cột dính khi cuộn dọc (20-10-2026). Chưa thử xoay khi đang mở hộp thoại Add / Update user | REQ-130 |
+| Xoay màn hình | Bảng hiện nhiều cột, tiêu đề cột dính khi cuộn dọc · hộp Add user chia 2 cột, giữ dữ liệu khi xoay (20-10-2026). Chưa thử ở Update user | REQ-130 · 131 |
 | Bàn phím | Không che ô Email và nút Save | REQ-127 |
 | Deep link | **Không áp dụng** — app không khai scheme/host (`system_map.md` mục 1) | — |
 | Push notification | **Không áp dụng** — không quan sát thấy thông báo đẩy | — |
@@ -184,6 +185,7 @@ Thư mục [`evidence/`](evidence/). **Mọi ảnh đã mở lại xác nhận �
 | `android_user_list_landscape.png` | Danh sách (khách) | Xoay ngang — ô tìm kiếm đủ gợi ý, 5 tiêu đề cột trong một khung nhìn | 130 |
 | `android_user_update_error_processing.png` | Update user | Sau khi bấm `Update` — thông báo `Error in processing request`, hộp vẫn mở (tài khoản test `auto_web_<timestamp>_b`) | 129 |
 | `android_user_delete_success.png` | Danh sách | `Deleted successfully.` · từ khoá `auto_web_` → không còn dòng | 42 |
+| `android_user_add_landscape.png` | Add user | Xoay ngang — 2 cột, `Cancel` · `Save` ở đáy (Name ở cột trái, nằm dưới mép ảnh) | 131 |
 
 REQ không có ảnh riêng, truy bằng số liệu thuộc tính trong AC: 05 · 06 · 07 · 10 · 13 · 14 · 17 · 18 · 123 · 126 · 128. Ảnh sắp xếp theo `Name` (REQ-10) và ảnh xoay ngang sau khi cuộn dọc (REQ-130) **không** lưu vì chứa email người dùng thật.
 
