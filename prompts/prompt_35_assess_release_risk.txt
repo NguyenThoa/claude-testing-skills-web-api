@@ -1,0 +1,13 @@
+/assess-release-risk
+
+# MỐC RELEASE
+- Mốc: [VD: release_1.0 — để trống nếu chỉ có một Master Test Plan đang mở]
+- Ticket thuộc đợt: [VD: PO-2026-09-19, PO-2026-10-02 — để trống = mọi impact report từ ngày lập plan]
+
+# THÔNG TIN KHÔNG CÓ TRONG FILE
+[Để trống dòng nào không có — agent KHÔNG bịa:]
+- Lỗi đang được Dev sửa / có workaround: [VD: BUG_login_…_TC039 — Dev hẹn sửa 05-11-2026]
+
+# GHI CHÚ
+- Báo cáo rủi ro KHÔNG khuyến nghị go/no-go — việc đó là /generate-test-summary-report, đọc báo cáo này làm đầu vào
+- Module thiếu dữ liệu (chưa có TC, chưa chạy) được tính là có rủi ro, không phải an toàn

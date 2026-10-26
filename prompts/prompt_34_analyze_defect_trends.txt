@@ -1,0 +1,15 @@
+/analyze-defect-trends
+
+# PHẠM VI
+[Để trống = mọi hệ thống, module, nền tảng đang có trong docs/]
+- Hệ thống: [VD: default — hoặc _book-api]
+- Module: [VD: login, customers]
+- Nền tảng: [web / mobile / api]
+
+# THÔNG TIN KHÔNG CÓ TRONG FILE
+[Để trống dòng nào không có — agent KHÔNG bịa:]
+- Nguyên nhân gốc Dev đã xác nhận: [VD: BUG_book_… và BUG_user_… cùng do API upload trên Android — Dev xác nhận 25-10-2026]
+
+# GHI CHÚ
+- Agent KHÔNG sửa bug, TC, execution report — việc cần làm ghi ở mục Đề xuất hành động
+- Dưới 5 lỗi thật hoặc dưới 3 tháng có dữ liệu → báo cáo chỉ nêu "quan sát", không nêu xu hướng tăng/giảm

@@ -1,0 +1,16 @@
+/select-regression-tests
+
+# THAY ĐỔI
+[Chọn MỘT:]
+- Ticket: [VD: PO-2026-09-19 — đã có docs/requirements/<module>/impact/impact_<TICKET>.md]
+- Danh sách REQ: [VD: REQ-LOGIN-16, REQ-LOGIN-25]
+- Build mới, không rõ REQ: [VD: build 2.3.1 — module customers]
+
+# QUỸ THỜI GIAN
+- Số phút: [VD: 45 — để trống = không giới hạn, chỉ xếp hạng]
+- Nền tảng: [web / mobile / api — để trống = mọi nền tảng có TC]
+
+# GHI CHÚ
+- Agent tự thêm module phụ thuộc theo system_map.md và RISK-* (chỉ lấy TC @Smoke / @CriticalPath của module đó)
+- Nhóm Bắt buộc không bị cắt cho vừa quỹ — vượt thì agent báo để xin thêm thời gian
+- Agent KHÔNG chạy test — danh sách TC ID ở cuối báo cáo dán thẳng vào /execute-test-cases

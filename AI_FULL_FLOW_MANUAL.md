@@ -34,6 +34,8 @@
 │     /create-bug-report                   → bug report chuẩn      │
 │     /retest-fixed-bugs   ←──── dev fix ───┘  → FIXED? regression?│  ↻ lặp tới khi hết bug
 │  ⊹ /generate-test-progress-report        → tiến độ kỳ này        │  Hằng tuần — khi có plan chính thức
+│  ⊹ /analyze-defect-trends                → lỗi dồn vào đâu       │  Định kỳ / trước họp triage
+│  ⊹ /select-regression-tests              → chạy TC nào trước     │  Mỗi build / ticket mà không đủ giờ chạy hết
 └──────────────────────────────────────────────────────────────────┘
                                   ↓
 ┌─ CHỨNG MINH ĐỘ PHỦ ──────────────────────────────────────────────┐
@@ -41,6 +43,7 @@
 └──────────────────────────────────────────────────────────────────┘
                                   ↓
 ┌─ BÁO CÁO & QUYẾT ĐỊNH ───────────────────────────────────────────┐
+│  ⊹ /assess-release-risk                  → vùng nóng của mốc     │  Trước code freeze · đầu vào cho 7
 │  7. /generate-test-summary-report        → báo cáo tổng kết đợt  │  Mỗi mốc release
 │                                            + có nên release không│
 └──────────────────────────────────────────────────────────────────┘
@@ -423,6 +426,36 @@ Gộp **mọi** kết quả của cả đợt — execution report nhiều modul
 
 ---
 
+## Phân tích chất lượng cắt ngang — Quality Insights (tuỳ chọn, chặng 4–7)
+
+```
+/analyze-defect-trends
+/assess-release-risk
+/select-regression-tests
+```
+
+📋 Prompt mẫu: [`prompt_34`](prompts/prompt_34_analyze_defect_trends.txt) · [`prompt_35`](prompts/prompt_35_assess_release_risk.txt) · [`prompt_36`](prompts/prompt_36_select_regression_tests.txt)
+
+Ba câu hỏi mà từng báo cáo riêng lẻ không trả lời được, vì phải **đọc chéo** bug × lần chạy × test case × thay đổi:
+
+| Command | Trả lời | Đầu ra |
+|---|---|---|
+| `/analyze-defect-trends` | Lỗi dồn vào module × nền tảng nào · vấn đề nào lặp lại ở nhiều chỗ · TC fail nào chưa có bug | `docs/quality-insights/defect_trends_<YYYYMMDD>.md` |
+| `/assess-release-risk` | Mốc này rủi ro ở đâu, vì sao, cần kiểm soát gì trước code freeze | `docs/quality-insights/release_risk_<mốc>_<YYYYMMDD>.md` |
+| `/select-regression-tests` | Có thay đổi này, có X phút — chạy TC nào, thứ tự nào, cố ý bỏ gì | `docs/quality-insights/test_selection_<TICKET-ID \| mốc>_<YYYYMMDD>.md` |
+
+Số liệu do `scripts/quality-insights/qi.py` tính thẳng từ `docs/`; phần AI là agent đọc file nguồn để gom nhóm nguyên nhân gốc và viết nhận định.
+
+### ⚠️ Ba luật của bước này
+
+**1. Mọi con số truy về mã** (bug · run · TC · REQ), điểm số hiện đủ thành phần. Thấy điểm sai → ghi *Nhận định QA* bên cạnh, không sửa điểm.
+
+**2. Thiếu dữ liệu ≠ an toàn.** Module chưa có TC, chưa chạy lần nào được tính là có rủi ro (⬛) — "0 bug" vì chưa ai test không phải tin tốt.
+
+**3. Không thay báo cáo tổng hợp.** `/assess-release-risk` không khuyến nghị go/no-go — nó là đầu vào cho chặng 7. `/select-regression-tests` không chạy test — danh sách đưa sang chặng 4.
+
+---
+
 ## Luồng checklist — từ rà nhanh tới báo cáo release
 
 Checklist đi **cùng** chuỗi chặng 4 → 7 như bộ TC, chỉ khác cách các chặng sau đếm nó:
@@ -518,6 +551,9 @@ Cột **`TC cần xử lý`** trong Nhật ký thay đổi của tài liệu req
 | ⊹ | `/generate-test-progress-report` | [`prompt_32`](prompts/prompt_32_generate_test_progress_report.txt) | **Mỗi kỳ** theo lịch plan (thường hằng tuần) — trong chặng 4–6 |
 | ⊹ | `/generate-user-guide` | [`prompt_28`](prompts/prompt_28_generate_user_guide.txt) | Khi bàn giao — tài liệu cho **người dùng cuối**, không phải cho QA |
 | ⊹ | `/compare-ui-from-figma-design` | [`prompt_33`](prompts/prompt_33_compare_ui_from_figma_design.txt) | Khi có bản thiết kế Figma và một bản build chạy được — sau khi dev báo "đã làm theo design", trước release, hoặc khi designer cập nhật Figma · gọi lại với `khung=còn-mở` sau khi dev/designer sửa · hỏi nhanh một màn: `nhanh` · xem kết quả: `scripts/design-review-viewer/bundle.html` |
+| ⊹ | `/analyze-defect-trends` | [`prompt_34`](prompts/prompt_34_analyze_defect_trends.txt) | Định kỳ (theo kỳ báo cáo tiến độ) hoặc trước họp triage |
+| ⊹ | `/assess-release-risk` | [`prompt_35`](prompts/prompt_35_assess_release_risk.txt) | Trước code freeze · lặp lại hằng tuần để thấy ô ⬛ được lấp dần · **trước chặng 7** |
+| ⊹ | `/select-regression-tests` | [`prompt_36`](prompts/prompt_36_select_regression_tests.txt) | **Mỗi build / ticket** mà không đủ thời gian chạy hết — trước chặng 4
 
 **Biến thể của chặng 1–2** (không nằm trên luồng chính): `/analyze-requirement-document` → [`prompt_20`](prompts/prompt_20_analyze_requirement_document.txt) · `/generate-testcases-from-requirements` → [`prompt_22`](prompts/prompt_22_generate_testcases_quick.txt).
 

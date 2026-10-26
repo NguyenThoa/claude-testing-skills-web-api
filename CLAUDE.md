@@ -207,6 +207,7 @@ Agent sử dụng skills trong `.claude/skills/` tùy theo nhiệm vụ:
 | `skills-test-report-analyzer`   | Phân tích test report **một lần chạy** — automation lẫn manual, gom nhóm failure theo root cause, đề xuất thứ tự xử lý |
 | `skills-test-progress-reporter` | Báo cáo tiến độ **một kỳ trong đợt** (ngày/tuần) — so thực tế với lịch plan, chỉ số trong kỳ, trở ngại, rủi ro mới, đề xuất điều chỉnh — ISTQB CTFL v4.0 mục 5.3.2 |
 | `skills-test-summary-reporter`  | Tổng hợp **toàn dự án tại một mốc** — gộp nhiều execution report + bug + RTM, đối chiếu tiêu chí exit, khuyến nghị go/no-go |
+| `skills-quality-insights`        | Phân tích chất lượng **cắt ngang** module × nền tảng × thời gian từ dữ liệu `docs/` — xu hướng lỗi + gom nhóm nguyên nhân gốc · chấm rủi ro release 5 yếu tố · chọn + xếp hạng test cho một thay đổi trong quỹ thời gian. Điểm minh bạch, mọi số truy về mã — công cụ `scripts/quality-insights/qi.py` |
 | `skills-testcase-reviewer`      | Review chất lượng manual test cases — rubric 6 tiêu chí, coverage gaps · Mode AUTOMATION chấm TC nào làm automation được theo bảng tiêu chí |
 | `skills-coverage-traceability`  | Sinh ma trận truy vết RTM — Requirements ↔ Test Cases ↔ Automation                    |
 | `skills-api-mocking`            | Sinh mock/stub API (Playwright route, WireMock) — test UI độc lập backend             |
@@ -309,6 +310,11 @@ docs/
 │   ├── README.md                               ← DANH MỤC bug — có cột Nền tảng
 │   └── <module>/<nền-tảng>/BUG_<module>_<timestamp>_<TC_ID>.md  ← mỗi bug 1 file, hậu tố TC_ID để nhìn tên biết ngay thuộc TC nào
 │
+├── quality-insights/                            ← phân tích CẮT NGANG module × nền tảng — ảnh chụp tại một ngày, KHÔNG sửa tại chỗ
+│   ├── defect_trends_<YYYYMMDD>.md              ← /analyze-defect-trends — nhóm nguyên nhân gốc · vấn đề lặp lại · điểm nóng · TC fail chưa có bug
+│   ├── release_risk_<mốc>_<YYYYMMDD>.md         ← /assess-release-risk — cùng slug <mốc> với test plan · đầu vào cho báo cáo tổng hợp
+│   └── test_selection_<TICKET-ID|mốc>_<YYYYMMDD>.md ← /select-regression-tests — thứ tự chạy · ⏭️ cố ý bỏ · phạm vi dán thẳng cho /execute-test-cases
+│
 ├── design-reviews/                              ← /compare-ui-from-figma-design — so thiết kế Figma với UI thật
 │   ├── README.md                                ← DANH MỤC — module × nền tảng × biến thể, DIFF đã dùng · mã kế tiếp (`DIFF-<MODULE>-<nn>`, đếm theo module) · **Sổ khung Figma** (tra trước khi cấp mã)
 │   └── <module>/<nền-tảng>/run_<timestamp>/
@@ -345,6 +351,7 @@ Các trang tĩnh trong `scripts/`, mở bằng cách double-click, chạy offlin
 | `scripts/user-guide/md2html.py` (chạy bằng Python) | `user_guide_<module>.md` · `execution_report.md` · `retest_report.md` · **mọi `.md`** | Xuất Markdown thành HTML 1 file nhúng ảnh + video (`--standalone --lang <vi\|en> [--release]`) — **user bảo "xuất MD sang HTML" là luôn dùng script này với `--standalone`**, không tự viết HTML, không để ảnh/video dạng link rời — cùng thư mục có công cụ quay video/highlight, xem `scripts/user-guide/README.md` |
 | `scripts/design-compare/dc.py` (chạy bằng Python) | spec JSON của Figma (`figma_extract.js`) + của UI thật (`collect_dom.js` / page source mobile) | Đo lệch thiết kế ↔ UI (`match`), dựng ảnh Figma \| App đặt cạnh nhau (`visual`), dựng ảnh Figma từ JSON khi hết hạn mức MCP (`render`), khoanh DIFF (`annotate`), che dữ liệu cá nhân (`mask` · `match --redact`), ghép mục báo cáo (`sections`), ΔE màu — xem `scripts/design-compare/README.md` |
 | `scripts/design-review-viewer/bundle.html` | cả thư mục `docs/design-reviews/` (danh mục + `design_compare_report.md` + `evidence/`) | Lọc DIFF theo module · nền tảng · trạng thái · mức độ · ai xử lý, xem ảnh Figma \| App và ảnh khoanh, cảnh báo High / Cần PO quyết / khung ❔, xuất CSV/Excel |
+| `scripts/quality-insights/qi.py` (chạy bằng Python) | cả `docs/` — `bugs/` · `executions/` · `testcases/` · `requirements/**/impact/` | Tính số liệu cho 3 workflow Quality Insights: `trends` (xu hướng lỗi, xu hướng từng TC qua các lần chạy) · `risk` (điểm rủi ro module × nền tảng) · `select` (chọn + xếp hạng TC theo thay đổi và quỹ phút) · `collect` (dữ liệu thô để soát). Thang điểm: `skills-quality-insights/references/scoring.md` |
 | `scripts/bugs-viewer/bundle.html` | `docs/bugs/README.md` (danh mục) · `docs/bugs/<module>/<nền-tảng>/BUG_*.md` | Lọc bug theo Severity/Priority/Trạng thái, xem Lịch sử retest, xuất CSV/Excel |
 
 ### Quy tắc bất biến
@@ -564,6 +571,9 @@ Agent sử dụng workflows trong `.claude/commands/` qua slash commands:
 | `/generate-master-test-plan`            | Master Test Plan cấp quản lý — đầu vào phiếu YAML `plans/master-test-plan/test_plan.config.yaml`. Phạm vi **module × nền tảng**, cấp độ · loại · độc lập kiểm thử, chiến lược tự động hoá · phi chức năng, tiêu chí vào/ra, môi trường · dữ liệu kiểm thử, quản lý lỗi, lịch · ước lượng · ngân sách, rủi ro dự án + sản phẩm. Xuất `docs/test-plans/test_plan_<mốc>.md`, bám 29119-3, phủ đủ ISTQB CTFL v4.0 mục 5.1.1 |
 | `/generate-test-progress-report`        | Báo cáo tiến độ **một kỳ** trong đợt — so thực tế với lịch plan, chỉ số trong kỳ, trở ngại, rủi ro mới, kế hoạch kỳ tới, đề xuất điều chỉnh. **Không** khuyến nghị go/no-go |
 | `/generate-test-summary-report`         | Báo cáo tổng hợp tại một mốc release/sprint — gộp mọi kết quả, đối chiếu tiêu chí exit, **khuyến nghị go/no-go** |
+| `/analyze-defect-trends`                | Xu hướng lỗi & vấn đề lặp lại **toàn dự án** — gom nhóm nguyên nhân gốc trên kho bug + lịch sử chạy, điểm nóng module × nền tảng, TC fail chưa có bug, bug mở mà TC đã PASS. KHÔNG sửa bug/TC |
+| `/assess-release-risk`                  | Chấm rủi ro release theo **module × nền tảng** — 5 yếu tố (thay đổi · lỗi mở · bất ổn · khoảng trống thực thi · tầm ảnh hưởng), đối chiếu plan + `RISK-*`, đề xuất kiểm soát. Đầu vào cho báo cáo tổng hợp — **không** go/no-go |
+| `/select-regression-tests`              | Chọn + xếp hạng TC cho một thay đổi trong quỹ thời gian — nhóm Bắt buộc · Smoke · Theo điểm, mở rộng theo module phụ thuộc, liệt kê đủ ⏭️ cố ý bỏ. Danh sách dán thẳng cho `/execute-test-cases` |
 | `/review-testcases`                     | Review chất lượng manual TCs (3 modes: REVIEW/FIX/AUTOMATION — AUTOMATION chấm độc lập TC nào làm automation được theo `skills-rbt-manual-testing/references/automation_criteria.md`) |
 | `/generate-traceability-matrix`         | Sinh ma trận truy vết RTM 3 tầng (+ checklist, kết quả chạy, bug làm nguồn phụ) — file chung `docs/traceability/traceability_matrix.md` + file chi tiết từng module. Nhận danh sách module (`login, customers`) |
 | `/generate-api-mocks`                   | Sinh API mocks + tests cho edge cases                        |

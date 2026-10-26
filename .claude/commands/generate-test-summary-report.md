@@ -45,6 +45,7 @@ Glob theo bảng Input của skill, **ghi lại đường dẫn từng file** đ
 
 1. `docs/test-plans/test_plan_<mốc>.md` — nếu có: tiêu chí exit (4.2, gồm bảng bổ sung) · mục tiêu (1.1) · phạm vi (2.1, 2.2) · lịch & ước lượng (7.1, 7.2) · rủi ro dự án (8.1)
 1b. `docs/executions/test_progress_<mốc>_*.md` — nếu có: chỉ số từng kỳ, thời lượng trở ngại, rủi ro đã xảy ra, sai lệch so với lịch
+1c. `docs/quality-insights/release_risk_<mốc>_*.md` (bản **mới nhất**) — nếu có: đơn vị 🔴/🟠 và ⬛ đưa vào mục 2 *Vùng chưa kiểm thử* và phần *rủi ro tồn đọng* của khuyến nghị; bảng *Rủi ro đã công bố ↔ bằng chứng* dùng cho mục 8. Báo cáo rủi ro lập **trước** lần chạy cuối thì ghi rõ ngày lập — số của nó có thể đã cũ, số của báo cáo này lấy từ execution report. `defect_trends_*.md` mới nhất — nếu có: *vấn đề lặp lại* đưa vào mục 5
 2. `docs/executions/<module>/<nền-tảng>/run_*/execution_report.md` — kết quả manual từng module × nền tảng. **Phân loại từng lần chạy** theo ô `Loại nguồn` ở header: `Bộ TC` hay `Checklist <loại>` (thiếu ô → `Nguồn TC` nằm trong `docs/checklists/` là checklist)
 2b. `docs/executions/_release/<nền-tảng>/run_*/execution_report.md` — kết quả checklist Release-readiness của mốc (`Nguồn TC` = `checklist_release_<mốc>.md`); quy từng mục về module theo cột `Module`
 3. `docs/executions/<module>/<nền-tảng>/retest_*/retest_report.md` — bug đã verify + regression phát sinh

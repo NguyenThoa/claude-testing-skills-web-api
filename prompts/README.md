@@ -84,6 +84,16 @@ Thư mục này chứa các prompt mẫu dùng nhanh (copy → paste → gửi) 
 
 > 📌 Hai prompt này đi thành cặp: `25` công bố tiêu chí exit **trước** khi test, `24` chấm lại đúng bộ đó **sau** khi test. Dùng lệch bộ tiêu chí là lúc release sẽ cãi nhau về chuẩn.
 
+### 🧠 Phân Tích Chất Lượng Cắt Ngang (Quality Insights)
+
+| # | File | Command Tương Ứng | Skill Tích Hợp | Mô Tả & Cải Tiến Mới |
+|---|------|-------------------|----------------|----------------------|
+| 34 | `prompt_34_analyze_defect_trends.txt` | `/analyze-defect-trends` | `skills-quality-insights` · `skills-test-report-analyzer` | **[Mới]** Xu hướng lỗi & vấn đề lặp lại toàn dự án — gom nhóm nguyên nhân gốc trên kho bug + lịch sử chạy, điểm nóng module × nền tảng, TC fail chưa có bug |
+| 35 | `prompt_35_assess_release_risk.txt` | `/assess-release-risk` | `skills-quality-insights` · `skills-test-summary-reporter` | **[Mới]** Chấm rủi ro release theo module × nền tảng — 5 yếu tố minh bạch, đối chiếu plan + `RISK-*`, đề xuất kiểm soát. Không go/no-go |
+| 36 | `prompt_36_select_regression_tests.txt` | `/select-regression-tests` | `skills-quality-insights` · `skills-manual-test-executor` | **[Mới]** Chọn + xếp hạng TC cho một thay đổi trong quỹ phút — Bắt buộc · Smoke · Theo điểm, liệt kê đủ TC cố ý bỏ, danh sách dán thẳng cho `/execute-test-cases` |
+
+> 📌 Số liệu của cả ba do `scripts/quality-insights/qi.py` tính từ `docs/` — không cần nguồn dữ liệu ngoài. `35` là đầu vào cho `24` (báo cáo tổng hợp); `36` là đầu vào cho `16` (thực thi).
+
 ### 📘 Tài liệu cho Người dùng cuối
 
 | # | File | Command Tương Ứng | Skill Tích Hợp | Mô Tả & Cải Tiến Mới |

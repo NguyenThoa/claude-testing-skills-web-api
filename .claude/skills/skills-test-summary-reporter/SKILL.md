@@ -93,6 +93,7 @@ Mỗi tiêu chí chấm **Đạt / Không đạt / Không áp dụng**, kèm s�
 |---|---|---|
 | `docs/test-plans/test_plan_<mốc>.md` | Tiêu chí exit đã công bố (mục 4.2) · mục tiêu kiểm thử (1.1) · phạm vi module × nền tảng (2.1) · ngoài phạm vi (2.2) · lịch & ước lượng công sức (7.1 · 7.2) · rủi ro dự án (8.1) | Nếu có |
 | `docs/executions/test_progress_<mốc>_*.md` | Chỉ số từng kỳ · **thời lượng trở ngại** · rủi ro đã xảy ra · sai lệch lịch — ISTQB CTFL v4.0 mục 5.3.2: báo cáo tổng hợp *"uses test progress reports"* | Nếu có |
+| `docs/quality-insights/release_risk_<mốc>_*.md` · `defect_trends_*.md` (bản mới nhất) | Đơn vị 🔴/🟠/⬛ → *Vùng chưa kiểm thử* + rủi ro tồn đọng · rủi ro đã công bố đã thành lỗi chưa · vấn đề lặp lại → *Tình hình lỗi*. Ghi ngày lập — số có thể cũ hơn execution report | Nếu có |
 | `docs/executions/<module>/<nền-tảng>/run_*/execution_report.md` · kiểu cũ `docs/executions/<module>/run_*/` | PASS/FAIL/BLOCKED/SKIPPED từng module × nền tảng — phân loại **bộ TC / checklist** theo ô `Loại nguồn` | ✅ |
 | `docs/executions/_release/<nền-tảng>/run_*/execution_report.md` | Kết quả checklist Release-readiness — chọn lần chạy có `Nguồn TC` là `checklist_release_<mốc>.md`, quy từng mục về module theo cột `Module` | Nếu có |
 | `docs/executions/<module>/<nền-tảng>/retest_*/retest_report.md` · kiểu cũ `docs/executions/<module>/retest_*/` | Bug đã verify fix · regression phát sinh | Nếu có |
