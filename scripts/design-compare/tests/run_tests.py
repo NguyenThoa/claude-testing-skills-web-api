@@ -1,4 +1,4 @@
-"""Kiểm thử hồi quy cho dc.py match — dữ liệu thật của các lượt chạy 20-10-2026 (app Hybrid Android, Figma wireframe 412 dp):
+"""Kiểm thử hồi quy cho dc.py (match · checklist · mark · cache) — dữ liệu thật của các lượt chạy 20-10-2026 (app Hybrid Android, Figma wireframe 412 dp):
 page AUTH (A-…), USER (U-…), BOOK (B-…). Số điện thoại trong fixture đã thay bằng số giả cùng khuôn.
 
     python scripts/design-compare/tests/run_tests.py            # chạy, báo PASS/FAIL
@@ -96,6 +96,48 @@ def semantics(name, res):
     return out
 
 
+def tools(tmp):
+    """Lệnh checklist · mark · cache — mỗi khẳng định ứng với một góp ý / bẫy đã gặp khi dùng thật."""
+    from PIL import Image
+    out, T = [], Path(tmp)
+    ok = lambda cond, msg: out.append((cond, msg))
+    dc = lambda *args: subprocess.run([sys.executable, str(DC), *map(str, args)], capture_output=True, text=True, encoding='utf-8')
+    # checklist: đủ phần tử, đúng thứ tự ngoài → trong, padding không so khi app trả chính nút làm khung chữ
+    subprocess.run([sys.executable, str(DC), 'match', str(FX / 'figma_6-123.json'), str(FX / 'A-01_actual.json'), '-o', str(T / 'cA'), '--actual-top', '40'], check=True, capture_output=True)
+    r = dc('checklist', FX / 'figma_6-123.json', '--match', T / 'cA.json', '-o', T / 'cl.md')
+    md = (T / 'cl.md').read_text(encoding='utf-8') if r.returncode == 0 else ''
+    ok(r.returncode == 0 and md.count('| L3 |') == 8, 'checklist A-01: 8 phần tử L3 (chữ · ô nhập · icon)')
+    ok(md.find('**AppHeader**') < md.find('**Body**') < md.find('Login account'), 'checklist đi vùng trên → dưới, khối trước phần tử')
+    ok('padding trái -114' not in md and 'padding trái 25 · trên 113 trong `Auth card`' in md, 'padding đo trong khối cha; không so khi khung app = chính phần tử')
+    ok('⚠️ Δ cao +6' in md, 'dòng ⚠️ không có ghi chú vẫn nêu số đo vượt dung sai')
+    # mark: hai phía cùng số, thiếu đích thì DỪNG chứ không khoanh bừa
+    sys.path.insert(0, str(DC.parent)); from dc import load
+    D, A = load(FX / 'figma_6-123.json'), load(FX / 'A-01_actual.json')
+    Image.new('RGB', (D['frame']['w'] * 2, D['frame']['h'] * 2), 'white').save(T / 'f.png')
+    Image.new('RGB', (round(A['frame']['w'] * A['scale']), round(A['frame']['h'] * A['scale'])), 'white').save(T / 'a.png')
+    spec = {'title': 'A-01', 'items': [{'diff': 'DIFF-T-01', 'title': 'Nhãn thiếu dấu *', 'figma': {'text': '^Email address'}, 'app': {'text': '^Email address'},
+                                        'expected': 'Email address *', 'actual': 'Email address'},
+                                       {'diff': 'DIFF-T-02', 'title': 'Thiếu', 'figma': {'text': '^Need help'}, 'app': None}]}
+    (T / 's.json').write_text(json.dumps(spec, ensure_ascii=False), encoding='utf-8')
+    r = dc('mark', T / 'f.png', T / 'a.png', '--design', FX / 'figma_6-123.json', '--actual', FX / 'A-01_actual.json', '--match', T / 'cA.json', '--spec', T / 's.json', '-o', T / 'm.png')
+    ok(r.returncode == 0 and (T / 'm.png').exists(), 'mark dựng ảnh Figma | App + dải ghi chú')
+    spec['items'][0]['app'] = {'text': '^KHÔNG-CÓ-CHỮ-NÀY$'}
+    (T / 's.json').write_text(json.dumps(spec, ensure_ascii=False), encoding='utf-8')
+    r = dc('mark', T / 'f.png', T / 'a.png', '--design', FX / 'figma_6-123.json', '--actual', FX / 'A-01_actual.json', '--spec', T / 's.json', '-o', T / 'm2.png')
+    ok(r.returncode != 0 and not (T / 'm2.png').exists(), 'mark dừng khi không thấy đích — không khoanh sai chỗ')
+    # cache: khung đổi dấu vân tay → bỏ bản cũ, chỉ trích lại khung đổi
+    lst = lambda fp: {'pages': [{'id': '6:2', 'name': 'AUTH', 'frames': [{'id': '6:123', 'name': 'A-01', 'fp': 'a1'}, {'id': '6:168', 'name': 'A-02', 'fp': fp}]}]}
+    (T / 'l1.json').write_text(json.dumps(lst('b1')), encoding='utf-8'); (T / 'l2.json').write_text(json.dumps(lst('b2')), encoding='utf-8')
+    for n in ('figma_6-123.json', 'figma_6-168.json'): (T / n).write_bytes((FX / n).read_bytes())
+    for n in ('figma_6-123.png', 'figma_6-168.png'): Image.new('RGB', (8, 8)).save(T / n)
+    dc('cache', 'put', '--listing', T / 'l1.json', '--cache', T / 'kho', *(T / n for n in ('figma_6-123.json', 'figma_6-123.png', 'figma_6-168.json', 'figma_6-168.png')))
+    r = dc('cache', 'plan', '--listing', T / 'l2.json', '--cache', T / 'kho')
+    ok('FRAME_IDS cần trích (1): ["6:168"]' in r.stdout, 'cache: chỉ khung đổi dấu vân tay phải trích lại')
+    dc('cache', 'put', '--listing', T / 'l2.json', '--cache', T / 'kho', T / 'figma_6-168.json')
+    ok(not (T / 'kho' / 'figma_6-168.png').exists(), 'cache: Figma đổi → ảnh cũ bị bỏ, không ghép với spec mới')
+    return out
+
+
 def main():
     update = '--update' in sys.argv
     exp_path = HERE / 'expected.json'
@@ -113,6 +155,9 @@ def main():
             for cond, msg in semantics(name, res):
                 if not cond: fails += 1
                 print(('PASS ' if cond else 'FAIL ') + f'{name} · {msg}')
+        for cond, msg in tools(tmp):
+            if not cond: fails += 1
+            print(('PASS ' if cond else 'FAIL ') + f'lệnh · {msg}')
     if update:
         exp_path.write_text(json.dumps(got, ensure_ascii=False, indent=1), encoding='utf-8'); print('đã ghi expected.json')
     print('—' * 40); print('KẾT QUẢ:', 'PASS' if not fails else f'{fails} FAIL')

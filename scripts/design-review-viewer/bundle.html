@@ -465,6 +465,9 @@ function parseReport(text, path, name){
     const iC=g(/^mã$/i), iSt=g(/trạng thái/i), iF=g(/^khung/i), iT=g(/^loại/i), iSv=g(/mức độ/i), iO=g(/ai xử lý/i),
           iD=g(/mô tả/i), iA=g(/thực tế/i), iDs=g(/thiết kế/i), iE=g(/evidence/i);
     const cell=(r,i)=>i>=0?(r[i]||''):'';
+    // cột ngoài bộ chuẩn (Nền tảng · Liên quan · cột riêng của mẫu báo cáo team) — giữ tên + nội dung để hiện ở chi tiết DIFF
+    const known=new Set([iC,iSt,iF,iT,iSv,iO,iD,iA,iDs,iE]);
+    const extraIdx=h.map((_,i)=>i).filter(i=>!known.has(i));
     for(const r of tDiff.rows){
       const code=stripMd(cell(r,iC)); if(!code) continue;
       const framesTxt=stripMd(cell(r,iF));
@@ -472,7 +475,7 @@ function parseReport(text, path, name){
         frames:framesTxt, framesArr:parseFrameCodes(framesTxt),
         type:normType(cell(r,iT)), severity:normSev(cell(r,iSv)), ownerKey:normOwner(cell(r,iO)), ownerRaw:stripMd(cell(r,iO)),
         desc:stripMd(cell(r,iD)), descRaw:cell(r,iD), actualRaw:cell(r,iA), designRaw:cell(r,iDs), evRaw:cell(r,iE),
-        evLinks:links(cell(r,iE))});
+        evLinks:links(cell(r,iE)), extra:extraIdx.map(i=>[h[i],cell(r,i)]).filter(([,v])=>stripMd(v)&&!/^(—|-|n\/a)$/i.test(stripMd(v).trim()))});
     }
   }
   const codePrefix=diffs.length?diffs[0].code.replace(/\d+$/,''):'';
@@ -769,7 +772,7 @@ function filteredDiffs(){
     if(!s) return true;
     const fNames=d.framesArr.map(c=>(d.rep.frames.find(f=>f.code===c)||{}).name||'').join(' ');
     return [d.code,d.statusRaw,d.module,d.platform,d.platformLabel,d.frames,fNames,d.type,d.severity,d.ownerRaw,d.desc,
-      stripMd(d.actualRaw),stripMd(d.designRaw),stripMd(d.evRaw),d.runId].some(v=>String(v||'').toLowerCase().includes(s));
+      stripMd(d.actualRaw),stripMd(d.designRaw),stripMd(d.evRaw),d.runId,...(d.extra||[]).map(([,v])=>stripMd(v))].some(v=>String(v||'').toLowerCase().includes(s));
   }).sort(rowCmp(sortKey,sortDir));
 }
 const SEV_RANK={High:0,Medium:1,Low:2};
@@ -990,6 +993,7 @@ function openDiff(d){
     ['Mô tả', inl(d.descRaw,ctx)],
     ['Thực tế (số đo)', inl(d.actualRaw,ctx)],
     ['Thiết kế (số đo)', inl(d.designRaw,ctx)],
+    ...(d.extra||[]).map(([k,v])=>[k==='Nền tảng'?'Thấy trên nền tảng':k, inl(v,ctx)]),
     ['Lần chạy', `<code>${esc(d.runId)}</code>${d.notInLatest?` <span class="pf">— lần chạy mới nhất <code>${esc(d.notInLatest)}</code> không liệt kê mã này; trạng thái lấy theo lần chạy trên</span>`:''}`],
     ['File nguồn', `<span class="pf">${esc(r.path||r.name)}</span>`]
   ])+`<h4 class="sec">Evidence</h4>${evThumbs}
@@ -1063,12 +1067,12 @@ function downloadBlob(name, blob){
 }
 function exportPlan(){
   const head=['Mã','Trạng thái','Ghi chú trạng thái','Module','Nền tảng','Khung','Loại','Mức độ','Ai xử lý','Mô tả',
-    'Thực tế (số đo)','Thiết kế (số đo)','Evidence','Lần chạy','Số lần chạy có mã này','File nguồn'];
+    'Thực tế (số đo)','Thiết kế (số đo)','Cột bổ sung','Evidence','Lần chạy','Số lần chạy có mã này','File nguồn'];
   const rows=filteredDiffs().map(d=>[d.code, ST_LABEL[d.statusKey], d.statusRaw!==ST_LABEL[d.statusKey]?d.statusRaw:'',
     d.ns?`${d.module} (${d.ns})`:d.module, d.platformLabel?`${PF_LABEL[d.platform]||d.platform} (${d.platformLabel})`:(PF_LABEL[d.platform]||d.platform),
     d.frames, d.type, d.severity, d.ownerRaw, d.desc, stripMd(d.actualRaw), stripMd(d.designRaw),
-    d.evLinks.map(baseName).join('\n'), d.runId, String(d.history.length), d.rep.path||d.rep.name]);
-  const widths=[20,18,26,16,18,16,11,10,14,50,40,40,34,22,10,40];
+    (d.extra||[]).map(([k,v])=>`${k}: ${stripMd(v)}`).join('\n'), d.evLinks.map(baseName).join('\n'), d.runId, String(d.history.length), d.rep.path||d.rep.name]);
+  const widths=[20,18,26,16,18,16,11,10,14,50,40,40,36,34,22,10,40];
   return {base:'design_review', sheets:[{name:'DIFF', widths, head, rows,
     styleCols:[{col:1,map:XLSX_STATUS},{col:7,map:XLSX_SEV}]}]};
 }

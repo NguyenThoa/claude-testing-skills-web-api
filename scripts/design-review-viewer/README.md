@@ -68,7 +68,7 @@ Phần ghi chú sau nhãn (lần chạy khắc phục, lý do chấp nhận…) 
 | **Tab DIFF** | Bảng Mã · Trạng thái · Module · Nền tảng · Khung · Loại · Mức độ · Ai xử lý · Mô tả. Click header để sort; Mức độ, Trạng thái và Ai xử lý sort theo thứ bậc, không theo chữ cái. Chip lọc Trạng thái / Mức độ / Loại / Ai xử lý · chọn Module, Nền tảng · tìm toàn văn (mã, mô tả, số đo thực tế/thiết kế, mã/tên khung, tên ảnh evidence) |
 | **Tab Khung** | Lưới khung theo từng báo cáo, mỗi thẻ gồm: mã · node-id · tên · kết quả · các mã DIFF (bấm để mở DIFF) · ảnh Figma \| App. Bấm thẻ để mở chi tiết khung: thông tin bản đồ màn hình, ảnh lớn, mọi ảnh evidence khác cùng tiền tố mã khung (`A-03_*.png`), và **bảng đo tự động** (`<details>` của mục 4) đã dựng thành bảng |
 | **Tab Báo cáo** | Mỗi lần chạy một thẻ. Thẻ có số DIFF theo trạng thái, số khung đã so, toàn bộ bảng thông tin đầu báo cáo (Mode · Ngày chạy · Figma · Độ trung thực · Bản build · Môi trường · Dung sai · Phạm vi…), và các mục 1 Tóm tắt · 5 Không so được · 6 Ghi chú tham khảo · 7 Việc tiếp theo |
-| **Chi tiết DIFF** | Đủ mọi cột, gồm cả *Thực tế (số đo)* và *Thiết kế (số đo)*. Ảnh evidence (side + marked) hiện thành thumbnail, bấm để xem giữa màn hình. Panel có thêm bảng lịch sử qua các lần chạy |
+| **Chi tiết DIFF** | Đủ mọi cột, gồm cả *Thực tế (số đo)* và *Thiết kế (số đo)*, cột *Nền tảng* (hiện là *Thấy trên nền tảng* — DIFF dùng lại ở nền tảng chung mã nguồn), *Liên quan* và mọi cột riêng của mẫu báo cáo team. Ảnh evidence (side + marked) hiện thành thumbnail, bấm để xem giữa màn hình. Panel có thêm bảng lịch sử qua các lần chạy |
 | **Xem ảnh** | Lightbox giữa màn hình, phím ← → để lướt các ảnh trong cùng panel, Esc để đóng |
 | **Export** | **CSV** và **Excel (.xlsx)**: xuất đúng bảng DIFF đang hiển thị sau lọc/tìm. Cột Trạng thái tô màu (Mở đỏ · Đã khắc phục xanh · Chấp nhận xám · Không còn áp dụng tím), cột Mức độ cũng tô màu |
 | **Xoá tất cả** | Xoá hết báo cáo và ảnh đã nạp (kể cả trong `localStorage`), rồi quay về màn hình kéo thả trống |
@@ -106,7 +106,7 @@ Link ảnh trong ô bảng (`[A-01 side](evidence/A-01_sign_in_side.png)`) đư�
 | File danh mục | Tiêu đề `# Danh mục So thiết kế …`, hoặc có bảng với cột `Mã kế tiếp` |
 | Thông tin đầu báo cáo | Bảng 2 cột `Mục \| Giá trị` trước mục `## 1.` |
 | Bản đồ màn hình | Bảng có cột `Mã khung`, cùng `Khung Figma (node-id)` · `Trạng thái vẽ` · `Cách tới trên app` · `Kết quả` · `DIFF`. Cột DIFF ghi số ngắn (`01 · 02`) thì tự ghép tiền tố mã DIFF của báo cáo |
-| Danh sách DIFF | Bảng có cột `Mã`. Các cột còn lại tìm **theo tên**, không theo vị trí, nên thiếu cột `Trạng thái` (báo cáo cũ) vẫn đọc được |
+| Danh sách DIFF | Bảng có cột `Mã`. Các cột còn lại tìm **theo tên**, không theo vị trí, nên thiếu cột `Trạng thái` (báo cáo cũ) vẫn đọc được. Cột ngoài bộ chuẩn (`Nền tảng` · `Liên quan` · cột thêm của mẫu riêng `plans/design-compare/report_template.md`) hiện ở chi tiết DIFF, được tìm toàn văn và xuất vào cột *Cột bổ sung* |
 | Chi tiết từng khung | Heading `### <mã khung> · <tên>` · ảnh `![…](evidence/…)` · khối `<details><summary>…</summary> … </details>` chứa bảng đo |
 | Mục 5 · 6 · 7 | Tìm heading theo chữ (*không so được* · *ghi chú tham khảo* · *việc tiếp theo*), không phụ thuộc số thứ tự |
 | Ô bảng | `**đậm**` · `*nghiêng*` · `` `code` `` · `<br>` · `\*` · link ảnh (thành nút xem ảnh) · link `https://` (mở tab mới) · link `.md` tương đối (chỉ hiện chữ — trang không mở được file khác qua `file://`) |

@@ -1,5 +1,5 @@
 ---
-description: So bản thiết kế Figma với giao diện đã xây dựng thật — 2 mode WEB (Playwright MCP) và MOBILE (Appium MCP — Android/iOS/Hybrid). Trích spec Figma chỉ-đọc, đo lệch chữ · vị trí · khoảng cách · màu · cỡ chữ theo dp/pt/px, người soát xác nhận trên ảnh đặt cạnh nhau rồi ghi DIFF có loại · mức độ · ai xử lý. Xuất báo cáo + evidence vào docs/design-reviews/.
+description: So bản thiết kế Figma với giao diện đã xây dựng thật — 3 mode WEB (Playwright MCP), MOBILE-WEB (trình duyệt điện thoại — Playwright MCP giả lập thiết bị) và MOBILE (Appium MCP — Android/iOS/Hybrid). Trích spec Figma chỉ-đọc (có cache), đo lệch chữ · vị trí · khoảng cách · màu · cỡ chữ theo dp/pt/px, đi lưới soát ngoài → trong, ghi DIFF có loại · mức độ · ai xử lý kèm ảnh khoanh đúng / sai, không log trùng giữa các nền tảng dùng chung khung Figma. Xuất báo cáo + evidence vào docs/design-reviews/.
 skills:
   - skills-figma-design-comparator
   - skills-mobile-debug-agent
@@ -8,11 +8,11 @@ skills:
 
 # Workflow: So Thiết Kế Figma Với UI Thật
 
-> **BẮT BUỘC (MANDATORY SKILL):** Nạp và đọc kỹ **`skills-figma-design-comparator`** (`.claude/skills/skills-figma-design-comparator/SKILL.md`) — quy trình 6 bước, cách đọc bảng đo, viết DIFF. Mode WEB đọc thêm `references/web.md`; mode MOBILE đọc `references/mobile.md` — **chỉ một** trong hai.
+> **BẮT BUỘC (MANDATORY SKILL):** Nạp và đọc kỹ **`skills-figma-design-comparator`** (`.claude/skills/skills-figma-design-comparator/SKILL.md`) — quy trình 6 bước, cách đọc bảng đo, viết DIFF. Mode WEB đọc thêm `references/web.md`; mode MOBILE-WEB đọc `references/web.md` **kể cả mục 7**; mode MOBILE đọc `references/mobile.md` — **chỉ một** file.
 >
 > **Rule bắt buộc:** [`.claude/rules/design_compare_rules.md`](../rules/design_compare_rules.md) — độ trung thực, đơn vị, dung sai, phân loại DIFF, cấm.
 >
-> Thao tác thiết bị: `skills-mobile-debug-agent` (MOBILE) · thao tác trình duyệt: `skills-ui-debug-agent` (WEB).
+> Thao tác thiết bị: `skills-mobile-debug-agent` (MOBILE) · thao tác trình duyệt: `skills-ui-debug-agent` (WEB · MOBILE-WEB).
 
 ---
 
@@ -24,7 +24,7 @@ skills:
 
 | Tham số | Bắt buộc | Ví dụ |
 |---|---|---|
-| `MODE` | ✅ | `WEB` · `MOBILE` |
+| `MODE` | ✅ | `WEB` (desktop) · `MOBILE-WEB` (trình duyệt trên điện thoại) · `MOBILE` (app Android / iOS / Hybrid) |
 | Link Figma | ✅ | `https://www.figma.com/design/<fileKey>/...` — có `node-id` thì giới hạn vào page/khung đó |
 | Module | Nên có | `auth` — để ghi đúng `docs/design-reviews/<module>/` và nối REQ/TC |
 | Khung | Không | `A-01,A-02` hoặc `tất cả` (mặc định: mọi khung màn hình trong page của `node-id`) |
@@ -37,10 +37,13 @@ Ví dụ:
 /compare-ui-from-figma-design MOBILE https://www.figma.com/design/<fileKey>/Book?node-id=7-1 user
 /compare-ui-from-figma-design MOBILE https://www.figma.com/design/<fileKey>/Book?node-id=6-607 auth A-07,A-08 bổ sung
 /compare-ui-from-figma-design WEB https://www.figma.com/design/<fileKey>/CRM?node-id=12-40 customers nhanh
+/compare-ui-from-figma-design MOBILE-WEB https://www.figma.com/design/<fileKey>/Shop?node-id=4-1 cart
 /compare-ui-from-figma-design MOBILE https://www.figma.com/design/<fileKey>/Book?node-id=9-1 book khung=còn-mở
 ```
 
-Đích so sánh: MODE WEB lấy URL từ `.env` / tài liệu module, hoặc user đưa · MODE MOBILE dùng app đã khai trong `capabilities.json` (Android) hoặc user đưa bundle id (iOS).
+Đích so sánh: MODE WEB / MOBILE-WEB lấy URL từ `.env` / tài liệu module, hoặc user đưa — MOBILE-WEB chạy trên server MCP `playwright-mobile` (`--device`, khai trong `.mcp.json`; chưa có tool `mcp__playwright-mobile__*` trong phiên → báo user khởi động lại Claude Code) · MODE MOBILE dùng app đã khai trong `capabilities.json` (Android) hoặc user đưa bundle id (iOS).
+
+Mẫu báo cáo: `plans/design-compare/report_template.md` nếu project có (mẫu riêng của team), không thì mẫu chuẩn của skill.
 
 ---
 
@@ -61,23 +64,26 @@ Ví dụ:
 
 1. Tách `fileKey` và `node-id` từ link (`node-id=1-2` → `1:2`)
 2. Đọc **danh mục** `docs/design-reviews/README.md` — hệ thống thứ hai trong namespace thì `docs/design-reviews/_<hệ-thống>/README.md` (chưa có → tạo theo `references/report_template.md`) → mã DIFF kế tiếp của module
-3. **Đã từng so module × nền tảng này?** Mở báo cáo `run_*` gần nhất (danh mục có link) → lấy danh sách DIFF 🔴 Mở và ⚪ Chấp nhận — lượt này phải đối chiếu lại **từng** DIFF đó (rule mục 6 — vòng đời DIFF)
-4. Đọc `docs/requirements/README.md` + `_discovery/system_map.md` (hoặc của namespace) → **đường điều hướng** tới từng màn hình, môi trường dùng chung hay không. Có tài liệu module thì mở index để biết REQ nào nói về màn hình sắp so
-5. Đọc bảng **Thành phần dùng chung** trong danh mục — lệch ở header, bottom nav, ô nhập… đã có mã thì lượt này chỉ dẫn chiếu
-6. Ước lượng lượt gọi Figma MCP (skill Bước 1 mục 6) — gói Starter có hạn mức; page nhiều khung thì lấy spec + ảnh **mọi** khung ngay đầu phiên
-7. Công bố một câu: *"So `<n>` khung page `<tên>` với **Android** `emulator-5554` (448 dp, density 480) — thiết kế mức **wireframe**, kiểu chạy **đầy đủ**, DIFF bắt đầu từ `DIFF-<MODULE>-<nn>`."*
+3. **Đã từng so module × nền tảng × biến thể này?** Mở báo cáo `run_*` gần nhất (danh mục có link) → lấy danh sách DIFF 🔴 Mở và ⚪ Chấp nhận — lượt này phải đối chiếu lại **từng** DIFF đó (rule mục 6 — vòng đời DIFF)
+4. **Cùng khung Figma đã so ở nền tảng / biến thể khác?** (VD chạy app sau mobile web, chung bộ khung) — đọc bảng **Sổ khung Figma** + **Nền tảng & biến thể** của danh mục → ghi lại các DIFF 🔴 Mở theo node-id khung, và hai nền tảng có chung mã nguồn giao diện không (chưa ghi → hỏi user **một câu**, ghi vào bảng). Bước 5 dùng danh sách này trước khi cấp mã (rule mục 6 — *một lệch, không log trùng*)
+5. Đọc `docs/requirements/README.md` + `_discovery/system_map.md` (hoặc của namespace) → **đường điều hướng** tới từng màn hình, môi trường dùng chung hay không. Có tài liệu module thì mở index để biết REQ nào nói về màn hình sắp so
+6. Đọc bảng **Thành phần dùng chung** trong danh mục — lệch ở header, bottom nav, ô nhập… đã có mã thì lượt này chỉ dẫn chiếu
+7. **Cache Figma** (rule mục 9): kho `reports/design-compare/_cache/<fileKey>/` — Bước 1 chạy `dc.py cache plan` để biết khung nào dùng lại spec + ảnh, chỉ gọi Figma cho khung đổi / mới. Gói Starter có hạn mức; khung phải lấy mới thì lấy **mọi** khung đó ngay đầu phiên
+8. Công bố một câu: *"So `<n>` khung page `<tên>` với **Android** `emulator-5554` (448 dp, density 480) — thiết kế mức **wireframe**, kiểu chạy **đầy đủ**, `<k>` khung lấy từ cache, cùng khung đã có `<m>` DIFF mở ở **Mobile web** (chung mã nguồn), DIFF mới bắt đầu từ `DIFF-<MODULE>-<nn>`."*
 
 ### Bước 1: Bản đồ màn hình — skill Bước 1
 
-`figma_extract.js` (`FRAME_IDS = []`) → danh sách khung → bảng Screen Map (mã khung · node-id · trạng thái vẽ · cách tới · đạt được?). Khai báo độ trung thực.
+`figma_extract.js` (`FRAME_IDS = []`) → `reports/design-compare/<run>/figma_listing.json` (mỗi khung có dấu vân tay `fp`) → bảng Screen Map (mã khung · node-id · trạng thái vẽ · cách tới · đạt được?). Khai báo độ trung thực. `dc.py cache plan --listing … --cache reports/design-compare/_cache/<fileKey> --frames <phạm vi>` → khung nào dùng cache, `FRAME_IDS` cần trích, số lượt gọi còn lại.
 
 ### Bước 2: Trích spec Figma — skill Bước 2
 
-Mỗi khung: `figma_extract.js` (3–4 khung một lần) → `reports/design-compare/<run>/figma_<id>.json` · `get_screenshot` → `curl` **ngay** → `figma_<id>.png`. Hết hạn mức ảnh → `dc.py render figma_<id>.json -o figma_<id>.png`, evidence đặt tên `_figma_render.png`.
+`dc.py cache get … -o reports/design-compare/<run>/` chép bản còn hiệu lực. Khung 🔄 / 🆕 / 🟡: `figma_extract.js` (3–4 khung một lần) → `figma_<id>.json` · `get_screenshot` → `curl` **ngay** → `figma_<id>.png` → `dc.py cache put …` cất vào kho. Hết hạn mức ảnh → `dc.py render figma_<id>.json -o figma_<id>.png`, evidence đặt tên `_figma_render.png`.
 
 `<run>` = `<module>_<nền-tảng>_<YYYYMMDD_HHMMSS>` — trùng với thư mục `run_*` sẽ ghi ở `docs/`.
 
 ### Bước 3: Thu dữ liệu UI thật — theo MODE
+
+MODE **MOBILE-WEB** = cột WEB, chạy trên tool `mcp__playwright-mobile__browser_*` (giả lập thiết bị) + `browser_resize` về bề ngang khung + kiểm `pointer: coarse` / UA mobile trước khi đo (`web.md` mục 7). **Không** thu hẹp Chrome desktop, **không** giả lập bằng CDP.
 
 | | MODE **MOBILE** (`references/mobile.md`) | MODE **WEB** (`references/web.md`) |
 |---|---|---|
@@ -100,28 +106,36 @@ python scripts/design-compare/dc.py visual figma_<id>.png  <mã>_app.png --desig
 
 ### Bước 5: Soát trên ảnh → DIFF — skill Bước 5
 
-Mở `<mã>_side.png`, đi từng dòng ❌ ⚠️ 🔍 ➕ ❔ của bảng đo + checklist soát tay. Mỗi lệch thật = 1 DIFF (cùng nguyên nhân gộp một; đã có mã ở module khác → dẫn chiếu). Gán **loại · mức độ · ai xử lý** theo rule mục 6 — lỗi hiển nhiên (chữ sai nghĩa, thiếu dữ liệu trong câu, lỗi dính từ form khác, thông tin khuất) là `Dev` dù thiết kế vẽ theo app. DIFF hành vi giao Dev → **tái hiện lại** một lần từ trạng thái sạch.
+1. **Lưới soát** `dc.py checklist figma_<id>.json --match <mã>_match.json … -o <run>/<mã>_checklist.md` → mở cạnh `<mã>_side.png`, đi **ngoài → trong, trên → dưới, trái → phải** (rule mục 4b); mỗi dòng phải có ✅ / ☑ / mã DIFF
+2. Đi từng dòng ❌ ⚠️ 🔍 ➕ ❔ của bảng đo. Mỗi lệch thật = 1 DIFF (cùng nguyên nhân gộp một)
+3. **Trước khi cấp mã**, tra theo thứ tự: DIFF lượt trước cùng nền tảng × biến thể → DIFF cùng node-id khung ở nền tảng / biến thể khác (Bước 0 mục 4) → *Thành phần dùng chung* ở module khác
 
-Khoanh ảnh (chỉ DIFF đã xác nhận): `dc.py annotate --actual <mã>_actual.json --text "<regex>=<mã DIFF>"` hoặc `--rect "x,y,w,h=<mã DIFF>"` — hoặc `--map` theo dòng bảng đo. Mở lại ảnh.
+Gán **loại · mức độ · ai xử lý** theo rule mục 6 — lỗi hiển nhiên (chữ sai nghĩa, thiếu dữ liệu trong câu, lỗi dính từ form khác, thông tin khuất) là `Dev` dù thiết kế vẽ theo app. DIFF hành vi giao Dev → **tái hiện lại** một lần từ trạng thái sạch.
 
-Kiểu `nhanh`: dừng ở đây — trả lời trong chat bằng ảnh đặt cạnh nhau + danh sách lệch (chưa cấp mã), hỏi user có muốn lưu thành lượt chạy đầy đủ không.
+**Ảnh khoanh đúng / sai** (rule mục 7, skill Bước 5d): spec JSON mỗi DIFF một mục (`figma` · `app` · `expected` · `actual` — ghi chú bằng margin / padding / gap / kích thước, không toạ độ) → `dc.py mark figma_<id>.png <mã>_app.png --design … --actual … --match … --spec <mã>_marks.json -o evidence/<mã>_<mô_tả>_marked.png`. Mở lại ảnh: khung xanh và đỏ cùng số phải là cùng một phần tử.
+
+Kiểu `nhanh`: dừng ở đây — trả lời trong chat bằng ảnh `mark` (nhãn là số thứ tự lệch) + danh sách lệch (chưa cấp mã), hỏi user có muốn lưu thành lượt chạy đầy đủ không.
 
 Có lần chạy trước → **trước khi cấp mã mới**, đối chiếu từng lệch với DIFF cũ: còn lệch → giữ mã cũ · hết lệch → `✅ Đã khắc phục` · lệch đã `⚪ Chấp nhận` → không báo lại. Chỉ lệch chưa có DIFF mới được cấp mã nối tiếp.
 
 ### Bước 6: Ghi báo cáo & danh mục
 
 1. **Che dữ liệu** người khác trước khi copy: ảnh `dc.py mask` (rồi dựng lại `_side` từ ảnh đã che) · bảng đo `match --redact`
-2. Copy evidence vào `docs/design-reviews/<module>/<nền-tảng>/run_<timestamp>/evidence/` — mỗi khung: `<mã>_<mô_tả>_figma.png` (hoặc `_figma_render.png`) · `_app.png` · `_side.png` (+ `_marked.png` nếu có DIFF; nhiều đoạn cuộn thêm `_part<n>`). **Không** copy page source, spec JSON, ảnh chồng, bản đồ khác biệt
-3. Viết `design_compare_report.md` theo `references/report_template.md` — mục 4 sinh bằng `dc.py sections` từ các `<mã>_match.md`. Kiểu `bổ sung`: sửa báo cáo của `run_*` gần nhất thay vì tạo thư mục mới
+2. Copy evidence vào `docs/design-reviews/<module>/<nền-tảng>/run_<timestamp>/evidence/` — mỗi khung: `<mã>_<mô_tả>_figma.png` (hoặc `_figma_render.png`) · `_app.png` · `_side.png` (+ `_marked.png` của `dc.py mark` nếu có DIFF; nhiều đoạn cuộn thêm `_part<n>`). **Không** copy page source, spec JSON, spec khoanh, ảnh chồng, bản đồ khác biệt. Mobile web ghi vào `<module>/web/` với ô *Biến thể* = `Mobile web — <thiết bị> · <bề ngang>`
+3. Viết `design_compare_report.md` theo mẫu riêng `plans/design-compare/report_template.md` (nếu có — giữ hợp đồng tối thiểu) hoặc `references/report_template.md` — mục 4 sinh bằng `dc.py sections` từ các `<mã>_match.md` + `<mã>_checklist.md`. Kiểu `bổ sung`: sửa báo cáo của `run_*` gần nhất thay vì tạo thư mục mới
 4. Kiểm mọi link `evidence/…` trỏ tới file có thật
-5. Cập nhật danh mục (`docs/design-reviews/README.md` hoặc `_<hệ-thống>/README.md`): dòng module × nền tảng · Nhật ký · bảng *Thành phần dùng chung*
-6. Đóng phiên: `appium_session_management delete` (MOBILE) · `browser_resize 1600×750` (WEB)
+5. Cập nhật danh mục (`docs/design-reviews/README.md` hoặc `_<hệ-thống>/README.md`): dòng module × nền tảng × biến thể · Nhật ký · *Nền tảng & biến thể* · **Sổ khung Figma** (node-id → nơi đã so → DIFF mở) · *Thành phần dùng chung*
+6. Đóng phiên: `appium_session_management delete` (MOBILE) · `browser_resize 1600×750` (WEB) · `mcp__playwright-mobile__browser_close` (MOBILE-WEB)
 
 ### Checklist bàn giao
 
 - [ ] Đã khai báo độ trung thực + dung sai ở đầu báo cáo; DIFF không vượt phạm vi của độ trung thực
 - [ ] Mọi khung trong phạm vi có kết quả: ✅ / DIFF / ❔ kèm lý do — không khung nào biến mất im lặng
-- [ ] Mỗi DIFF có số đo ở cả **Thực tế** và **Thiết kế**, có loại · mức độ · ai xử lý, có link ảnh
+- [ ] Mỗi DIFF có số đo ở cả **Thực tế** và **Thiết kế** — viết bằng tên phần tử nhìn thấy + kích thước / margin / padding / gap, **không** toạ độ thô — có loại · mức độ · ai xử lý
+- [ ] Mỗi DIFF có ảnh `_marked.png` (`dc.py mark`): Figma khung xanh | App khung đỏ cùng số + ghi chú Thiết kế / Thực tế
+- [ ] Lưới soát (`dc.py checklist`) của mọi khung không còn ô ☐ — đã đi ngoài → trong, trên → dưới, trái → phải
+- [ ] Đã tra *Sổ khung Figma*: lệch đã có ở nền tảng / biến thể khác cùng khung → dùng lại mã (chung mã nguồn) hoặc ghi *Liên quan* — không log trùng
+- [ ] Khung lấy từ cache được ghi ở ô *Ảnh Figma*; khung vừa trích mới đã `cache put`
 - [ ] Không DIFF nào chỉ dựa trên bảng đo tự động mà chưa xem ảnh đặt cạnh nhau
 - [ ] Lệch dây chuyền đã gộp về chỗ khởi phát — không 5 DIFF cho cùng một nguyên nhân
 - [ ] Đã mở lại mọi ảnh trong `evidence/`; ảnh khoanh đúng chỗ

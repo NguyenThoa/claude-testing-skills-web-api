@@ -9,6 +9,17 @@
         "--config",
         ".claude/playwright-mcp-config.json"
       ]
+    },
+    "playwright-mobile": {
+      "command": "npx",
+      "args": [
+        "-y",
+        "@playwright/mcp",
+        "--device=Pixel 7",
+        "--isolated",
+        "--config",
+        ".claude/playwright-mcp-config.json"
+      ]
     }
   }
 }

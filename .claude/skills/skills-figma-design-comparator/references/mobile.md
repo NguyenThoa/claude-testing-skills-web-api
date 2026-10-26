@@ -30,7 +30,9 @@ Ghi tất cả vào mục **Môi trường** của báo cáo — cùng app, đ�
 | Flutter đã bật semantics | Page source (`content-desc`) | Lấy mẫu trên ảnh | Chữ là `Semantics(label:)` — có thể là mã kiểu `login_button` chứ không phải chữ hiển thị → khớp kém, so chủ yếu bằng ảnh |
 | Flutter **chưa** bật semantics | ❌ Không có cây | Ảnh | Chỉ so được bằng **ảnh đặt cạnh nhau** + soát tay; báo dev bật semantics |
 | Hybrid — WebView **không** debug được (`appium_context` chỉ có `NATIVE_APP`) | Page source — WebView đưa chữ lên cây trợ năng | Lấy mẫu trên ảnh | Hay **gộp** chữ con (`User mgttotal: 3294 users`) và trả khung phần tử thay vì khung chữ |
-| Hybrid — có `WEBVIEW_*` | Như trên (appium-mcp chưa có tool chạy JS trong WebView để lấy computed style) | Lấy mẫu trên ảnh | Muốn số đo font/màu chính xác: mở bản web của cùng app bằng mode WEB, cùng bề ngang |
+| Hybrid — có `WEBVIEW_*` | Như trên (appium-mcp chưa có tool chạy JS trong WebView để lấy computed style) | Lấy mẫu trên ảnh | Muốn số đo font/màu chính xác: mở bản web của cùng app bằng mode **MOBILE-WEB**, cùng bề ngang |
+
+**App Hybrid nạp cùng frontend với bản web?** Hỏi user **một lần**, ghi vào bảng *Nền tảng & biến thể* của danh mục. Có → lệch ở app thường **chính là** lệch đã log ở mobile web: tra *Sổ khung Figma* trước khi cấp mã, dùng lại mã cũ + thêm nền tảng (rule `design_compare_rules.md` mục 6 — *một lệch, không log trùng*).
 
 ---
 

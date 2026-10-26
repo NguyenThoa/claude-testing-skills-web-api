@@ -42,6 +42,8 @@ Tôi cho phép Claude đọc file `.env` trong root project để lấy thông t
 >
 > 📌 **Đổi viewport headed ở đâu:** `--viewport-size` của MCP server `playwright` trong **`.mcp.json` ở gốc project** (cấu hình riêng của project này, đè lên `%APPDATA%\Claude\claude_desktop_config.json`). **Phải khởi động lại Claude Code** mới có hiệu lực.
 >
+> 📱 **Mobile web:** `.mcp.json` có thêm server **`playwright-mobile`** (`--device=Pixel 7 --isolated`) — trình duyệt giả lập điện thoại (UA, cảm ứng, DPR). Dùng cho mode MOBILE-WEB của `/compare-ui-from-figma-design` và mọi việc cần xem trang ở chế độ mobile. **Không** giả lập bằng thu hẹp viewport hay CDP trên server `playwright` chính — lệnh chụp ảnh đặt lại viewport desktop mà không báo lỗi.
+>
 > 📂 **Vì sao dùng `.mcp.json` riêng:** server khai ở đây chạy với cwd = gốc project, nên snapshot / console log / screenshot rơi đúng vào `.playwright-mcp/` của project. Dùng server global thì cwd bám theo project nào khởi động server trước — evidence sẽ lạc sang project khác. File không chứa đường dẫn tuyệt đối nên mang sang máy khác vẫn chạy.
 >
 > 🚫 Màn hình 1920×1080 **không thể** cho viewport headed 1920×1080 — thanh tab + thanh địa chỉ chiếm mất chiều cao. Cần đúng 1920×1080 thì chạy **headless**.
@@ -209,7 +211,7 @@ Agent sử dụng skills trong `.claude/skills/` tùy theo nhiệm vụ:
 | `skills-coverage-traceability`  | Sinh ma trận truy vết RTM — Requirements ↔ Test Cases ↔ Automation                    |
 | `skills-api-mocking`            | Sinh mock/stub API (Playwright route, WireMock) — test UI độc lập backend             |
 | `skills-user-guide-writer`      | Sinh Hướng dẫn sử dụng cho người dùng cuối — viết theo việc cần làm, bám cấu trúc ISO/IEC/IEEE 26514 · 82079-1. 3 mode DOC · LIVE · **VIDEO**, ngôn ngữ `lang` (vi/en…), mọi ảnh/video **có highlight** (khung đỏ + số thứ tự click), luôn xuất HTML nhúng ảnh + video — công cụ `scripts/user-guide/` |
-| `skills-figma-design-comparator` | So bản thiết kế **Figma** với UI đã xây — web (Playwright MCP) và app mobile (Appium MCP). Trích spec Figma chỉ-đọc, đo lệch chữ · vị trí · khoảng cách · màu theo dp/pt/px, xác nhận trên ảnh đặt cạnh nhau rồi ghi `DIFF` có loại · mức độ · ai xử lý — công cụ `scripts/design-compare/` |
+| `skills-figma-design-comparator` | So bản thiết kế **Figma** với UI đã xây — web, **mobile web** (Playwright MCP — server `playwright-mobile` giả lập thiết bị) và app mobile (Appium MCP). Trích spec Figma chỉ-đọc (**cache** theo dấu vân tay khung), đo lệch chữ · vị trí · khoảng cách · màu theo dp/pt/px, đi **lưới soát ngoài → trong**, ghi `DIFF` có loại · mức độ · ai xử lý kèm **ảnh khoanh đúng (Figma) / sai (App)** có ghi chú, không log trùng giữa các nền tảng chung khung Figma — công cụ `scripts/design-compare/` |
 
 ## 6. Kế Hoạch Kiểm Thử (Plan Templates)
 
@@ -308,7 +310,7 @@ docs/
 │   └── <module>/<nền-tảng>/BUG_<module>_<timestamp>_<TC_ID>.md  ← mỗi bug 1 file, hậu tố TC_ID để nhìn tên biết ngay thuộc TC nào
 │
 ├── design-reviews/                              ← /compare-ui-from-figma-design — so thiết kế Figma với UI thật
-│   ├── README.md                                ← DANH MỤC — module × nền tảng, DIFF đã dùng · mã kế tiếp (`DIFF-<MODULE>-<nn>`, đếm theo module)
+│   ├── README.md                                ← DANH MỤC — module × nền tảng × biến thể, DIFF đã dùng · mã kế tiếp (`DIFF-<MODULE>-<nn>`, đếm theo module) · **Sổ khung Figma** (tra trước khi cấp mã)
 │   └── <module>/<nền-tảng>/run_<timestamp>/
 │       ├── design_compare_report.md             ← Bản đồ màn hình · danh sách DIFF (loại · mức độ · ai xử lý) · bảng đo từng khung
 │       └── evidence/<mã-khung>_<mô_tả>_{figma|app|side|marked}.png ← ảnh Figma · ảnh app · đặt cạnh nhau · khoanh DIFF
@@ -366,7 +368,7 @@ Các trang tĩnh trong `scripts/`, mở bằng cách double-click, chạy offlin
 | Bug report sống ở **`docs/bugs/<module>/<nền-tảng>/`**, KHÔNG ở gốc repo | Bug là mắt xích thứ tư của chuỗi truy vết; để ngoài `docs/` thì lệnh dọn dự án bỏ sót, để lại bug mồ côi trỏ vào TC/REQ đã đổi nghĩa |
 | Bug **phải trỏ về TC ID và REQ ID đang có hiệu lực**; evidence chỉ **link** tới `executions/`, không nhân bản | Bug trỏ vào mã đã đổi nghĩa còn tệ hơn không trỏ — người đọc tin nhầm. Nhân bản ảnh là tạo hai nguồn sự thật |
 | Mục checklist khi đi ra khỏi file checklist mang **mã mục `CL-<phần tên file sau checklist_>-<nn>`**, không dùng `#3` trần · kết quả checklist **không** cộng vào số của bộ TC (RTM xếp REQ chỉ có checklist là 🟠, báo cáo tổng hợp tách bảng riêng) | `#3` trùng giữa mọi checklist — viewer, RTM, bug, báo cáo nối nhầm mà không ai biết. 12 mục smoke cộng vào 36 TC là pass rate vô nghĩa |
-| Chỗ lệch thiết kế mang mã **`DIFF-<MODULE>-<nn>`** đánh số nối tiếp theo module (dùng chung mọi nền tảng) · chạy lại thì **giữ mã** cho lệch cũ, chỉ đổi trạng thái 🔴 Mở / ✅ Đã khắc phục / ⚪ Chấp nhận · không xoá dòng | Bug, báo cáo cũ trỏ vào mã DIFF — cấp mã mới cho lệch cũ là đếm trùng, đánh lại số là cắt mối nối. Chi tiết: `design_compare_rules.md` mục 6 |
+| Chỗ lệch thiết kế mang mã **`DIFF-<MODULE>-<nn>`** đánh số nối tiếp theo module (dùng chung mọi nền tảng) · chạy lại thì **giữ mã** cho lệch cũ, chỉ đổi trạng thái 🔴 Mở / ✅ Đã khắc phục / ⚪ Chấp nhận · không xoá dòng · cùng khung Figma đã có DIFF ở nền tảng khác (mobile web ↔ app) → chung mã nguồn thì **dùng lại mã**, khác mã nguồn thì mã mới + cột *Liên quan* | Bug, báo cáo cũ trỏ vào mã DIFF — cấp mã mới cho lệch cũ là đếm trùng, đánh lại số là cắt mối nối; log lại lệch của nền tảng kia mà không liên kết là dev nhận hai bug cho một chỗ sửa. Chi tiết: `design_compare_rules.md` mục 6 |
 | Thêm module = thêm thư mục + 1 dòng ở `README.md` danh mục | Không đụng gì khác trong repo |
 | 📅 **Ngày trong nội dung tài liệu viết `DD-MM-YYYY`** (VD `17-09-2026`) hoặc `DD/MM/YYYY`; có giờ thì `17-09-2026 14:10`. Áp cho mọi file trong `docs/`, mẫu trong `.claude/`, `plans/`, `prompts/` và phiếu nhập. **Tên file giữ dạng cũ**: `run_<timestamp>`, `test_progress_<mốc>_<YYYYMMDD>.md`, `openapi_<YYYY-MM-DD>.json` · mã có ngày như `PO-2026-08-18` giữ nguyên · dữ liệu nhập vào hệ thống (payload API, giá trị field) viết đúng **định dạng hệ thống yêu cầu**, không đổi theo quy tắc này | Người đọc tài liệu là QA/PM/khách Việt Nam. Tên file cần năm đứng đầu để xếp đúng thứ tự thời gian. Đọc tài liệu cũ (trước 17-09-2026) vẫn gặp `YYYY-MM-DD` → **nhận cả hai**, năm đứng đầu không thể nhầm; **không** bao giờ hiểu `05-10-2026` theo kiểu Mỹ |
 | `_discovery/` **không được** chứa mã `REQ-XXX-NN` — chỉ cấp **prefix** | Tầng khám phá chưa mở form, chưa trigger validation; cấp số REQ ở đó là chắc chắn phải đánh lại |
@@ -566,4 +568,4 @@ Agent sử dụng workflows trong `.claude/commands/` qua slash commands:
 | `/generate-traceability-matrix`         | Sinh ma trận truy vết RTM 3 tầng (+ checklist, kết quả chạy, bug làm nguồn phụ) — file chung `docs/traceability/traceability_matrix.md` + file chi tiết từng module. Nhận danh sách module (`login, customers`) |
 | `/generate-api-mocks`                   | Sinh API mocks + tests cho edge cases                        |
 | `/generate-user-guide`                  | Sinh **Hướng dẫn sử dụng** cho người dùng cuối từ requirements + evidence đã khảo sát (3 modes: DOC/LIVE/VIDEO · `lang` vi/en) — ảnh/video có highlight, luôn xuất HTML 1 file nhúng media. KHÔNG phải tài liệu requirements viết lại giọng khác |
-| `/compare-ui-from-figma-design`         | So bản thiết kế **Figma** với UI thật — 2 mode **WEB** (Playwright MCP) / **MOBILE** (Appium MCP — Android/iOS/Hybrid). Chỉ đọc Figma, đo lệch chữ · vị trí · khoảng cách · màu · trạng thái, xác nhận trên ảnh rồi ghi `DIFF` (Dev / Design / Cần PO quyết) vào `docs/design-reviews/`. KHÔNG sửa Figma, KHÔNG tự tạo bug |
+| `/compare-ui-from-figma-design`         | So bản thiết kế **Figma** với UI thật — 3 mode **WEB** (Playwright MCP) / **MOBILE-WEB** (trình duyệt điện thoại — server `playwright-mobile`) / **MOBILE** (Appium MCP — Android/iOS/Hybrid). Chỉ đọc Figma (có cache), đo lệch chữ · vị trí · khoảng cách · màu · trạng thái, đi lưới soát ngoài → trong, ghi `DIFF` (Dev / Design / Cần PO quyết) kèm ảnh khoanh đúng / sai vào `docs/design-reviews/` — tra *Sổ khung Figma* để không log trùng giữa nền tảng. Mẫu báo cáo riêng của team: `plans/design-compare/report_template.md`. KHÔNG sửa Figma, KHÔNG tự tạo bug |

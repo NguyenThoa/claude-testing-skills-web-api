@@ -1,12 +1,12 @@
 # scripts/design-compare — so thiết kế Figma với UI thật
 
-Bộ công cụ của skill [`skills-figma-design-comparator`](../../.claude/skills/skills-figma-design-comparator/SKILL.md) · workflow `/compare-ui-from-figma-design` (Mode **WEB** / **MOBILE**) · rule [`design_compare_rules.md`](../../.claude/rules/design_compare_rules.md). Không gắn với hệ thống nào.
+Bộ công cụ của skill [`skills-figma-design-comparator`](../../.claude/skills/skills-figma-design-comparator/SKILL.md) · workflow `/compare-ui-from-figma-design` (Mode **WEB** / **MOBILE-WEB** / **MOBILE**) · rule [`design_compare_rules.md`](../../.claude/rules/design_compare_rules.md). Không gắn với hệ thống nào.
 
 | File | Chạy ở đâu | Làm gì |
 |---|---|---|
-| `figma_extract.js` | Tool `use_figma` của Figma MCP (dán nội dung vào `code`) | **CHỈ ĐỌC.** `FRAME_IDS = []` → liệt kê mọi page + khung (kể cả khung trong section) · `FRAME_IDS = ['<id>', …]` → spec JSON từng khung: chữ (kể cả chữ trong component), toạ độ tương đối khung, cỡ/độ đậm/font/line-height, màu chữ, khối có nền/viền + bo góc. `SCOPE = '<tên khối>'` → chỉ lấy lớp phủ (menu, dialog). `COMPACT = true` → định dạng gọn, 3–4 khung một lần gọi |
+| `figma_extract.js` | Tool `use_figma` của Figma MCP (dán nội dung vào `code`) | **CHỈ ĐỌC.** `FRAME_IDS = []` → liệt kê mọi page + khung (kể cả khung trong section), mỗi khung kèm **dấu vân tay** `fp` cho cache (`PAGES` giới hạn page, `FINGERPRINT = false` tắt) · `FRAME_IDS = ['<id>', …]` → spec JSON từng khung: chữ (kể cả chữ trong component), toạ độ tương đối khung, cỡ/độ đậm/font/line-height, màu chữ, khối có nền/viền + bo góc, **icon / ảnh** (mảng `i` — cho lưới soát). `SCOPE = '<tên khối>'` → chỉ lấy lớp phủ (menu, dialog). `COMPACT = true` → định dạng gọn, 3–4 khung một lần gọi |
 | `collect_dom.js` | `browser_evaluate` của Playwright MCP, kèm `filename` | Spec JSON của trang web thật — computed style, **font thực sự được vẽ** (dò trong font-stack), khung chữ đo bằng Range. Bề ngang khung = `clientWidth` (trừ thanh cuộn); ghi `overflow_x` (trang tràn ngang) và `cut` (chữ bị cắt `…`). `ROOT_SELECTOR` để đo riêng dialog/menu |
-| `dc.py` | Python 3.9+ · `pip install pillow` | Dựng spec từ page source mobile · so khớp · ảnh đặt cạnh nhau · dựng ảnh Figma từ JSON · khoanh DIFF · che dữ liệu · ghép mục báo cáo · lấy mẫu màu · ΔE |
+| `dc.py` | Python 3.9+ · `pip install pillow` | Dựng spec từ page source mobile · so khớp · ảnh đặt cạnh nhau · **lưới soát ngoài → trong** · **ảnh khoanh đúng / sai** · **cache Figma** · dựng ảnh Figma từ JSON · che dữ liệu · ghép mục báo cáo · lấy mẫu màu · ΔE |
 
 ## `dc.py` — lệnh con
 
@@ -31,13 +31,32 @@ python scripts/design-compare/dc.py visual figma.png app.png --design figma.json
 # Không có ảnh Figma (hết hạn mức MCP, file khoá xuất ảnh): dựng ảnh sơ đồ từ JSON — khối + chữ đúng toạ độ, cỡ, màu
 python scripts/design-compare/dc.py render figma.json -o figma_render.png [--unit-px 3]
 
-# Khoanh khung đỏ + nhãn DIFF lên ảnh app — chỉ DIFF đã xác nhận. Trộn được 3 cách trong một lệnh:
-python scripts/design-compare/dc.py annotate --png app.png --actual actual.json -o evidence/B-08_marked.png \
+# Lưới soát ngoài → trong (L0 khung màn → L1 vùng → L2 khối → L3 chữ/ô nhập/icon/ảnh), trên → dưới, trái → phải.
+# Mỗi dòng có thuộc tính thiết kế (font · cỡ · đậm · màu / kích thước) + margin · padding · gap; --match điền kết quả máy đo
+python scripts/design-compare/dc.py checklist figma.json --match out/A-03p1_match.json --match out/A-03p2_match.json -o out/A-03_checklist.md
+
+# ẢNH EVIDENCE CỦA DIFF: Figma | App cạnh nhau, khung XANH bên Figma = đúng · khung ĐỎ bên App = sai (cùng số),
+# app thiếu → khung đỏ nét đứt ở chỗ đáng lẽ có · dải ghi chú "Thiết kế (đúng): … / Thực tế (sai): …" dưới ảnh
+python scripts/design-compare/dc.py mark figma.png app.png --design figma.json --actual actual.json --match out/B-07_match.json \
+       --spec out/B-07_marks.json -o evidence/B-07_select_promotion_marked.png
+#   marks.json: {"title": "B-07 · …", "items": [{"diff": "DIFF-…-07", "title": "…", "figma": {"box": "B2"}, "app": {"box": "B2"},
+#                "expected": "Cột CODE rộng 118 dp, cột Name hiện đủ", "actual": "Cột CODE rộng 219 dp, cột Name bị cắt"}]}
+#   đích: {"text": regex[, "all": true]} · {"row": n} · {"box": "B2"} · {"name": regex} · {"rect": [x,y,w,h]} · [đích, …] · null
+#   không thấy đích nào → lệnh DỪNG (không khoanh bừa)
+
+# Cache Figma theo dấu vân tay khung — khung không đổi thì không gọi lại use_figma / get_screenshot
+python scripts/design-compare/dc.py cache plan --listing out/figma_listing.json --cache reports/design-compare/_cache/<fileKey> [--frames 6:123,6:168]
+python scripts/design-compare/dc.py cache get  --listing out/figma_listing.json --cache reports/design-compare/_cache/<fileKey> -o out/
+python scripts/design-compare/dc.py cache put  --listing out/figma_listing.json --cache reports/design-compare/_cache/<fileKey> out/figma_6-168.json out/figma_6-168.png
+#   fp đổi → put bỏ mọi bản cũ của khung đó · không truyền --listing = không gọi Figma, coi kho là còn hiệu lực (ghi rõ vào báo cáo)
+
+# Khoanh chỉ bên app (KHÔNG đủ làm evidence của DIFF — dùng mark). Trộn được 3 cách trong một lệnh:
+python scripts/design-compare/dc.py annotate --png app.png --actual actual.json -o out/B-08_app_annotated.png \
        --text "^Create a new book$=DIFF-BK-BOOK-08" \
        --rect "272,216,160,224=DIFF-BK-BOOK-04"
 #   --text "regex=nhãn"   khoanh phần tử app có chữ khớp (phần tử nhỏ nhất)
 #   --rect "x,y,w,h=nhãn" vùng theo đơn vị dp/pt/px — cần --actual hoặc --unit-px, thiếu thì lệnh dừng
-python scripts/design-compare/dc.py annotate out/A-01_match.json --png app.png -o evidence/A-01_marked.png \
+python scripts/design-compare/dc.py annotate out/A-01_match.json --png app.png -o out/A-01_app_annotated.png \
        --map '{"3": "DIFF-AUTH-01", "B2": "DIFF-AUTH-02"}'   # theo số dòng / mã khối của bảng đo
 
 # Che dữ liệu cá nhân trên ảnh (làm vỡ hạt vùng phần tử có chữ khớp regex)
@@ -46,7 +65,8 @@ python scripts/design-compare/dc.py mask app.png --actual actual.json --pattern 
 # Mục 4 "Chi tiết từng khung" của báo cáo — ghép các <mã>_match.md theo một file JSON mô tả khung
 python scripts/design-compare/dc.py sections frames.json -o sections.md
 #   frames.json: [{"title": "B-05 · Chi tiết sách", "note": "> …", "images": [["Figma | App", "evidence/B-05_side.png"]],
-#                  "matches": [["đoạn 1", "reports/…/B-05p1_match.md"]], "redact": [["[\\w.+-]+@gmail[.]com", "<email đã che>"]]}]
+#                  "matches": [["đoạn 1", "reports/…/B-05p1_match.md"]], "checklists": [["", "reports/…/B-05_checklist.md"]],
+#                  "redact": [["[\\w.+-]+@gmail[.]com", "<email đã che>"]]}]
 
 python scripts/design-compare/dc.py color app.png --rect 120,437,368,28 --unit-px 3   # màu nền + màu chữ trong vùng (đơn vị × unit-px)
 python scripts/design-compare/dc.py deltae "#42bc40" "#43bd41"                         # ΔE2000
@@ -71,6 +91,8 @@ Bảng đo là **dữ liệu**, không phải kết luận — người soát x�
 python scripts/design-compare/tests/run_tests.py
 ```
 
+`run_tests.py` kiểm cả `checklist` (đủ phần tử, thứ tự ngoài → trong, padding không so khi app trả chính nút làm khung chữ), `mark` (dựng được ảnh; **dừng** khi không thấy đích) và `cache` (chỉ trích lại khung đổi dấu vân tay; ảnh cũ bị bỏ khi Figma đổi).
+
 `tests/fixtures/` là spec thật của **15 lượt đo** ngày 20-10-2026 — page AUTH (A-01 → A-06, trang dài 2 đoạn), USER (danh sách, bộ lọc có chữ trùng, hộp thoại lớp phủ, khung lược bớt + `--sample`, trạng thái rỗng) và BOOK (thẻ lặp, breadcrumb sai chữ, câu xác nhận thiếu dữ liệu). Số điện thoại trong fixture đã thay bằng số giả cùng khuôn. `run_tests.py` kiểm tổng trạng thái từng ca **và** các khẳng định ứng với bẫy đã gặp trên máy thật (placeholder ghép chéo, header sticky, phần tử bị mép màn cắt, node WebView gộp chữ, chữ trùng ghép nhầm, ô mẫu che mất lỗi thiếu dữ liệu…). Thay đổi hành vi có chủ đích → xem tay kết quả mới rồi mới `--update` expected; **không** sửa khẳng định để né.
 
 ## Đã kiểm chứng
@@ -79,4 +101,6 @@ python scripts/design-compare/tests/run_tests.py
 |---|---|---|
 | 20-10-2026 | Android 17 emulator (Pixel 10 Pro XL, density 480, 448 dp) · app Hybrid Capacitor (WebView không debug) · Figma wireframe 412 dp | **26 khung / 3 page** (AUTH 8 · USER 9 · BOOK 9) → `docs/design-reviews/_book-api/`. Form, validation, toast, trang dài nhiều đoạn có header sticky, hộp thoại cuộn bên trong, menu lớp phủ, danh sách lặp, trạng thái rỗng, khung lược bớt, khung theo vai trò (khách / đăng nhập), ảnh Figma dựng lại bằng `render` khi hết hạn mức MCP, che dữ liệu bằng `mask` + `--redact` |
 | 20-10-2026 | Web (Chrome qua Playwright MCP 1600×750) | `collect_dom.js` qua `browser_evaluate` → bề ngang `clientWidth` (1585 khi có thanh cuộn), font thật dò đúng (`Segoe UI` từ stack `-apple-system, …`), cờ `cut` · `overflow_x`. **Chưa** có lượt so với khung Figma web thật |
+| 26-10-2026 | Mobile web — `@playwright/mcp --device=Pixel 7 --isolated` (cấu hình server `playwright-mobile` của `.mcp.json`, chạy headless để kiểm) | UA Android · `maxTouchPoints` 5 · `pointer: coarse` · DPR 2,625 giữ nguyên sau chụp ảnh và sau `browser_resize` 390×844 (ảnh 390 px, `clientWidth` 390). Ngược lại: giả lập bằng CDP trong server `playwright` chính bị lệnh chụp ảnh **đặt lại** về 1600 px. Chế độ headed của server mới: cần khởi động lại Claude Code mới có — chưa chạy lượt so thật |
+| 26-10-2026 | `mark` · `checklist` · `cache` trên dữ liệu đo thật của lượt 20-10-2026 (B-07 bảng tràn ngang, A-01 Sign in) | Ảnh khoanh xanh / đỏ đúng phần tử ở hai phía, khung nét đứt neo theo phần tử khớp gần nhất; lưới soát A-01 đủ 15 dòng. `figma_extract.js` (dấu vân tay + mảng icon/ảnh) kiểm bằng cây Figma giả lập trong Node — **chưa** chạy trên file Figma thật (giữ lượt gọi gói Starter) |
 | 20-10-2026 | iOS — page source XCUITest mẫu | `ios-tree` dựng spec đúng; **chưa** chạy trên máy iOS thật (cần macOS) |

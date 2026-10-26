@@ -1,6 +1,6 @@
 # Quy Tắc So Thiết Kế Figma Với UI Thật (Design Compare)
 
-> Áp dụng cho mọi tác vụ đối chiếu bản thiết kế (Figma) với giao diện đã xây dựng — **web** (Playwright MCP) và **mobile** (Appium MCP).
+> Áp dụng cho mọi tác vụ đối chiếu bản thiết kế (Figma) với giao diện đã xây dựng — **web** (Playwright MCP), **mobile web** (Playwright MCP giả lập thiết bị — server `playwright-mobile`) và **app mobile** (Appium MCP).
 >
 > Quy trình: workflow [`/compare-ui-from-figma-design`](../commands/compare-ui-from-figma-design.md) · phương pháp: skill [`skills-figma-design-comparator`](../skills/skills-figma-design-comparator/SKILL.md) · công cụ: [`scripts/design-compare/`](../../scripts/design-compare/README.md).
 
@@ -41,6 +41,7 @@ Không chắc mức nào → **hỏi user một câu**, không tự đoán. Khun
 | Android | `dp = px ÷ (density / 160)` | `adb shell wm density` · `adb shell wm size` |
 | iOS | `pt = px ÷ scale` (2 hoặc 3) | Page source XCUITest đã ở **pt** — không cần quy đổi toạ độ |
 | Web | CSS px (bỏ qua `devicePixelRatio`) | `getBoundingClientRect()` |
+| Mobile web (trình duyệt trên điện thoại) | CSS px của viewport thiết bị giả lập (bỏ qua `devicePixelRatio`) | `getBoundingClientRect()` trên server MCP **`playwright-mobile`** (`--device`) — có UA mobile, cảm ứng, DPR thật. **Không** phải Chrome desktop thu hẹp cửa sổ (`web.md` mục 7) |
 
 **Màn thật rộng khác khung Figma** (VD khung 412, máy 448 dp; khung 1440, màn 1600 px) là chuyện thường. Không phóng ảnh cho khớp rồi so — so từng phần tử theo **kiểu neo**: neo trái giữ `x`, neo phải dịch theo phần chênh bề ngang, căn giữa dịch nửa phần chênh, co giãn theo tỉ lệ. `dc.py match` thử cả 4 kiểu và báo kiểu khớp nhất.
 
@@ -66,6 +67,31 @@ Không chắc mức nào → **hỏi user một câu**, không tự đoán. Khun
 Dự án có quy định riêng (design system ghi dung sai) → dùng quy định đó, ghi vào đầu báo cáo, truyền vào `dc.py` bằng `--tol` / `--tol-size` / `--de-text` / `--de-fill`.
 
 **Xô lệch dây chuyền:** một khối phía trên cao hơn thì mọi phần tử bên dưới lệch theo. Chỉ phần tử có **khoảng cách tới phần tử khớp ngay phía trên** thay đổi mới là chỗ khởi phát — ghi **một** DIFF cho chỗ đó, các phần tử kế thừa không tính lại. Phần tử neo đáy (bottom nav, nút cố định) đo theo khoảng cách tới đáy màn hình.
+
+---
+
+## 4b. Thứ tự soát — ngoài → trong, trên → dưới, trái → phải
+
+Bảng đo tự động chỉ thấy **chữ** và **khối có nền/viền**. Icon, ảnh, khoảng cách giữa khối, lề trong của thẻ… lọt qua nếu người soát nhìn ảnh theo cảm hứng. Mỗi khung phải đi **đủ** lưới soát theo đúng thứ tự:
+
+| Cấp | Là gì | Soát gì |
+|---|---|---|
+| **L0** Khung màn | Toàn màn hình | Nền · bề ngang · safe area (status bar, notch, thanh điều hướng không che nội dung) · đã cuộn hết màn thật · không tràn ngang |
+| **L1** Vùng | Header · thân · footer / bottom nav · lớp phủ | Có đủ vùng, đúng thứ tự · chiều cao · **margin** tới mép màn · nền |
+| **L2** Khối | Thẻ, form, bảng, nhóm nút, banner | Kích thước · nền · viền · bo góc · bóng · **margin** (tới mép màn) hoặc **padding** (trong khối cha) · **gap** tới khối liền trước |
+| **L3** Phần tử | Chữ · ô nhập · nút · icon · ảnh | Bảng dưới · **padding** trong khối chứa · **gap** tới phần tử liền trước |
+
+| Loại phần tử L3 | Thuộc tính phải soát |
+|---|---|
+| Chữ | Nội dung · **font family · cỡ · độ đậm** · line-height · màu · căn lề · cắt `…` / xuống dòng |
+| Ô nhập | Nhãn · placeholder · chiều cao · viền · bo góc · icon trong ô · padding trong · trạng thái (focus / lỗi / disabled) |
+| Nút | Chữ (như dòng *Chữ*) · kích thước · nền · viền · bo góc · trạng thái |
+| Icon | Có / đúng hình · kích thước · màu · **gap** tới chữ đi kèm |
+| Ảnh | Có · tỉ lệ khung · kích thước · bo góc · không méo / vỡ |
+
+**Ba từ khoảng cách — dùng đúng nghĩa trong DIFF:** **margin** = từ mép khối tới mép màn (hoặc tới khối ngoài cùng cấp) · **padding** = từ viền khối tới nội dung bên trong · **gap** = khoảng trống giữa hai phần tử anh em liền nhau.
+
+`dc.py checklist` sinh sẵn lưới này cho từng khung từ spec Figma (kèm kết quả máy đo khi truyền `--match`). Mỗi dòng phải có kết quả — ✅ máy đo, ☑ người soát đã nhìn, hoặc mã DIFF — **trước** khi kết luận khung. Dòng chưa có kết quả = khung chưa soát xong.
 
 ---
 
@@ -135,11 +161,44 @@ Xác định **chiều dẫn dắt** trước khi gán: thiết kế làm **trư
 
 **Cột *Khung*:** mã khung ngăn bằng `·` (`A-01 · A-03`), dải liên tiếp `B-01 → B-04`, khung của module khác trong ngoặc `(+ B-09)` — viewer đọc theo đúng ba dạng này.
 
+### Viết DIFF cho người không đọc toạ độ
+
+DIFF được đọc bởi dev, designer, PO — **không ai** mở bảng đo để tra `x 272`. Ô *Mô tả* · *Thực tế* · *Thiết kế* viết bằng thứ nhìn thấy được:
+
+| Thành phần | ✅ Viết | ❌ Không viết |
+|---|---|---|
+| Gọi tên phần tử | Chữ hiển thị / vai trò + vị trí trong màn: *nút **Login account** trong thẻ Sign in*, *menu **Sort By*** | `TextView[12]`, `Box`, `B2`, số dòng bảng đo |
+| Lệch vị trí | Theo từ khoảng cách mục 4b: *cách mép phải **0 dp**, thiết kế **16 dp*** · *gap từ ô Password tới nút **25 dp**, thiết kế **18 dp** (rộng hơn 7 dp)* | `x 272 · y 416`, `Δx −45`, `Δy +15` |
+| Lệch kích thước / kiểu chữ | *rộng **160 dp**, thiết kế **220 dp** (hẹp hơn 60 dp)* · *cỡ chữ **14**, thiết kế **16*** | `[272, 216, 160, 224]` |
+| Hậu quả | *tên khuyến mãi bị cắt, người dùng không đọc được* | — |
+
+Toạ độ thô (`x`, `y`, `Δx`, `Δy`, `[x, y, w, h]`) **chỉ** nằm trong bảng đo (mục 4 của báo cáo) và trong spec khoanh ảnh. Mỗi DIFF đi kèm **ảnh khoanh đúng / sai** (mục 7) — chữ và ảnh cùng kể một câu chuyện.
+
+### Cùng khung Figma trên nhiều nền tảng / biến thể — một lệch, không log trùng
+
+Một bộ khung Figma thường dùng cho nhiều lượt chạy: **mobile web** và **app** chung thiết kế, hoặc web desktop + mobile web cùng một màn. Chạy lượt thứ hai mà không tra lượt thứ nhất là log lại đúng lệch đã có, không ai biết hai mã là một.
+
+**Trước khi cấp mã mới** (lượt nào cũng làm): tra bảng *Sổ khung Figma* trong danh mục → các DIFF 🔴 Mở trên **cùng node-id khung** ở nền tảng / biến thể khác của cùng module → mở báo cáo đó, so từng lệch vừa thấy:
+
+| Lệch vừa thấy so với DIFF đã có ở nền tảng khác | Hai nền tảng **chung mã nguồn giao diện** (app Hybrid/WebView nạp cùng frontend với mobile web · web desktop và mobile web là một trang responsive) | **Khác** mã nguồn (app native ↔ web) |
+|---|---|---|
+| Cùng phần tử, cùng kiểu lệch | **Dùng lại mã cũ** — thêm nền tảng này vào cột *Nền tảng* của DIFF, thêm link ảnh của lượt này. Không cấp mã mới | **Cấp mã mới** (sửa ở hai nơi khác nhau), cột *Liên quan* ghi mã của nền tảng kia — người đọc thấy ngay đây là cùng một lệch thiết kế |
+| Cùng phần tử, khác kiểu lệch | Mã mới, *Liên quan* trỏ mã kia | Mã mới, *Liên quan* trỏ mã kia |
+| Lệch ở nền tảng kia **không** xuất hiện ở lượt này | Ghi vào báo cáo lượt này: *"không tái hiện trên <nền tảng>"* — **không** đổi trạng thái DIFF (đó là quyết định của lượt chạy trên nền tảng kia) | Như bên trái |
+
+Chung hay khác mã nguồn: mode MOBILE nhận diện app Hybrid (WebView) → hỏi user **một lần** app có nạp cùng frontend với bản web không, ghi vào bảng *Nền tảng & biến thể* của danh mục. Không chắc → coi là **khác** (mã mới + *Liên quan*) — log thừa có liên kết vẫn hơn gộp nhầm hai lỗi khác nhau làm một.
+
 ---
 
 ## 7. Evidence
 
-- Mỗi màn hình tối thiểu: ảnh Figma · ảnh app · ảnh **đặt cạnh nhau** (`_side.png`). Có DIFF → thêm ảnh app **khoanh khung đỏ + số DIFF** (`_marked.png`)
+- Mỗi màn hình tối thiểu: ảnh Figma · ảnh app · ảnh **đặt cạnh nhau** (`_side.png`)
+- Có DIFF → **ảnh khoanh đúng / sai** `_marked.png` dựng bằng `dc.py mark` — **bắt buộc** đủ 3 thứ:
+  1. Figma | App **đặt cạnh nhau** trong cùng một ảnh
+  2. Mỗi DIFF khoanh ở **cả hai phía**, **cùng số thứ tự**: khung **xanh** bên Figma = chỗ đúng theo thiết kế · khung **đỏ** bên App = chỗ lệch · app **thiếu** phần tử → khung đỏ **nét đứt** ở chỗ đáng lẽ phải có · thiết kế không có (`EXTRA`) → chỉ khoanh bên App
+  3. **Dải ghi chú** dưới ảnh, mỗi DIFF một khối: `mã · tiêu đề` + `Thiết kế (đúng): …` + `Thực tế (sai): …` — viết theo mục 6 *Viết DIFF cho người không đọc toạ độ*
+
+  Ảnh chỉ khoanh bên App (`dc.py annotate`) **không** đủ làm evidence của DIFF — người nhận không biết đúng phải trông thế nào. Ở kiểu *Xem nhanh* (chưa cấp mã) cũng dựng ảnh này, nhãn là số thứ tự lệch
 - Nằm ở `docs/design-reviews/<module>/<nền-tảng>/run_<timestamp>/evidence/` — tên ASCII `<mã-khung>_<mô_tả>_{figma|app|side|marked}.png`
 - **Mở lại từng ảnh** sau khi tạo — khung khoanh đọc toạ độ dễ lệch; ảnh chụp sai trạng thái nguy hiểm hơn không có ảnh
 - File làm việc (spec JSON, page source, ảnh chồng, bản đồ khác biệt) để ở `reports/design-compare/<run>/` — **không** vào `docs/` (page source chứa dữ liệu thật)
@@ -161,3 +220,22 @@ Xác định **chiều dẫn dắt** trước khi gán: thiết kế làm **trư
 - ❌ Đưa ảnh / bảng đo còn dữ liệu cá nhân chưa che vào `docs/`
 - ❌ Web: `browser_resize` phóng viewport vượt cửa sổ headed để khớp khung Figma rộng (`playwright_rules.md` mục 1) — khung rộng hơn cửa sổ thì chạy headless
 - ❌ Lưu page source, credentials, token vào `docs/`
+- ❌ DIFF chỉ có ảnh khoanh bên App, không có phía Figma và ghi chú đúng / sai (mục 7)
+- ❌ Ô *Mô tả* / *Thực tế* / *Thiết kế* của DIFF ghi toạ độ thô (`x 272`, `Δy +15`) thay cho margin / padding / gap / kích thước (mục 6)
+- ❌ Kết luận một khung khi lưới soát (mục 4b) còn dòng chưa có kết quả
+- ❌ Cấp mã DIFF mới mà chưa tra *Sổ khung Figma* xem cùng khung đã có DIFF ở nền tảng / biến thể khác (mục 6)
+- ❌ Mobile web: so bằng Chrome desktop thu hẹp viewport, hoặc giả lập thiết bị bằng CDP trong phiên Playwright MCP chính — chụp ảnh là Playwright đặt lại viewport desktop, **âm thầm** mất giả lập (`web.md` mục 7)
+
+---
+
+## 9. Cache Figma — tiết kiệm lượt gọi MCP
+
+Gói Figma có hạn mức lượt gọi; so lại cùng page (sau khi dev sửa, chạy nền tảng thứ hai) không cần trích + chụp lại khung Figma **không đổi**.
+
+| Quy tắc | Lý do |
+|---|---|
+| Kho ở `reports/design-compare/_cache/<fileKey>/` — spec JSON + ảnh Figma + `manifest.json` | Đã `.gitignore`; chỉ chứa dữ liệu Figma (không có dữ liệu app) |
+| Dùng lại theo **dấu vân tay từng khung** (`fp` của `figma_extract.js` khi liệt kê) — `dc.py cache plan` | Đổi bất kỳ chữ / toạ độ / màu / font nào trong khung → `fp` đổi → trích + chụp lại đúng khung đó. Dời khung trên canvas không tính là đổi |
+| Lượt liệt kê (1 lượt gọi) vẫn chạy mỗi phiên | Là cách duy nhất biết Figma có đổi không. Bỏ qua lượt này (không gọi Figma lần nào) → được, nhưng báo cáo **phải** ghi *"Figma lấy từ cache ngày <DD-MM-YYYY>, chưa kiểm thay đổi"* |
+| `fp` đổi → `cache put` **bỏ mọi bản cũ** của khung đó | Ảnh cũ ghép với spec mới là hai nguồn mâu thuẫn trong cùng một DIFF |
+| Báo cáo ghi rõ khung nào lấy từ cache (ô *Ảnh Figma*) | Người đọc biết ảnh Figma trong evidence là của ngày nào |

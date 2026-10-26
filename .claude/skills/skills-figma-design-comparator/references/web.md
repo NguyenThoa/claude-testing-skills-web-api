@@ -1,6 +1,6 @@
-# Mode WEB — thu dữ liệu UI thật trên trình duyệt
+# Mode WEB · MOBILE-WEB — thu dữ liệu UI thật trên trình duyệt
 
-> Bước 3 của skill. Quy tắc trình duyệt: [`playwright_rules.md`](../../../rules/playwright_rules.md) · CLAUDE.md mục Browser Rules.
+> Bước 3 của skill. Mode **MOBILE-WEB** (trình duyệt trên điện thoại) dùng chung mục 2–6 và đọc thêm **mục 7**. Quy tắc trình duyệt: [`playwright_rules.md`](../../../rules/playwright_rules.md) · CLAUDE.md mục Browser Rules.
 >
 > Web đo được **nhiều hơn** mobile: `collect_dom.js` đọc computed style (cỡ chữ, độ đậm, font thực sự được vẽ, màu chính xác) và khung chữ thật (ink box). Đổi lại, web có nhiều **biến** hơn: breakpoint, font tải chậm, thanh cuộn, nội dung tải lười, animation. Mục 1–3 là để khử các biến đó **trước** khi đo.
 
@@ -23,7 +23,7 @@ Khung Figma web thường rộng 1440 / 1280 / 1024 / 768 / 375–430. Mỗi b�
 |---|---|
 | ≤ cửa sổ headed (mặc định `1600×750`) | `browser_resize` về `<bề ngang khung> × 750` — **thu nhỏ** viewport trong cửa sổ là được phép |
 | > cửa sổ headed (VD 1920) | **Không** `browser_resize` vượt cửa sổ (trang bị cắt, rule mục 8). Hai đường: (a) chạy Playwright **headless** ở đúng bề ngang — một script ngắn: `page.setViewportSize`, `page.evaluate(<collect_dom.js>)`, `page.screenshot({fullPage:true})`; (b) so ở 1600 và ghi giới hạn vào báo cáo — phần tử co giãn được `dc.py` neo theo tỉ lệ, phần tử đổi layout theo breakpoint thì **không** so được |
-| Mobile web (≤ 430) | `browser_resize` về bề ngang khung; *Môi trường* ghi "mobile web — Chrome desktop thu hẹp, không phải thiết bị thật". Cần đúng thiết bị → mode MOBILE |
+| Mobile web (≤ 430) | **Mode MOBILE-WEB** — mục 7. Không thu hẹp Chrome desktop: trang responsive chọn layout theo UA / cảm ứng / `pointer: coarse`, không chỉ theo bề ngang |
 
 **Thanh cuộn dọc ăn bề ngang.** Viewport 1440 trên Windows chỉ còn ~1425 px cho nội dung; Figma không vẽ thanh cuộn. `collect_dom.js` lấy bề ngang khung bằng `clientWidth` (đã trừ thanh cuộn) để phép neo phải/giữa đúng — dòng *Môi trường* ghi số này. Lệch ~15 px ở phần tử neo phải mà ảnh vẫn đúng → nguyên nhân là thanh cuộn, không phải DIFF.
 
@@ -122,3 +122,48 @@ Web không có status bar → **không** cần `--design-top` / `--actual-top`, 
 - [ ] Ảnh `object-fit` sai (méo/cắt), ảnh vỡ (`naturalWidth = 0`)
 - [ ] Focus ring / outline (a11y) — thiết kế bỏ trống thì **không** ghi DIFF bắt dev xoá outline
 - [ ] Favicon, tiêu đề tab — chỉ khi thiết kế quy định
+
+---
+
+## 7. Mobile web — Mode `MOBILE-WEB`
+
+Trình duyệt trên điện thoại khác Chrome desktop thu hẹp ở 4 chỗ trang web **đọc được**: user agent mobile · `navigator.maxTouchPoints` / `pointer: coarse` · `devicePixelRatio` · không có thanh cuộn chiếm bề ngang. Trang responsive (Bootstrap, MUI, Tailwind có `hover:` / `pointer:`) chọn menu, kích thước nút, hover… theo các thứ này → so bằng Chrome desktop thu hẹp là so một layout **không người dùng nào thấy**.
+
+### 7.1 Dùng server MCP `playwright-mobile`
+
+`.mcp.json` khai sẵn server thứ hai chạy `--device` (giả lập thiết bị của Playwright: UA, cảm ứng, DPR, viewport) + `--isolated` (profile riêng — không khoá chung profile với server `playwright`). Tool của nó mang tiền tố `mcp__playwright-mobile__browser_*`, dùng y hệt mode WEB (mục 2–5):
+
+```
+mcp__playwright-mobile__browser_navigate(url)
+mcp__playwright-mobile__browser_resize(<bề ngang khung Figma> × <cao>)   ← vẫn giữ UA / cảm ứng / DPR của thiết bị; thu nhỏ trong cửa sổ là được phép
+mcp__playwright-mobile__browser_evaluate(probe) → kiểm: innerWidth = bề ngang khung · clientWidth = innerWidth (không thanh cuộn) · pointer: coarse = true
+```
+
+```js
+// browser_evaluate — kiểm đúng chế độ mobile TRƯỚC khi đo, ghi kết quả vào ô Môi trường
+() => ({ w: innerWidth, cw: document.documentElement.clientWidth, dpr: devicePixelRatio,
+         touch: navigator.maxTouchPoints, coarse: matchMedia('(pointer: coarse)').matches, ua: navigator.userAgent })
+```
+
+| Việc | Cách |
+|---|---|
+| Đổi thiết bị mặc định (`Pixel 7`) | Sửa `--device` trong `.mcp.json` (tên theo danh sách thiết bị của Playwright: `"iPhone 15"`, `"Galaxy S24"`…), **khởi động lại Claude Code**. Thiết bị chỉ quyết định UA / DPR / kiểu engine giả lập; bề ngang chỉnh bằng `browser_resize` theo khung Figma |
+| Server chưa có trong phiên (chưa khởi động lại sau khi thêm) | Báo user khởi động lại — **không** tự thay bằng cách dưới |
+| Đăng nhập | Profile `--isolated` không giữ phiên giữa các lần mở → đăng nhập một lần đầu phiên (mục 3) |
+| Ảnh | `browser_take_screenshot(scale = "css")` → 1 px ảnh = 1 CSS px, khớp đơn vị Figma — **không** dùng `scale: "device"` (ảnh ×DPR, `dc.py` sẽ tính sai tỉ lệ nếu spec ghi CSS px) |
+
+Kiểm chứng 26-10-2026 (`@playwright/mcp --device "Pixel 7"`): UA Android, `maxTouchPoints` 5, `pointer: coarse`, DPR 2,625 giữ nguyên sau `browser_take_screenshot` và sau `browser_resize` 390×844 → ảnh 390 px rộng, `clientWidth` 390.
+
+### 7.2 Bẫy: giả lập bằng CDP trong server `playwright` chính
+
+`browser_run_code_unsafe` + `Emulation.setDeviceMetricsOverride` / `setUserAgentOverride` trông như chạy được (`innerWidth` báo 390) — nhưng **lệnh chụp ảnh của Playwright đặt lại viewport desktop**: ảnh ra layout 1600 px, sau đó `innerWidth` cũng về 1600. Không có lỗi nào báo. **Không** dùng cách này (rule mục 8).
+
+### 7.3 Máy thật (Chrome Android / Safari iOS) — chỉ để xác nhận bằng mắt
+
+Cần đúng engine của máy (font hệ thống, cách Safari vẽ form, thanh địa chỉ co giãn): mở trình duyệt trên thiết bị qua Appium (`browserName: Chrome` / `Safari` — skill `skills-mobile-debug-agent`). appium-mcp **không** chạy được JS trong trang → không có `collect_dom.js`, không có số đo font/màu. Dùng ảnh máy thật để **đặt cạnh** ảnh Figma và soát mắt; số đo lấy từ `playwright-mobile`. Báo cáo ghi rõ ảnh nào từ máy thật.
+
+### 7.4 Ghi vào đâu
+
+- Thư mục: `docs/design-reviews/<module>/web/run_<…>/` (tầng nền tảng chỉ có `web` · `mobile` · `api`) — ô **Biến thể** ở đầu báo cáo: `Mobile web — <thiết bị> · <bề ngang>`
+- Danh mục: một dòng riêng cho `web` × `Mobile web` (khác dòng `web` × `Desktop`) — *So lại* tìm lượt chạy gần nhất theo cặp nền tảng × biến thể
+- Khung Figma dùng chung với app → tra *Sổ khung Figma* trước khi cấp mã (rule mục 6 — *một lệch, không log trùng*)

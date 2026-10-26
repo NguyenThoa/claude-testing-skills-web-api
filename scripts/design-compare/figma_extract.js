@@ -4,6 +4,8 @@
 //
 // Đơn vị: đơn vị Figma (= dp Android · pt iOS · CSS px web). Toạ độ `rect` = [x, y, w, h] TƯƠNG ĐỐI với góc trái-trên của khung.
 // FRAME_IDS rỗng → chỉ liệt kê page + khung cấp 1 (để lập Bản đồ màn hình), không trích chi tiết.
+//   Mỗi khung kèm `fp` = dấu vân tay nội dung (chữ, toạ độ, màu, font của MỌI node con) — `dc.py cache plan` so với kho
+//   để biết khung nào đổi, khung nào dùng lại spec + ảnh đã lưu (không tốn lượt get_screenshot).
 
 const FRAME_IDS = ['<node-id>'];
 // Khung vẽ lớp phủ (menu, dialog, bottom sheet) trên nền màn khác: đặt tên khối lớp phủ (VD 'Menu').
@@ -12,6 +14,9 @@ const SCOPE = null;
 // Định dạng GỌN (mặc định): mảng thay cho object, bỏ khối không nền/viền (trừ khối cấp 1 như StatusBar · AppHeader · BottomNav).
 // Kết quả phải chép ra file → càng ngắn càng ít lỗi chép. dc.py tự mở rộng. Đặt false khi cần xem đủ thuộc tính để gỡ lỗi.
 const COMPACT = true;
+// Chỉ liệt kê / lấy dấu vân tay các page này (id page, VD ['6:2']) — file rất lớn thì giới hạn để lượt liệt kê không quá chậm.
+const PAGES = [];
+const FINGERPRINT = true;
 
 const hex = (paints) => {
   const list = paints && paints !== figma.mixed ? paints : [];
@@ -33,13 +38,34 @@ const font = (n) => {
   try { const s = n.getStyledTextSegments(['fontName'])[0]; return s.fontName.family + ' ' + s.fontName.style + ' (mixed)'; } catch (e) { return 'mixed'; }
 };
 
+// Dấu vân tay: băm FNV-1a hai lượt (64 bit) chuỗi mô tả mọi node con — toạ độ TƯƠNG ĐỐI khung (dời khung trên canvas không tính là đổi)
+const fingerprint = (frame) => {
+  let h1 = 0x811c9dc5, h2 = 0x9747b28c;
+  const add = (str) => { for (let i = 0; i < str.length; i++) { const c = str.charCodeAt(i); h1 = Math.imul(h1 ^ c, 16777619); h2 = Math.imul(h2 ^ c, 2246822507); } };
+  const val = (v) => v === figma.mixed ? 'mixed' : JSON.stringify(v);
+  const fb = frame.absoluteBoundingBox || { x: 0, y: 0 };
+  const walk = (n) => {
+    if (n.visible === false) { add('~' + n.id); return; }
+    const b = n.absoluteBoundingBox;
+    add([n.type, n.name, b ? [b.x - fb.x, b.y - fb.y, b.width, b.height].map(Math.round).join(',') : '',
+      'characters' in n ? n.characters : '', 'fontSize' in n ? val(n.fontSize) : '', 'fontName' in n ? val(n.fontName) : '',
+      'fills' in n ? val(n.fills) : '', 'strokes' in n ? val(n.strokes) : '', 'cornerRadius' in n ? val(n.cornerRadius) : '',
+      'opacity' in n ? n.opacity : ''].join('|'));
+    if ('children' in n) for (const c of n.children) walk(c);
+  };
+  walk(frame);
+  return (h1 >>> 0).toString(16).padStart(8, '0') + (h2 >>> 0).toString(16).padStart(8, '0');
+};
+
 if (!FRAME_IDS.length || FRAME_IDS[0] === '<node-id>') {
   const pages = [];
   for (const p of figma.root.children) {
+    if (PAGES.length && !PAGES.includes(p.id)) continue;
     await p.loadAsync();
     // khung màn hình hay được gom trong SECTION — liệt kê cả khung con của section, không chỉ section
     const frames = [];
-    const add = (c, section) => frames.push({ id: c.id, name: c.name, type: c.type, w: Math.round(c.width), h: Math.round(c.height), ...(section ? { section } : {}) });
+    const add = (c, section) => frames.push({ id: c.id, name: c.name, type: c.type, w: Math.round(c.width), h: Math.round(c.height),
+      ...(section ? { section } : {}), ...(FINGERPRINT && c.type !== 'SECTION' ? { fp: fingerprint(c) } : {}) });
     for (const c of p.children) {
       if (c.type === 'SECTION') { add(c); for (const k of c.children) if (['FRAME', 'COMPONENT'].includes(k.type)) add(k, c.name); }
       else if (['FRAME', 'COMPONENT'].includes(c.type)) add(c);
@@ -74,16 +100,24 @@ for (const id of FRAME_IDS) {
           strokeW: stroke && n.strokeWeight !== figma.mixed ? Math.round(n.strokeWeight * 10) / 10 : null, radius: radius || null, owner }));
       }
     }
-    // icon: dừng ở cấp INSTANCE tên Icon/* — nét vẽ bên trong chỉ là nhiễu
-    if ('children' in n && !(n.type === 'INSTANCE' && /^icon/i.test(n.name))) for (const c of n.children) walk(c, path ? path + ' > ' + n.name : n.name);
+    // icon / ảnh: máy không so được nội dung, nhưng phải có mặt trong lưới soát (`dc.py checklist`) để người soát không bỏ sót
+    const isIcon = (n.type === 'INSTANCE' || ['VECTOR', 'BOOLEAN_OPERATION', 'GROUP', 'FRAME', 'COMPONENT'].includes(n.type)) && /^(icon|ic[ _/-])/i.test(n.name);
+    const hasImage = 'fills' in n && n.fills !== figma.mixed && n.fills.some(f => f.type === 'IMAGE' && f.visible !== false);
+    const imageLike = !isIcon && n !== frame && /image|img|ảnh|hình|photo|avatar|banner|logo|thumbnail|cover/i.test(n.name)
+      && 'findOne' in n && !n.findOne(c => c.type === 'TEXT');
+    if (rect && n !== frame && (isIcon || hasImage || imageLike)) nodes.push(clean({ k: isIcon ? 'icon' : 'image', id: n.id, name: n.name, path, rect, owner }));
+    // icon: dừng ở cấp icon — nét vẽ bên trong chỉ là nhiễu
+    if ('children' in n && !isIcon) for (const c of n.children) walk(c, path ? path + ' > ' + n.name : n.name);
   };
   for (const c of frame.children) walk(c, '');
   frames.push({ source: 'figma', frame: { id: frame.id, name: frame.name, w: Math.round(fb.width), h: Math.round(fb.height), fill: hex(frame.fills) }, nodes });
 }
 if (SCOPE) for (const f of frames) if (f.nodes) f.nodes = f.nodes.filter(n => n.owner === SCOPE || n.name === SCOPE || /^status ?bar$/i.test(n.name || ''));
 // t: [chữ, x, y, w, h, cỡ, đậm, line-height, màu, căn, khối cấp 1, font] · b: [tên, x, y, w, h, nền, viền, bo góc, khối cấp 1, là khối cấp 1 (1/0)]
+// i: [tên, x, y, w, h, khối cấp 1, 'i' icon | 'm' ảnh]
 const pack = (f) => f.error ? f : { f: [f.frame.id, f.frame.name, f.frame.w, f.frame.h, f.frame.fill], ...(SCOPE ? { scope: SCOPE } : {}),
   t: f.nodes.filter(n => n.k === 'text').map(n => [n.text, ...n.rect, n.size ?? null, n.weight ?? null, n.lh ?? null, n.color ?? null, n.align ?? null, n.owner ?? '', n.font ?? null]),
-  b: f.nodes.filter(n => n.k === 'box' && (!n.path || ((n.fill || n.stroke) && n.rect[2] >= 24 && n.rect[3] >= 24))).map(n => [n.name, ...n.rect, n.fill ?? null, n.stroke ?? null, n.radius ?? null, n.owner ?? '', n.path ? 0 : 1]) };
+  b: f.nodes.filter(n => n.k === 'box' && (!n.path || ((n.fill || n.stroke) && n.rect[2] >= 24 && n.rect[3] >= 24))).map(n => [n.name, ...n.rect, n.fill ?? null, n.stroke ?? null, n.radius ?? null, n.owner ?? '', n.path ? 0 : 1]),
+  i: f.nodes.filter(n => n.k === 'icon' || n.k === 'image').map(n => [n.name, ...n.rect, n.owner ?? '', n.k === 'icon' ? 'i' : 'm']) };
 const out = COMPACT ? frames.map(pack) : frames;
 return out.length === 1 ? out[0] : out;

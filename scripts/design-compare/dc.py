@@ -12,6 +12,9 @@ Mọi bước đều xuất cùng một định dạng "spec JSON":
     python scripts/design-compare/dc.py render figma.json -o figma_render.png                     # hết lượt ảnh Figma: dựng sơ đồ từ JSON
     python scripts/design-compare/dc.py annotate <tên>.json --png actual.png -o <ảnh_khoanh.png>  # khung đỏ + số DIFF
     python scripts/design-compare/dc.py annotate --png app.png --actual actual.json --text "Create a new book=DIFF-…-08" --rect "16,284,416,58=DIFF-…-02" -o marked.png
+    python scripts/design-compare/dc.py mark figma.png app.png --design figma.json --actual actual.json --spec marks.json -o <mã>_marked.png  # ảnh DIFF: xanh = đúng · đỏ = sai + ghi chú
+    python scripts/design-compare/dc.py checklist figma.json --match <tên>.json -o <mã>_checklist.md    # lưới soát ngoài → trong, trên → dưới, trái → phải
+    python scripts/design-compare/dc.py cache plan --listing listing.json --cache reports/design-compare/_cache/<fileKey>   # khung nào dùng lại spec + ảnh Figma
     python scripts/design-compare/dc.py sections frames.json -o sections.md                       # mục 4 của báo cáo từ các <mã>_match.md
     python scripts/design-compare/dc.py color <ảnh.png> --rect x,y,w,h [--unit-px 3]           # màu nền + màu chữ trong vùng
     python scripts/design-compare/dc.py mask app.png --actual actual.json --pattern "^0[0-9]{8,10}$" -o app_masked.png  # che dữ liệu cá nhân
@@ -333,6 +336,8 @@ def load(path):
                   'align': t[9], 'owner': t[10], 'font': t[11] if len(t) > 11 else None} for t in obj['t']]
         nodes += [{'k': 'box', 'name': b[0], 'rect': b[1:5], 'fill': b[5], 'stroke': b[6], 'radius': b[7], 'owner': b[8],
                    'path': '' if b[9] else b[8]} for b in obj['b']]
+        # i: icon / ảnh — máy không so được nội dung, nhưng phải có mặt trong lưới soát (lệnh checklist) để người soát không bỏ sót
+        nodes += [{'k': 'icon' if m[6] == 'i' else 'image', 'name': m[0], 'rect': m[1:5], 'owner': m[5]} for m in obj.get('i', [])]
         obj = {'source': 'figma', 'frame': {'id': fid, 'name': name, 'w': w, 'h': h, 'fill': fill}, 'nodes': nodes,
                **({'scope': obj['scope']} if obj.get('scope') else {})}
     fix = lambda v: html.unescape(v) if isinstance(v, str) else v
@@ -875,7 +880,8 @@ def annotate(a):
 def sections(a):
     """Dựng mục 4 "Chi tiết từng khung" của báo cáo từ các <mã>_match.md — page nhiều khung không phải chép tay.
     spec JSON: [{"title": "U-05 · Add user", "note": "> …", "images": [["Figma | App", "evidence/U-05_side.png"]],
-                 "matches": [["đoạn 1", "reports/…/U-05p1_match.md"]], "redact": [["regex", "<đã che>"]]}]"""
+                 "matches": [["đoạn 1", "reports/…/U-05p1_match.md"]], "checklists": [["", "reports/…/U-05_checklist.md"]],
+                 "redact": [["regex", "<đã che>"]]}]"""
     spec = json.loads(Path(a.spec).read_text(encoding='utf-8'))
     out = []
     for fr in spec:
@@ -888,6 +894,11 @@ def sections(a):
             while body and not body[0].strip(): body.pop(0)
             out += [f"<details><summary>Bảng đo tự động{(' — ' + label) if label else ''} (dc.py match)</summary>\n",
                     '\n'.join(body).rstrip() + '\n', '</details>\n']
+        for label, cp in fr.get('checklists', []):           # lưới soát ngoài → trong (dc.py checklist) — người soát đã tick ☑ / ghi DIFF
+            body = Path(cp).read_text(encoding='utf-8').splitlines()[1:]
+            for rx, rep in fr.get('redact', []): body = [re.sub(rx, rep, l) for l in body]
+            out += [f"<details><summary>Lưới soát ngoài → trong{(' — ' + label) if label else ''} (dc.py checklist)</summary>\n",
+                    '\n'.join(body).strip() + '\n', '</details>\n']
     Path(a.out).write_text('\n'.join(out), encoding='utf-8')
     print('OK', a.out, '·', len(spec), 'khung — dán vào mục 4 của báo cáo')
 
@@ -915,6 +926,387 @@ def color(a):
     r = [float(v) * a.unit_px for v in a.rect.split(',')]
     bg, fg = sample(img, r)
     print(json.dumps({'nen': bg, 'chu_hoac_vien': fg}, ensure_ascii=False))
+
+
+# ───────────────────────── ảnh khoanh ĐÚNG / SAI cho DIFF ─────────────────────────
+GREEN, RED_, INK = (22, 163, 74), (225, 29, 72), (17, 24, 39)
+
+
+def _wrap(dr, text, f, width):
+    """Ngắt dòng theo bề rộng pixel — ghi chú tiếng Việt dài phải đọc được trên ảnh, không bị cắt."""
+    out = []
+    for para in str(text).split('\n'):
+        cur = ''
+        for w in para.split(' '):
+            if cur and dr.textlength(cur + ' ' + w, font=f) > width: out.append(cur); cur = w
+            else: cur = (cur + ' ' + w).strip()
+        out.append(cur)
+    return out
+
+
+def _dashed(dr, box, color, width, dash=14):
+    x1, y1, x2, y2 = box
+    for (ax, ay, bx, by) in ((x1, y1, x2, y1), (x2, y1, x2, y2), (x2, y2, x1, y2), (x1, y2, x1, y1)):
+        L = math.hypot(bx - ax, by - ay) or 1
+        for t in range(0, int(L), dash * 2):
+            t2 = min(t + dash, L)
+            dr.line((ax + (bx - ax) * t / L, ay + (by - ay) * t / L, ax + (bx - ax) * t2 / L, ay + (by - ay) * t2 / L), fill=color, width=width)
+
+
+def _resolve(tg, nodes, rows, boxes, side):
+    """Đích khoanh → khung [x, y, w, h] theo đơn vị của phía đó (dp/pt/px). Trả None nếu không thấy.
+    tg: {"text": regex} · {"name": regex} (khối/icon theo tên) · {"rect": [x,y,w,h]} · {"row": n} · {"box": "B2"}
+        · danh sách các đích (gộp khung) · thêm "all": true để gộp MỌI phần tử khớp thay vì lấy phần tử nhỏ nhất."""
+    if isinstance(tg, list):
+        rs = [_resolve(t, nodes, rows, boxes, side) for t in tg]
+        if any(r is None for r in rs): return None
+        x1, y1 = min(r[0] for r in rs), min(r[1] for r in rs)
+        return [x1, y1, max(r[0] + r[2] for r in rs) - x1, max(r[1] + r[3] for r in rs) - y1]
+    key = 'drect' if side == 'figma' else 'arect'
+    if 'rect' in tg: return list(tg['rect'])
+    if 'row' in tg:
+        r = rows[int(tg['row']) - 1] if 0 < int(tg['row']) <= len(rows) else None
+        return list(r[key]) if r and r.get(key) else None
+    if 'box' in tg:
+        k = int(str(tg['box']).lstrip('Bb')) - 1
+        return list(boxes[k][key]) if 0 <= k < len(boxes) and boxes[k].get(key) else None
+    if 'text' in tg:
+        hits = [n for n in nodes if n['k'] in ('text', 'input', 'label') and re.search(tg['text'], n.get('text') or '')]
+    elif 'name' in tg:
+        hits = [n for n in nodes if n['k'] in ('box', 'icon', 'image') and re.search(tg['name'], ' '.join(str(n.get(k) or '') for k in ('name', 'rid', 'cls')))]
+    else:
+        return None
+    if not hits: return None
+    if tg.get('all'): return _resolve([{'rect': n['rect']} for n in hits], nodes, rows, boxes, side)
+    return list(min(hits, key=lambda n: n['rect'][2] * n['rect'][3])['rect'])
+
+
+def mark(a):
+    """Ảnh evidence của DIFF: Figma | App đặt cạnh nhau, CÙNG số thứ tự trên cả hai phía —
+    khung XANH bên Figma = chỗ đúng theo thiết kế · khung ĐỎ bên App = chỗ lệch · dải ghi chú dưới ảnh nói rõ
+    "Thiết kế: … / Thực tế: …" cho từng DIFF. Người nhận đọc được ngay mà không phải tra toạ độ trong bảng đo.
+    spec JSON: {"title": "B-07 · Chọn khuyến mãi", "items": [{"diff": "DIFF-BK-BOOK-07", "title": "Bảng khuyến mãi tràn ngang",
+                "figma": {"text": "^CODE$"}, "app": {"text": "^CODE$"},
+                "expected": "Cột CODE rộng 118 dp, cột Name hiện đủ", "actual": "Cột CODE rộng 219 dp, cột Name bị cắt ở mép phải"}]}
+    "figma": null → thiết kế không có (EXTRA) · "app": null → app không có (MISSING): khung đỏ NÉT ĐỨT ở chỗ đáng lẽ phải có."""
+    from PIL import Image, ImageDraw
+    spec = json.loads(Path(a.spec).read_text(encoding='utf-8'))
+    items = spec['items'] if isinstance(spec, dict) else spec
+    title = (spec.get('title') if isinstance(spec, dict) else None) or a.caption
+    D, A = load(a.design), load(a.actual)
+    M = json.loads(Path(a.match).read_text(encoding='utf-8')) if a.match else {}
+    rows, boxes = M.get('rows', []), M.get('boxes', [])
+    di, ai = Image.open(a.design_png).convert('RGB'), Image.open(a.actual_png).convert('RGB')
+    Wd, Wa = D['frame']['w'], A['frame']['w']
+    du, au = di.width / Wd, ai.width / Wa
+    dtop = a.design_top if a.design_top is not None else M.get('design_top', next(
+        (n['rect'][1] + n['rect'][3] for n in D['nodes'] if n['k'] == 'box' and n.get('name', '').lower().replace(' ', '') == 'statusbar'), 0))
+    atop = a.actual_top if a.actual_top is not None else M.get('actual_top', A.get('top', 0))
+    abot = A.get('bottom', 0)
+    off = M.get('offset', 0) or 0
+    dcut = dtop - min(off, 0)                                  # đoạn đã cuộn: cắt Figma từ đúng chỗ đoạn app bắt đầu (như lệnh visual)
+    U = a.unit_px
+    di = di.crop((0, int(dcut * du), di.width, di.height)); ai = ai.crop((0, int(atop * au), ai.width, ai.height - int(abot * au)))
+    di = di.resize((round(di.width / du * U), round(di.height / du * U))); ai = ai.resize((round(ai.width / au * U), round(ai.height / au * U)))
+    if a.clip: di = di.crop((0, 0, di.width, min(di.height, ai.height)))
+    to_d = lambda r: [r[0] * U, (r[1] - dcut) * U, (r[0] + r[2]) * U, (r[1] + r[3] - dcut) * U]
+    to_a = lambda r: [r[0] * U, (r[1] - atop) * U, (r[0] + r[2]) * U, (r[1] + r[3] - atop) * U]
+    k = max(1, (di.width + ai.width) / 1000)                  # chữ, nét theo bề ngang ảnh ghép — ảnh to thì ghi chú vẫn đọc được
+    f_head, f_title, f_note, f_badge = _font(round(17 * k)), _font(round(15 * k)), _font(round(14 * k), bold=False), _font(round(13 * k))
+    marks, missing = [], []
+    for i, it in enumerate(items, 1):
+        fr = _resolve(it['figma'], D['nodes'], rows, boxes, 'figma') if it.get('figma') else None
+        ar = _resolve(it['app'], A['nodes'], rows, boxes, 'app') if it.get('app') else None
+        if it.get('figma') and fr is None: missing.append(f"#{i} figma {it['figma']}")
+        if it.get('app') and ar is None: missing.append(f"#{i} app {it['app']}")
+        ghost = None
+        if ar is None and fr is not None and it.get('ghost', True):   # thiếu trên app → khung nét đứt ở chỗ đáng lẽ phải có
+            x, y, w, h = fr
+            # neo theo phần tử khớp gần nhất phía trên (bố cục cục bộ) — độ lệch chung của cả đoạn cuộn thường sai vài chục đơn vị
+            nb = [r for r in rows if r.get('arect') and r['drect'][1] <= y and r.get('match') != 'contains']
+            nb = max(nb, key=lambda r: r['drect'][1]) if nb else None
+            gy = nb['arect'][1] + (y - nb['drect'][1]) if nb else y - dtop + atop + off
+            ghost = [x + (Wa - Wd) if x > Wd * .5 else x, gy, w, h]
+        marks.append((i, it, fr, ar, ghost))
+    if missing:                                                 # khoanh sai chỗ nguy hiểm hơn không khoanh — dừng, không đoán
+        sys.exit('KHÔNG tìm thấy đích khoanh: ' + ' · '.join(missing) + ' — sửa spec (regex chữ, tên khối, số dòng bảng đo) rồi chạy lại')
+    pad, gap, head = round(6 * k), round(28 * k), round(64 * k)
+    top_title = round(40 * k) if title else 0
+    W = di.width + ai.width + gap
+    probe = ImageDraw.Draw(Image.new('RGB', (10, 10)))
+    note_w = W - round(80 * k)
+    legend = []
+    for i, it, fr, ar, ghost in marks:
+        lines = [(f"{it.get('diff', '')}{' · ' if it.get('diff') and it.get('title') else ''}{it.get('title', '')}", f_title, INK)]
+        exp = it.get('expected') or ('Không có phần tử này' if not it.get('figma') else '')
+        act = it.get('actual') or ('Không có trên app' if not it.get('app') else '')
+        for lab, txt, col in (('Thiết kế (đúng)', exp, GREEN), ('Thực tế (sai)', act, RED_)):
+            if txt:
+                for j, ln in enumerate(_wrap(probe, f'{lab}: {txt}', f_note, note_w)): lines.append((ln, f_note, col))
+        legend.append((i, lines))
+    lh = round(22 * k)
+    leg_h = sum(len(ls) * lh + round(14 * k) for _, ls in legend) + round(24 * k)
+    H = max(di.height, ai.height)
+    img = Image.new('RGB', (W, top_title + head + H + leg_h), 'white')
+    img.paste(di, (0, top_title + head)); img.paste(ai, (di.width + gap, top_title + head))
+    dr = ImageDraw.Draw(img, 'RGBA')
+    if title:
+        dr.rectangle((0, 0, W, top_title), fill=INK); dr.text((round(14 * k), round(9 * k)), title, fill='white', font=f_head)
+    dr.text((round(8 * k), top_title + round(8 * k)), 'THIẾT KẾ (Figma)', fill=GREEN, font=f_head)
+    dr.text((round(8 * k), top_title + round(34 * k)), 'khung xanh = đúng theo thiết kế', fill=GREEN, font=f_note)
+    xa = di.width + gap
+    dr.text((xa + round(8 * k), top_title + round(8 * k)), 'THỰC TẾ (App)', fill=RED_, font=f_head)
+    dr.text((xa + round(8 * k), top_title + round(34 * k)), 'khung đỏ = chỗ lệch · nét đứt = thiếu', fill=RED_, font=f_note)
+    dr.line((di.width + gap / 2, top_title, di.width + gap / 2, top_title + head + H), fill=(203, 213, 225), width=2)
+
+    def badge(x, y, n, col):
+        t = str(n); tw = dr.textlength(t, font=f_badge); bw = max(24 * k, tw + 12 * k)
+        bx, by = max(2, x - 12 * k), max(top_title + head + 2, y - 12 * k)
+        dr.rounded_rectangle((bx, by, bx + bw, by + 24 * k), 12 * k, fill=col)
+        dr.text((bx + (bw - tw) / 2, by + 4 * k), t, fill='white', font=f_badge)
+
+    def box(r, ox, col, dashed=False):
+        x1, y1, x2, y2 = r[0] - pad + ox, r[1] - pad + top_title + head, r[2] + pad + ox, r[3] + pad + top_title + head
+        x1, x2 = max(ox + 1, x1), min(ox + (di.width if ox == 0 else ai.width) - 2, x2)
+        if dashed: _dashed(dr, (x1, y1, x2, y2), col, round(3 * k))
+        else:
+            dr.rounded_rectangle((x1, y1, x2, y2), 6 * k, fill=col + (28,), outline=col, width=round(3 * k))
+        return x1, y1
+    for i, it, fr, ar, ghost in marks:
+        if fr: badge(*box(to_d(fr), 0, GREEN), i, GREEN)
+        if ar: badge(*box(to_a(ar), xa, RED_), i, RED_)
+        elif ghost: badge(*box(to_a(ghost), xa, RED_, dashed=True), i, RED_)
+    y = top_title + head + H + round(14 * k)
+    dr.line((0, y - round(6 * k), W, y - round(6 * k)), fill=(203, 213, 225), width=2)
+    for i, lines in legend:
+        badge(round(28 * k), y + round(12 * k), i, RED_)
+        for t, f, col in lines:
+            dr.text((round(52 * k), y), t, fill=col, font=f); y += lh
+        y += round(14 * k)
+    out = Path(a.out); out.parent.mkdir(parents=True, exist_ok=True); img.save(out)
+    print(f'OK {out} · {len(marks)} DIFF — MỞ LẠI ẢNH: khung xanh/đỏ phải cùng một phần tử ở hai phía')
+
+
+# ───────────────────────── lưới soát NGOÀI → TRONG ─────────────────────────
+def _bands(items):
+    """Thứ tự đọc: trên → dưới, cùng hàng thì trái → phải (hàng = các phần tử chồng nhau theo chiều dọc)."""
+    out, band, bot, minh = [], [], 0, 0
+    for n in sorted(items, key=lambda n: n['rect'][1]):
+        y, h = n['rect'][1], n['rect'][3]
+        if band and y >= bot - min(h, minh) * .5:
+            out += sorted(band, key=lambda n: n['rect'][0]); band = []
+        if not band: bot, minh = y + h, h
+        else: bot, minh = max(bot, y + h), min(minh, h)
+        band.append(n)
+    return out + sorted(band, key=lambda n: n['rect'][0])
+
+
+def checklist(a):
+    """Lưới soát của một khung — đi NGOÀI → TRONG (khung màn → vùng → khối → phần tử), trong mỗi cấp TRÊN → DƯỚI, TRÁI → PHẢI.
+    Mỗi chữ / ô nhập / icon / ảnh có đủ thuộc tính thiết kế (font · cỡ · đậm · màu · kích thước) và khoảng cách
+    (margin tới mép màn · padding trong khối chứa · gap tới phần tử liền trước). Có --match thì điền kết quả máy đo và
+    độ lệch khoảng cách phía app; cột "Soát mắt" để người soát tick sau khi nhìn ảnh đặt cạnh nhau."""
+    D = load(a.design); W = D['frame']['w']; H = D['frame']['h']
+    Ms = [json.loads(Path(m).read_text(encoding='utf-8')) for m in (a.match or [])]
+    tol = a.tol
+    sysn = lambda n: (n.get('owner') or n.get('name') or '').lower().replace(' ', '') in ('statusbar', 'navbar', 'homeindicator', 'keyboard')
+    # khối tên Icon* / khối nhỏ ≤ 32 không nền là icon (spec cũ chưa có mảng `i`) — xếp vào phần tử, không phải khối
+    iconish = lambda n: n['k'] == 'box' and n.get('path') and (re.match(r'icon', n.get('name') or '', re.I) or (max(n['rect'][2:]) <= 32 and not n.get('fill')))
+    els = [n for n in D['nodes'] if n['k'] in ('text', 'icon', 'image') and not sysn(n) and (n['k'] != 'text' or n.get('text', '').strip())]
+    els += [dict(n, k='icon') for n in D['nodes'] if iconish(n) and not sysn(n)]
+    blocks = [n for n in D['nodes'] if n['k'] == 'box' and n.get('path') and not sysn(n) and not iconish(n)]
+    tops = [n for n in D['nodes'] if n['k'] == 'box' and not n.get('path') and not sysn(n)]
+    inside = lambda r, b: r[0] >= b[0] - 1 and r[1] >= b[1] - 1 and r[0] + r[2] <= b[0] + b[2] + 1 and r[1] + r[3] <= b[1] + b[3] + 1
+    # kết quả máy đo theo khung thiết kế — nhiều đoạn cuộn thì lấy kết quả có số đo (không phải "ngoài màn")
+    rank = {'diff': 0, 'missing': 1, 'minor': 2, 'ok': 3, 'na': 4, 'offscreen': 5}
+    meas = {}
+    for M in Ms:
+        for r in M.get('rows', []) + M.get('boxes', []):
+            key = tuple(r['drect'])
+            if key not in meas or (meas[key]['status'] == 'offscreen' and r['status'] != 'offscreen') or \
+               (r['status'] != 'offscreen' and rank.get(r['status'], 9) < rank.get(meas[key]['status'], 9)):
+                meas[key] = dict(r, _aw=M.get('actual_w'))
+    Wa = next((M.get('actual_w') for M in Ms), None)
+    fmt = lambda v: f'{v:g}'
+
+    def got(n):
+        r = meas.get(tuple(n['rect']))
+        if not r: return None, '— (máy không đo)' if n['k'] in ('icon', 'image') else '— (chưa đo)'
+        txt = ICON[r['status']]
+        why = r['checks'][0] if r.get('checks') else ''
+        if not why and r['status'] in ('minor', 'diff'):          # lệch mà không có ghi chú → nêu số đo vượt dung sai
+            why = ' · '.join(f'{lab} {r[k]:+g}' for k, lab in (('dx', 'Δx'), ('dy', 'Δy'), ('dgap', 'Δ khoảng cách'), ('dh', 'Δ cao'), ('dw', 'Δ rộng'))
+                             if isinstance(r.get(k), (int, float)) and abs(r[k]) > tol)
+            if r.get('dE') is not None and r['dE'] > 3: why += f" · ΔE {r['dE']:g}"
+        if why: txt += ' ' + (why if len(why) <= 80 else why[:78].rsplit(' ', 1)[0] + ' …')
+        return r, txt
+
+    def cont_of(n, pool):
+        c = [b for b in pool if b is not n and inside(n['rect'], b['rect']) and b['rect'][2] * b['rect'][3] > n['rect'][2] * n['rect'][3]]
+        return min(c, key=lambda b: b['rect'][2] * b['rect'][3]) if c else None
+
+    def spacing(n, cont, prev):
+        x, y, w, h = n['rect']; parts, app = [], []
+        if cont:
+            bx, by = cont['rect'][:2]
+            parts.append(f"padding trái {fmt(x - bx)} · trên {fmt(y - by)} trong `{cont.get('name', 'khối')}`")
+        else:
+            parts.append(f'margin trái {fmt(x)} · phải {fmt(W - x - w)}')
+        if prev:
+            px, py, pw, ph = prev['rect']
+            g = (y - py - ph, 'dọc') if y >= py + ph - 1 else (x - px - pw, 'ngang')
+            parts.append(f"gap {g[1]} {fmt(g[0])} tới “{(prev.get('text') or prev.get('name') or '')[:18]}”")
+        # phía app: so padding với khối chứa (cả hai phía cùng được máy ghép), gap tới phần tử liền trước
+        r = meas.get(tuple(n['rect']))
+        if r and r.get('arect'):
+            ca = meas.get(tuple(cont['rect']), {}).get('arect') if cont else None
+            ar = r['arect']
+            # khung chứa phía app phải lớn hơn hẳn phần tử (app hay trả CHÍNH nút làm khung chữ) mới đo được padding
+            if ca and ca[2] * ca[3] > ar[2] * ar[3] * 1.2 and not any('khung phần tử app lớn hơn' in c for c in r.get('checks', [])):
+                dl, dt = (r['arect'][0] - ca[0]) - (x - cont['rect'][0]), (r['arect'][1] - ca[1]) - (y - cont['rect'][1])
+                if abs(dl) > tol: app.append(f'padding trái {dl:+g}')
+                if abs(dt) > tol: app.append(f'padding trên {dt:+g}')
+            elif not cont and Wa:
+                dl = r['arect'][0] - x
+                dr_ = (Wa - r['arect'][0] - r['arect'][2]) - (W - x - w)
+                if abs(dl) > tol and abs(dr_) > tol: app.append(f'margin trái {dl:+g} · phải {dr_:+g}')
+            if r.get('dgap') is not None and abs(r['dgap']) > tol: app.append(f"gap {r['dgap']:+g}")
+        return ' · '.join(parts), app
+
+    def props(n):
+        if n['k'] == 'text':
+            f = (n.get('font') or '').replace(' (mixed)', '*')
+            return ' · '.join(v for v in (f, f"{fmt(n['size'])}" if n.get('size') else '', str(n.get('weight') or ''),
+                                          f"lh {fmt(n['lh'])}" if n.get('lh') else '', f"`{n['color']}`" if n.get('color') else '') if v)
+        return f"{fmt(n['rect'][2])}×{fmt(n['rect'][3])}"
+
+    kind = lambda n: {'text': 'chữ', 'icon': 'icon', 'image': 'ảnh'}[n['k']] if n['k'] != 'text' or not re.search(r'input|field|textfield|ô nhập', n.get('owner', '') + ' ' + (n.get('path') or ''), re.I) else 'ô nhập'
+    L = [f"#### Lưới soát — `{D['frame'].get('name')}` ({fmt(W)}×{fmt(H)})", '',
+         '> Đi **ngoài → trong** (L0 khung màn → L1 vùng → L2 khối → L3 phần tử), mỗi cấp **trên → dưới, trái → phải**. '
+         'Cột *Máy đo* lấy từ `dc.py match` (padding/margin/gap: độ lệch phía app so với thiết kế, chỉ hiện khi vượt dung sai ±' + fmt(tol) + '). '
+         'Icon, ảnh, bo góc, viền, bóng **máy không đo** — cột *Soát mắt* là việc của người soát sau khi nhìn ảnh đặt cạnh nhau.', '',
+         f"**L0 · Khung màn** — rộng {fmt(W)}{f' (app {fmt(Wa)})' if Wa else ''} · nền `{D['frame'].get('fill') or '—'}` · "
+         '☐ safe area / status bar / thanh điều hướng không che nội dung · ☐ đã cuộn hết màn thật · ☐ không tràn ngang', '',
+         '| Cấp | Phần tử | Loại | Thiết kế | Khoảng cách (thiết kế) | Máy đo | Soát mắt |', '|---|---|---|---|---|---|---|']
+    # vùng cấp 1: khối cấp 1 có nền/viền, hoặc gộp khung của các phần tử cùng chủ (khung không nền không có trong spec)
+    owners = {}
+    for n in els + blocks: owners.setdefault(n.get('owner') or '', []).append(n)
+    regions = []
+    for name, ns in owners.items():
+        t = next((b for b in tops if b.get('name') == name), None)
+        if t: rect = t['rect']
+        else:
+            x1, y1 = min(n['rect'][0] for n in ns), min(n['rect'][1] for n in ns)
+            rect = [x1, y1, max(n['rect'][0] + n['rect'][2] for n in ns) - x1, max(n['rect'][1] + n['rect'][3] for n in ns) - y1]
+        regions.append({'name': name or '(nằm trực tiếp trong khung)', 'rect': rect, 'box': t, 'ns': ns})
+    for t in tops:                                              # vùng cấp 1 không chứa gì đo được (banner, ảnh nền) vẫn phải liệt kê
+        if t.get('name') not in owners: regions.append({'name': t.get('name'), 'rect': t['rect'], 'box': t, 'ns': []})
+    cnt = Counter()
+    for rg in sorted(regions, key=lambda r: (r['rect'][1], r['rect'][0])):
+        x, y, w, h = rg['rect']; b = rg['box']
+        st = (f"nền `{b['fill']}`" if b and b.get('fill') else '') + (f" · viền `{b['stroke']}`" if b and b.get('stroke') else '') + (f" · bo {fmt(b['radius'])}" if b and b.get('radius') else '')
+        _, m = got(b) if b else (None, '—')
+        L.append(f"| **L1** | **{rg['name']}** | vùng | {fmt(w)}×{fmt(h)}{' · ' + st if st else ''} | đỉnh {fmt(y)} · margin trái {fmt(x)} · phải {fmt(W - x - w)} | {m} | ☐ |")
+        bl = [n for n in rg['ns'] if n['k'] == 'box']
+        prev_b = None
+        for bb in _bands(bl):
+            bx, by, bw, bh = bb['rect']
+            st = ' · '.join(v for v in (f"nền `{bb['fill']}`" if bb.get('fill') else '', f"viền `{bb['stroke']}`" if bb.get('stroke') else '', f"bo {fmt(bb['radius'])}" if bb.get('radius') else '') if v)
+            gp = f" · gap {fmt(by - prev_b['rect'][1] - prev_b['rect'][3])} tới `{prev_b.get('name')}`" if prev_b and by >= prev_b['rect'][1] + prev_b['rect'][3] - 1 else ''
+            pb = cont_of(bb, bl)                               # khối lồng trong khối: lề trong (padding) của khối cha, không phải margin tới mép màn
+            where = f"padding trái {fmt(bx - pb['rect'][0])} · trên {fmt(by - pb['rect'][1])} trong `{pb.get('name')}`" if pb else f'margin trái {fmt(bx)} · phải {fmt(W - bx - bw)}'
+            r, m = got(bb)
+            app = []
+            if r and r.get('arect') and Wa and not pb:
+                dl = r['arect'][0] - bx; drr = (Wa - r['arect'][0] - r['arect'][2]) - (W - bx - bw)
+                if abs(dl) > tol and abs(drr) > tol: app.append(f'margin trái {dl:+g} · phải {drr:+g}')
+            L.append(f"| L2 | `{bb.get('name')}` | khối | {fmt(bw)}×{fmt(bh)}{' · ' + st if st else ''} | {where}{gp} | {m}{' · ' + ' · '.join(app) if app else ''} | ☐ |")
+            prev_b = bb; cnt['khối'] += 1
+        prev_by_cont = {}
+        for n in _bands([n for n in rg['ns'] if n['k'] != 'box']):
+            c = cont_of(n, bl)
+            key = id(c) if c else None
+            sp, app = spacing(n, c, prev_by_cont.get(key))
+            prev_by_cont[key] = n
+            _, m = got(n)
+            label = (n.get('text') or n.get('name') or '').replace('|', '\\|').replace('\n', ' ')
+            label = f"“{label[:40]}”" if n['k'] == 'text' else f"`{label[:40]}`"
+            L.append(f"| L3 | {label} | {kind(n)} | {props(n)} | {sp} | {m}{' · ' + ' · '.join(app) if app else ''} | ☐ |")
+            cnt[kind(n)] += 1
+    L += ['', '**Đếm:** ' + ' · '.join(f'{k} {v}' for k, v in cnt.items()) + ' — mỗi dòng phải có kết quả (máy đo hoặc tick ☑ / ghi DIFF) trước khi kết luận khung.']
+    Path(a.out).parent.mkdir(parents=True, exist_ok=True)
+    Path(a.out).write_text('\n'.join(L) + '\n', encoding='utf-8')
+    print(f"OK {a.out} · {sum(cnt.values())} dòng soát ({', '.join(f'{k} {v}' for k, v in cnt.items())})")
+
+
+# ───────────────────────── cache Figma (tiết kiệm lượt gọi MCP) ─────────────────────────
+def _frames_of(listing):
+    L = json.loads(Path(listing).read_text(encoding='utf-8'))
+    return {f['id']: dict(f, page=p['name']) for p in L.get('pages', []) for f in p.get('frames', [])}, L
+
+
+def cache(a):
+    """Kho spec + ảnh Figma theo DẤU VÂN TAY từng khung (figma_extract.js FRAME_IDS = [] trả `fp`).
+    Khung có `fp` không đổi → dùng lại spec + ảnh đã lưu, không gọi use_figma / get_screenshot lần nào nữa.
+      plan  --listing listing.json --cache DIR [--frames 6:123,6:168]   → khung nào dùng cache, khung nào phải trích / chụp lại
+      put   --listing listing.json --cache DIR figma_6-123.json figma_6-123.png …   → cất vào kho (ghi dấu vân tay hiện tại)
+      get   --listing listing.json --cache DIR -o <thư mục run> [--frames …]          → chép bản còn hiệu lực sang lượt chạy
+    Không truyền --listing (không gọi Figma lần nào) → plan/get coi mọi bản trong kho là còn hiệu lực, báo cáo PHẢI ghi
+    "Figma lấy từ cache ngày …, chưa kiểm thay đổi"."""
+    import shutil, datetime
+    root = Path(a.cache); root.mkdir(parents=True, exist_ok=True)
+    mf = root / 'manifest.json'
+    man = json.loads(mf.read_text(encoding='utf-8')) if mf.exists() else {}
+    frames, L = _frames_of(a.listing) if a.listing else ({}, {})
+    want = [x.strip() for x in a.frames.split(',')] if a.frames else None
+    fid = lambda p: re.sub(r'^figma_', '', Path(p).stem).split('_')[0].replace('-', ':')      # figma_7-1373_dialog.json → 7:1373
+    if a.action == 'put':
+        if not a.files: sys.exit('put: thiếu file figma_<id>.json / .png')
+        cleared = set()
+        for f in a.files:
+            p = Path(f); i = fid(p); key = p.name
+            new_fp = frames.get(i, {}).get('fp')
+            if i in man and new_fp and man[i].get('fp') not in (None, new_fp) and i not in cleared:
+                for k in man[i]['files']: (root / k).unlink(missing_ok=True)       # Figma đã đổi → bỏ mọi bản cũ (ảnh cũ không còn đúng spec mới)
+                man[i]['files'] = {}
+            cleared.add(i)
+            if a.listing and i not in frames: print(f'⚠️  {p.name}: khung {i} không có trong listing — vẫn cất, không có dấu vân tay')
+            shutil.copy2(p, root / key)
+            e = man.setdefault(i, {'files': {}})
+            e.update({'name': frames.get(i, {}).get('name', e.get('name')), 'page': frames.get(i, {}).get('page', e.get('page')),
+                      'fp': frames.get(i, {}).get('fp', e.get('fp'))})
+            e['files'][key] = datetime.datetime.now().strftime('%d-%m-%Y %H:%M')
+        mf.write_text(json.dumps(man, ensure_ascii=False, indent=1), encoding='utf-8')
+        print(f'OK đã cất {len(a.files)} file vào {root}'); return
+    ids = want or (list(frames) if frames else list(man))
+    plan = []
+    for i in ids:
+        e, f = man.get(i), frames.get(i, {})
+        has = lambda ext: e and any(k.endswith(ext) for k in e['files'])
+        if not e: st = 'new'
+        elif frames and not f: st = 'gone'
+        elif frames and (not f.get('fp') or f.get('fp') != e.get('fp')): st = 'changed'
+        else: st = 'ok' if has('.json') and has('.png') else 'partial'
+        plan.append((i, f.get('name') or (e or {}).get('name') or '', st, e))
+    if a.action == 'get':
+        if not a.out: sys.exit('get: thiếu -o <thư mục run>')
+        out = Path(a.out); out.mkdir(parents=True, exist_ok=True); n = 0
+        for i, name, st, e in plan:
+            if st in ('ok', 'partial'):
+                for k in e['files']: shutil.copy2(root / k, out / k); n += 1
+        print(f'OK đã chép {n} file sang {out} — khung đổi/mới vẫn phải trích + chụp (xem: cache plan)'); return
+    LBL = {'ok': '✅ dùng cache (spec + ảnh)', 'partial': '🟡 thiếu ảnh hoặc spec — gọi bù phần thiếu', 'changed': '🔄 Figma đã đổi — trích + chụp lại',
+           'new': '🆕 chưa có — trích + chụp', 'gone': '🗑️ khung không còn trong Figma'}
+    print(f"Kho: {root} · listing: {a.listing or 'KHÔNG (chưa kiểm thay đổi — ghi rõ vào báo cáo)'}")
+    print('| Khung | Tên | Trạng thái | Lưu lúc |\n|---|---|---|---|')
+    for i, name, st, e in plan:
+        print(f"| `{i}` | {name} | {LBL[st]} | {' · '.join(sorted(set((e or {}).get('files', {}).values()))) or '—'} |")
+    need_x = [i for i, _, st, e in plan if st in ('new', 'changed') or (st == 'partial' and not any(k.endswith('.json') for k in e['files']))]
+    need_s = [i for i, _, st, e in plan if st in ('new', 'changed') or (st == 'partial' and not any(k.endswith('.png') for k in e['files']))]
+    print(f"\nFRAME_IDS cần trích ({len(need_x)}): {json.dumps(need_x)}")
+    print(f"Khung cần get_screenshot ({len(need_s)}): {', '.join(need_s) or '—'}")
+    print(f"Ước lượng lượt gọi Figma MCP còn lại: {math.ceil(len(need_x) / 4)} (trích, 4 khung/lượt) + {len(need_s)} (ảnh) — "
+          f"tiết kiệm {sum(1 for p in plan if p[2] == 'ok')} khung")
 
 
 def main():
@@ -949,6 +1341,20 @@ def main():
     x.add_argument('--rect', action='append', help='"x,y,w,h=nhãn" theo đơn vị dp/pt/px; lặp được')
     x.add_argument('--only', default='diff,missing'); x.add_argument('--map', help='JSON {"3": "DIFF-AUTH-01", "B2": "DIFF-AUTH-02"}')
     x.add_argument('--unit-px', type=float); x.add_argument('--caption'); x.set_defaults(fn=annotate)
+    x = s.add_parser('mark', help='ảnh evidence của DIFF: Figma | App, khung xanh = đúng · đỏ = sai, dải ghi chú Thiết kế / Thực tế')
+    x.add_argument('design_png'); x.add_argument('actual_png'); x.add_argument('--design', required=True); x.add_argument('--actual', required=True)
+    x.add_argument('--spec', required=True, help='JSON {"title", "items": [{"diff", "title", "figma", "app", "expected", "actual"}]}')
+    x.add_argument('--match', help='<mã>_match.json — cho đích {"row": n} / {"box": "B2"} và độ lệch dọc của đoạn cuộn')
+    x.add_argument('--design-top', type=float); x.add_argument('--actual-top', type=float); x.add_argument('--unit-px', type=float, default=2)
+    x.add_argument('--clip', action='store_true', help='cắt ảnh thiết kế theo chiều cao màn thật'); x.add_argument('--caption')
+    x.add_argument('-o', '--out', required=True); x.set_defaults(fn=mark)
+    x = s.add_parser('checklist', help='lưới soát ngoài → trong, trên → dưới, trái → phải của một khung')
+    x.add_argument('design'); x.add_argument('--match', action='append', help='<mã>_match.json — lặp được (mỗi đoạn cuộn một file)')
+    x.add_argument('--tol', type=float, default=4); x.add_argument('-o', '--out', required=True); x.set_defaults(fn=checklist)
+    x = s.add_parser('cache', help='kho spec + ảnh Figma theo dấu vân tay khung — khỏi gọi lại Figma MCP')
+    x.add_argument('action', choices=['plan', 'put', 'get']); x.add_argument('files', nargs='*')
+    x.add_argument('--cache', required=True, help='VD reports/design-compare/_cache/<fileKey>'); x.add_argument('--listing', help='kết quả figma_extract.js FRAME_IDS = [] (có fp)')
+    x.add_argument('--frames', help='giới hạn khung: 6:123,6:168'); x.add_argument('-o', '--out'); x.set_defaults(fn=cache)
     x = s.add_parser('sections'); x.add_argument('spec'); x.add_argument('-o', '--out', required=True); x.set_defaults(fn=sections)
     x = s.add_parser('mask'); x.add_argument('png'); x.add_argument('--actual', required=True); x.add_argument('--pattern', required=True)
     x.add_argument('-o', '--out', required=True); x.set_defaults(fn=mask)
