@@ -1,19 +1,25 @@
-"""User Guide Markdown → HTML 1 file (mục lục cố định, ảnh bấm phóng to, video phát tại chỗ, sáng/tối).
+"""Markdown → HTML 1 file (mục lục cố định, ảnh bấm phóng to, video phát tại chỗ, sáng/tối).
+Dùng cho MỌI tài liệu Markdown của dự án: User Guide · execution_report.md · retest_report.md · bug report · báo cáo khác.
 
-    python scripts/user-guide/md2html.py <user_guide.md> <out.html> [--standalone] [--lang vi|en] [--release]
+    python scripts/user-guide/md2html.py <file.md> <out.html> [--standalone] [--lang vi|en] [--release] [--max-video-mb 50]
 
-  --standalone  nhúng MỌI ảnh (nén JPEG q78) và video MP4 ≤ 25 MB vào HTML — gửi 1 file là xem được hết, không cần thư mục images/ video/
-  --lang        ngôn ngữ chữ giao diện (mục lục, nút, gợi ý) — khớp ngôn ngữ tài liệu. Mặc định vi
-  --release     bản phát hành: cắt mọi đoạn giữa <!-- internal:start --> và <!-- internal:end --> (mục "Vùng chưa xác minh"…).
-                Không thấy cặp đánh dấu nào ⇒ báo lỗi, không xuất (tránh lỡ gửi khách ghi chú nội bộ)
+  --standalone    nhúng MỌI ảnh (PNG nén JPEG q78) và video (MP4/WebM ≤ --max-video-mb) vào HTML — gửi 1 file là xem được hết,
+                  không cần kèm thư mục images/ evidence/ video/. Video vượt ngưỡng giữ link tương đối + in cảnh báo
+  --lang          ngôn ngữ chữ giao diện (mục lục, nút, gợi ý) — khớp ngôn ngữ tài liệu. Mặc định vi
+  --release       bản phát hành: cắt mọi đoạn giữa <!-- internal:start --> và <!-- internal:end --> (mục "Vùng chưa xác minh"…).
+                  Không thấy cặp đánh dấu nào ⇒ báo lỗi, không xuất (tránh lỡ gửi khách ghi chú nội bộ)
+  --max-video-mb  trần dung lượng MỖI video được nhúng (mặc định 50)
 
-Trong Markdown:
-  ảnh   ![Chú thích](images/x.png)                      → figure + chú thích = alt
-  video <video src="video/x.mp4" title="Chú thích" controls></video>   → trình phát, chú thích = title (không có thì tên file)
+Trong Markdown (đường dẫn tương đối tính từ file .md, kể cả ../../ sang thư mục khác):
+  ảnh   ![Chú thích](images/x.png)                                 → figure + chú thích = alt
+  video <video src="video/x.mp4" title="Chú thích" controls></video>  → trình phát, chú thích = title (không có thì tên file)
+  link  [ảnh](evidence/x.png) · [▶ video](video/TC_001.webm)        → ảnh / trình phát tại chỗ, chú thích = chữ của link
+  Nằm TRONG bảng → ảnh thu nhỏ (bấm phóng to) / trình phát nhỏ, để bảng kết quả không bị kéo giãn. File không tồn tại ⇒ giữ link + cảnh báo
   ghi chú/cảnh báo: đoạn bắt đầu bằng 💡 ❗ ⚠️ 🛑 📌 → khung màu
 Cần: pip install markdown pillow
 """
-import base64, html, json, re, sys
+import argparse, base64, html, json, re, sys
+from urllib.parse import unquote
 from pathlib import Path
 import markdown
 
@@ -27,11 +33,15 @@ I18N = {
                hint='Click an image to zoom · ← → previous/next · Esc to close'),
 }
 
-args = [a for a in sys.argv[1:] if not a.startswith('--')]
-STANDALONE, RELEASE = '--standalone' in sys.argv, '--release' in sys.argv
-LANG = sys.argv[sys.argv.index('--lang') + 1] if '--lang' in sys.argv else 'vi'
-args = [a for a in args if a != LANG]
-src, dst = Path(args[0]), Path(args[1])
+ap = argparse.ArgumentParser()
+ap.add_argument('src'); ap.add_argument('dst')
+ap.add_argument('--standalone', action='store_true')
+ap.add_argument('--release', action='store_true')
+ap.add_argument('--lang', default='vi')
+ap.add_argument('--max-video-mb', type=float, default=50)
+a = ap.parse_args()
+STANDALONE, RELEASE, LANG = a.standalone, a.release, a.lang
+src, dst = Path(a.src), Path(a.dst)
 base = src.parent
 text = src.read_text(encoding='utf-8')
 
@@ -63,9 +73,19 @@ def callout(m):
 body = re.sub(r'<p>(.*?)</p>', callout, body, flags=re.S)
 body = re.sub(r'<blockquote>\s*(.*?)\s*</blockquote>', lambda m: f'<div class="callout note">{m.group(1)}</div>', body, flags=re.S)
 
-ASSETS, KEYS = {}, {}
-def asset(path):
-    f = base / path
+IMG_EXT = {'.png': 'image/png', '.jpg': 'image/jpeg', '.jpeg': 'image/jpeg', '.gif': 'image/gif', '.webp': 'image/webp', '.svg': 'image/svg+xml'}
+VID_EXT = {'.mp4': 'video/mp4', '.webm': 'video/webm'}
+ASSETS, KEYS, MISSING, BIG = {}, {}, [], []
+
+
+def local(path):
+    """File cục bộ mà đường dẫn trỏ tới — None nếu là URL / data: / neo #."""
+    if re.match(r'^([a-z]+:|#|/)', path, re.I):
+        return None
+    return base / unquote(html.unescape(path))
+
+
+def asset(f):
     k = str(f.resolve())
     if k not in KEYS:
         suf = f.suffix.lower()
@@ -77,31 +97,64 @@ def asset(path):
                 uri = 'data:image/jpeg;base64,' + base64.b64encode(buf.getvalue()).decode()
             except ImportError:
                 uri = 'data:image/png;base64,' + base64.b64encode(f.read_bytes()).decode()
-        elif suf in ('.jpg', '.jpeg'):
-            uri = 'data:image/jpeg;base64,' + base64.b64encode(f.read_bytes()).decode()
         else:
-            uri = 'data:video/mp4;base64,' + base64.b64encode(f.read_bytes()).decode()
+            uri = f'data:{IMG_EXT.get(suf) or VID_EXT[suf]};base64,' + base64.b64encode(f.read_bytes()).decode()
         KEYS[k] = f'a{len(KEYS)}'; ASSETS[KEYS[k]] = uri
     return KEYS[k]
 
 
-def img(m):
-    alt, path = html.unescape(m.group(1)), m.group(2)
-    s = f'data-k="{asset(path)}"' if STANDALONE and (base / path).exists() else f'src="{path}"'
-    return f'<figure><img {s} alt="{html.escape(alt)}" loading="lazy"><figcaption>{html.escape(alt)}</figcaption></figure>'
-body = re.sub(r'<img alt="([^"]*)" src="([^"]+)"\s*/?>', img, body)
-body = re.sub(r'<p>\s*(<figure>.*?</figure>)\s*</p>', r'\1', body, flags=re.S)
+def source(path):
+    """Thuộc tính nguồn: data-k (nhúng) khi --standalone và file có thật, ngược lại src tương đối."""
+    f = local(path)
+    if f is None:
+        return f'src="{path}"'
+    if not f.exists():
+        MISSING.append(path); return f'src="{path}"'
+    if not STANDALONE:
+        return f'src="{path}"'
+    if f.suffix.lower() in VID_EXT and f.stat().st_size > a.max_video_mb * 1024 * 1024:
+        BIG.append(f'{path} ({f.stat().st_size / 1048576:.1f} MB)'); return f'src="{path}"'
+    return f'data-k="{asset(f)}"'
 
 
-def video(m):
-    path = m.group(1)
-    f = base / path
-    t = re.search(r'\stitle="([^"]*)"', m.group(0))
-    cap = html.unescape(t.group(1)) if t else path
-    s = f'data-k="{asset(path)}"' if STANDALONE and f.exists() and f.stat().st_size <= 25 * 1024 * 1024 else f'src="{path}"'
-    return f'<figure class="vid"><video {s} controls preload="metadata"></video><figcaption>{html.escape(cap)}</figcaption></figure>'
-body = re.sub(r'<video[^>]*\ssrc="([^"]+)"[^>]*>\s*</video>', video, body)
-body = re.sub(r'<p>\s*(<figure class="vid">.*?</figure>)\s*</p>', r'\1', body, flags=re.S)
+def image(path, cap, small):
+    s, c = source(path), html.escape(cap or Path(unquote(path)).name)
+    if small:
+        return f'<img class="thumb" {s} alt="{c}" title="{c}" loading="lazy">'
+    return f'<figure><img {s} alt="{c}" loading="lazy"><figcaption>{c}</figcaption></figure>'
+
+
+def player(path, cap, small):
+    s, c = source(path), html.escape(cap or Path(unquote(path)).name)
+    if small:
+        return f'<video class="vmini" {s} title="{c}" controls preload="metadata"></video>'
+    return f'<figure class="vid"><video {s} controls preload="metadata"></video><figcaption>{c}</figcaption></figure>'
+
+
+def media(chunk, small):
+    chunk = re.sub(r'<img alt="([^"]*)" src="([^"]+)"\s*/?>', lambda m: image(m.group(2), html.unescape(m.group(1)), small), chunk)
+
+    def vid(m):
+        t = re.search(r'\stitle="([^"]*)"', m.group(0))
+        return player(m.group(1), html.unescape(t.group(1)) if t else m.group(1), small)
+    chunk = re.sub(r'<video[^>]*\ssrc="([^"]+)"[^>]*>\s*</video>', vid, chunk)
+
+    def link(m):   # [chữ](evidence/x.png) · [▶](video/x.webm) → ảnh / trình phát; file không có thật ⇒ giữ nguyên link
+        path, txt = m.group(1), re.sub('<[^>]+>', '', m.group(2)).strip()
+        f = local(path)
+        if f is None or not f.exists():
+            if f is not None:
+                MISSING.append(path)
+            return m.group(0)
+        cap = txt if txt and txt not in ('▶', 'ảnh', 'video') else f.name
+        return (image if f.suffix.lower() in IMG_EXT else player)(path, cap, small)
+    ext = '|'.join(e[1:] for e in (*IMG_EXT, *VID_EXT))
+    return re.sub(rf'<a href="([^"]+\.(?:{ext}))">(.*?)</a>', link, chunk, flags=re.I)
+
+
+# Trong bảng → thu nhỏ; ngoài bảng → figure khổ đầy đủ
+body = ''.join(media(part, part.startswith('<table>')) for part in re.split(r'(<table>.*?</table>)', body, flags=re.S))
+body = re.sub(r'<p>\s*(<figure( class="vid")?>.*?</figure>)\s*</p>', r'\1', body, flags=re.S)
 # Liên kết sang User Guide khác (.md) → bản .html cạnh nó nếu đã xuất (người đọc HTML không mở được .md)
 body = re.sub(r'href="([^"#:]+)\.md(#[^"]*)?"', lambda m: f'href="{m.group(1)}.html{m.group(2) or ""}"' if (base / (m.group(1) + '.html')).exists() else m.group(0), body)
 body = body.replace('<table>', '<div class="tbl"><table>').replace('</table>', '</table></div>')
@@ -122,3 +175,7 @@ if ASSETS:   # bảng tài sản nạp TRƯỚC script lightbox (lightbox đọc
 dst.write_text(page, encoding='utf-8')
 print(f'{dst} — {dst.stat().st_size // 1024} KB · {sum(1 for v in ASSETS.values() if v.startswith("data:image"))} ảnh + '
       f'{sum(1 for v in ASSETS.values() if v.startswith("data:video"))} video nhúng · lang={LANG}' + (' · release' if RELEASE else ''))
+for p in dict.fromkeys(MISSING):
+    print('⚠️ không thấy file:', p)
+for p in BIG:
+    print(f'⚠️ video vượt {a.max_video_mb:g} MB — KHÔNG nhúng, HTML vẫn trỏ link tương đối (nâng --max-video-mb nếu cần):', p)

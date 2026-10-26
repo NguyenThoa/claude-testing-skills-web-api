@@ -201,7 +201,7 @@ Agent sử dụng skills trong `.claude/skills/` tùy theo nhiệm vụ:
 | `skills-automation-code-reviewer` | Review chất lượng automation code theo Definition of Done — hard sleep, POM, Allure metadata, assertion yếu |
 | `skills-jira-integration`       | Tích hợp Jira/Xray — lấy requirements, đẩy test results                             |
 | `skills-bug-reporter`           | Sinh bug report chuẩn từ test FAIL — evidence, severity/priority, đẩy Jira            |
-| `skills-manual-test-executor`   | Thực thi manual TC trên browser thật qua Playwright MCP — chấm PASS/FAIL/BLOCKED/SKIPPED, xuất execution report |
+| `skills-manual-test-executor`   | Thực thi manual TC trên browser thật qua Playwright MCP — chấm PASS/FAIL/BLOCKED/SKIPPED, quay video từng TC (`video/` ngang cấp `evidence/`), xuất execution report |
 | `skills-test-report-analyzer`   | Phân tích test report **một lần chạy** — automation lẫn manual, gom nhóm failure theo root cause, đề xuất thứ tự xử lý |
 | `skills-test-progress-reporter` | Báo cáo tiến độ **một kỳ trong đợt** (ngày/tuần) — so thực tế với lịch plan, chỉ số trong kỳ, trở ngại, rủi ro mới, đề xuất điều chỉnh — ISTQB CTFL v4.0 mục 5.3.2 |
 | `skills-test-summary-reporter`  | Tổng hợp **toàn dự án tại một mốc** — gộp nhiều execution report + bug + RTM, đối chiếu tiêu chí exit, khuyến nghị go/no-go |
@@ -290,10 +290,13 @@ docs/
 │   └── <module>/<nền-tảng>/                    ← mỗi lần chạy thuộc ĐÚNG MỘT nền tảng
 │       ├── run_<timestamp>/
 │       │   ├── execution_report.md             ← ô `Loại nguồn`: Bộ TC / Checklist <loại> — mục checklist mang mã CL-<…>-<nn>
-│       │   └── evidence/<TC_ID>_<mô_tả>.png
+│       │   ├── execution_report.html           ← chỉ khi user yêu cầu — md2html.py --standalone, nhúng ảnh + video
+│       │   ├── evidence/<TC_ID>_<mô_tả>.png
+│       │   └── video/<TC_ID>.webm               ← NGANG CẤP evidence/ — mặc định mỗi TC đã chạy 1 video; input `Quay video`: Có · Chỉ giữ FAIL · Không
 │       ├── retest_<timestamp>/                 ← /retest-fixed-bugs
 │       │   ├── retest_report.md
-│       │   └── evidence/*.png
+│       │   ├── evidence/*.png
+│       │   └── video/<BUG_ID>_lan<n>.webm · <TC_ID>.webm ← mỗi lần lặp + mỗi TC regression
 │       └── analysis_<timestamp>.md             ← /analyze-test-report nhánh MANUAL
 │
 ├── traceability/                               ← /generate-traceability-matrix — ghi đè tại chỗ, bản cũ tra git
@@ -337,7 +340,7 @@ Các trang tĩnh trong `scripts/`, mở bằng cách double-click, chạy offlin
 | `scripts/testcases-viewer/bundle.html` | `test_cases_*.md` | Duyệt, lọc, xuất Excel test case |
 | `scripts/execution-viewer/bundle.html` | `execution_report.md` · `retest_report.md` | Xem kết quả chạy (bộ TC lẫn checklist — nhãn `CHECKLIST` riêng), so sánh giữa các lần chạy, xuất CSV/Excel |
 | `scripts/traceability-viewer/bundle.html` | cả thư mục `docs/traceability/` (file chung + file từng module) | Xem độ phủ REQ theo module · Story, lọc 🔴 🟠 🟡 🟣 ✅ ⏭️, TC chưa automate, gap, việc cần làm, xuất CSV/Excel |
-| `scripts/user-guide/md2html.py` (chạy bằng Python) | `user_guide_<module>.md` | Xuất User Guide thành HTML 1 file nhúng ảnh + video (`--standalone --lang <vi\|en> [--release]`) — cùng thư mục có công cụ quay video/highlight, xem `scripts/user-guide/README.md` |
+| `scripts/user-guide/md2html.py` (chạy bằng Python) | `user_guide_<module>.md` · `execution_report.md` · `retest_report.md` · **mọi `.md`** | Xuất Markdown thành HTML 1 file nhúng ảnh + video (`--standalone --lang <vi\|en> [--release]`) — **user bảo "xuất MD sang HTML" là luôn dùng script này với `--standalone`**, không tự viết HTML, không để ảnh/video dạng link rời — cùng thư mục có công cụ quay video/highlight, xem `scripts/user-guide/README.md` |
 | `scripts/design-compare/dc.py` (chạy bằng Python) | spec JSON của Figma (`figma_extract.js`) + của UI thật (`collect_dom.js` / page source mobile) | Đo lệch thiết kế ↔ UI (`match`), dựng ảnh Figma \| App đặt cạnh nhau (`visual`), dựng ảnh Figma từ JSON khi hết hạn mức MCP (`render`), khoanh DIFF (`annotate`), che dữ liệu cá nhân (`mask` · `match --redact`), ghép mục báo cáo (`sections`), ΔE màu — xem `scripts/design-compare/README.md` |
 | `scripts/design-review-viewer/bundle.html` | cả thư mục `docs/design-reviews/` (danh mục + `design_compare_report.md` + `evidence/`) | Lọc DIFF theo module · nền tảng · trạng thái · mức độ · ai xử lý, xem ảnh Figma \| App và ảnh khoanh, cảnh báo High / Cần PO quyết / khung ❔, xuất CSV/Excel |
 | `scripts/bugs-viewer/bundle.html` | `docs/bugs/README.md` (danh mục) · `docs/bugs/<module>/<nền-tảng>/BUG_*.md` | Lọc bug theo Severity/Priority/Trạng thái, xem Lịch sử retest, xuất CSV/Excel |
@@ -356,7 +359,7 @@ Các trang tĩnh trong `scripts/`, mở bằng cách double-click, chạy offlin
 | **KHÔNG xoá dòng REQ** — tính năng gỡ thì đổi trạng thái 🔴 Deprecated | Xoá dòng là mất dấu vết |
 | **KHÔNG đổi / đánh lại TC ID** khi cập nhật TC theo ticket — sửa tại chỗ, ghi **mốc git** (hash commit trước khi sửa) vào Nhật ký, TC bị gỡ gắn tag `@Deprecated` ở cột `Tags` + tiền tố `🗑️ Deprecated (<TICKET-ID>, <ngày>) —` ở `Test Scenario` (bảng TC không có cột trạng thái) — `/execute-test-cases`, RTM, Bảng Đối Soát Coverage lọc theo tag này | TC ID là khoá nối sang `allure.label('testId', ...)` trong script, cột TC ID của RTM và execution report cũ. Đổi là cắt cả ba mối nối, không có cách phát hiện tự động |
 | Mọi thay đổi requirements phải ghi **Nhật ký thay đổi** ở cuối tài liệu module | Bộ nhớ liền mạch giữa các phiên, và là nơi báo TC nào đã stale |
-| Evidence nằm **cùng** tài liệu sinh ra nó (recon → `<module>/<nền-tảng>/evidence/`, execution → `<module>/<nền-tảng>/run_*/evidence/`) | Di chuyển/xoá không lạc file; link tương đối không gãy |
+| Evidence nằm **cùng** tài liệu sinh ra nó (recon → `<module>/<nền-tảng>/evidence/`, execution → `<module>/<nền-tảng>/run_*/evidence/`, video thực thi → `run_*/video/` ngang cấp `evidence/`) | Di chuyển/xoá không lạc file; link tương đối không gãy |
 | 🔒 **KHÔNG ghi giá trị bí mật thật vào `docs/`** — mật khẩu, token, cookie xác thực, session id, API key. Ghi **hình thái** (`<16 ký tự hex>`) thay cho giá trị | `docs/` được commit và **lịch sử git không xoá được bằng cách sửa file**. Credentials sống ở `.env` (đã `.gitignore`); tài liệu chỉ mô tả *hình dạng* |
 | 📸 **Evidence chụp đúng phạm vi đối tượng cần chứng minh, không chụp thừa** — đối tượng nằm trọn trong viewport thì chụp viewport, đừng full-page kéo theo cả trang dữ liệu nghiệp vụ | Ảnh full-page của màn hình nghiệp vụ kéo theo tên khách hàng, số tiền, nhật ký hoạt động — không liên quan gì tới REQ mà vẫn bị commit |
 | 🔍 **Chụp xong phải mở lại ảnh xác nhận đúng trạng thái** trước khi ghi vào Danh mục Evidence | Thao tác mở dropdown/tab có thể thất bại âm thầm. Dòng danh mục sai **nguy hiểm hơn không có ảnh** — nó tạo cảm giác REQ đã có bằng chứng |
@@ -459,7 +462,7 @@ rm -rf docs .playwright-mcp task.md .claude/settings.local.json
 
 ⚠️ **`.claude/settings.local.json`** là permission tích luỹ theo từng máy/phiên, thường chứa đường dẫn tuyệt đối của dự án cũ. Đã đưa vào `.gitignore` — nếu file còn bị git theo dõi từ trước, gỡ bằng: `git rm --cached .claude/settings.local.json`
 
-⚠️ **Trước khi xoá, kiểm tra ảnh trong `docs/executions/*/run_*/evidence/`, `docs/design-reviews/*/run_*/evidence/` và `docs/user-guides/*/images/`** — screenshot chụp hệ thống thật, thường chứa dữ liệu khách hàng (tên, email, số tiền). Quan trọng hơn nữa: **đừng commit chúng lên repo công khai**.
+⚠️ **Trước khi xoá, kiểm tra ảnh + video trong `docs/executions/*/run_*/evidence/` · `video/`, `docs/design-reviews/*/run_*/evidence/` và `docs/user-guides/*/images/`** — screenshot chụp hệ thống thật, thường chứa dữ liệu khách hàng (tên, email, số tiền). Quan trọng hơn nữa: **đừng commit chúng lên repo công khai**.
 
 Không cần dọn gì thêm. Agent tự tạo lại `docs/` và 2 file danh mục (`docs/requirements/README.md`, `docs/testcases/README.md`) ở lần chạy workflow đầu tiên — xem skill `skills-requirements-analyzer` mục 5.7.1.
 
@@ -553,8 +556,8 @@ Agent sử dụng workflows trong `.claude/commands/` qua slash commands:
 | `/fetch-jira-requirements`              | Lấy requirements/user stories từ Jira                     |
 | `/import-test-results-xray`             | Đẩy kết quả test lên Xray                              |
 | `/create-bug-report`                    | Sinh bug report chuẩn từ test FAIL (tùy chọn đẩy Jira)  |
-| `/execute-test-cases`                   | Thực thi manual TC **hoặc checklist** trên browser thật — chấm PASS/FAIL/BLOCKED/SKIPPED, xuất execution report (ô `Loại nguồn` phân biệt bộ TC / checklist) |
-| `/retest-fixed-bugs`                    | **Đóng vòng lặp bug** — retest bug đã fix trên build mới, chấm FIXED/NOT_FIXED/PARTIAL, chạy regression quanh vùng fix (2 modes: RETEST/FULL) |
+| `/execute-test-cases`                   | Thực thi manual TC **hoặc checklist** trên browser thật — chấm PASS/FAIL/BLOCKED/SKIPPED, quay video từng TC vào `video/` ngang cấp `evidence/` (mặc định bật, tắt bằng input `Quay video`), xuất execution report (ô `Loại nguồn` phân biệt bộ TC / checklist) · xuất HTML nhúng ảnh + video khi được yêu cầu |
+| `/retest-fixed-bugs`                    | **Đóng vòng lặp bug** — retest bug đã fix trên build mới, chấm FIXED/NOT_FIXED/PARTIAL, chạy regression quanh vùng fix, quay video mỗi lần lặp + mỗi TC regression vào `video/` — tắt được (2 modes: RETEST/FULL) |
 | `/analyze-test-report`                  | Phân tích test report **một lần chạy** — 2 nhánh AUTOMATION / MANUAL, gom nhóm failure, đề xuất xử lý |
 | `/generate-master-test-plan`            | Master Test Plan cấp quản lý — đầu vào phiếu YAML `plans/master-test-plan/test_plan.config.yaml`. Phạm vi **module × nền tảng**, cấp độ · loại · độc lập kiểm thử, chiến lược tự động hoá · phi chức năng, tiêu chí vào/ra, môi trường · dữ liệu kiểm thử, quản lý lỗi, lịch · ước lượng · ngân sách, rủi ro dự án + sản phẩm. Xuất `docs/test-plans/test_plan_<mốc>.md`, bám 29119-3, phủ đủ ISTQB CTFL v4.0 mục 5.1.1 |
 | `/generate-test-progress-report`        | Báo cáo tiến độ **một kỳ** trong đợt — so thực tế với lịch plan, chỉ số trong kỳ, trở ngại, rủi ro mới, kế hoạch kỳ tới, đề xuất điều chỉnh. **Không** khuyến nghị go/no-go |

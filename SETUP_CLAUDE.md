@@ -131,6 +131,7 @@ Kèm file `.claude/playwright-mcp-config.json`:
 
 ```json
 {
+  "capabilities": ["devtools"],
   "browser": {
     "launchOptions": {
       "args": [
@@ -145,6 +146,7 @@ Kèm file `.claude/playwright-mcp-config.json`:
 
 | Tham số | Tác dụng |
 |---|---|
+| `"capabilities": ["devtools"]` | Mở thêm nhóm tool `browser_start_video` · `browser_stop_video` · `browser_video_chapter` (cùng tracing) — `/execute-test-cases` và `/retest-fixed-bugs` dùng để **quay video từng TC** vào `video/` ngang cấp `evidence/`. Video mặc định bật, tắt cho từng lần chạy bằng input `Quay video: Không` (hoặc `Chỉ giữ FAIL`) — dòng config này cứ để nguyên, tool chỉ chạy khi được gọi. Thiếu dòng này mà vẫn muốn quay thì hai workflow đó dừng và báo khởi động lại. Đổi xong phải **khởi động lại Claude Code** |
 | `--test-type` | Tắt thanh cảnh báo "Chrome đang bị điều khiển bởi phần mềm tự động" — đỡ chiếm chiều cao |
 | `--window-position=0,0` | Ghim cửa sổ về góc trên trái, khỏi bị lệch ra ngoài màn |
 | `initPage` → `.claude/playwright-mcp-init.cjs` | Tắt popup **Save password? · Change your password · Save address? · Save card?** của Chrome — Chrome không có cờ dòng lệnh cho các popup này nên script mở `chrome://settings` một lần lúc khởi động, đặt preference (`credentials_enable_service`, `profile.password_manager_leak_detection`, `autofill.profile_enabled`, `autofill.credit_card_enabled` = `false`). Đường dẫn tính theo thư mục file config |

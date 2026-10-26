@@ -11,7 +11,7 @@ Bộ công cụ của skill [`skills-user-guide-writer`](../../.claude/skills/sk
 | `rec-template.js` | VIDEO (LIVE dùng y hệt, chỉ bỏ `UG.record`) | Khung kịch bản quay 1 phần — copy rồi điền `<…>` |
 | `annotate.py` | DOC (và ảnh có sẵn bất kỳ) | Vẽ **cùng kiểu highlight** lên ảnh có sẵn theo `spec.json`; `--grid` sinh ảnh lưới toạ độ để đọc vị trí khung |
 | `webm2mp4.py` | VIDEO | `.webm` → `.mp4` an toàn (kiểm ffprobe rồi mới xoá bản gốc) · `--concat full_walkthrough.mp4 --order …` gộp video trọn luồng |
-| `md2html.py` + `template.html` | mọi mode | User Guide `.md` → HTML 1 file: `--standalone` nhúng ảnh + video · `--lang vi\|en` chữ giao diện · `--release` cắt phần `<!-- internal:start -->…<!-- internal:end -->` |
+| `md2html.py` + `template.html` | mọi mode — **và mọi `.md` khác** (`execution_report.md`, `retest_report.md`, bug report…) | Markdown → HTML 1 file: `--standalone` nhúng ảnh + video (MP4/WebM; cả `![](…)`, `<video>` lẫn link `[ảnh](evidence/x.png)` · `[▶](video/x.webm)` — trong bảng thành ảnh thu nhỏ / trình phát nhỏ) · `--max-video-mb` trần mỗi video (mặc định 50) · `--lang vi\|en` chữ giao diện · `--release` cắt phần `<!-- internal:start -->…<!-- internal:end -->` |
 
 Cần: Playwright MCP (`browser_run_code_unsafe`), Python 3 + `pip install markdown pillow`, `ffmpeg` + `ffprobe` trong PATH (mode VIDEO).
 
@@ -62,3 +62,11 @@ python scripts/user-guide/annotate.py docs/user-guides/login/annotate.json      
 python scripts/user-guide/webm2mp4.py docs/user-guides/<module>/video --concat full_walkthrough.mp4 --order p1_a,p2_b,p3_c
 python scripts/user-guide/md2html.py docs/user-guides/<module>/user_guide_<module>.md docs/user-guides/<module>/user_guide_<module>.html --standalone --lang en --release
 ```
+
+**Report thực thi / retest** (`/execute-test-cases`, `/retest-fixed-bugs`) — video từng TC nằm ở `video/` ngang cấp `evidence/`:
+
+```bash
+python scripts/user-guide/md2html.py docs/executions/<module>/web/<run_id>/execution_report.md docs/executions/<module>/web/<run_id>/execution_report.html --standalone
+```
+
+In `⚠️ không thấy file` = link trong report gãy → sửa rồi xuất lại. WebM không phát trên Safari — cần thì đổi MP4 bằng `webm2mp4.py --keep` và sửa đuôi link.

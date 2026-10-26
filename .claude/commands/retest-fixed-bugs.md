@@ -7,7 +7,7 @@ skills:
 
 # Workflow: Retest Bug Đã Fix
 
-> **BẮT BUỘC (MANDATORY SKILL):** Bạn PHẢI nạp và đọc kỹ **`skills-manual-test-executor`** (thứ tự thao tác browser, 4 trạng thái kết quả, quy tắc auto-skip, evidence) và **`skills-bug-reporter`** (template bug, mục **Lịch sử retest**, thang Severity/Priority) trước khi bắt đầu.
+> **BẮT BUỘC (MANDATORY SKILL):** Bạn PHẢI nạp và đọc kỹ **`skills-manual-test-executor`** (thứ tự thao tác browser, 4 trạng thái kết quả, quy tắc auto-skip, evidence, **video quay màn hình**, xuất HTML) và **`skills-bug-reporter`** (template bug, mục **Lịch sử retest**, thang Severity/Priority) trước khi bắt đầu.
 
 Workflow này đóng **vòng lặp cuối** của quy trình kiểm thử: dev báo đã fix → QA xác minh trên build mới → xác nhận đóng bug hoặc mở lại, **kèm regression quanh vùng vừa sửa**.
 
@@ -16,6 +16,7 @@ Workflow này đóng **vòng lặp cuối** của quy trình kiểm thử: dev b
 - **Tất cả output bằng Tiếng Việt**
 - **KHÔNG chấm FIXED vì "không thấy lỗi nữa"** — phải chạy **đúng Steps to Reproduce trong bug report gốc**, không rút gọn, không đi đường khác
 - **KHÔNG sửa bug report gốc** cho khớp hành vi mới — chỉ **thêm** mục Lịch sử retest. Nội dung gốc là bằng chứng lịch sử
+- **Mặc định mỗi lần chạy lại steps và mỗi TC regression có 1 video** ở `retest_<timestamp>/video/` — ngang cấp `evidence/`. Video FIXED là bằng chứng đóng bug mạnh hơn một ảnh trạng thái cuối. Tắt được bằng input `Quay video`
 - Fix xong mà sinh lỗi khác ở chỗ khác là chuyện **thường xuyên** — đó là lý do Mode FULL tồn tại, đừng bỏ qua vì "bug đã fix rồi"
 
 ## 2 Chế độ (Mode)
@@ -37,6 +38,7 @@ Workflow này đóng **vòng lặp cuối** của quy trình kiểm thử: dev b
 | **Build / version mới** | User cung cấp | ✅ |
 | Môi trường + tài khoản | `.env` hoặc user | ✅ |
 | Môi trường dùng chung? | User — bật quy tắc auto-skip của skill executor | ✅ |
+| Quay video | User — `Có` (mặc định) · `Chỉ giữ FAIL` (giữ video lần lặp/TC không đạt, xoá video FIXED/PASS) · `Không` | Tuỳ chọn |
 
 ⛔ **Chốt chặn — build phải khác build lúc log bug.** Đối chiếu cột `Build / Version` trong bug report gốc với build hiện tại:
 
@@ -64,7 +66,9 @@ Trích từ bug report gốc, **không diễn giải lại**:
 
 ## Bước 2: Chạy lại đúng steps (verify bug)
 
-Theo thứ tự thao tác browser bắt buộc của skill executor: `navigate → wait → snapshot → interact` (KHÔNG resize).
+Theo thứ tự thao tác browser bắt buộc của skill executor: `navigate → wait → snapshot → interact` (KHÔNG resize). Đăng nhập đầu buổi **ngoài** video; `Quay video` ≠ `Không` mà thiếu tool `browser_start_video` → dừng, báo user khởi động lại Claude Code hoặc chạy với `Quay video: Không` (mục *Video quay màn hình* của skill).
+
+**Quay từng lần chạy** (bỏ qua khi `Quay video: Không`; `Chỉ giữ FAIL` thì lần lặp chấm đạt xoá video ngay sau khi dừng)**:** mỗi lần lặp là một video riêng — `browser_start_video` (`filename` = `docs/executions/<module>/<nền-tảng>/retest_<timestamp>/video/<BUG_ID>_lan<n>.webm`, `size` = viewport) → `browser_video_chapter` (`title` = `<BUG_ID> · lần <n>`, `description` = tóm tắt bug, `duration` = `1500`) → chạy đúng steps → chấm → `browser_stop_video` → mới khôi phục trạng thái cho lần sau. Video đầu tiên: kiểm file rơi đúng thư mục `video/` của retest.
 
 **Chạy đúng steps gốc, tối thiểu 2 lần** — fix "lúc được lúc không" là dấu hiệu fix chưa triệt để, phải phát hiện ở đây chứ không phải ở production.
 
@@ -79,7 +83,7 @@ Theo thứ tự thao tác browser bắt buộc của skill executor: `navigate �
 
 > **Quy tắc vàng:** không quan sát được kết quả → `CANNOT_VERIFY`, tuyệt đối không suy đoán "chắc fix rồi". Giống hệt quy tắc BLOCKED của skill executor.
 
-**Evidence bắt buộc:** screenshot trạng thái sau khi chạy steps — cả khi FIXED. Ảnh FIXED chính là bằng chứng đóng bug.
+**Evidence bắt buộc:** screenshot trạng thái sau khi chạy steps — cả khi FIXED — **và** (mặc định) video của **mọi** lần lặp. Ảnh + video FIXED chính là bằng chứng đóng bug; lần lặp ra kết quả khác nhau thì video là thứ duy nhất cho dev thấy hai lần đã làm gì khác nhau.
 
 ---
 
@@ -105,7 +109,7 @@ Fix là **thay đổi code** — mà mọi thay đổi code đều có thể là
 - Vòng 3 chỉ mở khi fix **thực sự** đụng thành phần dùng chung — suy đoán "biết đâu ảnh hưởng" thì không mở
 - Ghi rõ trong report: đã chọn bao nhiêu TC, theo vòng nào, **và cố ý bỏ những gì**
 
-Chạy nhóm TC đã chọn theo đúng quy trình `skills-manual-test-executor` — chấm PASS/FAIL/BLOCKED/SKIPPED như bình thường.
+Chạy nhóm TC đã chọn theo đúng quy trình `skills-manual-test-executor` — chấm PASS/FAIL/BLOCKED/SKIPPED như bình thường, quay `video/<TC_ID>.webm` cho mỗi TC (SKIPPED không quay) theo đúng giá trị `Quay video`.
 
 🔴 **TC regression FAIL = regression do fix gây ra** → đây là **bug MỚI**, không phải bug cũ. Tạo bug riêng bằng `/create-bug-report`, ghi rõ ở mục Ghi chú: *"phát sinh sau khi fix BUG_xxx"*.
 
@@ -114,7 +118,7 @@ Chạy nhóm TC đã chọn theo đúng quy trình `skills-manual-test-executor`
 ## Bước 4: Xuất Retest Report
 
 File: `docs/executions/<module>/<nền-tảng>/retest_<timestamp>/retest_report.md` — `<nền-tảng>` lấy theo thư mục của bug (`docs/bugs/<module>/<nền-tảng>/`). Bug cũ nằm thẳng ở `docs/bugs/<module>/` → nền tảng lấy từ dòng `Môi trường` của bug
-Evidence: `docs/executions/<module>/<nền-tảng>/retest_<timestamp>/evidence/`
+Evidence: `docs/executions/<module>/<nền-tảng>/retest_<timestamp>/evidence/` · Video: `docs/executions/<module>/<nền-tảng>/retest_<timestamp>/video/` (ngang cấp `evidence/`)
 
 ```markdown
 # Retest Report — <Module> · Build <version>
@@ -130,6 +134,7 @@ Evidence: `docs/executions/<module>/<nền-tảng>/retest_<timestamp>/evidence/`
 | Người thực hiện | <tên tester> (agent hỗ trợ) |
 | Thời gian | 12-08-2026 14:10 → 14:55 (45 phút) |
 | Môi trường dùng chung? | Có — auto-skip TC phá huỷ đang BẬT |
+| Video | Có — 1 video/lần lặp + 1 video/TC regression tại `video/` (WebM 1600×750) |
 
 ## 1. Kết quả verify bug
 
@@ -143,16 +148,17 @@ Evidence: `docs/executions/<module>/<nền-tảng>/retest_<timestamp>/evidence/`
 | Actual lần này | Bảng hiển thị "Không tìm thấy kết quả", không có thông báo lỗi |
 | Số lần lặp | 2/2 đều đúng |
 | Evidence | ![](evidence/BUG_customers_1785612000_TC011_retest_fixed.png) |
+| Video | <video src="video/BUG_customers_1785612000_TC011_lan1.webm" title="Lần 1 — FIXED" controls></video> <video src="video/BUG_customers_1785612000_TC011_lan2.webm" title="Lần 2 — FIXED" controls></video> |
 
 ## 2. Regression quanh vùng fix
 
 **Phạm vi đã chọn:** 8 TC — vòng 1 (cùng `REQ-CUST-04`): 5 TC · vòng 2 (cùng màn hình danh sách): 3 TC
 **Cố ý bỏ:** TC export (vòng 3) — fix chỉ đụng tầng search, không đụng export
 
-| TC ID | Test Scenario | Kết quả | Ghi chú |
-|---|---|---|---|
-| CRM_CUST_TC_009 | Search theo tên đầy đủ | ✅ PASS | — |
-| CRM_CUST_TC_012 | Search ký tự đặc biệt `%` | ❌ FAIL | **Regression mới** — xem mục 3 |
+| TC ID | Test Scenario | Kết quả | Ghi chú | Video |
+|---|---|---|---|---|
+| CRM_CUST_TC_009 | Search theo tên đầy đủ | ✅ PASS | — | [▶](video/CRM_CUST_TC_009.webm) |
+| CRM_CUST_TC_012 | Search ký tự đặc biệt `%` | ❌ FAIL | **Regression mới** — xem mục 3 | [▶](video/CRM_CUST_TC_012.webm) |
 
 | Trạng thái | Số lượng |
 |---|---|
@@ -172,6 +178,7 @@ Evidence: `docs/executions/<module>/<nền-tảng>/retest_<timestamp>/evidence/`
 | Nghi ngờ nguyên nhân | Bộ lọc escape ký tự thêm khi fix SQL injection đã escape luôn wildcard hợp lệ |
 | Bug mới | BUG_customers_1785700456_TC012 |
 | Evidence | ![](evidence/CRM_CUST_TC_012_regression.png) |
+| Video | <video src="video/CRM_CUST_TC_012.webm" title="CRM_CUST_TC_012 — trả 0 kết quả với từ khoá chứa %" controls></video> |
 
 ## 4. Dữ liệu đã tạo & dọn dẹp
 
@@ -188,6 +195,8 @@ Evidence: `docs/executions/<module>/<nền-tảng>/retest_<timestamp>/evidence/`
 - Fix giải quyết đúng lỗi gốc nhưng làm hỏng search wildcard — **cần fix bổ sung trước khi release**
 - Đề nghị dev thu hẹp phạm vi escape, chỉ escape ký tự nguy hiểm thay vì escape toàn bộ
 ```
+
+**User yêu cầu xuất HTML** → `python scripts/user-guide/md2html.py <…>/retest_report.md <…>/retest_report.html --standalone` — nhúng sẵn ảnh evidence + video, đặt cạnh file `.md` (mục *Xuất report sang HTML* của skill executor).
 
 ---
 
@@ -229,6 +238,7 @@ Bug **đẩy lên Jira** → cập nhật trạng thái tương ứng qua `skill
 - [ ] Chạy **đúng** Steps to Reproduce gốc, không rút gọn
 - [ ] Lặp tối thiểu 2 lần, kết quả nhất quán (lệch nhau → ghi rõ, không làm tròn thành FIXED)
 - [ ] Có screenshot **kể cả khi FIXED**
+- [ ] Video đúng giá trị `Quay video` (mặc định: **mọi** lần lặp + mọi TC regression), nằm ở `video/` ngang cấp `evidence/`, link trỏ đúng file; header ghi ô `Video`
 - [ ] Mode FULL: đã ghi rõ phạm vi regression đã chọn **và phần cố ý bỏ**
 - [ ] TC regression FAIL đã tách thành **bug mới**, không gộp vào bug cũ
 - [ ] Đã thêm dòng vào Lịch sử retest của bug gốc, **không** sửa nội dung gốc
@@ -249,6 +259,7 @@ Bug **đẩy lên Jira** → cập nhật trạng thái tương ứng qua `skill
 | Chạy lại cả suite cho "chắc ăn" | Regression có trần 15 TC; vượt thì dùng `/execute-test-cases` |
 | Bỏ regression vì "chỉ sửa một dòng" | Một dòng vẫn đủ làm hỏng luồng khác — đó là lý do có Mode FULL |
 | Retest trên đúng build đã log bug | Dừng, hỏi user build mới |
+| Tự bỏ video các lần lặp khi user không yêu cầu tắt | Mặc định mỗi lần lặp một video — "2/2 lần FIXED" phải xem lại được cả hai lần |
 
 ---
 

@@ -1,4 +1,5 @@
 {
+  "capabilities": ["devtools"],
   "browser": {
     "launchOptions": {
       "args": [

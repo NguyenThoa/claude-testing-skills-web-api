@@ -61,6 +61,7 @@ Sử dụng skill này khi:
 
 ## Evidence
 - Screenshot: [<tên file>.png](<path/link>) — **link tới ảnh gốc** trong `docs/executions/<module>/<nền-tảng>/run_*/evidence/` (đường dẫn tương đối từ file bug: `../../../executions/<module>/<nền-tảng>/run_<timestamp>/evidence/<tên>.png`), **KHÔNG** chép ảnh sang `docs/bugs/` — một nguồn sự thật. Ảnh chụp thêm lúc tái hiện thì lưu vào `evidence/` của lần chạy tương ứng rồi link. BẮT BUỘC viết đúng cú pháp link Markdown `[]()` nếu ảnh còn xem được; `bugs-viewer` chỉ nhận diện ảnh viết theo cú pháp này làm evidence bấm-xem-được. Ảnh cũ đã mất (không còn truy cập) thì ghi tên file bằng code span `` `tên_file.png` `` (KHÔNG bọc trong `[]()`) để không hiện nhầm thành ảnh "chưa nạp, kéo vào là được"
+- Video: [▶ <TC_ID>.webm](../../../executions/<module>/<nền-tảng>/run_<timestamp>/video/<TC_ID>.webm) — video của chính TC fail do `/execute-test-cases` quay (thư mục `video/` ngang cấp `evidence/`). Cũng **chỉ link**, không chép file. Lần chạy không có video (chạy cũ, hoặc chạy với `Quay video: Không`) thì bỏ dòng này
 - Error log / Stack trace: (code block)
 - Console / Network log: (nếu liên quan)
 

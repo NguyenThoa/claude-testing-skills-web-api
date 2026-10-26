@@ -25,6 +25,7 @@
 - Giới hạn thời gian chạy: [VD: 60 phút — để trống = chạy hết phạm vi đã chọn]
 - Dữ liệu tiền đề đã có sẵn: [VD: khách hàng Auto_Customer_1785700456 đã tồn tại — để trống nếu agent tự tạo]
 - Sinh bug report ngay cho TC FAIL? [Có / Không — mặc định Không, chỉ ghi vào execution report]
+- Quay video? [Có / Chỉ giữ FAIL / Không — mặc định Có] — video lưu ở video/ cạnh evidence/; "Chỉ giữ FAIL" xoá video của TC đạt để nhẹ repo
 
 # GHI CHÚ
 - Agent chạy headed mode (viewport theo `--viewport-size` lúc launch, không resize), ghi kết quả sau mỗi TC

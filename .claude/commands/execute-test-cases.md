@@ -1,5 +1,5 @@
 ---
-description: Thực thi manual test cases trên browser thật qua Playwright MCP — chấm PASS/FAIL/BLOCKED/SKIPPED, thu evidence, xuất execution report. Dành cho tester manual, KHÔNG sinh code automation.
+description: Thực thi manual test cases trên browser thật qua Playwright MCP — chấm PASS/FAIL/BLOCKED/SKIPPED, thu evidence (ảnh + video từng TC), xuất execution report (HTML nhúng ảnh + video khi được yêu cầu). Dành cho tester manual, KHÔNG sinh code automation.
 skills:
   - skills-manual-test-executor
   - skills-bug-reporter
@@ -16,6 +16,7 @@ Chạy bộ manual test cases trực tiếp trên browser thật, đối chiếu
 - **Chạy thật, không suy đoán** — mọi PASS/FAIL phải dựa trên quan sát UI qua `snapshot`
 - **TC là chuẩn** — thực tế lệch TC thì ghi FAIL, **TUYỆT ĐỐI KHÔNG sửa TC** cho khớp
 - **Headed mode, viewport theo `--viewport-size` lúc launch** (bảng ở `.claude/rules/playwright_rules.md` mục 1) — tester phải nhìn được agent đang thao tác, KHÔNG resize phóng vượt cửa sổ
+- **Mặc định mỗi TC đã chạy có 1 video** ở `<run_id>/video/` — ngang cấp `evidence/`. Tắt được bằng input `Quay video` (mục *Video quay màn hình* của skill)
 - Tất cả output bằng **Tiếng Việt**
 
 ## Input cần thu thập
@@ -27,6 +28,7 @@ Chạy bộ manual test cases trực tiếp trên browser thật, đối chiếu
 | URL & tài khoản | ⭐ Bắt buộc | Môi trường đang test + tài khoản đăng nhập |
 | Môi trường dùng chung? | ⭐ Bắt buộc | Có → bật auto-skip TC phá huỷ; Không → chạy đầy đủ, ghi rõ trong report |
 | Build / Version | Khuyến nghị | Để truy vết kết quả về đúng bản build |
+| Quay video | Tuỳ chọn — mặc định **`Có`** | `Có` · `Chỉ giữ FAIL` (quay hết, xoá video TC PASS) · `Không` (*"không quay video"*). Không nói → `Có`, không hỏi thêm |
 
 ## Các bước thực hiện
 
@@ -42,28 +44,31 @@ Chạy bộ manual test cases trực tiếp trên browser thật, đối chiếu
 
 ### Bước 2: Chuẩn bị
 1. Tạo `run_id` dạng `run_<timestamp>`
-2. Tạo thư mục evidence `docs/executions/<module>/<nền-tảng>/<run_id>/evidence/` — `<nền-tảng>` là nền tảng của file TC đang chạy. Workflow này chạy trên **trình duyệt** nên là `web`; TC `@Android` / `@iOS` / `@API` không chạy ở đây. Checklist Release-readiness (`docs/checklists/_release/<nền-tảng>/`) thì `<module>` là **`_release`**
-3. Khởi tạo file report `docs/executions/<module>/<nền-tảng>/<run_id>/execution_report.md` với phần header — **bắt buộc** có ô `Loại nguồn` (`Bộ TC` / `Checklist <loại> · <Mã checklist>`)
+2. Tạo thư mục evidence `docs/executions/<module>/<nền-tảng>/<run_id>/evidence/` và — khi `Quay video` ≠ `Không` — thư mục **`video/` ngang cấp** — `<nền-tảng>` là nền tảng của file TC đang chạy. Workflow này chạy trên **trình duyệt** nên là `web`; TC `@Android` / `@iOS` / `@API` không chạy ở đây. Checklist Release-readiness (`docs/checklists/_release/<nền-tảng>/`) thì `<module>` là **`_release`**
+3. Khởi tạo file report `docs/executions/<module>/<nền-tảng>/<run_id>/execution_report.md` với phần header — **bắt buộc** có ô `Loại nguồn` (`Bộ TC` / `Checklist <loại> · <Mã checklist>`) và ô `Video`
+4. `Quay video` ≠ `Không`: kiểm có tool `browser_start_video` — không có → config `"capabilities": ["devtools"]` chưa nạp: dừng, báo user khởi động lại Claude Code hoặc chạy với `Quay video: Không`
 
 ### Bước 3: Khởi tạo browser & đăng nhập
 1. `browser_navigate(url)`
 2. **KHÔNG gọi `browser_resize`** — viewport đã đúng từ `--viewport-size` lúc launch MCP server
 3. Chờ trang load xong → `browser_snapshot()`
-4. Đăng nhập, verify đã vào được hệ thống
+4. Đăng nhập, verify đã vào được hệ thống — **chưa quay video** ở bước này (mật khẩu không vào video)
 5. **Không đăng nhập được → DỪNG NGAY**, báo user, không chạy tiếp
 
 ### Bước 4: Chạy từng TC
 Với mỗi TC theo thứ tự:
 1. **Kiểm tra Auto-Skip** — TC có tag `@PersonalOnly` (`Automation = No` **không** phải lý do bỏ qua — vẫn chạy bình thường), hoặc steps chứa Mass Delete / Select All / xoá qua URL GET / upload `.exe` / import hàng loạt → `⏭️ SKIPPED` + ghi lý do, sang TC tiếp. **Nhập chuỗi dài vào một field** (TC biên `max+1`) **không** phải lý do skip
-2. **Dựng Pre-Condition** — không dựng được → `⚠️ BLOCKED` + ghi nguyên nhân
-3. **Thực hiện đúng từng bước** trong Test Steps — không tự thêm/bớt bước
-4. **Verify từng Expected** bằng `snapshot` sau mỗi bước có kết quả quan sát được. TC đặc biệt chạy theo bảng **TC đặc biệt** của skill: TC gộp chạy **từng biến thể** (FAIL ghi mã `<TC ID>-<mã>`) · `@TechCheck` chấm phần chính, phần `🔧` kiểm nếu làm được · `@NeedsVerify` lệch thì ghi chú đối chiếu lại TC · mục checklist ghi **mã mục** `<Mã checklist>-<nn>` (VD `CL-smoke_20261009-03`), **không** ghi `#3` trần — đủ 5 luật ở mục *Chạy checklist* của skill
-5. **Chấm trạng thái:**
+2. **Bật quay** (bỏ qua khi `Quay video: Không`) — `browser_start_video` (`filename` = `docs/executions/<module>/<nền-tảng>/<run_id>/video/<TC_ID>.webm`, `size` = viewport) rồi `browser_video_chapter` (`title` = TC ID, `description` = Test Scenario, `duration` = `1500`). Video đầu tiên: kiểm file rơi đúng thư mục `video/` của run
+3. **Dựng Pre-Condition** — không dựng được → `⚠️ BLOCKED` + ghi nguyên nhân
+4. **Thực hiện đúng từng bước** trong Test Steps — không tự thêm/bớt bước
+5. **Verify từng Expected** bằng `snapshot` sau mỗi bước có kết quả quan sát được. TC đặc biệt chạy theo bảng **TC đặc biệt** của skill: TC gộp chạy **từng biến thể** (FAIL ghi mã `<TC ID>-<mã>`) · `@TechCheck` chấm phần chính, phần `🔧` kiểm nếu làm được · `@NeedsVerify` lệch thì ghi chú đối chiếu lại TC · mục checklist ghi **mã mục** `<Mã checklist>-<nn>` (VD `CL-smoke_20261009-03`), **không** ghi `#3` trần — đủ 5 luật ở mục *Chạy checklist* của skill
+6. **Chấm trạng thái:**
    - Mọi Expected khớp → `✅ PASS`
    - Có Expected không khớp → `❌ FAIL` + **screenshot ngay tại bước fail** + ghi Actual vs Expected
    - Có Expected không verify được → `⚠️ BLOCKED` (KHÔNG phải PASS)
-6. **Ghi kết quả vào report ngay** (không dồn tới cuối buổi)
-7. **Khôi phục trạng thái sạch** (đóng modal, về trang danh sách) rồi chạy TC tiếp theo
+7. **Dừng quay** — `browser_stop_video`, trước khi dọn trạng thái. `Chỉ giữ FAIL`: TC PASS → xoá video vừa quay
+8. **Ghi kết quả vào report ngay** (không dồn tới cuối buổi) — cột `Video` = `[▶](video/<TC_ID>.webm)` (video đã xoá / không quay → `—`); TC FAIL thêm dòng `Video` (thẻ `<video>`) vào chi tiết FAIL. `Quay video: Không` → không có cột `Video`
+9. **Khôi phục trạng thái sạch** (đóng modal, về trang danh sách) rồi chạy TC tiếp theo
 
 ### Bước 5: Báo tiến độ
 Sau mỗi 5–10 TC, báo 1 dòng:
@@ -78,6 +83,10 @@ Sau mỗi 5–10 TC, báo 1 dòng:
 
 ### Bước 7: Xuất report
 Xuất `execution_report.md` theo template trong skill, gồm 6 mục: Tổng kết · Kết quả từng TC · Chi tiết FAIL · TC BLOCKED · Dữ liệu đã tạo & dọn dẹp · Đề xuất bước tiếp theo.
+
+Đối chiếu thư mục `video/` với bảng mục 2: mọi TC đáng lẽ có video (theo giá trị `Quay video`) đều có file, mọi link `[▶]` đều trỏ tới file có thật. Ô `Video` ở header ghi đúng giá trị đã dùng.
+
+**User yêu cầu xuất HTML** → `python scripts/user-guide/md2html.py <…>/execution_report.md <…>/execution_report.html --standalone` — nhúng sẵn mọi ảnh evidence + video, đặt cạnh file `.md` (mục *Xuất report sang HTML* của skill).
 
 Nguồn là **checklist** → cập nhật lại cột `Trạng thái` · `Execution ID` và dòng `Trạng thái lấy từ:` của file checklist cho mọi mục đã chạy (luật 5, mục *Chạy checklist* của skill). Không đụng cột khác.
 
@@ -94,7 +103,7 @@ Agent chạy tiếp qua TC fail (fail-forward), **chỉ dừng** khi:
 ## Quy tắc quan trọng
 
 - **Pass rate không tính SKIPPED vào mẫu số** — báo cả 2 con số: tổng số TC và số TC thực chạy
-- Screenshot **chỉ** khi FAIL hoặc milestone quan trọng — không chụp mọi bước
+- Screenshot **chỉ** khi FAIL hoặc milestone quan trọng — không chụp mọi bước. Video thì quay **mọi** TC đã chạy (trừ SKIPPED) — trừ khi user tắt
 - Mọi dữ liệu tạo ra phải traceable (`Auto_<Module>_<timestamp>`) và có kế hoạch xoá
 - KHÔNG `browser_navigate` lại nếu đã ở đúng trang — tránh reload làm mất trạng thái đang test
 

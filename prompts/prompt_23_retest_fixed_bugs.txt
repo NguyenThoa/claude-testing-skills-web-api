@@ -26,6 +26,7 @@
 - Nguồn TC để chọn regression: [VD: docs/testcases/customers/TEST_CASES_CUSTOMERS_SUMMARY.md — để trống thì agent tự tìm theo module]
 - Trần số TC regression: [VD: 15 — để trống dùng mặc định 15]
 - Sinh bug report ngay cho regression mới phát hiện? [Có / Không — mặc định Không]
+- Quay video? [Có / Chỉ giữ FAIL / Không — mặc định Có] — video lưu ở video/ cạnh evidence/; "Chỉ giữ FAIL" xoá video của TC đạt để nhẹ repo
 
 # GHI CHÚ
 - Agent chạy ĐÚNG Steps to Reproduce trong bug gốc, không rút gọn, lặp tối thiểu 2 lần
