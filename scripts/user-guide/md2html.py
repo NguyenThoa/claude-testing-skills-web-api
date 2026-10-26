@@ -62,6 +62,8 @@ for ln in text.splitlines():
         lines.append('')
     lines.append(ln)
 body = markdown.markdown('\n'.join(lines), extensions=['tables', 'toc', 'sane_lists'])
+# `\|` trong ô bảng là dấu | đã thoát — python-markdown giữ nguyên dấu \ khi nó nằm trong `code`
+body = re.sub(r'<code>(.*?)</code>', lambda m: '<code>' + m.group(1).replace('\\|', '|') + '</code>', body, flags=re.S)
 
 
 def callout(m):

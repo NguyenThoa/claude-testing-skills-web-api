@@ -58,8 +58,8 @@ Chạy bộ manual test cases trực tiếp trên browser thật, đối chiếu
 ### Bước 4: Chạy từng TC
 Với mỗi TC theo thứ tự:
 1. **Kiểm tra Auto-Skip** — TC có tag `@PersonalOnly` (`Automation = No` **không** phải lý do bỏ qua — vẫn chạy bình thường), hoặc steps chứa Mass Delete / Select All / xoá qua URL GET / upload `.exe` / import hàng loạt → `⏭️ SKIPPED` + ghi lý do, sang TC tiếp. **Nhập chuỗi dài vào một field** (TC biên `max+1`) **không** phải lý do skip
-2. **Bật quay** (bỏ qua khi `Quay video: Không`) — `browser_start_video` (`filename` = `docs/executions/<module>/<nền-tảng>/<run_id>/video/<TC_ID>.webm`, `size` = viewport) rồi `browser_video_chapter` (`title` = TC ID, `description` = Test Scenario, `duration` = `1500`). Video đầu tiên: kiểm file rơi đúng thư mục `video/` của run
-3. **Dựng Pre-Condition** — không dựng được → `⚠️ BLOCKED` + ghi nguyên nhân
+2. **Bật quay** (bỏ qua khi `Quay video: Không`) — `browser_start_video` (`filename` = `docs/executions/<module>/<nền-tảng>/<run_id>/video/<TC_ID>.webm`, `size` = viewport) rồi `browser_video_chapter` (`title` = TC ID, `description` = Test Scenario, `duration` = `1500`). Video đầu tiên: kiểm file rơi đúng thư mục `video/` của run. Báo *"Browser is already in use"* → quay dự phòng bằng `page.screencast` qua `browser_run_code_unsafe` (bảng tình huống ở mục *Video quay màn hình* của skill)
+3. **Dựng Pre-Condition** — không dựng được → `⚠️ BLOCKED` + ghi nguyên nhân. Pre-Condition đòi *"trình duyệt sạch"* / *"chưa đăng nhập"* → xoá cookie trước, vì phiên của TC trước làm lệch kết quả (mục *Quy trình thực thi* của skill)
 4. **Thực hiện đúng từng bước** trong Test Steps — không tự thêm/bớt bước
 5. **Verify từng Expected** bằng `snapshot` sau mỗi bước có kết quả quan sát được. TC đặc biệt chạy theo bảng **TC đặc biệt** của skill: TC gộp chạy **từng biến thể** (FAIL ghi mã `<TC ID>-<mã>`) · `@TechCheck` chấm phần chính, phần `🔧` kiểm nếu làm được · `@NeedsVerify` lệch thì ghi chú đối chiếu lại TC · mục checklist ghi **mã mục** `<Mã checklist>-<nn>` (VD `CL-smoke_20261009-03`), **không** ghi `#3` trần — đủ 5 luật ở mục *Chạy checklist* của skill
 6. **Chấm trạng thái:**

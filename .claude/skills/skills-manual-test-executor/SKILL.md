@@ -218,6 +218,7 @@ docs/executions/<module>/<nền-tảng>/<run_id>/      (retest: retest_<timestam
 | ⏭️ SKIPPED | Không quay — TC không chạy |
 | ⚠️ BLOCKED | Có quay — video là bằng chứng vì sao không dựng được Pre-Condition |
 | TC mở tab mới | MCP tự quay tab đó ra file thứ hai `<TC_ID>-1.webm` — ghi **đủ** các file vào report |
+| `browser_start_video` báo *"Browser is already in use … use --isolated"* trong khi `browser_navigate` vẫn chạy | Máy đang chạy **2 server Playwright MCP cùng tên `playwright`** — server global (cấu hình Claude Desktop) giữ Chrome, tool quay video lại do server project xử lý nên nó mở thêm Chrome trên cùng profile và bị khoá. **Quay dự phòng trên đúng trang đang chạy** bằng `browser_run_code_unsafe` — cùng API mà tool quay video dùng, đường dẫn **tuyệt đối**: `async (page) => { await page.screencast.start({ path: '<gốc project>/docs/executions/…/video/<TC_ID>.webm', size: { width: 1600, height: 750 } }); await page.screencast.showChapter('<TC_ID>', { description: '<Test Scenario>', duration: 1500 }); }` · dừng: `await page.screencast.stop()`. Cách này chỉ quay đúng trang đó — tab khác không vào video. Ghi lý do vào ô `Video` ở header, mục Đề xuất nhắc user thêm `"capabilities": ["devtools"]` vào file cấu hình Playwright của server global (hoặc gỡ server global) rồi khởi động lại |
 | Bước làm lộ giá trị bí mật **dạng rõ** (bật "hiện mật khẩu" với mật khẩu thật, trang hiện token / API key) | `browser_stop_video` trước bước đó, làm bước, rồi quay tiếp sang `<TC_ID>_p2.webm`; cột Ghi chú ghi *"video tạm dừng ở bước n — lộ bí mật"*. Ô mật khẩu đang che `•••` thì cứ quay |
 | Chạy checklist | `<TC_ID>` là mã mục: `video/CL-smoke_20261009-03.webm` |
 
@@ -255,7 +256,7 @@ python scripts/user-guide/md2html.py docs/executions/<module>/<nền-tảng>/<ru
 4. **Chạy từng TC theo thứ tự:**
    - Kiểm tra quy tắc Auto-Skip → khớp thì `SKIPPED`, sang TC tiếp (không quay video)
    - `Quay video` ≠ `Không`: `browser_start_video` → `video/<TC_ID>.webm` + thẻ `browser_video_chapter` (mục **Video quay màn hình**)
-   - Đọc Pre-Condition → dựng điều kiện; không dựng được → `BLOCKED`
+   - Đọc Pre-Condition → dựng điều kiện; không dựng được → `BLOCKED`. Pre-Condition ghi *"trình duyệt sạch"* / *"chưa đăng nhập"* / *"cửa sổ ẩn danh"* → **xoá cookie** (`page.context().clearCookies()`) trước khi chạy — phiên của TC trước còn nhớ URL vừa ghé, sẽ đổi chỗ trang chuyển tới sau đăng nhập và làm TC fail giả. Lượt chạy bị ảnh hưởng giữ làm bằng chứng (`<TC_ID>_lan1_<lý_do>.webm`), ghi vào mục Đề xuất như **phát hiện ngoài TC**
    - Thực hiện **đúng từng bước** trong Test Steps, không tự thêm/bớt bước
    - Sau mỗi bước có Expected tương ứng: `snapshot` để verify
    - Đối chiếu **toàn bộ** Expected Result → chấm trạng thái
