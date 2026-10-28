@@ -532,7 +532,7 @@ code:     TC_LOGIN_1712049200
 
 ## 10. Tham Chiếu Workflows
 
-Agent sử dụng workflows trong `.claude/commands/` qua slash commands:
+Workflow là skill **không** có tiền tố `skills-`, nằm ở `.claude/skills/<tên-workflow>/SKILL.md`, gọi bằng `/<tên-workflow>`. Workflow nạp skill nền tảng (tiền tố `skills-`) ghi ở dòng *Skill nền tảng cần nạp trước* đầu file:
 
 | Workflow                                  | Mô tả                                                     |
 | ----------------------------------------- | ----------------------------------------------------------- |
@@ -546,7 +546,7 @@ Agent sử dụng workflows trong `.claude/commands/` qua slash commands:
 | `/generate-testcases-from-requirements` | Sinh test cases nhanh từ requirements (QUICK mode)         |
 | `/generate-checklist-test`              | Sinh checklist test tick tay (CHECKLIST mode) — smoke / post-hotfix / regression / release-readiness. Chạy bằng `/execute-test-cases`, mỗi mục mang mã `CL-<…>-<nn>` |
 | `/update-testcases-from-impact`         | **Delta mode cho test cases** — mắt xích giữa của chuỗi delta 3 tầng: từ Impact Report sửa TC stale tại chỗ, giữ nguyên TC ID, đánh dấu 🗑️ Deprecated TC bị gỡ, ghi Delta TC List ra `impact/delta_tc_<TICKET-ID>.md` có cột nền tảng (2 modes: PLAN/APPLY). KHÔNG sinh lại cả module |
-| `/generate-automation-from-testcases`   | **Bộ định tuyến** — tự nhận nền tảng của file TC (`web/` · `mobile/` · `api/`) rồi chuyển sang command nền tảng. Mode WEB (mặc định) / MOBILE / API để chỉ định rõ. Không chứa logic sinh code |
+| `/generate-automation-from-testcases`   | **Bộ định tuyến** — tự nhận nền tảng của file TC (`web/` · `mobile/` · `api/`) rồi chuyển sang workflow nền tảng. Mode WEB (mặc định) / MOBILE / API để chỉ định rõ. Không chứa logic sinh code |
 | `/generate-automation-web`              | Sinh automation **web** (Playwright / Selenium) — mode TC (từ file TC web, mặc định) · mode FLOW (chưa có TC, chạy thật UI flow trên browser) |
 | `/generate-automation-mobile`           | Sinh automation **Appium** — Native Android/iOS, **Flutter**, Hybrid — mode TC (từ file TC mobile, mặc định) · mode FLOW (chưa có TC). Nhận diện loại app trước, thu locator từ UI hierarchy |
 | `/generate-automation-api`              | Sinh automation **API** từ file TC API — REST Assured / Playwright API / Pytest / Supertest, fixture 2 tài khoản BOLA, dọn dữ liệu, không hạ assertion để né bug |

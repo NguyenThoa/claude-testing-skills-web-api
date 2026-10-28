@@ -15,4 +15,4 @@
 
 # GHI CHÚ
 - Chỉ có file .docx/.pdf mô tả API, không có OpenAPI → chạy /generate-requirements-from-api trước (prompt_29), rồi mới sinh TC
-- Command này KHÔNG sinh code — có TC rồi chạy /generate-automation-api (prompt_31)
+- Workflow này KHÔNG sinh code — có TC rồi chạy /generate-automation-api (prompt_31)

@@ -106,7 +106,7 @@
 
 ## Chặng 1 — Sinh Automation Scripts
 
-> **Chạy lặp, mỗi lần một module × một nền tảng.** Cửa vào chung là `/generate-automation-from-testcases` — nó đọc đường dẫn file TC (`<module>/web/` · `mobile/` · `api/`) rồi chuyển sang đúng command nền tảng. Biết rõ nền tảng thì gọi thẳng command đó cũng được.
+> **Chạy lặp, mỗi lần một module × một nền tảng.** Cửa vào chung là `/generate-automation-from-testcases` — nó đọc đường dẫn file TC (`<module>/web/` · `mobile/` · `api/`) rồi chuyển sang đúng workflow nền tảng. Biết rõ nền tảng thì gọi thẳng workflow đó cũng được.
 
 | Có gì trong tay | Command | Prompt mẫu | Chạy trên |
 |---|---|---|---|
@@ -249,7 +249,7 @@ Mắt xích **cuối** của chuỗi delta 3 tầng:
 
 > ⚠️ **Bỏ tầng giữa là sửa script theo kỳ vọng cũ.** File test cases là nguồn sự thật của kỳ vọng mới; TC còn mô tả hành vi cũ thì script sửa xong vẫn sai — và test vẫn **xanh**, nên không ai phát hiện. Vì vậy workflow này **chỉ nhận `delta_tc_<TICKET-ID>.md`** — đưa Impact Report mà chưa có file đó thì nó dừng.
 
-**Tách theo nền tảng.** Delta TC List có cột `Nền tảng` — workflow sửa và chạy lại **từng nền tảng một lượt**, gọi lại đúng bước recon của command nền tảng:
+**Tách theo nền tảng.** Delta TC List có cột `Nền tảng` — workflow sửa và chạy lại **từng nền tảng một lượt**, gọi lại đúng bước recon của workflow nền tảng:
 
 | Nền tảng | Recon phần bị đổi | Chạy lại |
 |---|---|---|
@@ -263,7 +263,7 @@ Mắt xích **cuối** của chuỗi delta 3 tầng:
 | 🚨 **CẤM xoá file script** của TC 🗑️ Deprecated | Skip kèm lý do + mã ticket (vẫn hiện `SKIPPED` trong report), chờ user xác nhận mới gỡ |
 | 🚨 **CẤM sửa script của TC `⏸️ @NeedsVerify`** | TC đó chưa được sửa vì thiếu bằng chứng màn hình mới — sửa script là đi trước TC |
 | **Giữ nguyên `testId`** sau khi sửa | Đứt TC ID là vỡ RTM |
-| TC **mới hoàn toàn** (`➕ Mới`) → route sang command nền tảng (hoặc `/generate-automation-from-testcases`) | Trộn hai việc là mất lý do tồn tại của delta mode |
+| TC **mới hoàn toàn** (`➕ Mới`) → route sang workflow nền tảng (hoặc `/generate-automation-from-testcases`) | Trộn hai việc là mất lý do tồn tại của delta mode |
 | Nền tảng không chạy được trên máy này (iOS ngoài macOS, thiếu device) → ghi `⚠️ chưa chạy` | Không chạy thì không được tính là PASS |
 
 ---
@@ -276,7 +276,7 @@ Mắt xích **cuối** của chuỗi delta 3 tầng:
 
 📋 Prompt mẫu: [`prompts/prompt_13_generate_traceability_matrix.txt`](prompts/prompt_13_generate_traceability_matrix.txt)
 
-Cùng một command với flow manual, nhưng ở đây đọc **tầng 3**: REQ → TC → **script**.
+Cùng một workflow với flow manual, nhưng ở đây đọc **tầng 3**: REQ → TC → **script**.
 
 | Ký hiệu | Nghĩa | Ai xử lý |
 |---|---|---|
@@ -306,7 +306,7 @@ Chỉ chạy khi dự án dùng Jira/Xray. Cần lấy requirements/ticket từ 
 | Chặng | Command | Prompt mẫu | Số lần chạy |
 |---|---|---|---|
 | 0 | `/generate-automation-framework` | [`prompt_03`](prompts/prompt_03_create_framework_playwright.txt) | **1 lần** / dự án (bỏ qua nếu đã có framework) |
-| 1 | `/generate-automation-from-testcases` | [`prompt_05`](prompts/prompt_05_convert_manual_to_automation.txt) | **N lần** = số module × nền tảng — tự chuyển tới 3 command dưới |
+| 1 | `/generate-automation-from-testcases` | [`prompt_05`](prompts/prompt_05_convert_manual_to_automation.txt) | **N lần** = số module × nền tảng — tự chuyển tới 3 workflow dưới |
 | 1 · web | `/generate-automation-web` | [`prompt_04`](prompts/prompt_04_generate_script_playwright.txt) | Mode TC · mode FLOW khi chưa có TC |
 | 1 · mobile | `/generate-automation-mobile` | [`prompt_26`](prompts/prompt_26_generate_automation_mobile_flow.txt) | Mode TC · mode FLOW khi chưa có TC — Native / Flutter / Hybrid |
 | 1 · API | `/generate-automation-api` | [`prompt_31`](prompts/prompt_31_generate_automation_api.txt) | Từ file TC API — TC sinh bằng `/generate-testcases-api` ([`prompt_09`](prompts/prompt_09_generate_api_tests.txt)) |

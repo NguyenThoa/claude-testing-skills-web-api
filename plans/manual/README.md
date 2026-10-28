@@ -34,7 +34,7 @@ Tận dụng tốc độ của AI để thực thi chi tiết, kết hợp với
 
 ## ⚠️ Lưu ý Quan Trọng: Chiến Lược Thực Thi (Execution Strategy)
 
-Đối với phần **Manual Testing** (Đi từ Yêu cầu chức năng / Figma), bạn **BẮT BUỘC phải chạy tuần tự thủ công từng prompt một** (hoặc dùng command `/generate-testcases-manual-rbt` trên Claude Code) thay vì gộp chung thành một câu prompt sơ khai.
+Đối với phần **Manual Testing** (Đi từ Yêu cầu chức năng / Figma), bạn **BẮT BUỘC phải chạy tuần tự thủ công từng prompt một** (hoặc dùng workflow `/generate-testcases-manual-rbt` trên Claude Code) thay vì gộp chung thành một câu prompt sơ khai.
 
 **Lý do:**
 1. **Điểm nghẽn ở Bước 2 (Analysis & QnA):** AI cần thời gian phân tích và đưa ra các câu hỏi (Ambiguities) về logic của Requirement để bạn giải đáp. Nếu chạy 1 lèo, AI sẽ tự đoán mò logic dẫn đến viết Test Case sai trầm trọng.

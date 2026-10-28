@@ -23,5 +23,5 @@
 - Trọng tâm: [VD: "Tập trung phân quyền" / "Ưu tiên luồng thanh toán" / để trống = rà toàn diện theo rủi ro]
 
 # GHI CHÚ
-- Command này sinh checklist tick tay (CHECKLIST mode) — mục ngắn 1 dòng, KHÔNG có steps chi tiết
+- Workflow này sinh checklist tick tay (CHECKLIST mode) — mục ngắn 1 dòng, KHÔNG có steps chi tiết
 - Cần TC chi tiết có steps + test data đầy đủ → dùng /generate-testcases-from-requirements (QUICK) hoặc /generate-testcases-manual-rbt (FULL RBT)

@@ -154,7 +154,7 @@ Quên quay lại `NATIVE_APP` → mọi locator native sau đó fail, và log **
 
 ## Bảng tool Appium MCP theo việc (NGUỒN DUY NHẤT — đối chiếu schema thật của server `appium-mcp`)
 
-Mọi command mobile (`/discover-system` Bước 3-M · `/generate-requirements-from-mobile` · `/generate-automation-mobile`) gọi tool theo bảng này. Tên `action` sai là tool báo lỗi, không phải lỗi app.
+Mọi workflow mobile (`/discover-system` Bước 3-M · `/generate-requirements-from-mobile` · `/generate-automation-mobile`) gọi tool theo bảng này. Tên `action` sai là tool báo lỗi, không phải lỗi app.
 
 | Việc | Tool · tham số | Lưu ý |
 |---|---|---|

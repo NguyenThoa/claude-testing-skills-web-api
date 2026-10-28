@@ -1,4 +1,5 @@
 {
+  "skillListingBudgetFraction": 0.02,
   "permissions": {
     "allow": [
       "Read project files",

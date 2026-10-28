@@ -132,9 +132,9 @@ plans/cross-module/
 **Workflows tham chiếu (slash commands):**
 
 ```
-.claude/commands/
-├── generate-cross-module-test-plan.md       ← Phân tích cross-module + sinh Ma trận
-└── generate-combinatorial-test-data.md      ← Sinh test data cho ma trận
+.claude/skills/
+├── generate-cross-module-test-plan/SKILL.md     ← Phân tích cross-module + sinh Ma trận
+└── generate-combinatorial-test-data/SKILL.md    ← Sinh test data cho ma trận
 ```
 
 **Skills sử dụng:**

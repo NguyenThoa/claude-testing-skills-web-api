@@ -21,7 +21,7 @@
 - Trọng tâm phân tích: [VD: "Tập trung phân quyền theo role" / "Soi kỹ ma trận trạng thái" / để trống = phân tích toàn diện]
 
 # GHI CHÚ
-- Command này CHỈ sinh tài liệu phân tích `analysis_<TICKET-ID>.md`, KHÔNG sinh test cases
+- Workflow này CHỈ sinh tài liệu phân tích `analysis_<TICKET-ID>.md`, KHÔNG sinh test cases
 - Nguồn sự thật là hệ thống đang chạy (không có tài liệu) → dùng /generate-requirements-from-website
 - Module ĐÃ có requirements và ticket này sửa/bổ sung yêu cầu cũ → dùng /update-requirements-from-ticket (chế độ delta, giữ nguyên REQ ID)
 - URL Jira/Confluence: agent KHÔNG tự fetch — cần lấy từ Jira thì chạy /fetch-jira-requirements trước

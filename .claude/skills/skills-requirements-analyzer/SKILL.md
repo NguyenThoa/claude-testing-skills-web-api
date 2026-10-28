@@ -906,8 +906,8 @@ Bản đồ khám phá **không mang mã REQ** (mục 5.8), nên tách/gộp l�
 > | `/generate-requirements-from-website` | **Mục 6 này** — tài liệu đặc tả module | Đầu ra là `REQUIREMENTS_<TÊN_MODULE>_SUMMARY.md` |
 > | `/generate-requirements-from-mobile` | **Mục 6 này** + khác biệt ở **3.5** (metadata `Thiết bị khảo sát`, mục Yêu cầu riêng của mobile) | Đầu ra là `mobile/requirements_<module>_mobile.md` + index `REQUIREMENTS_<TÊN_MODULE>_SUMMARY.md` — cùng thư mục module với web/API (2.2, 5.3) |
 > | `/generate-requirements-from-api` | **Mục 6 này** + bảng thay đổi ở **3.4.7** | Đầu ra là `api/requirements_<module>_api.md` + index `REQUIREMENTS_<TÊN_MODULE>_SUMMARY.md` — cùng thư mục module với web/mobile (2.2, 5.3) |
-> | `/analyze-requirement-document` | **Template 10 mục của chính command đó** | Đầu ra là `analysis_<TICKET-ID>.md` — tài liệu phân tích ticket, KHÁC tài liệu đặc tả module |
-> | `/discover-system` | **Template của chính command đó** (Bước 6) + `api_map.md` theo **5.8.2** | Đầu ra là `_discovery/system_map.md` / `api_map.md` + `README.md` — cấp hệ thống, **KHÔNG có mã REQ**. Xem mục **5.8** |
+> | `/analyze-requirement-document` | **Template 10 mục của chính workflow đó** | Đầu ra là `analysis_<TICKET-ID>.md` — tài liệu phân tích ticket, KHÁC tài liệu đặc tả module |
+> | `/discover-system` | **Template của chính workflow đó** (Bước 6) + `api_map.md` theo **5.8.2** | Đầu ra là `_discovery/system_map.md` / `api_map.md` + `README.md` — cấp hệ thống, **KHÔNG có mã REQ**. Xem mục **5.8** |
 >
 > Nhánh `/analyze-requirement-document` chỉ **mượn** từ skill các mục: **2 + 2.1** (đánh mã), **3.2** (quy trình trích xuất), **4 + 4.3** (AMB/RISK + Cổng Tự Soát REQ), **5** (scaling), **7.1 + 7.3** (strict rules) — **KHÔNG** dùng cấu trúc mục 6.
 >

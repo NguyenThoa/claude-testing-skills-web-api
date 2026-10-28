@@ -43,7 +43,7 @@
 
 ## 1. Add Playwright MCP Thủ Công (Developers → Local MCP Server)
 
-Playwright MCP cho Claude quyền **mở browser thật, đọc DOM, click, gõ phím, chụp screenshot**. Đây là điều kiện bắt buộc để chạy các skill `skills-ui-debug-agent`, `skills-manual-test-executor`, và các command `/execute-test-cases`, `/generate-requirements-from-website`.
+Playwright MCP cho Claude quyền **mở browser thật, đọc DOM, click, gõ phím, chụp screenshot**. Đây là điều kiện bắt buộc để chạy các skill `skills-ui-debug-agent`, `skills-manual-test-executor`, và các workflow `/execute-test-cases`, `/generate-requirements-from-website`.
 
 > 📌 **Claude Desktop KHÔNG có form điền sẵn.** Mục `Local MCP servers` chỉ có nút **Edit Config** — bấm vào là mở thẳng file `claude_desktop_config.json` để bạn tự gõ JSON. Không có ô Name / Command / Arguments riêng lẻ.
 
@@ -291,7 +291,7 @@ npx playwright install
 
 ### 2.2. Atlassian (Jira + Confluence)
 
-**Dùng để:** kéo requirement/user story từ Jira, đọc tài liệu Confluence, cập nhật kết quả test lên ticket. Phục vụ command `/fetch-jira-requirements`, `/analyze-requirement-document`, `/update-requirements-from-ticket`, và skill `skills-jira-integration`.
+**Dùng để:** kéo requirement/user story từ Jira, đọc tài liệu Confluence, cập nhật kết quả test lên ticket. Phục vụ workflow `/fetch-jira-requirements`, `/analyze-requirement-document`, `/update-requirements-from-ticket`, và skill `skills-jira-integration`.
 
 **Các bước:**
 
@@ -409,7 +409,7 @@ gh run view --log-failed
 
 ### 2.6. Figma
 
-**Dùng để:** đọc bản thiết kế (khung màn hình, chữ, màu, font, toạ độ) để so với giao diện đã xây — command `/compare-ui-from-figma-design`, skill `skills-figma-design-comparator`. Bộ kit **chỉ đọc** Figma, không sửa file thiết kế.
+**Dùng để:** đọc bản thiết kế (khung màn hình, chữ, màu, font, toạ độ) để so với giao diện đã xây — workflow `/compare-ui-from-figma-design`, skill `skills-figma-design-comparator`. Bộ kit **chỉ đọc** Figma, không sửa file thiết kế.
 
 **Các bước:**
 
@@ -428,7 +428,7 @@ gh run view --log-failed
 
 ### 2.7. Bảng Tổng Hợp
 
-| Tên | Loại | Cách cài | Cần OAuth | Dùng cho command/skill nào |
+| Tên | Loại | Cách cài | Cần OAuth | Dùng cho workflow/skill nào |
 |---|---|---|---|---|
 | **Playwright** | Local MCP | `npx @playwright/mcp@latest` | Không | `/execute-test-cases`, `/generate-requirements-from-website`, `/generate-automation-web` |
 | **Atlassian** | Connector | Settings → Connectors | Có | `/fetch-jira-requirements`, `/update-requirements-from-ticket`, `skills-jira-integration` |

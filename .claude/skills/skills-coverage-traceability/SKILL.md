@@ -291,7 +291,7 @@ RTM được đọc bởi QA lead, PM, khách — người **không** mở file 
 3. **Trích xuất** — liệt kê toàn bộ REQ ID (kèm Story), TC ID, test method (kèm file path), căn cứ loại trừ
 4. **Map** — nối các tầng theo Mapping Rules; tách riêng mapping chắc chắn và mapping suy luận ⚠️
 5. **Tính trạng thái + metrics** — theo bảng *Trạng thái của một REQ* và *Coverage Metrics*
-6. **Phát hiện gap + lập Việc cần làm** — theo thứ tự ở template file chung, mỗi việc kèm command
+6. **Phát hiện gap + lập Việc cần làm** — theo thứ tự ở template file chung, mỗi việc kèm workflow
 7. **Xuất** — file module trước, rồi cập nhật file chung (luật ở *Nơi ghi file*). CSV cùng tên nếu user cần import Excel — hoặc nhắc dùng nút Excel của `traceability-viewer`
 
 ---
@@ -306,7 +306,7 @@ RTM được đọc bởi QA lead, PM, khách — người **không** mở file 
 - [ ] Header có Ngày sinh · Phạm vi · Mốc git · Nguồn đã quét; Bản đồ tài liệu có Ngày sinh + Mốc git từng module
 - [ ] Không có cột toàn `—`, không có bảng rỗng chỉ có tiêu đề
 - [ ] Metrics khớp số dòng trong ma trận; dòng `Tổng` của file chung khớp tổng các dòng module
-- [ ] Việc cần làm có command cụ thể
+- [ ] Việc cần làm có workflow cụ thể
 - [ ] Không tự ý sửa file TC/test khi chưa được yêu cầu
 
 ---

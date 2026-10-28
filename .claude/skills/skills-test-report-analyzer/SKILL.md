@@ -193,7 +193,7 @@ Glob `docs/executions/<module>/<nền-tảng>/run_*/execution_report.md` (và `d
 - [ ] Mọi failure đều được gán category dựa trên log thực tế
 - [ ] Failure có chung root cause được gom nhóm, không đếm trùng
 - [ ] Flaky (pass sau retry) tách riêng khỏi FAIL thật
-- [ ] Đề xuất hành động cụ thể cho từng nhóm, có skill/command liên quan
+- [ ] Đề xuất hành động cụ thể cho từng nhóm, có skill/workflow liên quan
 - [ ] Báo cáo bằng Tiếng Việt, số liệu chính xác khớp report gốc
 
 ---

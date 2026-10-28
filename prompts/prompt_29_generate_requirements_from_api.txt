@@ -18,4 +18,4 @@
 # GHI CHÚ
 - API của hệ thống đã có web/app → REQ ghi vào thư mục api/ của CÙNG module, chung prefix và dải REQ (không mở module hay prefix riêng cho API)
 - Chưa chạy /discover-system cho mặt API → agent làm tầng khám phá trước (có checkpoint chốt prefix)
-- Command này KHÔNG sinh test cases — xong thì chạy /generate-testcases-api, rồi /generate-automation-api
+- Workflow này KHÔNG sinh test cases — xong thì chạy /generate-testcases-api, rồi /generate-automation-api

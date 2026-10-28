@@ -60,7 +60,7 @@ Typical prompts include:
 
 # Workflow Routing
 
-When the user request matches a specific task, select the appropriate workflow file from `.claude/commands/`.
+When the user request matches a specific task, select the appropriate workflow skill in `.claude/skills/<workflow>/SKILL.md` (workflow skills have no `skills-` prefix).
 
 ### Generate test cases from requirements
 

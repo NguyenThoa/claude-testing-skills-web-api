@@ -12,7 +12,7 @@
 - Prefix TC ID: [VD: CRM_LOGIN — để trống nếu muốn agent tự đặt]
 
 # GHI CHÚ
-- Command này chạy theo quy trình AI-RBT 6 bước (FULL RBT mode) — agent sẽ dừng ở checkpoint chờ bạn xác nhận
+- Workflow này chạy theo quy trình AI-RBT 6 bước (FULL RBT mode) — agent sẽ dừng ở checkpoint chờ bạn xác nhận
 - Nếu chỉ cần sinh TC nhanh không qua 6 bước → dùng /generate-testcases-from-requirements
 - Module đã có bộ TC → agent chỉ sinh BỔ SUNG cho REQ chưa có TC (TC ID nối tiếp dải); REQ đã có TC mà vừa đổi → dùng /update-testcases-from-impact
 - Output là file Markdown trong docs/testcases/ — cần Excel thì mở scripts/testcases-viewer/bundle.html rồi xuất

@@ -18,7 +18,7 @@
 - Giới hạn phạm vi: [VD: "Chỉ màn hình Danh sách + Thêm mới" / để trống = toàn module]
 
 # GHI CHÚ
-- Command này chạy QUICK mode — 1 lượt duy nhất, KHÔNG dừng hỏi giữa chừng
+- Workflow này chạy QUICK mode — 1 lượt duy nhất, KHÔNG dừng hỏi giữa chừng
 - Requirements mơ hồ / scope >3 module / logic chồng chéo → agent tự đề xuất chuyển sang /generate-testcases-manual-rbt (FULL RBT 6 bước)
 - Chỉ cần checklist tick tay, không cần steps chi tiết → dùng /generate-checklist-test
 - Module đã có bộ TC → agent chỉ sinh BỔ SUNG cho REQ chưa có TC (TC ID nối tiếp dải); REQ đã có TC mà vừa đổi → dùng /update-testcases-from-impact

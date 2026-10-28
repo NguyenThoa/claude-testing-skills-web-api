@@ -2,7 +2,7 @@
 
 👋 Chào mừng bạn đến với **Claude Testing Skills** phiên bản dành cho **Claude Code**!
 
-Đây là bộ Skills được xây dựng và phát triển bởi **Anh Tester**, dành riêng cho **Học viên học khoá AI tại Anh Tester**. Mục tiêu của repo này là cung cấp sẵn các thiết lập, quy tắc hành vi (Rules), kỹ năng (Skills), và lệnh tùy chỉnh (Commands) chuẩn để hỗ trợ sử dụng AI Agent trên phần mềm **Claude Code** (bao gồm Claude Code CLI và Claude Code Desktop hoặc Claude Code dạng Extention trên VS Code).
+Đây là bộ Skills được xây dựng và phát triển bởi **Anh Tester**, dành riêng cho **Học viên học khoá AI tại Anh Tester**. Mục tiêu của repo này là cung cấp sẵn các thiết lập, quy tắc hành vi (Rules), kỹ năng (Skills), và lệnh tùy chỉnh (Workflows) chuẩn để hỗ trợ sử dụng AI Agent trên phần mềm **Claude Code** (bao gồm Claude Code CLI và Claude Code Desktop hoặc Claude Code dạng Extention trên VS Code).
 
 Bộ Skills này **không chỉ dành riêng cho Automation** — mà được thiết kế toàn diện cho cả **Manual Testing** lẫn **Automation Testing**, bao phủ toàn bộ vòng đời kiểm thử phần mềm từ phân tích yêu cầu, thiết kế test cases cho đến thực thi và báo cáo kết quả.
 
@@ -29,7 +29,7 @@ Bộ Skills này **không chỉ dành riêng cho Automation** — mà được t
   - Bao phủ đủ **12 HTTP Status Codes** tiêu chuẩn (`200`, `201`, `400`, `401`, `403`, `404`, `406`, `409`, `413`, `415`, `429`, `500`).
   - Tích hợp **OWASP API Security Checklist** (BOLA/IDOR, Mass Assignment, SQLi/XSS, ReDoS, Sensitive Data Masking).
   - Response time SLA (< 2 giây), Dynamic Auth Token, Teardown/Cleanup test data tự động.
-- **🧠 Tối ưu cho QA/Tester:** Tất cả các prompt, rule và command đều được tinh chỉnh dựa trên tư duy và quy trình làm việc thực tế của cả **Manual Tester** lẫn **Automation Engineer**.
+- **🧠 Tối ưu cho QA/Tester:** Tất cả các prompt, rule và workflow đều được tinh chỉnh dựa trên tư duy và quy trình làm việc thực tế của cả **Manual Tester** lẫn **Automation Engineer**.
 - **💻 Hỗ trợ Đa Nền Tảng:** Tương thích với các framework phổ biến như Web (Playwright, Selenium), Mobile (Appium), và API (Playwright API, REST Assured, Pytest Requests, Supertest).
 - **🛡️ Tuân thủ Tiêu Chuẩn Cao (Strict Rules):** Đảm bảo AI luôn đi theo cấu trúc Page Object Model (POM), viết code rõ ràng, không đoán bừa locator và tự động sửa lỗi (Self-fix).
 - **🇻🇳 Giao Tiếp Bằng Tiếng Việt:** AI được cấu hình để trao đổi, giải thích và báo cáo hoàn toàn bằng Tiếng Việt, thân thiện với người dùng Việt Nam.
@@ -45,9 +45,8 @@ claude-testing-skills/
 │
 │ ══════════ KHUNG — dùng lại cho mọi dự án ══════════
 ├── .claude/
-│   ├── commands/            # 39 lệnh tùy chỉnh (slash commands)
-│   ├── rules/               # 6 quy tắc bắt buộc AI phải tuân theo
-│   ├── skills/              # 20 kỹ năng chuyên biệt cho AI
+│   ├── rules/               # 7 quy tắc bắt buộc AI phải tuân theo
+│   ├── skills/              # 66 skill: 23 skill nền tảng (skills-*) + 43 workflow gọi bằng /tên
 │   └── settings.json        # Cấu hình quyền hạn cho Claude Code
 ├── plans/
 │   ├── manual/              # Quy trình 6 bước sinh Manual Test Cases (AI-RBT)
@@ -109,12 +108,12 @@ claude-testing-skills/
 
 | Thư mục         | Vai trò                                                                                                                                                                                                                                                                                                                                                                                                                                             |
 | --------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `commands/`     | 43 slash commands: `/discover-system`, `/compare-ui-from-figma-design`, `/generate-automation-web`, `/generate-automation-mobile`, `/generate-automation-api`, `/generate-testcases-api`, `/generate-requirements-from-website`, `/generate-requirements-from-mobile`, `/generate-requirements-from-api`, `/update-requirements-from-ticket`, `/generate-testcases-manual-rbt`, `/update-testcases-from-impact`, `/generate-automation-from-testcases`, `/update-automation-from-impact`, `/run-and-fix-tests`, `/heal-locators`, `/review-automation-code`, `/execute-test-cases`, `/retest-fixed-bugs`, `/analyze-test-report`, `/create-bug-report`, `/review-testcases`, `/generate-traceability-matrix`, `/generate-master-test-plan`, `/generate-test-progress-report`, `/generate-test-summary-report`, `/analyze-defect-trends`, `/assess-release-risk`, `/select-regression-tests`, `/generate-user-guide`, `/generate-api-mocks`... |
+| `skills/` — workflow | 43 workflow (skill không có tiền tố `skills-`), gọi bằng `/tên`: `/discover-system`, `/compare-ui-from-figma-design`, `/generate-automation-web`, `/generate-automation-mobile`, `/generate-automation-api`, `/generate-testcases-api`, `/generate-requirements-from-website`, `/generate-requirements-from-mobile`, `/generate-requirements-from-api`, `/update-requirements-from-ticket`, `/generate-testcases-manual-rbt`, `/update-testcases-from-impact`, `/generate-automation-from-testcases`, `/update-automation-from-impact`, `/run-and-fix-tests`, `/heal-locators`, `/review-automation-code`, `/execute-test-cases`, `/retest-fixed-bugs`, `/analyze-test-report`, `/create-bug-report`, `/review-testcases`, `/generate-traceability-matrix`, `/generate-master-test-plan`, `/generate-test-progress-report`, `/generate-test-summary-report`, `/analyze-defect-trends`, `/assess-release-risk`, `/select-regression-tests`, `/generate-user-guide`, `/generate-api-mocks`... |
 | `rules/`        | 7 quy tắc bắt buộc: automation chung, reporting (Allure), locator strategy, Playwright, Selenium, Appium, so thiết kế Figma                                                                                                                                                                                                                                                                                                                                                                |
-| `skills/`       | 23 kỹ năng chuyên biệt: requirements analyzer, **figma design comparator**, automation engineer, manual testing, manual test executor, UI debug (web), **mobile debug (Appium — Native/Flutter/Hybrid)**, locator healer, test data generator, framework architect, jira integration, bug reporter, test report analyzer, **test progress reporter**, **test summary reporter**, **quality insights** (xu hướng lỗi · rủi ro release · chọn test), **user guide writer** (DOC/LIVE/VIDEO · ảnh + video có highlight · đa ngôn ngữ · HTML nhúng media), testcase reviewer, automation code reviewer, coverage traceability, api mocking...                                                                                                                              |
+| `skills/` — nền tảng | 23 skill nền tảng (tiền tố `skills-`), được workflow nạp: requirements analyzer, **figma design comparator**, automation engineer, manual testing, manual test executor, UI debug (web), **mobile debug (Appium — Native/Flutter/Hybrid)**, locator healer, test data generator, framework architect, jira integration, bug reporter, test report analyzer, **test progress reporter**, **test summary reporter**, **quality insights** (xu hướng lỗi · rủi ro release · chọn test), **user guide writer** (DOC/LIVE/VIDEO · ảnh + video có highlight · đa ngôn ngữ · HTML nhúng media), testcase reviewer, automation code reviewer, coverage traceability, api mocking...                                                                                                                              |
 | `settings.json` | Cấu hình quyền hạn: cho phép/cấm các hành động cụ thể (đọc file, chạy test, push code...). Riêng `settings.local.json` là cấu hình **cục bộ từng máy** — đã gitignore, không commit                                                                                                                                                                                                                                                                 |
 
-> **📌 Lưu ý về cấu trúc:** Trong Claude Code, **workflows** được gọi là **commands** và đặt trong `.claude/commands/`. Tên file dùng dấu gạch dưới (`_`). Ví dụ: `generate-automation-from-testcases.md`.
+> **📌 Lưu ý về cấu trúc:** Claude Code đã gộp custom command vào skill — repo này **không còn** `.claude/commands/`. Mỗi workflow là một skill `.claude/skills/<tên-workflow>/SKILL.md` (kebab-case, **không** có tiền tố `skills-`), vẫn gọi bằng `/<tên-workflow>` như trước. Ví dụ: `.claude/skills/generate-automation-from-testcases/SKILL.md` → `/generate-automation-from-testcases`.
 
 ---
 
@@ -193,10 +192,10 @@ Dành cho tác vụ **đơn lẻ**, chỉ cần copy → thay `[...]` bằng d�
    claude
    ```
 
-   Claude Code tự động nhận diện thư mục `.claude` và file `CLAUDE.md` ở thư mục gốc, áp dụng ngay các Rule, Skill, Command của **Anh Tester** đã thiết lập sẵn.
+   Claude Code tự động nhận diện thư mục `.claude` và file `CLAUDE.md` ở thư mục gốc, áp dụng ngay các Rule, Skill, Workflow của **Anh Tester** đã thiết lập sẵn.
 
 4. **Sử dụng slash commands:**
-   Gõ `/` trong Claude Code để xem danh sách commands có sẵn. Ví dụ:
+   Gõ `/` trong Claude Code để xem danh sách workflows có sẵn. Ví dụ:
    ```
    /generate-automation-from-testcases
    /generate-testcases-manual-rbt
@@ -215,7 +214,7 @@ Dành cho tác vụ **đơn lẻ**, chỉ cần copy → thay `[...]` bằng d�
 
 ### Bước tiếp theo: Kết nối công cụ → [SETUP_CLAUDE.md](SETUP_CLAUDE.md)
 
-Copy `.claude` vào dự án là AI đã có **Rule / Skill / Command**. Nhưng để AI **mở được browser thật**, **đọc Jira**, hay **gửi báo cáo vào Slack**, bạn cần kết nối thêm công cụ bên ngoài.
+Copy `.claude` vào dự án là AI đã có **Rule / Skill / Workflow**. Nhưng để AI **mở được browser thật**, **đọc Jira**, hay **gửi báo cáo vào Slack**, bạn cần kết nối thêm công cụ bên ngoài.
 
 📖 **Xem hướng dẫn đầy đủ tại [SETUP_CLAUDE.md](SETUP_CLAUDE.md):**
 

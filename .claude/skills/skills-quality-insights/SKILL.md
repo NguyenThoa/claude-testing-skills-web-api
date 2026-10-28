@@ -46,7 +46,7 @@ Số liệu do **`scripts/quality-insights/qi.py`** tính — đọc thẳng `do
 | 2 | **Thiếu dữ liệu ≠ an toàn.** Đơn vị chưa chạy lần nào, chưa có TC → tính là **có rủi ro** và đánh dấu ⬛ | Module không ai test thì 0 bug — đọc "0 bug" là "ổn" là sai lầm kinh điển |
 | 3 | **Tôn trọng cỡ mẫu.** Dưới 5 lỗi thật hoặc dưới 3 mốc thời gian → gọi là *quan sát*, **không** gọi là *xu hướng*, không ngoại suy | 5 bug không vẽ ra được đường xu hướng; nói "lỗi đang giảm" từ 3 điểm là bịa |
 | 4 | **Điểm số minh bạch.** Mỗi điểm rủi ro / điểm chọn TC hiện đủ thành phần (`+40 trỏ REQ đổi · +15 Risk High …`). Thang và trọng số ở [`references/scoring.md`](references/scoring.md) | Người đọc phải cãi được với con số. Điểm hộp đen thì không ai sửa được khi nó sai |
-| 5 | **Không tự sửa file nguồn.** Không đổi trạng thái bug, không sửa TC, không ghi nhóm nguyên nhân ngược vào file bug | Báo cáo này là **ảnh chụp phân tích**. Việc cần làm trên nguồn → ghi ở mục *Đề xuất hành động* kèm command, user tự gọi |
+| 5 | **Không tự sửa file nguồn.** Không đổi trạng thái bug, không sửa TC, không ghi nhóm nguyên nhân ngược vào file bug | Báo cáo này là **ảnh chụp phân tích**. Việc cần làm trên nguồn → ghi ở mục *Đề xuất hành động* kèm workflow, user tự gọi |
 | 6 | **Nền tảng tách riêng.** Đơn vị phân tích là `module × nền tảng` (`web` · `mobile` · `api`), hệ thống thứ hai (`_<hệ-thống>/`) ghi rõ namespace | Lỗi Android không làm web rủi ro hơn; gộp lại là che mất lỗi đặc thù nền tảng |
 | 7 | **FAIL không phải lúc nào cũng là lỗi app.** TC fail chưa có bug → đọc mục *Chi tiết TC FAIL* của execution report, phân loại *lỗi app* / *TC sai* / *môi trường* trước khi gọi là "lỗi rò rỉ" | Đếm TC viết sai thành lỗi sản phẩm là thổi phồng rủi ro và đổ oan cho dev |
 
@@ -85,7 +85,7 @@ File làm việc (`data.json`, `*.md`/`*.json` thô) để ở `reports/quality-
 | C. Danh sách lỗi + gợi ý nguyên nhân trích file bug | Tìm **vấn đề hệ thống**: cùng loại nguyên nhân ở ≥ 2 lỗi, ≥ 2 module hoặc cùng dấu hiệu (cùng thông báo lỗi, cùng màn hình thao tác) |
 | D. Cụm lỗi cùng REQ chính | Đối chiếu cụm với `RISK-<MODULE>-nn` trong requirements — rủi ro đã dự báo có thành lỗi thật không |
 | E. Xu hướng từng TC: 🆕 mới fail · 🔁 liên tục · 🎲 lật · ✅ hết fail · ⚠️ sang BLOCKED | Phân loại TC FAIL **chưa có bug**: lỗi app / TC sai / môi trường — đọc mục *Chi tiết TC FAIL* của run |
-| F. TC fail chưa có bug · bug mở mà TC đã PASS | Đề xuất command cho từng việc |
+| F. TC fail chưa có bug · bug mở mà TC đã PASS | Đề xuất workflow cho từng việc |
 
 ### 1.2 Bảng loại nguyên nhân gốc
 
@@ -209,7 +209,7 @@ Thang điểm: `.claude/skills/skills-quality-insights/references/scoring.md` ·
 | Đơn vị không có lần chạy được xếp 🟢 vì 0 lỗi | ⬛ thiếu dữ liệu, tính như có rủi ro |
 | Gán nguyên nhân gốc không có trong file bug | Trích căn cứ; không có → `(?)` + câu hỏi cho dev |
 | Gọi mọi TC FAIL chưa có bug là "lỗi rò rỉ" | Đọc chi tiết FAIL, phân loại lỗi app / TC sai / môi trường |
-| Tự đổi trạng thái bug, sửa TC, thêm cột vào file bug | Ghi đề xuất + command, user tự chạy |
+| Tự đổi trạng thái bug, sửa TC, thêm cột vào file bug | Ghi đề xuất + workflow, user tự chạy |
 | Cắt TC nhóm *Bắt buộc* cho vừa quỹ thời gian | Báo vượt quỹ, xin thêm thời gian |
 | Khuyến nghị go/no-go | Đưa bảng rủi ro sang `/generate-test-summary-report` |
 | Gộp web + mobile của một module làm một đơn vị | Tách `module × nền tảng` |

@@ -2,7 +2,7 @@
 
 Thư mục này chứa các prompt mẫu dùng nhanh (copy → paste → gửi) đã được thiết kế tối ưu cho **Claude Code**. Các prompt này hỗ trợ gọi trực tiếp slash command hoặc thực thi đơn lẻ theo tiêu chuẩn chất lượng cao.
 
-> **📌 Nguyên tắc thiết kế prompt:** Prompt chỉ chứa **INPUT của lần chạy** (slash command + context + data + lựa chọn per-run như Mode, format output). KHÔNG lặp lại CONSTRAINTS / OUTPUT FORMAT / quy trình — những phần đó đã được định nghĩa duy nhất trong `.claude/skills/` và `.claude/commands/`, agent tự nạp khi gọi command. Lặp lại sẽ gây drift khi nâng cấp skill.
+> **📌 Nguyên tắc thiết kế prompt:** Prompt chỉ chứa **INPUT của lần chạy** (slash command + context + data + lựa chọn per-run như Mode, format output). KHÔNG lặp lại CONSTRAINTS / OUTPUT FORMAT / quy trình — những phần đó đã được định nghĩa duy nhất trong `.claude/skills/` (skill nền tảng `skills-*` và skill workflow), agent tự nạp khi gọi workflow. Lặp lại sẽ gây drift khi nâng cấp skill.
 >
 > **📌 KHÔNG khai báo thứ agent tự đọc được từ repo.** Bỏ hẳn các dòng kiểu `Dự án`, `Stack`, `Framework`, `Language`, `Build tool`, `Design Pattern`, `Test Runner` — agent mở `package.json` / `pom.xml` / source code là biết. Điền tay chỉ tốn công và sai lệch khi dự án đổi.
 >
@@ -18,7 +18,7 @@ Thư mục này chứa các prompt mẫu dùng nhanh (copy → paste → gửi) 
 
 ### 🔍 Khảo sát & Requirements
 
-| # | File | Command Tương Ứng | Skill Tích Hợp | Mô Tả & Cải Tiến Mới |
+| # | File | Workflow Tương Ứng | Skill Tích Hợp | Mô Tả & Cải Tiến Mới |
 |---|------|-------------------|----------------|----------------------|
 | 00 | `prompt_00_discover_system.txt` | `/discover-system` | `skills-requirements-analyzer` | **[Mới]** Chạy **đầu tiên** khi hệ thống không có tài liệu — tự nhận diện mặt **web / app mobile / API**, lập bản đồ module, gán prefix chung mọi nền tảng, khởi tạo danh mục. 3 modes UI/HYBRID/DOC |
 | 01 | `prompt_01_generate_requirements.txt` | `/generate-requirements-from-website` | `skills-requirements-analyzer` | Phân tích website/sơ đồ để sinh tài liệu Yêu cầu |
@@ -29,7 +29,7 @@ Thư mục này chứa các prompt mẫu dùng nhanh (copy → paste → gửi) 
 
 ### 📝 Manual Test Cases
 
-| # | File | Command Tương Ứng | Skill Tích Hợp | Mô Tả & Cải Tiến Mới |
+| # | File | Workflow Tương Ứng | Skill Tích Hợp | Mô Tả & Cải Tiến Mới |
 |---|------|-------------------|----------------|----------------------|
 | 02 | `prompt_02_generate_test_cases.txt` | `/generate-testcases-manual-rbt` | `skills-rbt-manual-testing` | **[Nâng cấp mới]** Sinh Manual TCs chuẩn RBT, Checklist 15 loại input fields, Race condition, Session, A11y, AI Self-Quality Gate & Automation Metadata |
 | 27 | `prompt_27_update_testcases_from_impact.txt` | `/update-testcases-from-impact` | `skills-rbt-manual-testing` (Mode DELTA) | **[Mới]** Delta mode cho test cases — mắt xích **giữa** của chuỗi delta 3 tầng. Nhận Impact Report (`prompt_21`), sửa TC stale tại chỗ, giữ nguyên TC ID, đánh dấu 🗑️ Deprecated TC bị gỡ, mode APPLY ghi **Delta TC List** ra `impact/delta_tc_<TICKET-ID>.md` có cột nền tảng (input cho `prompt_19`). 2 modes PLAN/APPLY |
@@ -41,7 +41,7 @@ Thư mục này chứa các prompt mẫu dùng nhanh (copy → paste → gửi) 
 
 ### 🏗️ Framework & Sinh Script Automation
 
-| # | File | Command Tương Ứng | Skill Tích Hợp | Mô Tả & Cải Tiến Mới |
+| # | File | Workflow Tương Ứng | Skill Tích Hợp | Mô Tả & Cải Tiến Mới |
 |---|------|-------------------|----------------|----------------------|
 | 03 | `prompt_03_create_framework_playwright.txt` | `/generate-automation-framework` | `skills-framework-architect` | Dựng khung dự án Automation Playwright TypeScript |
 | 03 | `prompt_03_create_framework_selenium.txt` | `/generate-automation-framework` | `skills-framework-architect` | Dựng khung dự án Automation Selenium Java |
@@ -56,7 +56,7 @@ Thư mục này chứa các prompt mẫu dùng nhanh (copy → paste → gửi) 
 
 ### 🔧 Bảo trì Automation
 
-| # | File | Command Tương Ứng | Skill Tích Hợp | Mô Tả & Cải Tiến Mới |
+| # | File | Workflow Tương Ứng | Skill Tích Hợp | Mô Tả & Cải Tiến Mới |
 |---|------|-------------------|----------------|----------------------|
 | 06 | `prompt_06_review_automation_code.txt` | `/review-automation-code` | `skills-automation-code-reviewer` | **[Mới]** Review chất lượng automation code theo Definition of Done — rubric 6 nhóm, bắt hard sleep / locator inline / thiếu Allure metadata / assertion yếu (pass giả). 2 modes REVIEW/FIX |
 | 17 | `prompt_17_run_and_fix_tests.txt` | `/run-and-fix-tests` | `skills-test-report-analyzer` | **[Mới]** Chạy suite có sẵn → phân loại failure theo root cause → tự sửa nhóm sửa được → chạy lại. 2 modes RUN/FIX. Bug app giữ nguyên đỏ, không sửa test để né |
@@ -66,7 +66,7 @@ Thư mục này chứa các prompt mẫu dùng nhanh (copy → paste → gửi) 
 
 ### 🔗 Xuyên suốt Manual ↔ Automation
 
-| # | File | Command Tương Ứng | Skill Tích Hợp | Mô Tả & Cải Tiến Mới |
+| # | File | Workflow Tương Ứng | Skill Tích Hợp | Mô Tả & Cải Tiến Mới |
 |---|------|-------------------|----------------|----------------------|
 | 07 | `prompt_07_generate_test_data.txt` | `/generate-test-data` | `skills-test-data-generator` | Sinh dữ liệu kiểm thử có cấu trúc |
 | 10 | `prompt_10_create_bug_report.txt` | `/create-bug-report` | `skills-bug-reporter` | Sinh bug report chuẩn từ test FAIL — evidence, severity/priority, tùy chọn đẩy Jira |
@@ -76,7 +76,7 @@ Thư mục này chứa các prompt mẫu dùng nhanh (copy → paste → gửi) 
 
 ### 📊 Kế Hoạch & Báo Cáo Cấp Quản Lý
 
-| # | File | Command Tương Ứng | Skill Tích Hợp | Mô Tả & Cải Tiến Mới |
+| # | File | Workflow Tương Ứng | Skill Tích Hợp | Mô Tả & Cải Tiến Mới |
 |---|------|-------------------|----------------|----------------------|
 | 25 | `prompt_25_generate_master_test_plan.txt` | `/generate-master-test-plan` | `skills-test-summary-reporter` | **[Mới]** Master Test Plan — đầu vào là phiếu YAML `plans/master-test-plan/test_plan.config.yaml`. Phạm vi **module × nền tảng**, cấp độ · loại · độc lập kiểm thử, phi chức năng, chiến lược tự động hoá, tiêu chí vào/ra, dữ liệu kiểm thử, quản lý lỗi, lịch · **ước lượng · ngân sách**, rủi ro dự án + sản phẩm. Xuất `docs/test-plans/`. Bám 29119-3, phủ đủ nội dung ISTQB CTFL v4.0 mục 5.1.1 |
 | 32 | `prompt_32_generate_test_progress_report.txt` | `/generate-test-progress-report` | `skills-test-progress-reporter` | **[Mới]** Báo cáo tiến độ **một kỳ** (ngày/tuần) — so thực tế với lịch plan, chỉ số trong kỳ, trở ngại, rủi ro mới, kế hoạch kỳ tới, đề xuất điều chỉnh. Bám ISTQB CTFL v4.0 mục 5.3.2. **Không** khuyến nghị go/no-go |
@@ -86,7 +86,7 @@ Thư mục này chứa các prompt mẫu dùng nhanh (copy → paste → gửi) 
 
 ### 🧠 Phân Tích Chất Lượng Cắt Ngang (Quality Insights)
 
-| # | File | Command Tương Ứng | Skill Tích Hợp | Mô Tả & Cải Tiến Mới |
+| # | File | Workflow Tương Ứng | Skill Tích Hợp | Mô Tả & Cải Tiến Mới |
 |---|------|-------------------|----------------|----------------------|
 | 34 | `prompt_34_analyze_defect_trends.txt` | `/analyze-defect-trends` | `skills-quality-insights` · `skills-test-report-analyzer` | **[Mới]** Xu hướng lỗi & vấn đề lặp lại toàn dự án — gom nhóm nguyên nhân gốc trên kho bug + lịch sử chạy, điểm nóng module × nền tảng, TC fail chưa có bug |
 | 35 | `prompt_35_assess_release_risk.txt` | `/assess-release-risk` | `skills-quality-insights` · `skills-test-summary-reporter` | **[Mới]** Chấm rủi ro release theo module × nền tảng — 5 yếu tố minh bạch, đối chiếu plan + `RISK-*`, đề xuất kiểm soát. Không go/no-go |
@@ -96,7 +96,7 @@ Thư mục này chứa các prompt mẫu dùng nhanh (copy → paste → gửi) 
 
 ### 📘 Tài liệu cho Người dùng cuối
 
-| # | File | Command Tương Ứng | Skill Tích Hợp | Mô Tả & Cải Tiến Mới |
+| # | File | Workflow Tương Ứng | Skill Tích Hợp | Mô Tả & Cải Tiến Mới |
 |---|------|-------------------|----------------|----------------------|
 | 28 | `prompt_28_generate_user_guide.txt` | `/generate-user-guide` | `skills-user-guide-writer` | **[Mới]** Hướng dẫn sử dụng cho **người dùng cuối** — tổ chức theo **việc cần làm**, bám cấu trúc ISO/IEC/IEEE 26514 · 82079-1. 3 modes DOC/LIVE/VIDEO · `lang` vi/en · ảnh + video có **highlight** (khung đỏ + số thứ tự click) · luôn xuất HTML nhúng ảnh + video |
 
@@ -107,4 +107,4 @@ Thư mục này chứa các prompt mẫu dùng nhanh (copy → paste → gửi) 
 1. Chọn prompt phù hợp với nhu cầu.
 2. Mở file `.txt` và thay thế các thông tin trong ngoặc vuông `[...]` bằng dữ liệu thực tế dự án của bạn.
 3. Copy toàn bộ nội dung file → Paste vào ô chat của **Claude Code**.
-4. Agent sẽ tự động nạp skill, nhận diện command và thực thi quy trình theo đúng chuẩn tiêu chuẩn cao.
+4. Agent sẽ tự động nạp skill, nhận diện workflow và thực thi quy trình theo đúng chuẩn tiêu chuẩn cao.

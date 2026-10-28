@@ -2,7 +2,7 @@
 
 > Áp dụng cho mọi tác vụ đối chiếu bản thiết kế (Figma) với giao diện đã xây dựng — **web** (Playwright MCP), **mobile web** (Playwright MCP giả lập thiết bị — server `playwright-mobile`) và **app mobile** (Appium MCP).
 >
-> Quy trình: workflow [`/compare-ui-from-figma-design`](../commands/compare-ui-from-figma-design.md) · phương pháp: skill [`skills-figma-design-comparator`](../skills/skills-figma-design-comparator/SKILL.md) · công cụ: [`scripts/design-compare/`](../../scripts/design-compare/README.md).
+> Quy trình: workflow [`/compare-ui-from-figma-design`](../skills/compare-ui-from-figma-design/SKILL.md) · phương pháp: skill [`skills-figma-design-comparator`](../skills/skills-figma-design-comparator/SKILL.md) · công cụ: [`scripts/design-compare/`](../../scripts/design-compare/README.md).
 
 ---
 

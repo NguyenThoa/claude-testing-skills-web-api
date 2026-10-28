@@ -21,7 +21,7 @@
 - Giới hạn phạm vi: [VD: "Chỉ phần Field Spec" / để trống = áp toàn bộ delta]
 
 # GHI CHÚ
-- Command này chạy chế độ DELTA — sửa tại chỗ tài liệu đã có, GIỮ NGUYÊN mã REQ cũ, không đánh lại từ 01
+- Workflow này chạy chế độ DELTA — sửa tại chỗ tài liệu đã có, GIỮ NGUYÊN mã REQ cũ, không đánh lại từ 01
 - Module CHƯA có `REQUIREMENTS_<TÊN_MODULE>_SUMMARY.md` → agent sẽ dừng; dùng /analyze-requirement-document hoặc /generate-requirements-from-website trước
 - Chỉ muốn phân tích ticket, chưa động vào tài liệu module → dùng /analyze-requirement-document
 - Output quan trọng nhất là **Impact Report** (TC nào stale) — dùng nó làm input cho /update-automation-from-impact

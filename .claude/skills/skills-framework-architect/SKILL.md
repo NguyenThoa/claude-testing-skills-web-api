@@ -213,4 +213,4 @@ Agent PHẢI tuân thủ các rules chi tiết:
 |---|---|
 | [`references/PROJECT_STRUCTURE.md`](references/PROJECT_STRUCTURE.md) | **Nguồn duy nhất** của project structure (8 stacks) |
 | [`references/CODE_TEMPLATES.md`](references/CODE_TEMPLATES.md) | Code mẫu base classes / factory / config — copy & sửa, không viết lại từ đầu |
-| `.claude/commands/generate-automation-framework.md` | Workflow 6 bước thực thi scaffold |
+| `.claude/skills/generate-automation-framework/SKILL.md` | Workflow 6 bước thực thi scaffold |
