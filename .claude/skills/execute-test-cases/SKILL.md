@@ -23,12 +23,14 @@ Chạy bộ manual test cases trực tiếp trên browser thật, đối chiếu
 
 | Input | Bắt buộc? | Ghi chú |
 |---|---|---|
-| File TC hoặc checklist | ⭐ Bắt buộc | VD `docs/testcases/customers/web/test_cases_customers_web.md` · `docs/testcases/customers/web/parts/part_01_web_danh_sach.md` · `docs/checklists/customers/web/checklist_smoke_20261009.md`. User đưa file **index** → đọc `## Bản đồ tài liệu`, chỉ lấy file `web/` |
-| Phạm vi chạy | ⭐ Bắt buộc | Toàn bộ · theo tag (`@Smoke`) · theo TC ID range · theo nhóm chức năng. **Không có → agent hỏi**, không tự chạy hết |
+| File TC hoặc checklist | ⭐ Bắt buộc | VD `docs/testcases/customers/web/test_cases_customers_web.md` · `docs/testcases/customers/web/parts/part_01_web_danh_sach.md` · `docs/checklists/customers/web/checklist_smoke_20261009.md`. User đưa file **index** → đọc `## Bản đồ tài liệu`, chỉ lấy file `web/` · Danh sách TC ID từ `/select-regression-tests` (`docs/quality-insights/test_selection_*.md`) → **không** cần đưa file TC: agent tra file TC chứa từng TC ID |
+| Phạm vi chạy | ⭐ Bắt buộc | Toàn bộ · theo tag (`@Smoke`) · theo TC ID range · theo nhóm chức năng · **danh sách TC ID** theo thứ tự (khối *Phạm vi cho `/execute-test-cases`* của `/select-regression-tests`). **Không có → agent hỏi**, không tự chạy hết |
 | URL & tài khoản | ⭐ Bắt buộc | Môi trường đang test + tài khoản đăng nhập |
 | Môi trường dùng chung? | ⭐ Bắt buộc | Có → bật auto-skip TC phá huỷ; Không → chạy đầy đủ, ghi rõ trong report |
 | Build / Version | Khuyến nghị | Để truy vết kết quả về đúng bản build |
 | Quay video | Tuỳ chọn — mặc định **`Có`** | `Có` · `Chỉ giữ FAIL` (quay hết, xoá video TC PASS) · `Không` (*"không quay video"*). Không nói → `Có`, không hỏi thêm |
+
+> Phạm vi là **danh sách TC ID** (thường từ `/select-regression-tests`) → chạy **đúng thứ tự** đã cho. Danh sách trải nhiều module / nền tảng → tách thành **nhiều lần chạy**, mỗi lần một module × một nền tảng (`executions/<module>/<nền-tảng>/run_*`), các lần chạy xếp theo vị trí TC đầu tiên của nhóm trong danh sách — công bố kế hoạch tách trước khi chạy. TC ID không tìm thấy trong file TC nào, hoặc mang `@Deprecated` → liệt kê riêng, không chạy, báo user.
 
 ## Các bước thực hiện
 

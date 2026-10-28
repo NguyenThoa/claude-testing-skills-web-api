@@ -171,8 +171,12 @@ Dành cho tác vụ **đơn lẻ**, chỉ cần copy → thay `[...]` bằng d�
 | 30  | `prompt_30_generate_requirements_from_mobile.txt` | **[Mới]** Sinh REQ cho module trên app mobile — Native/Flutter/Hybrid, qua Appium MCP |
 | 31  | `prompt_31_generate_automation_api.txt`         | **[Mới]** Sinh automation API từ file TC API — fixture 2 tài khoản BOLA, dọn dữ liệu |
 | 32  | `prompt_32_generate_test_progress_report.txt`   | **[Mới]** Báo cáo tiến độ một kỳ trong đợt — so với lịch plan, trở ngại, rủi ro mới |
+| 33  | `prompt_33_compare_ui_from_figma_design.txt`  | **[Mới]** So thiết kế Figma với UI thật — WEB / MOBILE-WEB / MOBILE, ghi DIFF kèm ảnh khoanh đúng/sai |
+| 34  | `prompt_34_analyze_defect_trends.txt`         | **[Mới]** Xu hướng lỗi & vấn đề lặp lại toàn dự án — nhóm nguyên nhân gốc, điểm nóng module × nền tảng |
+| 35  | `prompt_35_assess_release_risk.txt`           | **[Mới]** Chấm rủi ro release theo module × nền tảng — 5 yếu tố minh bạch, không go/no-go |
+| 36  | `prompt_36_select_regression_tests.txt`       | **[Mới]** Chọn + xếp hạng TC cho một thay đổi trong quỹ phút — danh sách dán thẳng cho `/execute-test-cases` |
 
-> Danh mục đầy đủ chia theo 7 nhóm tra cứu: [`prompts/README.md`](prompts/README.md)
+> Danh mục đầy đủ chia theo 8 nhóm tra cứu: [`prompts/README.md`](prompts/README.md)
 
 ---
 

@@ -53,13 +53,15 @@ skills-rbt-manual-testing          skills-manual-test-executor          skills-b
 
 | Input | Bắt buộc? | Ghi chú |
 |---|---|---|
-| File TC hoặc checklist | ⭐ Bắt buộc | VD `docs/testcases/customers/web/test_cases_customers_web.md` · `docs/testcases/customers/web/parts/part_01_web_danh_sach.md` · `docs/checklists/customers/web/checklist_smoke_20261009.md` · `docs/checklists/_release/web/checklist_release_release_2.0.md`. User đưa file **index** → đọc `## Bản đồ tài liệu`, chỉ lấy file `web/` |
-| Phạm vi chạy | ⭐ Bắt buộc | Toàn bộ file · theo tag (`@Smoke`) · theo TC ID range · theo nhóm chức năng |
+| File TC hoặc checklist | ⭐ Bắt buộc | VD `docs/testcases/customers/web/test_cases_customers_web.md` · `docs/testcases/customers/web/parts/part_01_web_danh_sach.md` · `docs/checklists/customers/web/checklist_smoke_20261009.md` · `docs/checklists/_release/web/checklist_release_release_2.0.md`. User đưa file **index** → đọc `## Bản đồ tài liệu`, chỉ lấy file `web/` · Danh sách TC ID từ `/select-regression-tests` (`docs/quality-insights/test_selection_*.md`) → **không** cần đưa file TC: agent tra file TC chứa từng TC ID |
+| Phạm vi chạy | ⭐ Bắt buộc | Toàn bộ file · theo tag (`@Smoke`) · theo TC ID range · theo nhóm chức năng · **danh sách TC ID** theo thứ tự (khối *Phạm vi cho `/execute-test-cases`* của `/select-regression-tests`) |
 | Môi trường & tài khoản | ⭐ Bắt buộc | URL, tài khoản đăng nhập, build/version đang test |
 | Mức độ dùng chung của môi trường | ⭐ Bắt buộc | Dùng chung → bật auto-skip TC phá huỷ; môi trường riêng → có thể chạy đầy đủ |
 | Quay video | Tuỳ chọn — mặc định **`Có`** | `Có` · `Chỉ giữ FAIL` · `Không` — xem bảng **Bật / tắt** ở mục *Video quay màn hình*. User không nói → `Có`, **không** hỏi thêm |
 
 > Thiếu phạm vi chạy → agent **hỏi** thay vì mặc định chạy toàn bộ (bộ TC có thể tới hàng trăm TC).
+>
+> Phạm vi là **danh sách TC ID** (thường từ `/select-regression-tests`) → chạy **đúng thứ tự** đã cho. Danh sách trải nhiều module / nền tảng → tách thành **nhiều lần chạy**, mỗi lần một module × một nền tảng (`executions/<module>/<nền-tảng>/run_*`), các lần chạy xếp theo vị trí TC đầu tiên của nhóm trong danh sách — công bố kế hoạch tách trước khi chạy. TC ID không tìm thấy trong file TC nào, hoặc mang `@Deprecated` → liệt kê riêng, không chạy, báo user.
 >
 > TC mang tag `@Deprecated` (chức năng đã gỡ) **bị loại khỏi phạm vi ngay lúc lọc** — không chạy, không tính vào tổng, **không** tính SKIPPED (SKIPPED là nợ kiểm thử, còn TC này không còn gì để kiểm). Header report ghi số TC Deprecated đã loại.
 
