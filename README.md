@@ -49,9 +49,7 @@ claude-testing-skills-new/
 │   ├── skills/              # 66 skill: 23 skill nền tảng (skills-*) + 43 workflow gọi bằng /tên
 │   └── settings.json        # Cấu hình quyền hạn cho Claude Code
 ├── plans/
-│   ├── manual/              # Quy trình 6 bước sinh Manual Test Cases (AI-RBT)
-│   ├── automation/          # Quy trình 6 bước sinh Automation Scripts
-│   └── cross-module/        # Quy trình phân tích Cross-Module & Ma trận kết hợp
+│   └── master-test-plan/    # Phiếu YAML đầu vào cho /generate-master-test-plan (điền rồi gọi lệnh)
 ├── prompts/                 # 36 prompt mẫu dùng nhanh (copy → paste → gửi)
 ├── scripts/
 │   ├── testcases-viewer/    # Công cụ web xem/lọc test case
@@ -117,17 +115,15 @@ claude-testing-skills-new/
 
 ---
 
-## `plans/` — Quy Trình 6 Bước Chuyên Sâu
+## `plans/` — Phiếu Đầu Vào
 
-Dành cho các tác vụ phức tạp, cần thực hiện **tuần tự trong cùng 1 conversation**.
+Chứa phiếu người dùng **tự điền** — thứ agent không suy ra được từ hệ thống hay `docs/`. Các quy trình nhiều bước (AI-RBT 6 bước, automation, cross-module) đã nằm trọn trong skill, gọi bằng `/tên`.
 
-| Plan                  | Mô tả                                                                                                                 | Bắt đầu nhanh                           |
-| --------------------- | --------------------------------------------------------------------------------------------------------------------- | --------------------------------------- |
-| `plans/manual/`       | Sinh Manual Test Cases theo quy trình **AI-RBT 6 bước** (Risk-Based Testing, 15 field types, OWASP & AI Quality Gate) | Xem `plans/manual/QUICK_START.md`       |
-| `plans/automation/`   | Sinh Automation Scripts theo **6 bước** từ context → review                                                           | Xem `plans/automation/QUICK_START.md`   |
-| `plans/cross-module/` | Phân tích tính năng **đa module** & sinh **ma trận kết hợp** (Output-Class/Pairwise/Cartesian)                        | Xem `plans/cross-module/QUICK_START.md` |
+| Thư mục                   | Nội dung                                                                                                                         | Dùng với                     |
+| ------------------------- | -------------------------------------------------------------------------------------------------------------------------------- | ---------------------------- |
+| `plans/master-test-plan/` | Phiếu `test_plan.config.yaml` (tên ô tiếng Việt, chú thích giá trị hợp lệ) + khung rỗng `test_plan.template.yaml` + plan mẫu đã điền | `/generate-master-test-plan` |
 
-**Cách dùng:** Mở `QUICK_START.md` → Làm theo từng bước → Gửi prompt mỗi bước vào Claude Code.
+**Cách dùng:** Điền `plans/master-test-plan/test_plan.config.yaml` → gọi `/generate-master-test-plan`. Không muốn điền tay → gọi lệnh kèm tên mốc, agent hỏi một lượt rồi tự ghi vào phiếu.
 
 ### `prompts/` — Prompt Mẫu Dùng Nhanh
 

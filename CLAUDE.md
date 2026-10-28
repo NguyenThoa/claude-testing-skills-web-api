@@ -214,25 +214,12 @@ Agent sử dụng skill nền tảng (tiền tố `skills-`) trong `.claude/skil
 | `skills-user-guide-writer`      | Sinh Hướng dẫn sử dụng cho người dùng cuối — viết theo việc cần làm, bám cấu trúc ISO/IEC/IEEE 26514 · 82079-1. 3 mode DOC · LIVE · **VIDEO**, ngôn ngữ `lang` (vi/en…), mọi ảnh/video **có highlight** (khung đỏ + số thứ tự click), luôn xuất HTML nhúng ảnh + video — công cụ `scripts/user-guide/` |
 | `skills-figma-design-comparator` | So bản thiết kế **Figma** với UI đã xây — web, **mobile web** (Playwright MCP — server `playwright-mobile` giả lập thiết bị) và app mobile (Appium MCP). Trích spec Figma chỉ-đọc (**cache** theo dấu vân tay khung), đo lệch chữ · vị trí · khoảng cách · màu theo dp/pt/px, đi **lưới soát ngoài → trong**, ghi `DIFF` có loại · mức độ · ai xử lý kèm **ảnh khoanh đúng (Figma) / sai (App)** có ghi chú, không log trùng giữa các nền tảng chung khung Figma — công cụ `scripts/design-compare/` |
 
-## 6. Kế Hoạch Kiểm Thử (Plan Templates)
+## 6. Phiếu Đầu Vào (`plans/`)
 
-Các bộ prompt template sẵn dùng trong `plans/`:
+`plans/` chỉ chứa phiếu người dùng **tự điền** — thứ agent không suy ra được. Quy trình nhiều bước (AI-RBT 6 bước, automation, cross-module) nằm trọn trong skill, gọi bằng `/tên`.
 
-- **`plans/manual/`** — Quy trình sinh Manual Test Cases (2 modes: QUICK + FULL RBT)
-
-  - Xem `plans/manual/QUICK_START.md` để bắt đầu nhanh
-  - Workflow QUICK: `/generate-testcases-from-requirements`
-  - Workflow FULL RBT: `/generate-testcases-manual-rbt`
-- **`plans/automation/`** — Quy trình 6 bước sinh Automation Scripts
-
-  - Xem `plans/automation/QUICK_START.md` để bắt đầu nhanh
-  - One-click: Copy `plans/automation/prompt_automation.txt`
-  - Workflow: `/generate-automation-from-testcases`
-- **`plans/cross-module/`** — Quy trình phân tích Cross-Module & Ma trận kết hợp
-
-  - Xem `plans/cross-module/QUICK_START.md` để bắt đầu nhanh
-  - Workflow phân tích: `/generate-cross-module-test-plan`
-  - Workflow sinh data: `/generate-combinatorial-test-data`
+- **`plans/master-test-plan/`** — phiếu `test_plan.config.yaml` cho `/generate-master-test-plan` (+ khung rỗng `test_plan.template.yaml`)
+- **`plans/design-compare/report_template.md`** — *tuỳ chọn*: mẫu báo cáo riêng của team cho `/compare-ui-from-figma-design`, tự tạo khi cần
 
 ## 6b. Cấu Trúc Thư Mục `docs/` (BẮT BUỘC)
 

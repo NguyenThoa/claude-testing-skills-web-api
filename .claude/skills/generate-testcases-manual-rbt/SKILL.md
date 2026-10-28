@@ -11,10 +11,6 @@ description: Sinh manual test cases chất lượng cao theo quy trình AI-RBT 6
 
 Workflow này sử dụng **Mode FULL RBT** của skill `skills-rbt-manual-testing` — quy trình **AI-RBT (AI-Driven Risk-Based Testing)** gồm 6 bước tuần tự để sinh manual test cases từ tài liệu yêu cầu.
 
-> [!NOTE]
-> **Luồng này dành cho Claude Code (slash command).** Agent thực hiện theo hướng dẫn trong skill, KHÔNG cần đọc file prompt.txt.
-> Nếu QA team dùng AI agent khác (Codex, Antigravity, Kiro, Cursor…) không có slash command này, hãy copy-paste từng bước từ `plans/manual/01-06/prompt.txt`.
-
 ## ⚠️ Nguyên tắc thực thi
 
 - **Mode:** FULL RBT (6 bước tuần tự)

@@ -1011,11 +1011,6 @@ Quy trình bài bản, tuần tự cho module phức tạp. Bao gồm phân tíc
 
 > ⚠️ **QUAN TRỌNG:** Quy trình này **BẮT BUỘC chạy tuần tự** từng bước. KHÔNG được gộp nhiều bước chạy 1 lần. Mỗi bước phải hoàn thành và được user xác nhận trước khi sang bước tiếp.
 
-> [!NOTE]
-> **2 luồng sử dụng riêng biệt:**
-> - **Luồng Claude Code (workflow):** Agent thực hiện theo hướng dẫn tổng quát bên dưới. Agent KHÔNG cần đọc file prompt.txt.
-> - **Luồng Copy-Paste (Claude Chat):** QA team copy nội dung prompt chi tiết từ `plans/manual/01-06/prompt.txt` vào chat AI, từng bước một.
-
 ### Bước 1: Context & Role-play (Khởi tạo ngữ cảnh)
 
 **Mục đích:** Thiết lập vai trò Senior QA Engineer và nạp bối cảnh dự án.

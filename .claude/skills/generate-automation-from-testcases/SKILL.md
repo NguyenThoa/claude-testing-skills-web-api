@@ -44,6 +44,6 @@ description: Cửa vào chung để sinh automation từ test cases — tự nh�
 | Mobile — chỉ biết *"mở app, đăng nhập, tạo đơn"* | `/generate-automation-mobile` mode **FLOW** |
 | API — mới có spec | `/generate-testcases-api` sinh TC trước, rồi `/generate-automation-api` |
 
-## Quy trình 6 bước ở `plans/automation/`
+## Gọi lại giữa chừng
 
-Các prompt theo chặng ở `plans/automation/` vẫn gọi workflow này. Mỗi lần gọi (kể cả *"tiếp tục"*), bộ định tuyến nhận lại nền tảng từ file TC và chuyển sang **đúng workflow đích đang chạy dở**, tiếp tục tại bước tương ứng trong `task.md` — không bắt đầu lại từ đầu.
+Mỗi lần gọi (kể cả *"tiếp tục"*), bộ định tuyến nhận lại nền tảng từ file TC và chuyển sang **đúng workflow đích đang chạy dở**, tiếp tục tại bước tương ứng trong `task.md` — không bắt đầu lại từ đầu.
