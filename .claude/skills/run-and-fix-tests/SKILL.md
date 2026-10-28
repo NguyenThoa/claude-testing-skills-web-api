@@ -148,7 +148,7 @@ Cập nhật `reports/run_and_fix_report.md` thêm:
 
 ## Workflow liên quan
 
-| Tình huống sau khi chạy | Command |
+| Tình huống sau khi chạy | Workflow |
 |---|---|
 | Còn bug app cần báo dev | `/create-bug-report` |
 | Locator gãy diện rộng do UI đổi | `/heal-locators` |

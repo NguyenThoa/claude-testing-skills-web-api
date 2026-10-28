@@ -186,7 +186,7 @@ Agent phải tham chiếu quy tắc chi tiết trong `.claude/rules/`:
 
 ## 5. Tham Chiếu Skills
 
-Agent sử dụng skills trong `.claude/skills/` tùy theo nhiệm vụ:
+Agent sử dụng skill nền tảng (tiền tố `skills-`) trong `.claude/skills/` tùy theo nhiệm vụ — workflow gọi bằng `/` xem mục 10:
 
 | Skill                      | Vai trò                                                                                  |
 | -------------------------- | ----------------------------------------------------------------------------------------- |

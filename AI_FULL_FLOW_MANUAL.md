@@ -121,7 +121,7 @@ docs/requirements/_discovery/doc_inventory.md  ← chỉ khi có tài liệu
 
 📋 Prompt mẫu: [`prompts/prompt_01_generate_requirements.txt`](prompts/prompt_01_generate_requirements.txt)
 
-| Biến thể | Command | Prompt mẫu |
+| Biến thể | Workflow | Prompt mẫu |
 |---|---|---|
 | Module là **app mobile** (hoặc thêm mặt app cho module web đã có) | `/generate-requirements-from-mobile` — mỗi nền tảng một lượt, ghi vào `<module>/mobile/`, chung dải REQ với web | [`prompt_30`](prompts/prompt_30_generate_requirements_from_mobile.txt) |
 | Module có **mặt API** — Swagger / Scalar / Postman / tài liệu API `.docx` | `/generate-requirements-from-api` — ghi vào `<module>/api/`, chung prefix và dải REQ với web | [`prompt_29`](prompts/prompt_29_generate_requirements_from_api.txt) |
@@ -156,7 +156,7 @@ Cộng thêm: `README.md` cập nhật `Trạng thái recon` ⬜ → ✅.
 
 > **Chạy lặp, mỗi lần một module.** Chọn đúng 1 trong 3 mode.
 
-| Mode | Command | Prompt mẫu | Khi nào dùng |
+| Mode | Workflow | Prompt mẫu | Khi nào dùng |
 |---|---|---|---|
 | **FULL RBT** | `/generate-testcases-manual-rbt` | [`prompt_02_generate_test_cases.txt`](prompts/prompt_02_generate_test_cases.txt) | Module lớn · requirements còn mơ hồ · cần đánh giá risk · **bộ TC gốc của module** |
 | **QUICK** | `/generate-testcases-from-requirements` | [`prompt_22_generate_testcases_quick.txt`](prompts/prompt_22_generate_testcases_quick.txt) | Requirements đã rõ · scope 1 form / 1 tính năng · cần nhanh |
@@ -321,7 +321,7 @@ Report gồm 6 mục: Tổng kết · Kết quả từng TC · Chi tiết FAIL �
 
 ## Chặng 5 — Xử lý FAIL
 
-| Tình huống | Command | Prompt mẫu | Ghi chú |
+| Tình huống | Workflow | Prompt mẫu | Ghi chú |
 |---|---|---|---|
 | **Nhiều TC FAIL**, chưa rõ nguyên nhân | `/analyze-test-report` | [`prompt_11_analyze_test_report.txt`](prompts/prompt_11_analyze_test_report.txt) | **Chạy cái này trước** — 12 TC FAIL thường chỉ là 2 bug |
 | Đã rõ bug, cần báo cáo | `/create-bug-report` | [`prompt_10_create_bug_report.txt`](prompts/prompt_10_create_bug_report.txt) | Tự lấy evidence từ run vừa rồi, tuỳ chọn đẩy Jira |
@@ -438,7 +438,7 @@ Gộp **mọi** kết quả của cả đợt — execution report nhiều modul
 
 Ba câu hỏi mà từng báo cáo riêng lẻ không trả lời được, vì phải **đọc chéo** bug × lần chạy × test case × thay đổi:
 
-| Command | Trả lời | Đầu ra |
+| Workflow | Trả lời | Đầu ra |
 |---|---|---|
 | `/analyze-defect-trends` | Lỗi dồn vào module × nền tảng nào · vấn đề nào lặp lại ở nhiều chỗ · TC fail nào chưa có bug | `docs/quality-insights/defect_trends_<YYYYMMDD>.md` |
 | `/assess-release-risk` | Mốc này rủi ro ở đâu, vì sao, cần kiểm soát gì trước code freeze | `docs/quality-insights/release_risk_<mốc>_<YYYYMMDD>.md` |
@@ -528,7 +528,7 @@ Cột **`TC cần xử lý`** trong Nhật ký thay đổi của tài liệu req
 
 ## Bảng tra nhanh — chạy bao nhiêu lần
 
-| Chặng | Command | Prompt mẫu | Số lần chạy |
+| Chặng | Workflow | Prompt mẫu | Số lần chạy |
 |---|---|---|---|
 | 0 | `/discover-system` | [`prompt_00`](prompts/prompt_00_discover_system.txt) | **1 lần** / hệ thống (+ ADD/DELTA khi cần) |
 | 1 | `/generate-requirements-from-website` | [`prompt_01`](prompts/prompt_01_generate_requirements.txt) | **N lần** = số module |

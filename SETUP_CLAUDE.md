@@ -745,7 +745,7 @@ Khi đã tin tưởng output, mở khoá gửi tự động. Ba nguyên tắc b�
         "-y", "@playwright/mcp@latest",
         "--browser=chrome",
         "--viewport-size=1600,750",
-        "--output-dir=D:\\ANHTESTER\\ClaudeCode\\claude-testing-skills\\.playwright-mcp"
+        "--output-dir=D:\\ANHTESTER\\ClaudeCode\\claude-testing-skills-new\\.playwright-mcp"
       ]
     }
   }

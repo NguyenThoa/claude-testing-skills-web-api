@@ -108,7 +108,7 @@
 
 > **Chạy lặp, mỗi lần một module × một nền tảng.** Cửa vào chung là `/generate-automation-from-testcases` — nó đọc đường dẫn file TC (`<module>/web/` · `mobile/` · `api/`) rồi chuyển sang đúng workflow nền tảng. Biết rõ nền tảng thì gọi thẳng workflow đó cũng được.
 
-| Có gì trong tay | Command | Prompt mẫu | Chạy trên |
+| Có gì trong tay | Workflow | Prompt mẫu | Chạy trên |
 |---|---|---|---|
 | **File TC, nền tảng nào cũng được** (đường chính) | `/generate-automation-from-testcases` — bộ định tuyến, mode WEB (mặc định) / MOBILE / API | [`prompt_05`](prompts/prompt_05_convert_manual_to_automation.txt) | Tự nhận từ đường dẫn file TC |
 | File TC **web** | `/generate-automation-web` mode TC | [`prompt_04 PW`](prompts/prompt_04_generate_script_playwright.txt) · [`prompt_04 SE`](prompts/prompt_04_generate_script_selenium.txt) | Playwright MCP |
@@ -148,7 +148,7 @@ task.md                           ← checklist tiến độ + bảng kết qu�
 
 **Phụ trợ khi cần:**
 
-| Cần gì | Command | Prompt mẫu |
+| Cần gì | Workflow | Prompt mẫu |
 |---|---|---|
 | Locator cho 1 element cụ thể | `/generate-locator` | — |
 | Bộ test data nhiều biến thể | `/generate-test-data` | [`prompt_07`](prompts/prompt_07_generate_test_data.txt) |
@@ -204,7 +204,7 @@ Lỗi 🌐 Environment (mạng, môi trường sập, thiếu credential) → **
 
 ## Chặng 4 — Xử lý FAIL
 
-| Tình huống | Command | Prompt mẫu | Ghi chú |
+| Tình huống | Workflow | Prompt mẫu | Ghi chú |
 |---|---|---|---|
 | **Đã có report**, nhiều test đỏ chưa rõ nguyên nhân | `/analyze-test-report` nhánh AUTOMATION | [`prompt_11`](prompts/prompt_11_analyze_test_report.txt) | Đọc report có sẵn, **không chạy lại** — 20 test đỏ thường chỉ 2–3 nguyên nhân |
 | Đã rõ là bug app | `/create-bug-report` | [`prompt_10`](prompts/prompt_10_create_bug_report.txt) | Tự lấy evidence từ `reports/`, tùy chọn đẩy Jira |
@@ -225,7 +225,7 @@ Lỗi 🌐 Environment (mạng, môi trường sập, thiếu credential) → **
 
 Ba workflow, **ba tín hiệu khác nhau**. Chọn sai là chữa nhầm bệnh:
 
-| Tín hiệu bạn thấy | Command | Prompt mẫu | Mode |
+| Tín hiệu bạn thấy | Workflow | Prompt mẫu | Mode |
 |---|---|---|---|
 | **UI vừa deploy bản mới**, locator gãy đồng loạt (chưa cần chạy test cũng biết) | `/heal-locators` | [`prompt_18`](prompts/prompt_18_heal_locators.txt) | SCAN → HEAL |
 | **Test lúc pass lúc fail**, code không đổi | `/analyze-flaky-tests` | [`prompt_08`](prompts/prompt_08_analyze_flaky_tests.txt) | ANALYZE → FIX |
@@ -303,7 +303,7 @@ Chỉ chạy khi dự án dùng Jira/Xray. Cần lấy requirements/ticket từ 
 
 ## Bảng tra nhanh — chạy bao nhiêu lần
 
-| Chặng | Command | Prompt mẫu | Số lần chạy |
+| Chặng | Workflow | Prompt mẫu | Số lần chạy |
 |---|---|---|---|
 | 0 | `/generate-automation-framework` | [`prompt_03`](prompts/prompt_03_create_framework_playwright.txt) | **1 lần** / dự án (bỏ qua nếu đã có framework) |
 | 1 | `/generate-automation-from-testcases` | [`prompt_05`](prompts/prompt_05_convert_manual_to_automation.txt) | **N lần** = số module × nền tảng — tự chuyển tới 3 workflow dưới |

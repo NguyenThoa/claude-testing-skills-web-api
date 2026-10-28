@@ -276,7 +276,7 @@ Chạy **sau** khi đã ghi Nhật ký và Delta TC List — kiểm đủ 8 mụ
 
 ## Workflow liên quan
 
-| Tình huống | Command |
+| Tình huống | Workflow |
 |---|---|
 | Trước đó — cập nhật requirements từ ticket | `/update-requirements-from-ticket` |
 | Trước đó — chưa có nguồn map REQ ↔ TC | `/generate-traceability-matrix` |

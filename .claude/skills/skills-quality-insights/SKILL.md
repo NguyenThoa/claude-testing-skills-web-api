@@ -7,7 +7,7 @@ description: Skill phân tích chất lượng cắt ngang toàn dự án từ d
 
 Purpose: Trả lời ba câu hỏi mà từng báo cáo riêng lẻ không trả lời được, vì chúng cần **đọc chéo** bug × lần chạy × test case × thay đổi:
 
-| Câu hỏi | Command | Đầu ra |
+| Câu hỏi | Workflow | Đầu ra |
 |---|---|---|
 | *"Lỗi đang dồn vào đâu, có vấn đề nào lặp lại không?"* | `/analyze-defect-trends` | `docs/quality-insights/defect_trends_<YYYYMMDD>.md` |
 | *"Release này rủi ro ở module × nền tảng nào, vì sao?"* | `/assess-release-risk` | `docs/quality-insights/release_risk_<mốc>_<YYYYMMDD>.md` |

@@ -41,7 +41,7 @@ Bộ Skills này **không chỉ dành riêng cho Automation** — mà được t
 Repo chia làm 2 phần rõ rệt: **khung** (dùng lại cho mọi dự án) và **đầu ra** (dữ liệu của dự án đang làm).
 
 ```
-claude-testing-skills/
+claude-testing-skills-new/
 │
 │ ══════════ KHUNG — dùng lại cho mọi dự án ══════════
 ├── .claude/
@@ -62,7 +62,7 @@ claude-testing-skills/
 │   └── design-review-viewer/ # Công cụ web lọc DIFF thiết kế, xem ảnh Figma | App
 ├── CLAUDE.md                # Rule chung cho AI Agent (Claude Code đọc tự động)
 ├── SETUP_CLAUDE.md          # Hướng dẫn cài Playwright MCP, Connectors & Cowork Schedule
-├── AI_FULL_FLOW_MANUAL.md      # Quy trình 8 chặng Manual Testing — chạy command nào, theo thứ tự nào
+├── AI_FULL_FLOW_MANUAL.md      # Quy trình 8 chặng Manual Testing — chạy workflow nào, theo thứ tự nào
 ├── AI_FULL_FLOW_AUTOMATION.md  # Quy trình 8 chặng Automation — nối tiếp từ bộ TC đã review
 │
 │ ══════════ ĐẦU RA — dữ liệu của dự án đang làm ══════════

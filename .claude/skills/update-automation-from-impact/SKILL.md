@@ -264,7 +264,7 @@ Chat chỉ hiện tóm tắt theo nền tảng + đường dẫn file kế hoạ
 
 ## Workflow liên quan
 
-| Tình huống | Command |
+| Tình huống | Workflow |
 |---|---|
 | Trước đó — cập nhật requirements từ ticket | `/update-requirements-from-ticket` |
 | Trước đó — **đồng bộ TC, ghi Delta TC List** (nguồn kỳ vọng mới) | `/update-testcases-from-impact` ⭐ |
