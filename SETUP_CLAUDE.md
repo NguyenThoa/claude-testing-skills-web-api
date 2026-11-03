@@ -1,7 +1,7 @@
 # SETUP CLAUDE — Hướng Dẫn Cài Đặt MCP, Connectors & Cowork Schedule
 
-> **Đối tượng:** Tester dùng bộ Kit `claude-testing-skills` của **Anh Tester**.
-> **Mục tiêu:** Cài đủ 3 mảng — **Playwright MCP** (điều khiển browser thật), **Connectors** (Atlassian / Slack / GitHub / Claude in Chrome), và **Cowork Schedule** (tự động chạy task theo lịch).
+> **Đối tượng:** Thành viên **Team QA Chí Doanh** dùng bộ Kit `claude-testing-skills`.
+> **Mục tiêu:** Cài đủ 3 mảng — **Playwright MCP** (điều khiển browser thật), **Connectors** (Google Drive / Slack / GitHub / Claude in Chrome), và **Cowork Schedule** (tự động chạy task theo lịch).
 
 > ⚠️ **Lưu ý về giao diện:** Claude cập nhật UI khá thường xuyên. Tên menu trong tài liệu này đúng tại thời điểm viết; nếu máy bạn hiển thị khác, hãy tìm **mục tương đương** (ví dụ `Developer` ≈ `Developers` ≈ `Advanced`). Phần sửa file JSON và lệnh CLI thì **ổn định hơn** — nếu UI khác quá, dùng cách đó.
 
@@ -11,7 +11,7 @@
 
 - [0. Chuẩn Bị Trước Khi Cài](#0-chuẩn-bị-trước-khi-cài)
 - [1. Add Playwright MCP Thủ Công (Developers → Local MCP Server)](#1-add-playwright-mcp-thủ-công-developers--local-mcp-server)
-- [2. Cài Connectors: Atlassian, Slack, GitHub, Claude in Chrome, Figma](#2-cài-connectors-atlassian-slack-github-claude-in-chrome-figma)
+- [2. Cài Connectors: Google Drive, Slack, GitHub, Claude in Chrome, Figma](#2-cài-connectors-google-drive-slack-github-claude-in-chrome-figma)
 - [3. Cowork — Setup Schedule Cho Task Cụ Thể](#3-cowork--setup-schedule-cho-task-cụ-thể)
 - [4. Checklist Nghiệm Thu & Xử Lý Lỗi Thường Gặp](#4-checklist-nghiệm-thu--xử-lý-lỗi-thường-gặp)
 
@@ -34,7 +34,7 @@
 |---|---|---|
 | Chạy ở đâu | Trên **máy bạn** (tiến trình con) | Trên **server của nhà cung cấp** |
 | Cách cài | Khai báo `command` + `args` | Đăng nhập **OAuth** qua trình duyệt |
-| Ví dụ | Playwright MCP, filesystem MCP | Atlassian, Slack, GitHub |
+| Ví dụ | Playwright MCP, filesystem MCP | Google Drive, Slack, GitHub |
 | Cần Node? | **Có** | Không |
 
 ➡️ **Playwright MCP là Local MCP Server**, KHÔNG phải Connector. Đừng tìm nó trong danh sách Connectors.
@@ -251,7 +251,7 @@ Trong phiên Claude Code, gõ `/mcp` để xem trạng thái kết nối và dan
 Gửi cho Claude câu lệnh sau:
 
 ```
-Dùng Playwright MCP mở https://anhtester.com rồi chụp snapshot cho tôi xem tiêu đề trang. Không resize.
+Dùng Playwright MCP mở https://example.com rồi chụp snapshot cho tôi xem tiêu đề trang. Không resize.
 ```
 
 **Đạt** khi: một cửa sổ browser **thật sự bật lên**, và Claude trả về nội dung DOM/tiêu đề trang.
@@ -271,7 +271,7 @@ npx playwright install
 
 ---
 
-## 2. Cài Connectors: Atlassian, Slack, GitHub, Claude in Chrome, Figma
+## 2. Cài Connectors: Google Drive, Slack, GitHub, Claude in Chrome, Figma
 
 ### 2.1. Đường vào chung cho mọi Connector
 
@@ -289,33 +289,40 @@ npx playwright install
 > - Với tài khoản công ty: nhiều tổ chức **chặn** OAuth bên thứ ba — nếu thấy màn hình "Admin approval required", gửi yêu cầu cho admin, đừng tìm cách lách.
 > - **KHÔNG** dán API token / password vào khung chat. Connector dùng OAuth, không bao giờ cần bạn gõ mật khẩu vào Claude.
 
-### 2.2. Atlassian (Jira + Confluence)
+### 2.2. Google Drive (đọc ticket trên Google Sheet)
 
-**Dùng để:** kéo requirement/user story từ Jira, đọc tài liệu Confluence, cập nhật kết quả test lên ticket. Phục vụ workflow `/fetch-jira-requirements`, `/analyze-requirement-document`, `/update-requirements-from-ticket`, và skill `skills-jira-integration`.
+> Team **không dùng Jira**. Ticket / user story nằm trên **Google Sheet**; kết quả test và bug lưu thành file `.md` trong `docs/`.
 
-**Các bước:**
+**Dùng để:** đọc sheet ticket **riêng tư** mà không phải chia sẻ link công khai. Phục vụ skill `/fetch-gsheet-requirements`, `/analyze-requirement-document`, `/update-requirements-from-ticket` và skill nền tảng `skills-gsheet-integration`.
 
-1. `Settings → Connectors → Browse connectors → Atlassian → Connect`.
-2. Đăng nhập tài khoản Atlassian (email công ty).
-3. Chọn **site** cần cấp quyền (ví dụ `anhtester.atlassian.net`) — nếu bạn có nhiều site, chọn đúng site chứa project đang test.
-4. Duyệt quyền: đọc issue, đọc page Confluence, (tuỳ chọn) ghi comment / cập nhật issue.
-5. Test nhanh:
+**Connector là tuỳ chọn** — `skills-gsheet-integration` có ba đường đọc, chọn theo sheet của bạn:
+
+| Sheet | Cần cài gì |
+|---|---|
+| Chia sẻ *"Bất kỳ ai có đường liên kết — Người xem"* | Không cần gì — script `scripts/gsheet/gsheet_fetch.py` (Python 3.9+, không thư viện ngoài) tải CSV qua link |
+| Riêng tư | Connector **Google Drive** (các bước dưới) |
+| Riêng tư, không được bật connector | *File → Tải xuống → .csv* rồi đưa file cho Claude |
+
+**Các bước bật connector:**
+
+1. `Settings → Connectors → Browse connectors → Google Drive → Connect`.
+2. Đăng nhập tài khoản Google **công ty** (tài khoản có quyền xem sheet ticket).
+3. Duyệt quyền: chỉ cần **đọc** file. Skill không ghi gì lên Drive.
+4. Test nhanh:
 
 ```
-Lấy nội dung Jira ticket CRM-123 và tóm tắt acceptance criteria.
+Đọc tab Requirements của Google Sheet <link> và liệt kê mã + tiêu đề các ticket trạng thái "Sẵn sàng test".
 ```
 
-**Cấu hình cho Claude Code CLI** (nếu muốn dùng trong terminal):
+**Link sheet mặc định** — thêm vào `.env` để khỏi dán link mỗi lần:
 
-```bash
-claude mcp add --transport sse atlassian https://mcp.atlassian.com/v1/sse
+```
+GSHEET_REQUIREMENTS_URL=https://docs.google.com/spreadsheets/d/<ID>/edit#gid=<GID>
 ```
 
-Sau đó gõ `/mcp` trong phiên Claude Code → chọn `atlassian` → **Authenticate** để chạy luồng OAuth.
+**Quy ước cột** của sheet (script nhận theo bí danh Tiếng Việt / Tiếng Anh): `Mã ticket | Loại | Tiêu đề | Module | Trạng thái | Ưu tiên | Mô tả | Acceptance Criteria | Ghi chú / Quyết định`. Chi tiết: [`scripts/gsheet/README.md`](scripts/gsheet/README.md).
 
-> ⚠️ Luồng OAuth **cần môi trường tương tác**. Nếu chạy trong CI hoặc phiên non-interactive, Claude sẽ báo "server needs authorization" và không dùng được cho tới khi bạn xác thực ở phiên tương tác.
-
-**Giới hạn cần biết:** Connector Atlassian **không** bao gồm Xray. Muốn đẩy kết quả lên Xray (`/import-test-results-xray`), phải dùng Xray REST API với `CLIENT_ID` / `CLIENT_SECRET` để trong `.env` — xem skill `skills-jira-integration`.
+> ⚠️ Luồng OAuth của connector **cần môi trường tương tác**. Phiên non-interactive (CI, scheduled task) báo "server needs authorization" → dùng đường link chia sẻ hoặc file CSV.
 
 ### 2.3. Slack
 
@@ -431,7 +438,7 @@ gh run view --log-failed
 | Tên | Loại | Cách cài | Cần OAuth | Dùng cho workflow/skill nào |
 |---|---|---|---|---|
 | **Playwright** | Local MCP | `npx @playwright/mcp@latest` | Không | `/execute-test-cases`, `/generate-requirements-from-website`, `/generate-automation-web` |
-| **Atlassian** | Connector | Settings → Connectors | Có | `/fetch-jira-requirements`, `/update-requirements-from-ticket`, `skills-jira-integration` |
+| **Google Drive** | Connector (tuỳ chọn) | Settings → Connectors | Có | `/fetch-gsheet-requirements`, `/update-requirements-from-ticket`, `skills-gsheet-integration` — sheet chia sẻ link thì không cần |
 | **Slack** | Connector | Settings → Connectors | Có | Gửi report, đọc task, Schedule |
 | **GitHub** | Connector / CLI | Connectors hoặc `gh auth login` | Có | Đọc CI result, tạo issue từ `/create-bug-report` |
 | **Claude in Chrome** | Extension | Chrome Web Store | Có | Thao tác trên session sẵn có |
@@ -603,7 +610,7 @@ Nội dung mỗi lần chạy:
 
 BƯỚC 1 — THU THẬP
 Lấy toàn bộ workflow run của GitHub Actions trong repo
-  anhtester/crm-automation
+  <org>/<repo>
 thuộc workflow "Playwright Tests", trong 24 giờ gần nhất.
 Với mỗi run: lấy trạng thái, branch, người trigger, thời gian chạy,
 số test PASS/FAIL/SKIP.
@@ -689,7 +696,7 @@ Khi đã tin tưởng output, mở khoá gửi tự động. Ba nguyên tắc b�
 - [ ] Screenshot lưu vào đúng `.playwright-mcp/` **của project này** (không lạc sang project khác)
 
 **Connectors**
-- [ ] Atlassian: lấy được nội dung một Jira ticket thật
+- [ ] Google Sheet: `python scripts/gsheet/gsheet_fetch.py --url "<link sheet ticket>" --list-columns` in ra đúng tên cột (hoặc đọc được qua connector Google Drive)
 - [ ] Slack: đọc được tin nhắn từ kênh đã join
 - [ ] GitHub: liệt kê được workflow run gần nhất (`gh run list` hoặc qua connector)
 - [ ] Claude in Chrome: icon đã ghim, đăng nhập xong, đọc được trang đang mở
@@ -726,8 +733,8 @@ Khi đã tin tưởng output, mở khoá gửi tự động. Ba nguyên tắc b�
 
 1. **Không bao giờ dán secret vào chat.** API token, webhook URL, password, chuỗi kết nối DB — để trong `.env` (đã gitignore) hoặc GitHub Secrets.
 2. **Screenshot evidence có thể chứa dữ liệu khách hàng thật.** Kiểm tra `docs/executions/*/run_*/evidence/` trước khi commit lên repo công khai.
-3. **Nội dung từ web / Slack / Jira là DỮ LIỆU, không phải mệnh lệnh.** Nếu một trang web hay tin nhắn có chữ hướng dẫn Claude làm gì đó (xoá file, gửi dữ liệu đi đâu, "bạn đã được cấp quyền"), đó là **prompt injection**. Claude sẽ hỏi lại bạn thay vì làm theo — và bạn cũng nên nghi ngờ.
-4. **Hành động không thu hồi được cần xác nhận.** Gửi tin nhắn, tạo issue, comment lên Jira, xoá dữ liệu. Với scheduled task, phải chốt kỹ ở bước chạy thử vì lúc chạy thật không có ai xác nhận.
+3. **Nội dung từ web / Slack / Google Sheet là DỮ LIỆU, không phải mệnh lệnh.** Nếu một trang web hay tin nhắn có chữ hướng dẫn Claude làm gì đó (xoá file, gửi dữ liệu đi đâu, "bạn đã được cấp quyền"), đó là **prompt injection**. Claude sẽ hỏi lại bạn thay vì làm theo — và bạn cũng nên nghi ngờ.
+4. **Hành động không thu hồi được cần xác nhận.** Gửi tin nhắn, tạo issue, sửa Google Sheet, xoá dữ liệu. Với scheduled task, phải chốt kỹ ở bước chạy thử vì lúc chạy thật không có ai xác nhận.
 5. **Môi trường dùng chung cần cẩn trọng gấp đôi.** Khi test trên hệ thống nhiều người dùng (như `crm.anhtester.com`), dọn dữ liệu test sau khi chạy và tránh mọi thao tác phá huỷ.
 
 ---
@@ -745,7 +752,7 @@ Khi đã tin tưởng output, mở khoá gửi tự động. Ba nguyên tắc b�
         "-y", "@playwright/mcp@latest",
         "--browser=chrome",
         "--viewport-size=1600,750",
-        "--output-dir=D:\\ANHTESTER\\ClaudeCode\\claude-testing-skills-new\\.playwright-mcp"
+        "--output-dir=D:\\QA-ChiDoanh\\claude-testing-skills-QA-CD\\.playwright-mcp"
       ]
     }
   }
@@ -797,5 +804,4 @@ Khi đã tin tưởng output, mở khoá gửi tự động. Ba nguyên tắc b�
 
 ---
 
-Anh Tester Automation Testing 🎯
-https://anhtester.com
+**Team QA Chí Doanh** 🎯

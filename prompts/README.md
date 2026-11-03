@@ -1,8 +1,8 @@
 # Prompt Templates — Dùng Nhanh với Claude Code
 
-Thư mục này chứa các prompt mẫu dùng nhanh (copy → paste → gửi) đã được thiết kế tối ưu cho **Claude Code**. Các prompt này hỗ trợ gọi trực tiếp slash command hoặc thực thi đơn lẻ theo tiêu chuẩn chất lượng cao.
+Thư mục này chứa các prompt mẫu dùng nhanh (copy → paste → gửi) đã được thiết kế tối ưu cho **Claude Code**. Dòng đầu mỗi prompt là tên **skill** cần gọi (`/<tên-skill>` — cú pháp gọi skill của Claude Code; phần còn lại là input của lần chạy.
 
-> **📌 Nguyên tắc thiết kế prompt:** Prompt chỉ chứa **INPUT của lần chạy** (slash command + context + data + lựa chọn per-run như Mode, format output). KHÔNG lặp lại CONSTRAINTS / OUTPUT FORMAT / quy trình — những phần đó đã được định nghĩa duy nhất trong `.claude/skills/` (skill nền tảng `skills-*` và skill workflow), agent tự nạp khi gọi workflow. Lặp lại sẽ gây drift khi nâng cấp skill.
+> **📌 Nguyên tắc thiết kế prompt:** Prompt chỉ chứa **INPUT của lần chạy** (tên skill + context + data + lựa chọn per-run như Mode, format output). KHÔNG lặp lại CONSTRAINTS / OUTPUT FORMAT / quy trình — những phần đó đã được định nghĩa duy nhất trong `.claude/skills/` (skill nền tảng `skills-*` và skill workflow), agent tự nạp khi gọi workflow. Lặp lại sẽ gây drift khi nâng cấp skill.
 >
 > **📌 KHÔNG khai báo thứ agent tự đọc được từ repo.** Bỏ hẳn các dòng kiểu `Dự án`, `Stack`, `Framework`, `Language`, `Build tool`, `Design Pattern`, `Test Runner` — agent mở `package.json` / `pom.xml` / source code là biết. Điền tay chỉ tốn công và sai lệch khi dự án đổi.
 >
@@ -18,7 +18,7 @@ Thư mục này chứa các prompt mẫu dùng nhanh (copy → paste → gửi) 
 
 ### 🔍 Khảo sát & Requirements
 
-| # | File | Workflow Tương Ứng | Skill Tích Hợp | Mô Tả & Cải Tiến Mới |
+| # | File | Skill Gọi | Skill Tích Hợp | Mô Tả & Cải Tiến Mới |
 |---|------|-------------------|----------------|----------------------|
 | 00 | `prompt_00_discover_system.txt` | `/discover-system` | `skills-requirements-analyzer` | **[Mới]** Chạy **đầu tiên** khi hệ thống không có tài liệu — tự nhận diện mặt **web / app mobile / API**, lập bản đồ module, gán prefix chung mọi nền tảng, khởi tạo danh mục. 3 modes UI/HYBRID/DOC |
 | 01 | `prompt_01_generate_requirements.txt` | `/generate-requirements-from-website` | `skills-requirements-analyzer` | Phân tích website/sơ đồ để sinh tài liệu Yêu cầu |
@@ -26,10 +26,11 @@ Thư mục này chứa các prompt mẫu dùng nhanh (copy → paste → gửi) 
 | 29 | `prompt_29_generate_requirements_from_api.txt` | `/generate-requirements-from-api` | `skills-requirements-analyzer` | **[Mới]** Sinh REQ cho module **API** từ Swagger UI / Scalar / Redoc / OpenAPI / Postman / tài liệu API `.docx` — kiểm chứng bằng gọi thật, không cần Ticket ID, ghi vào `<module>/api/`, chung prefix và dải REQ với web/mobile cùng nghiệp vụ |
 | 20 | `prompt_20_analyze_requirement_document.txt` | `/analyze-requirement-document` | `skills-requirements-analyzer` | **[Mới]** Phân tích ticket/tài liệu (.docx/.xlsx/.pdf/mockup) → `analysis_<TICKET-ID>.md` kèm REQ ID + Ambiguity/Risk. **KHÔNG** sinh test cases |
 | 21 | `prompt_21_update_requirements_from_ticket.txt` | `/update-requirements-from-ticket` | `skills-requirements-analyzer` | **[Mới]** Delta mode cho requirements — sửa tại chỗ tài liệu module, giữ nguyên REQ ID, ghi Nhật ký thay đổi, xuất **Impact Report** (input cho `prompt_27`) |
+| 37 | `prompt_37_fetch_gsheet_requirements.txt` | `/fetch-gsheet-requirements` | `skills-gsheet-integration` | **[Mới]** Lấy ticket / user story từ **Google Sheet** (team không dùng Jira) theo mã ticket · module · trạng thái → bản chụp `gsheet_*.md` làm đầu vào cho `prompt_20` / `prompt_21` |
 
 ### 📝 Manual Test Cases
 
-| # | File | Workflow Tương Ứng | Skill Tích Hợp | Mô Tả & Cải Tiến Mới |
+| # | File | Skill Gọi | Skill Tích Hợp | Mô Tả & Cải Tiến Mới |
 |---|------|-------------------|----------------|----------------------|
 | 02 | `prompt_02_generate_test_cases.txt` | `/generate-testcases-manual-rbt` | `skills-rbt-manual-testing` | **[Nâng cấp mới]** Sinh Manual TCs chuẩn RBT, Checklist 15 loại input fields, Race condition, Session, A11y, AI Self-Quality Gate & Automation Metadata |
 | 27 | `prompt_27_update_testcases_from_impact.txt` | `/update-testcases-from-impact` | `skills-rbt-manual-testing` (Mode DELTA) | **[Mới]** Delta mode cho test cases — mắt xích **giữa** của chuỗi delta 3 tầng. Nhận Impact Report (`prompt_21`), sửa TC stale tại chỗ, giữ nguyên TC ID, đánh dấu 🗑️ Deprecated TC bị gỡ, mode APPLY ghi **Delta TC List** ra `impact/delta_tc_<TICKET-ID>.md` có cột nền tảng (input cho `prompt_19`). 2 modes PLAN/APPLY |
@@ -41,7 +42,7 @@ Thư mục này chứa các prompt mẫu dùng nhanh (copy → paste → gửi) 
 
 ### 🏗️ Framework & Sinh Script Automation
 
-| # | File | Workflow Tương Ứng | Skill Tích Hợp | Mô Tả & Cải Tiến Mới |
+| # | File | Skill Gọi | Skill Tích Hợp | Mô Tả & Cải Tiến Mới |
 |---|------|-------------------|----------------|----------------------|
 | 03 | `prompt_03_create_framework_playwright.txt` | `/generate-automation-framework` | `skills-framework-architect` | Dựng khung dự án Automation Playwright TypeScript |
 | 03 | `prompt_03_create_framework_selenium.txt` | `/generate-automation-framework` | `skills-framework-architect` | Dựng khung dự án Automation Selenium Java |
@@ -56,7 +57,7 @@ Thư mục này chứa các prompt mẫu dùng nhanh (copy → paste → gửi) 
 
 ### 🔧 Bảo trì Automation
 
-| # | File | Workflow Tương Ứng | Skill Tích Hợp | Mô Tả & Cải Tiến Mới |
+| # | File | Skill Gọi | Skill Tích Hợp | Mô Tả & Cải Tiến Mới |
 |---|------|-------------------|----------------|----------------------|
 | 06 | `prompt_06_review_automation_code.txt` | `/review-automation-code` | `skills-automation-code-reviewer` | **[Mới]** Review chất lượng automation code theo Definition of Done — rubric 6 nhóm, bắt hard sleep / locator inline / thiếu Allure metadata / assertion yếu (pass giả). 2 modes REVIEW/FIX |
 | 17 | `prompt_17_run_and_fix_tests.txt` | `/run-and-fix-tests` | `skills-test-report-analyzer` | **[Mới]** Chạy suite có sẵn → phân loại failure theo root cause → tự sửa nhóm sửa được → chạy lại. 2 modes RUN/FIX. Bug app giữ nguyên đỏ, không sửa test để né |
@@ -66,17 +67,17 @@ Thư mục này chứa các prompt mẫu dùng nhanh (copy → paste → gửi) 
 
 ### 🔗 Xuyên suốt Manual ↔ Automation
 
-| # | File | Workflow Tương Ứng | Skill Tích Hợp | Mô Tả & Cải Tiến Mới |
+| # | File | Skill Gọi | Skill Tích Hợp | Mô Tả & Cải Tiến Mới |
 |---|------|-------------------|----------------|----------------------|
 | 07 | `prompt_07_generate_test_data.txt` | `/generate-test-data` | `skills-test-data-generator` | Sinh dữ liệu kiểm thử có cấu trúc |
-| 10 | `prompt_10_create_bug_report.txt` | `/create-bug-report` | `skills-bug-reporter` | Sinh bug report chuẩn từ test FAIL — evidence, severity/priority, tùy chọn đẩy Jira |
+| 10 | `prompt_10_create_bug_report.txt` | `/create-bug-report` | `skills-bug-reporter` | Sinh bug report chuẩn từ test FAIL — evidence, severity/priority, lưu file `.md` trong `docs/bugs/` |
 | 11 | `prompt_11_analyze_test_report.txt` | `/analyze-test-report` | `skills-test-report-analyzer` | **[Nâng cấp]** Phân tích test report — **2 nhánh AUTOMATION / MANUAL**. Gom nhóm failure theo root cause, so sánh trend, đề xuất thứ tự xử lý |
 | 13 | `prompt_13_generate_traceability_matrix.txt` | `/generate-traceability-matrix` | `skills-coverage-traceability` | Sinh ma trận truy vết RTM 3 tầng — tìm requirement chưa cover, orphan tests |
 | 23 | `prompt_23_retest_fixed_bugs.txt` | `/retest-fixed-bugs` | `skills-manual-test-executor`, `skills-bug-reporter` | **[Mới]** Retest bug đã fix trên build mới — chấm FIXED/NOT_FIXED/PARTIAL/CANNOT_VERIFY, chạy regression quanh vùng fix, ghi Lịch sử retest vào bug gốc. 2 modes RETEST/FULL |
 
 ### 📊 Kế Hoạch & Báo Cáo Cấp Quản Lý
 
-| # | File | Workflow Tương Ứng | Skill Tích Hợp | Mô Tả & Cải Tiến Mới |
+| # | File | Skill Gọi | Skill Tích Hợp | Mô Tả & Cải Tiến Mới |
 |---|------|-------------------|----------------|----------------------|
 | 25 | `prompt_25_generate_master_test_plan.txt` | `/generate-master-test-plan` | `skills-test-summary-reporter` | **[Mới]** Master Test Plan — đầu vào là phiếu YAML `plans/master-test-plan/test_plan.config.yaml`. Phạm vi **module × nền tảng**, cấp độ · loại · độc lập kiểm thử, phi chức năng, chiến lược tự động hoá, tiêu chí vào/ra, dữ liệu kiểm thử, quản lý lỗi, lịch · **ước lượng · ngân sách**, rủi ro dự án + sản phẩm. Xuất `docs/test-plans/`. Bám 29119-3, phủ đủ nội dung ISTQB CTFL v4.0 mục 5.1.1 |
 | 32 | `prompt_32_generate_test_progress_report.txt` | `/generate-test-progress-report` | `skills-test-progress-reporter` | **[Mới]** Báo cáo tiến độ **một kỳ** (ngày/tuần) — so thực tế với lịch plan, chỉ số trong kỳ, trở ngại, rủi ro mới, kế hoạch kỳ tới, đề xuất điều chỉnh. Bám ISTQB CTFL v4.0 mục 5.3.2. **Không** khuyến nghị go/no-go |
@@ -86,7 +87,7 @@ Thư mục này chứa các prompt mẫu dùng nhanh (copy → paste → gửi) 
 
 ### 🧠 Phân Tích Chất Lượng Cắt Ngang (Quality Insights)
 
-| # | File | Workflow Tương Ứng | Skill Tích Hợp | Mô Tả & Cải Tiến Mới |
+| # | File | Skill Gọi | Skill Tích Hợp | Mô Tả & Cải Tiến Mới |
 |---|------|-------------------|----------------|----------------------|
 | 34 | `prompt_34_analyze_defect_trends.txt` | `/analyze-defect-trends` | `skills-quality-insights` · `skills-test-report-analyzer` | **[Mới]** Xu hướng lỗi & vấn đề lặp lại toàn dự án — gom nhóm nguyên nhân gốc trên kho bug + lịch sử chạy, điểm nóng module × nền tảng, TC fail chưa có bug |
 | 35 | `prompt_35_assess_release_risk.txt` | `/assess-release-risk` | `skills-quality-insights` · `skills-test-summary-reporter` | **[Mới]** Chấm rủi ro release theo module × nền tảng — 5 yếu tố minh bạch, đối chiếu plan + `RISK-*`, đề xuất kiểm soát. Không go/no-go |
@@ -96,7 +97,7 @@ Thư mục này chứa các prompt mẫu dùng nhanh (copy → paste → gửi) 
 
 ### 📘 Tài liệu cho Người dùng cuối
 
-| # | File | Workflow Tương Ứng | Skill Tích Hợp | Mô Tả & Cải Tiến Mới |
+| # | File | Skill Gọi | Skill Tích Hợp | Mô Tả & Cải Tiến Mới |
 |---|------|-------------------|----------------|----------------------|
 | 28 | `prompt_28_generate_user_guide.txt` | `/generate-user-guide` | `skills-user-guide-writer` | **[Mới]** Hướng dẫn sử dụng cho **người dùng cuối** — tổ chức theo **việc cần làm**, bám cấu trúc ISO/IEC/IEEE 26514 · 82079-1. 3 modes DOC/LIVE/VIDEO · `lang` vi/en · ảnh + video có **highlight** (khung đỏ + số thứ tự click) · luôn xuất HTML nhúng ảnh + video |
 

@@ -258,7 +258,7 @@ docs/executions/test_summary_<slug>_<timestamp>.md   ← báo cáo tổng hợp 
    | Lịch vô lý | `Bắt đầu thực thi` sớm hơn `Môi trường sẵn sàng` · `Phát hành` sớm hơn `Đóng băng mã nguồn` · `Hồi quy từ` sau `Hồi quy đến` |
    | Nhân lực không phủ phạm vi | Cặp module × nền tảng không ai phụ trách |
    | Mâu thuẫn nội bộ | `Loại kiểm thử` → `Tự động hoá: không` nhưng `Nhân lực` có người vai trò `tự động hoá` · hoặc `Chiến lược tự động hoá` có dữ liệu · `Kỹ thuật: ba điểm` mà `Chi tiết ba điểm` trống · `Phi chức năng` khai loại mà `Loại kiểm thử` ghi `không` · `Có dữ liệu thật của khách hàng: có` mà `Cách che dữ liệu` trống · `Thang riêng` có dữ liệu mà `Thang Severity`/`Thang Priority` đều `mặc định` |
-   | Lệch công cụ | `Hệ thống CI` khác file CI thật trong repo · `Công cụ` → `Quản lý lỗi` không có Jira mà `Quy trình trạng thái: mặc định` vẫn nhắc đồng bộ Jira |
+   | Lệch công cụ | `Hệ thống CI` khác file CI thật trong repo · `Công cụ` → `Quản lý lỗi` chỉ có file markdown mà plan vẫn nhắc đồng bộ lên công cụ ngoài |
 
 4. **Chỉ hỏi user** khi: thiếu `Mốc` hoặc `Phạm vi` → `Trong phạm vi` (không lập được plan) · sai cú pháp · sai giá trị · mâu thuẫn ở bước 3. Mọi ô trống khác → ghi `❓`, **không** hỏi
 
@@ -702,7 +702,7 @@ TC FAIL ──/create-bug-report──→ 🔴 Đang mở ──Dev sửa──�
 | ⬛ Đóng | Tester | Retest `FIXED` — lặp ≥ 2 lần theo Steps gốc |
 | 🔴 Mở lại | Tester | Retest `NOT_FIXED` hoặc `PARTIAL` — **không** tạo bug trùng |
 
-> Phiếu `Quy trình trạng thái: riêng` (VD workflow Jira có *Từ chối* · *Trùng* · *Hoãn*) → thay sơ đồ và bảng bằng quy trình đó, **giữ** cột *Ai chuyển* và *Điều kiện*. Bug *Hoãn* vẫn tính là **đang mở** khi chấm tiêu chí exit #1, #2 — trừ khi người có quyền ở 4.2 chấp nhận bằng văn bản.
+> Phiếu `Quy trình trạng thái: riêng` (VD quy trình của team có *Từ chối* · *Trùng* · *Hoãn*) → thay sơ đồ và bảng bằng quy trình đó, **giữ** cột *Ai chuyển* và *Điều kiện*. Bug *Hoãn* vẫn tính là **đang mở** khi chấm tiêu chí exit #1, #2 — trừ khi người có quyền ở 4.2 chấp nhận bằng văn bản.
 
 ### 9.2 Thang Severity
 

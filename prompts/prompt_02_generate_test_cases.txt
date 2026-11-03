@@ -8,7 +8,7 @@
 [DÁN NỘI DUNG REQUIREMENT / USER STORIES VÀO ĐÂY]
 
 # TÙY CHỌN
-- Độ hạt test case: [GỘP (mặc định — biến thể cùng trường gom vào 1 TC có Bảng biến thể) / TÁCH (mỗi biến thể 1 TC — khi cần 1 dòng/TC trên Jira, TestRail, Xray)]
+- Độ hạt test case: [GỘP (mặc định — biến thể cùng trường gom vào 1 TC có Bảng biến thể) / TÁCH (mỗi biến thể 1 TC — khi cần 1 dòng/TC trên Google Sheet / Excel)]
 - Prefix TC ID: [VD: CRM_LOGIN — để trống nếu muốn agent tự đặt]
 
 # GHI CHÚ

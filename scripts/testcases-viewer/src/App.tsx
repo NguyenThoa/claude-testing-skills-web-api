@@ -250,7 +250,7 @@ export default function App() {
       {/* Top bar */}
       <header className="z-20 shrink-0 border-b border-slate-700 bg-slate-900 text-slate-100">
         <div className="flex items-center gap-3 px-4 py-2.5">
-          <img src={LOGO_DATA_URI} alt="Anh Tester" className="h-8 w-8 rounded-md" />
+          <img src={LOGO_DATA_URI} alt="Team QA Chí Doanh" className="h-8 w-8 rounded-md" />
           <div className="leading-tight">
             <div className="text-sm font-semibold tracking-wide">Test Cases Viewer</div>
             <div className="text-[11px] text-slate-400">Import file Markdown → tra cứu test cases</div>

@@ -25,8 +25,7 @@
 - URL trang lỗi: [https://...]
 
 # REQUIREMENT LIÊN QUAN (nếu có — để viết Expected có căn cứ)
-[Dán requirement / user story / link Jira ticket]
+[Dán requirement / user story / mã ticket trên Google Sheet]
 
-# TÙY CHỌN
-- Đẩy lên Jira sau khi review: [Có / Không]
-- Jira Project Key: [VD: PROJ] (nếu chọn Có)
+# GHI CHÚ
+- Bug lưu thành file .md trong docs/bugs/<module>/<nền-tảng>/ — không đẩy lên công cụ ngoài

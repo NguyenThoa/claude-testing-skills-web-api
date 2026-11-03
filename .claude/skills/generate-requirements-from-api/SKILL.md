@@ -49,7 +49,7 @@ description: Sinh tài liệu requirements (REQ ID) cho module API từ đặc t
 | URL Swagger UI · Scalar · Redoc · Stoplight · RapiDoc · URL spec `.json`/`.yaml` | ✅ Chạy tiếp — lấy spec theo skill **3.4.1** |
 | File OpenAPI `.json`/`.yaml` · Postman collection `.json` | ✅ Chạy tiếp |
 | `.docx` / `.pdf` mô tả endpoint (bảng method/path, JSON mẫu, bảng mã lỗi) | ✅ Chạy tiếp theo skill **3.4.6** |
-| Jira ticket / user story về một tính năng API | ⛔ Route `/analyze-requirement-document` (có Ticket ID) hoặc `/update-requirements-from-ticket` (module đã có tài liệu) |
+| Ticket (Google Sheet) / user story về một tính năng API | ⛔ Route `/analyze-requirement-document` (có Ticket ID) hoặc `/update-requirements-from-ticket` (module đã có tài liệu) |
 | Sản phẩm đầu ra của workflow khác (`REQUIREMENTS_<TÊN_MODULE>_SUMMARY.md`, `requirements_*.md`, `api_map.md`, `TEST_CASES_<TÊN_MODULE>_SUMMARY.md`, `test_cases_*.md`) | ⛔ **DỪNG, hỏi ý định thật** — không sinh bản diễn đạt lại của tài liệu đã có. Riêng `api_map.md`: nếu user muốn "sinh REQ từ bản đồ này" → chạy tiếp, dùng nó làm đầu vào ở Bước 1 |
 | Chỉ có base URL, **không** có spec hay tài liệu nào | ⛔ Hỏi user nguồn spec. Hệ thống có web → REQ server-side lấy qua tầng network của `/generate-requirements-from-website` (skill 3.1.1). **Không** dò endpoint mù |
 

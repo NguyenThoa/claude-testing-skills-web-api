@@ -63,7 +63,7 @@
                                   ↓
 ┌─ CHỨNG MINH & BÁO CÁO ───────────────────────────────────────────┐
 │  6. /generate-traceability-matrix       → cột automation của RTM │  Trước release
-│  7. /import-test-results-xray           → đẩy kết quả lên Xray   │  Nếu dùng Jira/Xray
+│  7. /analyze-test-report                → lưu kết quả file .md   │  Mỗi đợt chạy
 └──────────────────────────────────────────────────────────────────┘
 ```
 
@@ -207,7 +207,7 @@ Lỗi 🌐 Environment (mạng, môi trường sập, thiếu credential) → **
 | Tình huống | Workflow | Prompt mẫu | Ghi chú |
 |---|---|---|---|
 | **Đã có report**, nhiều test đỏ chưa rõ nguyên nhân | `/analyze-test-report` nhánh AUTOMATION | [`prompt_11`](prompts/prompt_11_analyze_test_report.txt) | Đọc report có sẵn, **không chạy lại** — 20 test đỏ thường chỉ 2–3 nguyên nhân |
-| Đã rõ là bug app | `/create-bug-report` | [`prompt_10`](prompts/prompt_10_create_bug_report.txt) | Tự lấy evidence từ `reports/`, tùy chọn đẩy Jira |
+| Đã rõ là bug app | `/create-bug-report` | [`prompt_10`](prompts/prompt_10_create_bug_report.txt) | Tự lấy evidence từ `reports/`, lưu file `.md` trong `docs/bugs/` |
 | Đỏ vì locator gãy hàng loạt | `/heal-locators` | [`prompt_18`](prompts/prompt_18_heal_locators.txt) | Xem chặng 5 |
 | Lúc pass lúc fail | `/analyze-flaky-tests` | [`prompt_08`](prompts/prompt_08_analyze_flaky_tests.txt) | Xem chặng 5 |
 
@@ -291,13 +291,22 @@ RTM gồm file chung `docs/traceability/traceability_matrix.md` (độ phủ the
 
 ---
 
-## Chặng 7 — Đẩy kết quả lên Xray
+## Chặng 7 — Lưu kết quả thành file `.md`
 
 ```
-/import-test-results-xray
+/analyze-test-report
 ```
 
-Chỉ chạy khi dự án dùng Jira/Xray. Cần lấy requirements/ticket từ Jira thì dùng `/fetch-jira-requirements`.
+Team **không dùng Jira / Xray** — kết quả không đẩy lên công cụ ngoài nào:
+
+| Kết quả | Nơi lưu |
+|---|---|
+| Allure report (raw + HTML) | `reports/` — không commit. Gửi người khác thì dùng bản single-file `reports/allure-report-single/` |
+| Tóm tắt PASS/FAIL, nhóm nguyên nhân, thứ tự xử lý | File `.md` do `/analyze-test-report` nhánh AUTOMATION sinh ra |
+| Bug app | `docs/bugs/<module>/<nền-tảng>/BUG_*.md` — `/create-bug-report` |
+| Báo cáo gửi PM tại mốc release | `docs/executions/test_summary_<mốc>_<timestamp>.md` — `/generate-test-summary-report` |
+
+Ticket thay đổi requirements đến từ **Google Sheet** → lấy bằng `/fetch-gsheet-requirements`, rồi đi chuỗi delta `/update-requirements-from-ticket` → `/update-testcases-from-impact` → `/update-automation-from-impact`.
 
 ---
 
@@ -318,7 +327,7 @@ Chỉ chạy khi dự án dùng Jira/Xray. Cần lấy requirements/ticket từ 
 | 5 | `/analyze-flaky-tests` | [`prompt_08`](prompts/prompt_08_analyze_flaky_tests.txt) | Khi test chập chờn |
 | 5 | `/update-automation-from-impact` | [`prompt_19`](prompts/prompt_19_update_automation_from_impact.txt) | Mỗi Impact Report — **sau** `/update-testcases-from-impact` |
 | 6 | `/generate-traceability-matrix` | [`prompt_13`](prompts/prompt_13_generate_traceability_matrix.txt) | Định kỳ / trước release |
-| 7 | `/import-test-results-xray` | — | Mỗi lần cần đồng bộ Xray |
+| 7 | `/analyze-test-report` | [`prompt_11`](prompts/prompt_11_analyze_test_report.txt) | Mỗi đợt chạy — lưu kết quả thành file `.md` |
 | ⊹ | `/generate-test-data` | [`prompt_07`](prompts/prompt_07_generate_test_data.txt) | Khi cần bộ data nhiều biến thể |
 | ⊹ | `/generate-api-mocks` | [`prompt_14`](prompts/prompt_14_generate_api_mocks.txt) | Khi cần test độc lập backend |
 

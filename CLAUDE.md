@@ -5,8 +5,29 @@
 
 ---
 
+## 🧠 Bộ Nhớ Repo (`memories/`) — ĐỌC NGAY SAU CLAUDE.md
+
+* **Mọi yêu cầu, trước khi làm:** đọc `CLAUDE.md` → đọc **`memories/MEMORY.md`** (bản đồ) → mở **đúng** các file nhớ liên quan tới việc đang làm. Không mở hết, không bỏ qua bước này.
+* **Ghi ngay khi phát hiện** bài học, bẫy kỹ thuật, quyết định của user, hay điều cần nhớ → ghi vào **đúng nhóm** trong `memories/` **và** thêm **một dòng** vào `memories/MEMORY.md`. Không đợi cuối phiên.
+* Nhóm: `team/` quyết định & quy ước của team · `repo/` khung repo (skill, script, phiếu) · `lessons/` bài học & bẫy · `systems/<hệ-thống>/<module>.md` kiến thức về hệ thống đang test.
+* Một file một chủ đề, tên ASCII kebab-case đọc là hiểu. Có file cùng chủ đề thì **cập nhật**, không tạo trùng. Xoá file nhớ chỉ khi user đồng ý.
+* Chỉ ghi thứ **không suy ra được** từ `CLAUDE.md`, skill, `docs/`, git. 🔒 **Không** ghi mật khẩu / token / API key.
+* Quy tắc chi tiết + mẫu file: `memories/_HUONG_DAN.md`.
+
+> Bộ nhớ này **thay** cho bộ nhớ riêng của Claude ngoài repo — mọi thứ cần nhớ về repo và dự án phải nằm trong `memories/` để cả team và mọi phiên đều thấy.
+
+---
+
 ## Được phép lấy thông tin tài khoản mật khẩu từ .env để nhập liệu trong quá trình chạy.
 Tôi cho phép Claude đọc file `.env` trong root project để lấy thông tin tài khoản, mật khẩu, token, cookie xác thực, session id, API key… phục vụ cho việc chạy test automation. File `.env` **không** được commit lên git (đã `.gitignore`) — Claude chỉ đọc để dùng, không ghi lại hay hiển thị ra log.
+
+---
+
+## Nguồn ticket & nơi lưu kết quả — KHÔNG dùng Jira
+
+* Team **không dùng Jira / Xray**. Ticket, user story, yêu cầu thay đổi nằm trên **Google Sheet** — đọc bằng skill `/fetch-gsheet-requirements` (link sheet mặc định: biến `GSHEET_REQUIREMENTS_URL` trong `.env`).
+* Kết quả thực thi, bug report, báo cáo **chỉ lưu thành file `.md`** trong `docs/` — **không** đẩy lên công cụ ngoài, **không** ghi lên Google Sheet.
+* Mã ticket trên sheet (VD `TK-12`) dùng nguyên làm `<TICKET-ID>` trong `analysis_<TICKET-ID>.md` · `impact_<TICKET-ID>.md` · `delta_tc_<TICKET-ID>.md`.
 
 ---
 
@@ -186,7 +207,7 @@ Agent phải tham chiếu quy tắc chi tiết trong `.claude/rules/`:
 
 ## 5. Tham Chiếu Skills
 
-Agent sử dụng skill nền tảng (tiền tố `skills-`) trong `.claude/skills/` tùy theo nhiệm vụ — workflow gọi bằng `/` xem mục 10:
+Agent sử dụng skill nền tảng (tiền tố `skills-`) trong `.claude/skills/` tùy theo nhiệm vụ — skill workflow (gọi bằng `/<tên-skill>`) xem mục 10:
 
 | Skill                      | Vai trò                                                                                  |
 | -------------------------- | ----------------------------------------------------------------------------------------- |
@@ -201,8 +222,8 @@ Agent sử dụng skill nền tảng (tiền tố `skills-`) trong `.claude/skil
 | `skills-test-data-generator`    | Sinh test data unique, traceable — hỗ trợ multi-step pipeline & combinatorial data       |
 | `skills-flaky-test-analyzer`    | Phân tích và khắc phục flaky tests                                                   |
 | `skills-automation-code-reviewer` | Review chất lượng automation code theo Definition of Done — hard sleep, POM, Allure metadata, assertion yếu |
-| `skills-jira-integration`       | Tích hợp Jira/Xray — lấy requirements, đẩy test results                             |
-| `skills-bug-reporter`           | Sinh bug report chuẩn từ test FAIL — evidence, severity/priority, đẩy Jira            |
+| `skills-gsheet-integration`     | Đọc ticket / user story từ **Google Sheet** (connector Google Drive · link chia sẻ · CSV tải về) → bản chụp `.md` trong `docs/` — thay cho Jira. Công cụ `scripts/gsheet/gsheet_fetch.py` |
+| `skills-bug-reporter`           | Sinh bug report chuẩn từ test FAIL — evidence, severity/priority, lưu file `.md` trong `docs/bugs/` |
 | `skills-manual-test-executor`   | Thực thi manual TC trên browser thật qua Playwright MCP — chấm PASS/FAIL/BLOCKED/SKIPPED, quay video từng TC (`video/` ngang cấp `evidence/`), xuất execution report |
 | `skills-test-report-analyzer`   | Phân tích test report **một lần chạy** — automation lẫn manual, gom nhóm failure theo root cause, đề xuất thứ tự xử lý |
 | `skills-test-progress-reporter` | Báo cáo tiến độ **một kỳ trong đợt** (ngày/tuần) — so thực tế với lịch plan, chỉ số trong kỳ, trở ngại, rủi ro mới, đề xuất điều chỉnh — ISTQB CTFL v4.0 mục 5.3.2 |
@@ -218,7 +239,7 @@ Agent sử dụng skill nền tảng (tiền tố `skills-`) trong `.claude/skil
 
 `plans/` chỉ chứa phiếu người dùng **tự điền** — thứ agent không suy ra được. Quy trình nhiều bước (AI-RBT 6 bước, automation, cross-module) nằm trọn trong skill, gọi bằng `/tên`.
 
-- **`plans/master-test-plan/`** — phiếu `test_plan.config.yaml` cho `/generate-master-test-plan` (+ khung rỗng `test_plan.template.yaml`)
+- **`plans/master-test-plan/`** — phiếu `test_plan.config.yaml` cho `/generate-master-test-plan` (+ mẫu đã điền đủ `test_plan.template.yaml` — hệ thống hư cấu ShopMini, chỉ để tham khảo)
 - **`plans/design-compare/report_template.md`** — *tuỳ chọn*: mẫu báo cáo riêng của team cho `/compare-ui-from-figma-design`, tự tạo khi cần
 
 ## 6b. Cấu Trúc Thư Mục `docs/` (BẮT BUỘC)
@@ -295,7 +316,9 @@ docs/
 │
 ├── bugs/                                       ← bug sinh từ TC FAIL
 │   ├── README.md                               ← DANH MỤC bug — có cột Nền tảng
-│   └── <module>/<nền-tảng>/BUG_<module>_<timestamp>_<TC_ID>.md  ← mỗi bug 1 file, hậu tố TC_ID để nhìn tên biết ngay thuộc TC nào
+│   └── <module>/<nền-tảng>/
+│       ├── BUG_<module>_<timestamp>_<TC_ID>.md  ← mỗi bug 1 file, hậu tố TC_ID để nhìn tên biết ngay thuộc TC nào
+│       └── review/bug_review_<YYYYMMDD_HHMM>.md · review/evidence/<BUG_ID>_review_lan<n>.png ← subagent `bug-report-reviewer` — làm lại từng bước đủ 3 lần, KHÔNG sửa file bug
 │
 ├── quality-insights/                            ← phân tích CẮT NGANG module × nền tảng — ảnh chụp tại một ngày, KHÔNG sửa tại chỗ
 │   ├── defect_trends_<YYYYMMDD>.md              ← /analyze-defect-trends — nhóm nguyên nhân gốc · vấn đề lặp lại · điểm nóng · TC fail chưa có bug
@@ -340,6 +363,7 @@ Các trang tĩnh trong `scripts/`, mở bằng cách double-click, chạy offlin
 | `scripts/design-review-viewer/bundle.html` | cả thư mục `docs/design-reviews/` (danh mục + `design_compare_report.md` + `evidence/`) | Lọc DIFF theo module · nền tảng · trạng thái · mức độ · ai xử lý, xem ảnh Figma \| App và ảnh khoanh, cảnh báo High / Cần PO quyết / khung ❔, xuất CSV/Excel |
 | `scripts/quality-insights/qi.py` (chạy bằng Python) | cả `docs/` — `bugs/` · `executions/` · `testcases/` · `requirements/**/impact/` | Tính số liệu cho 3 workflow Quality Insights: `trends` (xu hướng lỗi, xu hướng từng TC qua các lần chạy) · `risk` (điểm rủi ro module × nền tảng) · `select` (chọn + xếp hạng TC theo thay đổi và quỹ phút) · `collect` (dữ liệu thô để soát). Thang điểm: `skills-quality-insights/references/scoring.md` |
 | `scripts/bugs-viewer/bundle.html` | `docs/bugs/README.md` (danh mục) · `docs/bugs/<module>/<nền-tảng>/BUG_*.md` | Lọc bug theo Severity/Priority/Trạng thái, xem Lịch sử retest, xuất CSV/Excel |
+| `scripts/gsheet/gsheet_fetch.py` (chạy bằng Python) | Link Google Sheet chia sẻ, hoặc file `.csv` tải từ Google Sheet | Lấy ticket theo mã / module / trạng thái → bản chụp `.md` / JSON / CSV — công cụ của `/fetch-gsheet-requirements`, xem `scripts/gsheet/README.md` |
 
 ### Quy tắc bất biến
 
@@ -446,13 +470,13 @@ Agent nhận câu này thì **chỉ** đọc 2 file tầng 1–2 rồi báo cáo
 ### Chuyển sang dự án mới — dọn gì
 
 ```bash
-rm -rf docs .playwright-mcp task.md .claude/settings.local.json
+rm -rf docs memories/systems .playwright-mcp task.md .claude/settings.local.json
 ```
 
 | | |
 |---|---|
-| **Xoá** | `docs/` (gồm cả `docs/bugs/`) · `.playwright-mcp/` · `task.md` · `.claude/settings.local.json` |
-| **Giữ nguyên** | `.claude/` (trừ `settings.local.json`) · `plans/` (xoá hết giá trị trong `plans/master-test-plan/test_plan.config.yaml`, giữ tên ô và chú thích) · `prompts/` · `scripts/` · `CLAUDE.md` · `README.md` · `.gitignore` — khung dùng lại được, không hardcode hệ thống nào |
+| **Xoá** | `docs/` (gồm cả `docs/bugs/`) · `memories/systems/` (kiến thức hệ thống cũ) · `.playwright-mcp/` · `task.md` · `.claude/settings.local.json` |
+| **Giữ nguyên** | `.claude/` (trừ `settings.local.json`) · `memories/` (trừ `systems/`) · `plans/` (xoá hết giá trị trong `plans/master-test-plan/test_plan.config.yaml`, giữ tên ô và chú thích) · `prompts/` · `scripts/` · `CLAUDE.md` · `README.md` · `.gitignore` — khung dùng lại được, không hardcode hệ thống nào |
 
 ✅ **Bug report nằm trong `docs/bugs/`** — xoá `docs/` là xoá luôn, không còn sót như cấu trúc `bug_reports/` ở gốc trước đây.
 
@@ -517,9 +541,22 @@ code:     TC_LOGIN_1712049200
 | Để debug log / commented code khi deliver       | Cleanup trước khi deliver                    |
 | Dùng test data hardcoded trùng lặp             | Sinh data random + traceable                   |
 
-## 10. Tham Chiếu Workflows
+## 9b. Subagent Review Độc Lập (`.claude/agents/`) — TỰ ĐỘNG GỌI
 
-Workflow là skill **không** có tiền tố `skills-`, nằm ở `.claude/skills/<tên-workflow>/SKILL.md`, gọi bằng `/<tên-workflow>`. Workflow nạp skill nền tảng (tiền tố `skills-`) ghi ở dòng *Skill nền tảng cần nạp trước* đầu file:
+Hai subagent chạy trong ngữ cảnh riêng, **không thấy hội thoại** — chỉ biết prompt giao việc và file. Đó là giá trị của chúng: chấm đúng những gì ghi trên file, như người nhận tài liệu thật.
+
+| Subagent | Main agent gọi khi nào | Làm gì | Ghi ra |
+|---|---|---|---|
+| `testcase-reviewer` | Bộ TC đã sinh xong và **chốt** — cuối `/generate-testcases-manual-rbt` · `/generate-testcases-from-requirements` · `/generate-testcases-api` · `/update-testcases-from-impact` mode APPLY (chỉ TC trong `delta_tc_`) | Rubric 6 tiêu chí + đối soát 4 vòng + coverage REQ + TC trùng, theo mode REVIEW của `skills-testcase-reviewer` | `docs/testcases/<module>/review/testcase_review_report_<nền-tảng>_<YYYYMMDD>.md` |
+| `bug-report-reviewer` | Danh sách bug đã sinh xong và **chốt** — cuối `/create-bug-report` | Làm lại **đúng từng chữ** Steps trên hệ thống thật, **đủ 3 lần**, mỗi lần từ trạng thái sạch — chưa đủ 3 lần thì chưa kết luận, chấm *tái hiện được không · có thật là lỗi không · bug viết đủ chưa* | `docs/bugs/<module>/<nền-tảng>/review/bug_review_<YYYYMMDD_HHMM>.md` |
+
+* **Gọi tự động, không hỏi trước.** Không gọi giữa chừng khi user còn đang sửa.
+* **Prompt giao việc phải tự đủ:** đường dẫn file, module · nền tảng, môi trường, tên biến `.env` (không ghi giá trị). **Không** kể lý do, không gợi ý chỗ nào "đã ổn" — làm vậy là mất tính độc lập.
+* **Subagent chỉ báo cáo** — không sửa TC, bug, danh mục. Main agent chuyển kết quả cho user, **hỏi** trước khi sửa (TC sửa bằng `/review-testcases` mode FIX). Không tự gọi lại reviewer thành vòng lặp — chỉ gọi lại khi user yêu cầu.
+
+## 10. Tham Chiếu Skill Workflow
+
+Repo **không còn slash command** (`.claude/commands/` đã bỏ) — mọi quy trình là **skill**. Skill workflow là skill **không** có tiền tố `skills-`, nằm ở `.claude/skills/<tên-workflow>/SKILL.md`; gọi bằng cách gõ `/<tên-workflow>` (cú pháp gọi skill của Claude Code) hoặc nói yêu cầu bằng lời để Claude tự chọn skill khớp mô tả. Workflow nạp skill nền tảng (tiền tố `skills-`) ghi ở dòng *Skill nền tảng cần nạp trước* đầu file:
 
 | Workflow                                  | Mô tả                                                     |
 | ----------------------------------------- | ----------------------------------------------------------- |
@@ -527,7 +564,7 @@ Workflow là skill **không** có tiền tố `skills-`, nằm ở `.claude/skil
 | `/generate-requirements-from-website`   | Sinh requirements từ website đang chạy (nhánh UI Recon, Playwright MCP) |
 | `/generate-requirements-from-mobile`    | Sinh requirements từ **app mobile** chạy thật — Native Android/iOS, Flutter, Hybrid (Appium MCP). Mỗi nền tảng một lượt, ghi vào `<module>/mobile/` — chung prefix và dải REQ với web/API cùng nghiệp vụ, xét đủ 8 nhóm yêu cầu riêng mobile. KHÔNG sinh TC |
 | `/generate-requirements-from-api`       | Sinh requirements cho module **API** từ Swagger/Scalar/Redoc/OpenAPI/Postman/tài liệu API `.docx` — có kiểm chứng gọi thật, không cần Ticket ID, ghi vào `<module>/api/` — chung prefix và dải REQ với web/mobile cùng nghiệp vụ. KHÔNG sinh TC |
-| `/analyze-requirement-document`         | Phân tích requirement document (Jira/.docx/.pdf/.xlsx/.csv) — sinh tài liệu phân tích, KHÔNG sinh TC |
+| `/analyze-requirement-document`         | Phân tích requirement document (ticket Google Sheet/.docx/.pdf/.xlsx/.csv) — sinh tài liệu phân tích, KHÔNG sinh TC |
 | `/update-requirements-from-ticket`      | **Delta mode** — cập nhật tài liệu requirements đã có từ ticket mới: nhận diện THÊM/SỬA/BỎ, giữ nguyên REQ ID, ghi Nhật ký thay đổi, xuất Impact Report cho test cases |
 | `/generate-testcases-manual-rbt`        | Sinh manual test cases theo AI-RBT 6 bước (FULL RBT mode) — sinh tuần tự theo **4 vòng** (Smoke → Functional → Technical → Non-functional), có bảng đối soát loại kiểm thử ở Quality Gate |
 | `/generate-testcases-from-requirements` | Sinh test cases nhanh từ requirements (QUICK mode)         |
@@ -549,9 +586,8 @@ Workflow là skill **không** có tiền tố `skills-`, nằm ở `.claude/skil
 | `/heal-locators`                        | Rà & sửa locator trong Page Object sau khi UI đổi (2 modes: SCAN/HEAL) |
 | `/review-automation-code`               | Review chất lượng automation code theo Definition of Done (2 modes: REVIEW/FIX) |
 | `/analyze-flaky-tests`                  | Phân tích và khắc phục flaky tests                     |
-| `/fetch-jira-requirements`              | Lấy requirements/user stories từ Jira                     |
-| `/import-test-results-xray`             | Đẩy kết quả test lên Xray                              |
-| `/create-bug-report`                    | Sinh bug report chuẩn từ test FAIL (tùy chọn đẩy Jira)  |
+| `/fetch-gsheet-requirements`            | Lấy ticket / user story từ **Google Sheet** (lọc theo mã ticket · module · trạng thái), lưu bản chụp `docs/requirements/_discovery/sources/gsheet_*.md` — đầu vào cho `/analyze-requirement-document` · `/update-requirements-from-ticket` |
+| `/create-bug-report`                    | Sinh bug report chuẩn từ test FAIL — lưu file `.md` trong `docs/bugs/`  |
 | `/execute-test-cases`                   | Thực thi manual TC **hoặc checklist** trên browser thật — chấm PASS/FAIL/BLOCKED/SKIPPED, quay video từng TC vào `video/` ngang cấp `evidence/` (mặc định bật, tắt bằng input `Quay video`), xuất execution report (ô `Loại nguồn` phân biệt bộ TC / checklist) · xuất HTML nhúng ảnh + video khi được yêu cầu |
 | `/retest-fixed-bugs`                    | **Đóng vòng lặp bug** — retest bug đã fix trên build mới, chấm FIXED/NOT_FIXED/PARTIAL, chạy regression quanh vùng fix, quay video mỗi lần lặp + mỗi TC regression vào `video/` — tắt được (2 modes: RETEST/FULL) |
 | `/analyze-test-report`                  | Phân tích test report **một lần chạy** — 2 nhánh AUTOMATION / MANUAL, gom nhóm failure, đề xuất xử lý |

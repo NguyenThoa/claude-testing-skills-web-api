@@ -76,7 +76,7 @@ Bug ở mục *"Bug còn mở nhưng TC đã PASS"* → đề xuất `/retest-fi
 2. **Kết luận chính** — 3–5 dòng, mỗi dòng có số + mã
 3. **Nhóm nguyên nhân gốc** — bảng `Loại · Số lỗi · Mã bug · Căn cứ`, rồi **Vấn đề lặp lại** và **Điểm nóng**
 4. Bảng A–G của `qi.py` — chép nguyên văn từ `_trends_data.md`
-5. **Đề xuất hành động** — `# · Việc · Đối tượng · Command · Ưu tiên`
+5. **Đề xuất hành động** — `# · Việc · Đối tượng · Skill · Ưu tiên`
 6. **Phương pháp** — trỏ `references/scoring.md`, ngưỡng cỡ mẫu
 
 Xoá `docs/quality-insights/_trends_data.*` sau khi chép bảng.

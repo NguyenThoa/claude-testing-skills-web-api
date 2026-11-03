@@ -177,7 +177,7 @@ Mỗi mục ghi: **nền tảng** · `file:line` · đổi gì · cần recon g�
    |---|---|---|---|---|
 
    ## 3. Ngoài phạm vi
-   | TC ID | Lý do | Command |
+   | TC ID | Lý do | Skill |
    |---|---|---|
    | CRM_PRJ_TC_077 | ➕ TC mới, chưa có script | `/generate-automation-web` |
    | CRM_PRJ_TC_060 | ⏸️ TC chưa sửa — chờ recon | `/update-testcases-from-impact` sau khi có ảnh mới |

@@ -211,7 +211,7 @@ Mỗi mục ghi: `file:dòng`, TC ID, **vòng · nhánh**, sửa ô nào, có c�
 
 ## Ngoài phạm vi
 
-| REQ | Việc còn lại | Command |
+| REQ | Việc còn lại | Skill |
 |---|---|---|
 | REQ-PRJ-79 → 81 | Chưa có TC | `/generate-testcases-manual-rbt` |
 
@@ -250,6 +250,14 @@ Chạy **sau** khi đã ghi Nhật ký và Delta TC List — kiểm đủ 8 mụ
 - [ ] **7. `docs/testcases/README.md`** (danh mục) đã cập nhật: số TC, REQ bao phủ, ngày cập nhật
 - [ ] **8. Nhật ký thay đổi** ở cuối index + **`impact/delta_tc_<TICKET-ID>.md`** đã ghi ra file — có cột Nền tảng, Vòng · Nhánh, đủ dòng `⏸️ @NeedsVerify`, mốc git từng file nền tảng
 
+### Bước 8: Review độc lập — subagent `testcase-reviewer` (chỉ Mode APPLY)
+
+Chạy **tự động**, ngay khi bộ TC đã ghi xong file và **không còn chỉnh sửa** (user đã duyệt, Quality Gate đã qua). Không hỏi user có muốn review không.
+
+1. Gọi subagent **`testcase-reviewer`** (Agent tool, `subagent_type: testcase-reviewer`, chạy foreground). Subagent **không thấy hội thoại** — prompt giao việc phải tự đủ: module · nền tảng · đường dẫn file TC (file nền tảng / `parts/` + index) · đường dẫn file REQ · phạm vi: **chỉ các TC ID trong `impact/delta_tc_<TICKET-ID>.md`** (TC đã sửa / thêm — bỏ TC `@Deprecated`), kèm đường dẫn Impact Report để reviewer đối chiếu REQ đã đổi. **Không** kể lý do vì sao TC được viết như vậy, không dặn chỗ nào "đã ổn".
+2. Nhận tóm tắt → chuyển nguyên cho user: đường dẫn báo cáo review, xếp loại 🟢🟡🔴, coverage gap, chỗ lệch với bảng tự đối soát.
+3. Có TC 🟡/🔴 hoặc gap → hỏi user có chạy `/review-testcases` mode **FIX** theo báo cáo không. **Không** tự sửa TC, **không** tự gọi lại reviewer — chỉ gọi lại khi user yêu cầu sau khi sửa.
+
 ## Output
 
 ### Mode PLAN
@@ -283,6 +291,6 @@ Chạy **sau** khi đã ghi Nhật ký và Delta TC List — kiểm đủ 8 mụ
 | REQ mới hoàn toàn, chưa có TC | `/generate-testcases-manual-rbt` · `/generate-testcases-from-requirements` |
 | Sau đó — cập nhật automation script **đã có** (đọc `delta_tc_<TICKET-ID>.md`) | `/update-automation-from-impact` |
 | Sau đó — automate TC mới hoàn toàn | `/generate-automation-from-testcases` (tự chuyển sang workflow web / mobile / API) |
-| Sau đó — chấm chất lượng bộ TC vừa sửa | `/review-testcases` |
+| Sau đó — chấm chất lượng bộ TC vừa sửa | Tự động ở Bước 8 (subagent `testcase-reviewer`) · sửa theo báo cáo bằng `/review-testcases` mode FIX |
 | Sau đó — chạy lại phần TC bị ảnh hưởng | `/execute-test-cases` |
 | Sau đó — khớp lại ma trận truy vết | `/generate-traceability-matrix` |

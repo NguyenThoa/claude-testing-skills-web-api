@@ -10,7 +10,6 @@
 [Xoá dòng không dùng:]
 - File bug report: [VD: docs/bugs/customers/web/BUG_customers_1785612000_TC011.md]
 - Nhiều bug: [VD: docs/bugs/customers/web/BUG_customers_1785612000_TC011.md, docs/bugs/customers/web/BUG_customers_1785620000_TC019.md]
-- Jira key: [VD: CRM-482]
 
 # MODE (bắt buộc chọn 1)
 [Xoá dòng không dùng:]

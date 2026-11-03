@@ -24,7 +24,7 @@ Sử dụng skill này khi:
 
 | Nguồn | Định dạng chấp nhận | Cách nhận diện |
 |---|---|---|
-| **Requirements** | Markdown, Jira export, user stories, file phân tích từ `skills-requirements-analyzer` | ID dạng `REQ-xxx`, `US-xxx`, hoặc heading đánh số |
+| **Requirements** | Markdown, bản chụp Google Sheet (`gsheet_*.md`), user stories, file phân tích từ `skills-requirements-analyzer` | ID dạng `REQ-xxx`, `US-xxx`, hoặc heading đánh số |
 | **Manual Test Cases** | Markdown, Excel/CSV | ID dạng `TC_xxx` |
 | **Automation Scripts** | `.spec.ts`, `*Test.java`, `.py` | Tên test method/block, annotation/tag chứa TC ID |
 | **Checklist** *(nguồn phụ)* | `docs/checklists/<module>/<nền-tảng>/checklist_*.md` · `docs/checklists/_release/<nền-tảng>/checklist_release_*.md` | Cột `REQ ID` của từng mục · mã mục `<Mã checklist>-<nn>` (quy tắc ở skill `skills-rbt-manual-testing`, mục *Mã checklist & mã mục*) |
@@ -173,7 +173,7 @@ RTM được đọc bởi QA lead, PM, khách — người **không** mở file 
 
 ## 2. Việc cần làm — gộp mọi module, xếp theo mức nghiêm trọng
 
-| # | Việc | Module | Số lượng | Command |
+| # | Việc | Module | Số lượng | Skill |
 |:-:|---|---|:-:|---|
 | 1 | 🔴 Sinh TC cho REQ chưa có TC | `PRJ` | 104 REQ | `/generate-testcases-manual-rbt` |
 | 2 | ❌ Retest TC FAIL đã có bug đang mở | `LOGIN` | 5 TC | `/retest-fixed-bugs` |

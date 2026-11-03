@@ -18,7 +18,7 @@
 # NGUỒN DỮ LIỆU
 - Execution report: [để trống = agent tự glob docs/executions/*/run_*/]
 - Retest report: [để trống = agent tự glob docs/executions/*/retest_*/]
-- Bug: [để trống = agent đọc docs/bugs/ — hoặc ghi "lấy từ Jira" nếu đội dùng Jira]
+- Bug: [để trống = agent đọc docs/bugs/]
 - RTM: [VD: docs/traceability/traceability_matrix.md — để trống nếu chưa có]
 - Report automation: [VD: reports/allure-results — để trống nếu đợt này không chạy automation]
 

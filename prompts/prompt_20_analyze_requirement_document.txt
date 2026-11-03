@@ -24,4 +24,4 @@
 - Workflow này CHỈ sinh tài liệu phân tích `analysis_<TICKET-ID>.md`, KHÔNG sinh test cases
 - Nguồn sự thật là hệ thống đang chạy (không có tài liệu) → dùng /generate-requirements-from-website
 - Module ĐÃ có requirements và ticket này sửa/bổ sung yêu cầu cũ → dùng /update-requirements-from-ticket (chế độ delta, giữ nguyên REQ ID)
-- URL Jira/Confluence: agent KHÔNG tự fetch — cần lấy từ Jira thì chạy /fetch-jira-requirements trước
+- Ticket trên Google Sheet: chạy /fetch-gsheet-requirements trước (prompt_37), rồi đưa file bản chụp gsheet_*.md vào mục Tài liệu chính

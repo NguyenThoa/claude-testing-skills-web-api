@@ -34,7 +34,7 @@ Workflow này đóng **vòng lặp cuối** của quy trình kiểm thử: dev b
 
 | Cần có | Nguồn | Bắt buộc |
 |---|---|---|
-| Bug cần retest | File `docs/bugs/<module>/<nền-tảng>/BUG_*.md`, hoặc Jira key qua `/fetch-jira-requirements` | ✅ |
+| Bug cần retest | File `docs/bugs/<module>/<nền-tảng>/BUG_*.md` — bug chỉ lưu dạng file `.md` | ✅ |
 | **Build / version mới** | User cung cấp | ✅ |
 | Môi trường + tài khoản | `.env` hoặc user | ✅ |
 | Môi trường dùng chung? | User — bật quy tắc auto-skip của skill executor | ✅ |
@@ -225,8 +225,6 @@ Thêm mục **Lịch sử retest** vào cuối file `docs/bugs/<module>/<nền-t
 | ⚠️ CANNOT_VERIFY | `⚠️ Cần rà lại — CANNOT_VERIFY <DD-MM-YYYY>` |
 
 Bỏ bước này thì danh mục vẫn báo bug đã FIXED là *Đang mở* — người đọc danh mục (hoặc bugs-viewer khi chỉ nạp danh mục) thấy sai trạng thái.
-
-Bug **đẩy lên Jira** → cập nhật trạng thái tương ứng qua `skills-jira-integration`; **không** tự đóng ticket, chỉ chuyển sang trạng thái chờ xác nhận trừ khi user cho phép rõ ràng.
 
 ---
 

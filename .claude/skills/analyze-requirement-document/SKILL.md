@@ -1,6 +1,6 @@
 ---
 name: analyze-requirement-document
-description: Phân tích requirement document (Jira ticket, .docx/.pdf/.xlsx/.csv/.xml, user story) — sinh tài liệu phân tích chi tiết, KHÔNG sinh test cases.
+description: Phân tích requirement document (ticket trên Google Sheet, .docx/.pdf/.xlsx/.csv/.xml, user story) — sinh tài liệu phân tích chi tiết, KHÔNG sinh test cases.
 ---
 
 > **Skill nền tảng cần nạp trước:** `skills-requirements-analyzer` — đọc `.claude/skills/<tên-skill>/SKILL.md` của từng skill trước khi bắt đầu.
@@ -19,11 +19,11 @@ description: Phân tích requirement document (Jira ticket, .docx/.pdf/.xlsx/.cs
 
 # Workflow: Phân Tích Requirement Document
 
-Workflow này phân tích requirement documents (Jira tickets, .doc files, user stories, design mockups) và sinh ra một tài liệu phân tích chi tiết. **KHÔNG sinh test cases** — chỉ tập trung vào hiểu, phân rã, và phát hiện rủi ro/mơ hồ trong yêu cầu.
+Workflow này phân tích requirement documents (ticket trên Google Sheet, .doc files, user stories, design mockups) và sinh ra một tài liệu phân tích chi tiết. **KHÔNG sinh test cases** — chỉ tập trung vào hiểu, phân rã, và phát hiện rủi ro/mơ hồ trong yêu cầu.
 
 ## Khi nào sử dụng
 
-- User cung cấp Jira ticket hoặc requirement document (`.doc`, `.docx`, `.pdf`, `.xlsx`, `.csv`, `.xml`, `.md`) và yêu cầu "phân tích"
+- User cung cấp ticket trên Google Sheet (link hoặc bản chụp `gsheet_*.md`) hoặc requirement document (`.doc`, `.docx`, `.pdf`, `.xlsx`, `.csv`, `.xml`, `.md`) và yêu cầu "phân tích"
 - User đã có sẵn bộ file đặc tả (tài liệu + file bảng field + mockup) và muốn tổng hợp thành một tài liệu phân tích
 - User muốn hiểu rõ scope, acceptance criteria, và dependencies trước khi viết test
 - User cần danh sách các điểm mơ hồ (ambiguities) để clarify với PO/BA
@@ -75,13 +75,13 @@ Agent cần thu thập từ user:
 | Định dạng | Cách xử lý |
 |---|---|
 | `.md`, `.txt`, `.html`, `.xml`, `.json` | `Read` trực tiếp |
-| `.doc` export từ Jira | Thực chất là HTML → `Read` rồi bóc tag |
+| `.doc` export từ công cụ khác | Thực chất là HTML → `Read` rồi bóc tag |
 | `.docx`, `.dotx` | **Ủy quyền skill `docx`** — là ZIP/OOXML, `Read` thẳng ra rác |
 | `.xlsx`, `.xlsm`, `.csv`, `.tsv` | **Ủy quyền skill `xlsx`** |
 | `.pdf` | **Ủy quyền skill `pdf`** |
 | `.pptx` | **Ủy quyền skill `pptx`** |
 | Ảnh (`.png`, `.jpg`) | `Read` — công cụ hiển thị ảnh trực tiếp |
-| **URL Jira / Confluence** | ❌ **KHÔNG tự fetch.** Route sang `/fetch-jira-requirements` (skill `skills-jira-integration`). Nếu MCP Atlassian chưa authorize → **dừng, báo user cần authorize**, tuyệt đối KHÔNG bịa nội dung ticket |
+| **URL Google Sheet** (`docs.google.com/spreadsheets/...`) | ❌ **KHÔNG `WebFetch`.** Route sang `/fetch-gsheet-requirements` (skill `skills-gsheet-integration`) → phân tích file bản chụp `gsheet_*.md`. Sheet riêng tư mà chưa có connector Google Drive → **dừng, báo user**, tuyệt đối KHÔNG bịa nội dung ticket |
 
 > [!NOTE]
 > Nếu user chỉ cung cấp file tài liệu mà không có mockup, agent vẫn phải phân tích đầy đủ dựa trên nội dung document. Nếu có mockup/screenshot, agent phân tích UI chi tiết hơn.
@@ -319,9 +319,9 @@ Agent PHẢI xuất artifact theo cấu trúc sau:
 - **KHÔNG tự viết AC thay PO/BA.** Ticket thiếu AC → ghi nhận đúng thực trạng + `AMB-<MODULE>-XX` 🔴 High. Đây là luật tương đương "không đoán locator" của nhánh UI — vi phạm là tài liệu mất giá trị hoàn toàn
 - **KHÔNG đánh lại mã REQ từ `01`** nếu module đã có tài liệu — luôn đánh tiếp từ số cuối (mục 2.1 của skill). Đụng mã là vỡ toàn bộ RTM
 - **KHÔNG đọc file nhị phân bằng `Read`** (`.docx`/`.xlsx`/`.pdf`/`.pptx`) — ủy quyền đúng skill. Đọc không được thì **dừng và báo user**, không suy đoán từ tên file
-- **KHÔNG tự fetch URL Jira/Confluence** — route sang `/fetch-jira-requirements`. MCP chưa authorize thì báo user, tuyệt đối không bịa nội dung ticket
+- **KHÔNG tự fetch URL Google Sheet** — route sang `/fetch-gsheet-requirements`. Không đọc được sheet thì báo user, tuyệt đối không bịa nội dung ticket
 - **KHÔNG tự đoán** business logic nếu document không nói rõ → đưa vào Ambiguities
-- **KHÔNG bỏ qua comments** trong Jira ticket — comments thường là quyết định mới nhất và **đè lên** phần mô tả gốc
+- **KHÔNG bỏ qua cột Ghi chú / Quyết định** của ticket trên sheet — ghi chú thường là quyết định mới nhất và **đè lên** phần mô tả gốc
 - **KHÔNG tự giải quyết im lặng xung đột giữa các nguồn** — luôn thành `AMB-<MODULE>-XX`, kể cả khi đã áp thứ tự ưu tiên
 
 ### Bắt buộc (✅)

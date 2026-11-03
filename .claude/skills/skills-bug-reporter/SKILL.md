@@ -1,11 +1,11 @@
 ---
 name: skills-bug-reporter
-description: Skill sinh bug report chuẩn từ test FAIL — tự thu thập evidence (screenshot, log, environment), viết steps to reproduce, phân loại severity/priority, và hỗ trợ đẩy lên Jira.
+description: Skill sinh bug report chuẩn từ test FAIL — tự thu thập evidence (screenshot, log, environment), viết steps to reproduce, phân loại severity/priority, lưu thành file markdown trong docs/bugs/.
 ---
 
 # Bug Reporter
 
-Purpose: Chuyển kết quả test FAIL thành bug report chuẩn, đầy đủ evidence, sẵn sàng gửi developer hoặc đẩy lên Jira.
+Purpose: Chuyển kết quả test FAIL thành bug report chuẩn, đầy đủ evidence, lưu thành file `.md` sẵn sàng gửi developer (team không dùng Jira).
 
 ---
 
@@ -27,7 +27,7 @@ Sử dụng skill này khi:
 3. **Xác định Actual vs Expected** — rõ ràng, đo lường được
 4. **Phân loại Severity / Priority** — theo bảng chuẩn bên dưới
 5. **Ghi environment** — browser/version, OS, resolution, môi trường (dev/staging/prod), test data đã dùng
-6. **Đẩy lên Jira** (tùy chọn) — phối hợp với skill `skills-jira-integration`
+6. **Lưu file `.md`** — bug report và danh mục nằm trong `docs/bugs/`, không đẩy lên công cụ ngoài
 
 ---
 
@@ -118,7 +118,7 @@ Chi tiết quy trình: workflow `/retest-fixed-bugs`.
 3. **Isolate** — Rút gọn steps to reproduce về mức tối thiểu
 4. **Classify** — Gán Severity/Priority theo bảng chuẩn
 5. **Write** — Điền template, đính kèm evidence
-6. **Deliver** — Lưu file `docs/bugs/<module>/<nền-tảng>/BUG_<module>_<timestamp>_<TC_ID>.md` và cập nhật danh mục `docs/bugs/README.md` (template bên dưới); nếu user yêu cầu → đẩy lên Jira qua `skills-jira-integration`
+6. **Deliver** — Lưu file `docs/bugs/<module>/<nền-tảng>/BUG_<module>_<timestamp>_<TC_ID>.md` và cập nhật danh mục `docs/bugs/README.md` (template bên dưới)
 
 ---
 
@@ -177,5 +177,4 @@ Trước khi bàn giao bug report, verify:
 ## Rules References
 
 - `.claude/rules/automation_rules.md` — Test data traceable
-- `.claude/skills/skills-jira-integration/SKILL.md` — Đẩy bug lên Jira
 - `.claude/skills/skills-flaky-test-analyzer/SKILL.md` — Loại trừ flaky trước khi báo bug
