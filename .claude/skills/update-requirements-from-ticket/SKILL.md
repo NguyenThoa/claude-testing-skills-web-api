@@ -50,7 +50,7 @@ Module đang phát triển thì ticket liên tục sửa/bổ sung yêu cầu. W
 
 ### Bước 2: Đọc ticket mới
 
-Theo **mục 3.2** của skill — ủy quyền skill `docx`/`xlsx`/`pdf` đúng định dạng, đọc cả comments và file đính kèm. Ticket trên Google Sheet → lấy bản chụp bằng `/fetch-gsheet-requirements` trước, không tự fetch link sheet.
+Theo **mục 3.2** của skill — ủy quyền skill `docx`/`xlsx`/`pdf` đúng định dạng, đọc cả comments và file đính kèm. Không tự fetch URL Jira.
 
 ### Bước 3: Phân loại delta (TRỌNG TÂM)
 

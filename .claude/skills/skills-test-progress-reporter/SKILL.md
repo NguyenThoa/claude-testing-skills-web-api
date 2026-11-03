@@ -57,7 +57,7 @@ Giáo trình ghi ISO/IEC/IEEE 29119-3 gọi loại tài liệu này là **test s
 4. **BLOCKED không phải PASS · SKIPPED không phải PASS** — tách riêng, nêu lý do
 5. **Phần chưa bắt đầu đứng trước tỷ lệ** — cặp module × nền tảng chưa có TC hoặc chưa chạy nêu trước pass rate
 6. **Không có Master Test Plan → không kết luận "trễ" hay "đúng hạn"** — ghi *"không có mốc kế hoạch để so"*, chỉ báo số liệu
-7. **Số liệu mâu thuẫn giữa nguồn** (markdown ↔ Google Sheet) → nêu cả hai, ghi nguồn chính theo plan mục 5.3
+7. **Số liệu mâu thuẫn giữa nguồn** (markdown ↔ Jira) → nêu cả hai, ghi nguồn chính theo plan mục 5.3
 
 ---
 
@@ -96,7 +96,7 @@ Giáo trình ghi ISO/IEC/IEEE 29119-3 gọi loại tài liệu này là **test s
 
 > 📂 Tài liệu sinh trước khi có tầng nền tảng **không** bị di chuyển — quét **cả** `<module>/<nền-tảng>/` lẫn `<module>/`.
 >
-> Nguồn bug là `docs/bugs/`. Team còn theo dõi bug trên Google Sheet → đọc qua `skills-gsheet-integration`; không đọc được thì ghi rõ *"chưa đối chiếu Google Sheet"*.
+> Đội dùng Jira làm nguồn chính cho bug → lấy qua `skills-jira-integration`; không lấy được thì ghi rõ *"chưa đối chiếu Jira"*.
 
 **Chỉ hỏi user những thứ KHÔNG có trong file**, gom một lượt: công sức thực tế đã bỏ ra (khi plan có ước lượng 7.2) · trở ngại không để lại dấu vết trong file (môi trường sập, chờ tài khoản) kèm **thời lượng** · sự kiện ngoài repo (đổi người, đổi lịch). User không có → ghi `—`, không bịa.
 

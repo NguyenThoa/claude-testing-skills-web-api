@@ -9,7 +9,7 @@
 ## 1. Requirements
 [Chọn 1:]
 - File path: [path/to/requirements.md]
-- Google Sheet: [Link sheet + mã ticket — agent lấy bản chụp bằng /fetch-gsheet-requirements trước]
+- Jira: [Project key / danh sách ticket]
 - Dán trực tiếp:
 ```
 [DÁN REQUIREMENTS / USER STORIES]

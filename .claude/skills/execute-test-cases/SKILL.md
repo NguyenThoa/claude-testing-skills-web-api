@@ -115,5 +115,5 @@ Agent chạy tiếp qua TC fail (fail-forward), **chỉ dừng** khi:
 |---|---|
 | Có TC FAIL | `/create-bug-report` — sinh bug report chuẩn từ evidence đã thu. Mục checklist FAIL: bug đặt theo **module của mục** (cột `Module` với checklist release) |
 | Nhiều TC FAIL cần gom nhóm root cause | `/analyze-test-report` |
-| Cần chia sẻ kết quả cho team | Mở `execution_report.md` bằng `scripts/execution-viewer/bundle.html` → xuất CSV/Excel · hoặc xuất HTML bằng `scripts/user-guide/md2html.py --standalone` |
+| Cần đẩy kết quả lên Xray | `/import-test-results-xray` |
 | TC FAIL do TC viết sai (không phải lỗi hệ thống), kể cả TC `@NeedsVerify` lệch Expected | `/review-testcases` mode FIX — **không sửa TC trong lúc chạy** |

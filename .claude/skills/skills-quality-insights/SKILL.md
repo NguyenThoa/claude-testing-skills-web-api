@@ -192,7 +192,7 @@ Ba báo cáo chung khung — khác ở mục 2:
 - Chọn test: Thay đổi & REQ → Thứ tự chạy → REQ chưa phủ → ⏭️ Cố ý bỏ (người duyệt: ❓)
 
 ## 3. Đề xuất hành động
-| # | Việc | Đối tượng (mã) | Skill | Ưu tiên |
+| # | Việc | Đối tượng (mã) | Command | Ưu tiên |
 
 ## 4. Phương pháp
 Thang điểm: `.claude/skills/skills-quality-insights/references/scoring.md` · ngưỡng cỡ mẫu · những gì báo cáo KHÔNG nói

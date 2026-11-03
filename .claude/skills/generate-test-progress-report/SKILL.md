@@ -64,7 +64,7 @@ Glob theo bảng **Input** của skill, **ghi lại đường dẫn từng file*
 | Kỳ **không có** lần chạy nào | Vẫn lập báo cáo — tiến độ bằng 0 là thông tin quan trọng. Mục 4 phải giải thích vì sao |
 | Không có báo cáo kỳ trước | Cột *kỳ trước* / *xu hướng* ghi `—`, không dự báo |
 | Plan có ước lượng 7.2 nhưng không có công sức thực tế | Hỏi user ở Bước 3; không có → `—` |
-| Plan khai Google Sheet là nguồn phụ mà không đọc được | Ghi *chưa đối chiếu Google Sheet*, dùng `docs/bugs/` và nêu rõ |
+| Jira là nguồn chính mà không đọc được | Ghi *chưa đối chiếu Jira*, dùng `docs/bugs/` và nêu rõ |
 
 ---
 

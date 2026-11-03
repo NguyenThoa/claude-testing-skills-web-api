@@ -125,7 +125,7 @@ docs/requirements/_discovery/doc_inventory.md  ← chỉ khi có tài liệu
 |---|---|---|
 | Module là **app mobile** (hoặc thêm mặt app cho module web đã có) | `/generate-requirements-from-mobile` — mỗi nền tảng một lượt, ghi vào `<module>/mobile/`, chung dải REQ với web | [`prompt_30`](prompts/prompt_30_generate_requirements_from_mobile.txt) |
 | Module có **mặt API** — Swagger / Scalar / Postman / tài liệu API `.docx` | `/generate-requirements-from-api` — ghi vào `<module>/api/`, chung prefix và dải REQ với web | [`prompt_29`](prompts/prompt_29_generate_requirements_from_api.txt) |
-| Có ticket trên Google Sheet thay vì UI | `/fetch-gsheet-requirements` → `/analyze-requirement-document` | [`prompt_20`](prompts/prompt_20_analyze_requirement_document.txt) |
+| Có ticket Jira thay vì UI | `/analyze-requirement-document` | [`prompt_20`](prompts/prompt_20_analyze_requirement_document.txt) |
 | Tài liệu đã có, ticket sửa đổi | `/update-requirements-from-ticket` | [`prompt_21`](prompts/prompt_21_update_requirements_from_ticket.txt) |
 | Tài liệu vừa đổi, **bộ TC đã có cần đồng bộ** | `/update-testcases-from-impact` | [`prompt_27`](prompts/prompt_27_update_testcases_from_impact.txt) |
 
@@ -168,7 +168,7 @@ Cộng thêm: `README.md` cập nhật `Trạng thái recon` ⬜ → ✅.
 - **Web · Mobile** — cùng 3 mode trên. REQ dùng chung sinh **mỗi nền tảng một TC**, cùng `REQ ID`; TC mobile gắn tag `@Android` / `@iOS`
 - **API** — dùng `/generate-testcases-api` ([`prompt_09`](prompts/prompt_09_generate_api_tests.txt)): tự nhận nguồn URL hay file, kiểm chứng gọi thật, đủ 12 status code + OWASP, ghi vào `<module>/api/`
 
-**Ranh giới:** cần **bộ TC lưu trữ / quản lý trên Google Sheet / giao cho automation** → QUICK hoặc FULL RBT. Cần **tick tay cho nhanh** → CHECKLIST.
+**Ranh giới:** cần **bộ TC lưu trữ / import Jira / giao cho automation** → QUICK hoặc FULL RBT. Cần **tick tay cho nhanh** → CHECKLIST.
 
 💡 **Khuyến nghị:** module đầu tiên của hệ thống làm bằng **FULL RBT** — nó ép trả lời những câu hỏi nghiệp vụ mà sau này kiểu gì cũng phải hỏi. Các module tương tự sau đó dùng QUICK cho nhanh.
 
@@ -240,7 +240,7 @@ Sinh **Master Test Plan** — tài liệu quản lý để PM/khách hàng **duy
 | Bug đang mở · AMB 🔴 còn treo · rủi ro sản phẩm `RISK-<MODULE>-xx` | **Lịch** · **ước lượng công sức** · **ngân sách** · **nhân lực** |
 | Bài học và thời lượng thực tế của báo cáo mốc trước · thang Severity/Priority mặc định | Môi trường · **dữ liệu kiểm thử** đợt này · công cụ · **quy trình lỗi, người phân loại, thời hạn xử lý** · bên liên quan · người review, người duyệt · Test Policy/Strategy tổ chức |
 
-Không muốn điền phiếu → gọi skill `/generate-master-test-plan` kèm tên mốc, AI **hỏi một lượt** theo đúng các nhóm của phiếu rồi tự ghi vào `test_plan.config.yaml`. Ô nào bạn chưa có thông tin → AI để `❓` và liệt kê ở **đầu tài liệu**, **không** bịa ngày hay tên người.
+Không muốn điền phiếu → gọi lệnh kèm tên mốc, AI **hỏi một lượt** theo đúng các nhóm của phiếu rồi tự ghi vào `test_plan.config.yaml`. Ô nào bạn chưa có thông tin → AI để `❓` và liệt kê ở **đầu tài liệu**, **không** bịa ngày hay tên người.
 
 **Đầu ra:**
 ```
@@ -324,7 +324,7 @@ Report gồm 6 mục: Tổng kết · Kết quả từng TC · Chi tiết FAIL �
 | Tình huống | Workflow | Prompt mẫu | Ghi chú |
 |---|---|---|---|
 | **Nhiều TC FAIL**, chưa rõ nguyên nhân | `/analyze-test-report` | [`prompt_11_analyze_test_report.txt`](prompts/prompt_11_analyze_test_report.txt) | **Chạy cái này trước** — 12 TC FAIL thường chỉ là 2 bug |
-| Đã rõ bug, cần báo cáo | `/create-bug-report` | [`prompt_10_create_bug_report.txt`](prompts/prompt_10_create_bug_report.txt) | Tự lấy evidence từ run vừa rồi, lưu file `.md` trong `docs/bugs/` |
+| Đã rõ bug, cần báo cáo | `/create-bug-report` | [`prompt_10_create_bug_report.txt`](prompts/prompt_10_create_bug_report.txt) | Tự lấy evidence từ run vừa rồi, tuỳ chọn đẩy Jira |
 | FAIL vì **TC viết sai**, không phải lỗi hệ thống | `/review-testcases` mode FIX | [`prompt_12_review_testcases.txt`](prompts/prompt_12_review_testcases.txt) | Quay lại chặng 3 |
 | **Dev báo đã fix**, cần xác minh | `/retest-fixed-bugs` | [`prompt_23_retest_fixed_bugs.txt`](prompts/prompt_23_retest_fixed_bugs.txt) | Đóng vòng lặp bug — xem dưới. Hiện chỉ retest được bug **web**; bug mobile/API xác minh bằng cách chạy lại automation |
 

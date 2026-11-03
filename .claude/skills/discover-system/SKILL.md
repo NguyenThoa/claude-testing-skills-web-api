@@ -171,7 +171,7 @@ Sửa gì thì ghi **1 dòng vào Nhật ký danh mục**. Không lệch → nê
 > Mode UI → bỏ qua, sang Bước 3.
 
 1. **Đọc đúng cách theo định dạng** — theo bảng ở skill mục **3.2 Bước 0**:
-   `.docx` → skill `docx` · `.xlsx/.csv` → skill `xlsx` · `.pdf` → skill `pdf` · URL Google Sheet → `/fetch-gsheet-requirements`
+   `.docx` → skill `docx` · `.xlsx/.csv` → skill `xlsx` · `.pdf` → skill `pdf` · URL Jira → `/fetch-jira-requirements`
    **Đặc tả API** (Swagger UI · Scalar · Redoc · OpenAPI · Postman · `.docx` mô tả endpoint) cũng là **tài liệu** của mode HYBRID — lấy theo skill **3.4.1** (tải thô bằng `curl`, **không** `WebFetch`), rồi xử lý ở **Bước 3-A**
    ⚠️ Không đọc được → **báo user và dừng**, không suy đoán từ tên file
 2. **Lưu bản gốc** vào `docs/requirements/_discovery/sources/` — giữ nguyên tên file, để người review mở đối chiếu được

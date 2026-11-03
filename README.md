@@ -1,33 +1,18 @@
-# Team QA Chí Doanh — Claude Testing Skills 🚀
+# Claude Testing Skills 🚀
 
-👋 Đây là bộ **Rules · Skills** dùng chung của **Team QA Chí Doanh** trên **Claude Code** (CLI, Desktop và extension VS Code).
+👋 Chào mừng bạn đến với **Claude Testing Skills** phiên bản dành cho **Claude Code**!
 
-Repo gom sẵn thiết lập, quy tắc hành vi (Rules) và các **skill** để cả team dùng AI Agent theo cùng một quy trình — cho cả **Manual Testing** lẫn **Automation Testing**, từ phân tích yêu cầu, thiết kế test case, thực thi, báo bug đến báo cáo release.
+Đây là bộ Skills được xây dựng và phát triển bởi **Anh Tester**, dành riêng cho **Học viên học khoá AI tại Anh Tester**. Mục tiêu của repo này là cung cấp sẵn các thiết lập, quy tắc hành vi (Rules), kỹ năng (Skills), và lệnh tùy chỉnh (Workflows) chuẩn để hỗ trợ sử dụng AI Agent trên phần mềm **Claude Code** (bao gồm Claude Code CLI và Claude Code Desktop hoặc Claude Code dạng Extention trên VS Code).
 
-**Cách team làm việc:**
+Bộ Skills này **không chỉ dành riêng cho Automation** — mà được thiết kế toàn diện cho cả **Manual Testing** lẫn **Automation Testing**, bao phủ toàn bộ vòng đời kiểm thử phần mềm từ phân tích yêu cầu, thiết kế test cases cho đến thực thi và báo cáo kết quả.
 
-- 📋 **Ticket / user story nằm trên Google Sheet** — đọc bằng skill `/fetch-gsheet-requirements`.
-- 📝 **Mọi kết quả lưu thành file `.md`** trong `docs/` — requirements, test case, execution report, bug report, báo cáo. Không đẩy lên công cụ ngoài.
-- 🧩 **Mọi quy trình là skill** Gọi skill bằng cách gõ `/<tên-skill>` hoặc nói yêu cầu bằng lời để Claude tự chọn skill khớp.
+Đặc biệt, mọi công đoạn đều được **tích hợp AI một cách có hệ thống**, tạo thành một **quy trình ứng dụng AI hoàn thiện (End-to-End AI Testing Workflow)** — giúp Tester làm việc thông minh hơn, nhanh hơn và hiệu quả hơn trong kỷ nguyên AI.
 
-> 🔌 **Lần đầu cài đặt?** Đọc **[SETUP_CLAUDE.md](SETUP_CLAUDE.md)** — add **Playwright MCP**, kết nối **Google Drive / Slack / GitHub / Claude in Chrome / Figma**, và setup **Cowork Schedule** để chạy task theo lịch.
+> 🔌 **Lần đầu cài đặt?** Đọc **[SETUP_CLAUDE.md](SETUP_CLAUDE.md)** — hướng dẫn add **Playwright MCP** thủ công, kết nối **Atlassian / Slack / GitHub / Claude in Chrome**, và setup **Cowork Schedule** để tự động chạy task theo lịch.
 >
 > 🔄 **Cài xong rồi, chạy cái gì trước?** Đọc **[AI_FULL_FLOW_MANUAL.md](AI_FULL_FLOW_MANUAL.md)** — quy trình 8 chặng cho tình huống phổ biến nhất: hệ thống chỉ có UI, không tài liệu, không bộ test cases. Từ `/discover-system` → requirements → test cases → chạy tay → bug report → retest → ma trận truy vết → báo cáo release.
 >
-> 🤖 **Đã có bộ test cases, muốn viết script?** Đọc **[AI_FULL_FLOW_AUTOMATION.md](AI_FULL_FLOW_AUTOMATION.md)** — quy trình 8 chặng Automation: `/generate-automation-framework` → sinh script → review code → chạy & tự sửa → bảo trì khi UI/requirements đổi → RTM → lưu kết quả thành file `.md`.
-
----
-
-## 👥 Thành Viên Team QA Chí Doanh
-
-> ✏️ Điền tên thật của team vào bảng dưới.
-
-| Thành viên | Vai trò | Phụ trách |
-|---|---|---|
-| `<Họ tên>` | QA Lead | Duyệt test plan, test case · báo cáo release |
-| `<Họ tên>` | Automation Engineer | Framework · script automation · CI |
-| `<Họ tên>` | Manual Tester | Viết & chạy test case · báo bug |
-| `<Họ tên>` | Manual Tester | Viết & chạy test case · báo bug |
+> 🤖 **Đã có bộ test cases, muốn viết script?** Đọc **[AI_FULL_FLOW_AUTOMATION.md](AI_FULL_FLOW_AUTOMATION.md)** — quy trình 8 chặng Automation nối tiếp: `/generate-automation-framework` → sinh script → review code → chạy & tự sửa → bảo trì khi UI/requirements đổi → RTM → Xray.
 
 ---
 
@@ -44,7 +29,7 @@ Repo gom sẵn thiết lập, quy tắc hành vi (Rules) và các **skill** đ�
   - Bao phủ đủ **12 HTTP Status Codes** tiêu chuẩn (`200`, `201`, `400`, `401`, `403`, `404`, `406`, `409`, `413`, `415`, `429`, `500`).
   - Tích hợp **OWASP API Security Checklist** (BOLA/IDOR, Mass Assignment, SQLi/XSS, ReDoS, Sensitive Data Masking).
   - Response time SLA (< 2 giây), Dynamic Auth Token, Teardown/Cleanup test data tự động.
-- **🧠 Tối ưu cho QA/Tester:** Tất cả các prompt, rule và skill đều được tinh chỉnh dựa trên tư duy và quy trình làm việc thực tế của cả **Manual Tester** lẫn **Automation Engineer**.
+- **🧠 Tối ưu cho QA/Tester:** Tất cả các prompt, rule và workflow đều được tinh chỉnh dựa trên tư duy và quy trình làm việc thực tế của cả **Manual Tester** lẫn **Automation Engineer**.
 - **💻 Hỗ trợ Đa Nền Tảng:** Tương thích với các framework phổ biến như Web (Playwright, Selenium), Mobile (Appium), và API (Playwright API, REST Assured, Pytest Requests, Supertest).
 - **🛡️ Tuân thủ Tiêu Chuẩn Cao (Strict Rules):** Đảm bảo AI luôn đi theo cấu trúc Page Object Model (POM), viết code rõ ràng, không đoán bừa locator và tự động sửa lỗi (Self-fix).
 - **🇻🇳 Giao Tiếp Bằng Tiếng Việt:** AI được cấu hình để trao đổi, giải thích và báo cáo hoàn toàn bằng Tiếng Việt, thân thiện với người dùng Việt Nam.
@@ -56,36 +41,33 @@ Repo gom sẵn thiết lập, quy tắc hành vi (Rules) và các **skill** đ�
 Repo chia làm 2 phần rõ rệt: **khung** (dùng lại cho mọi dự án) và **đầu ra** (dữ liệu của dự án đang làm).
 
 ```
-claude-testing-skills-QA-CD/
+claude-testing-skills-new/
 │
 │ ══════════ KHUNG — dùng lại cho mọi dự án ══════════
 ├── .claude/
 │   ├── rules/               # 7 quy tắc bắt buộc AI phải tuân theo
-│   ├── skills/              # 65 skill: 23 skill nền tảng (skills-*) + 42 skill workflow gọi bằng /tên-skill
-│   ├── agents/              # 2 subagent review độc lập: testcase-reviewer · bug-report-reviewer (tự gọi sau khi sinh TC / bug)
+│   ├── skills/              # 66 skill: 23 skill nền tảng (skills-*) + 43 workflow gọi bằng /tên
 │   └── settings.json        # Cấu hình quyền hạn cho Claude Code
 ├── plans/
-│   └── master-test-plan/    # Phiếu YAML đầu vào cho skill /generate-master-test-plan (điền rồi gọi skill)
-├── prompts/                 # Prompt mẫu 00–37 dùng nhanh (copy → paste → gửi)
+│   └── master-test-plan/    # Phiếu YAML đầu vào cho /generate-master-test-plan (điền rồi gọi lệnh)
+├── prompts/                 # 36 prompt mẫu dùng nhanh (copy → paste → gửi)
 ├── scripts/
 │   ├── testcases-viewer/    # Công cụ web xem/lọc test case
 │   ├── execution-viewer/    # Công cụ web xem kết quả chạy, so sánh các lần chạy
 │   ├── traceability-viewer/ # Công cụ web xem ma trận truy vết — độ phủ REQ theo module/Story, TC chưa automate, gap
 │   ├── bugs-viewer/         # Công cụ web lọc bug theo Severity/Priority/Trạng thái, xem lịch sử retest
 │   ├── design-compare/      # Bộ đo so thiết kế Figma ↔ UI thật (figma_extract.js · collect_dom.js · dc.py)
-│   ├── gsheet/              # Đọc ticket từ Google Sheet → bản chụp .md (gsheet_fetch.py)
 │   └── design-review-viewer/ # Công cụ web lọc DIFF thiết kế, xem ảnh Figma | App
 ├── CLAUDE.md                # Rule chung cho AI Agent (Claude Code đọc tự động)
-├── memories/                # Bộ nhớ repo — MEMORY.md là bản đồ; team/ · repo/ · lessons/ · systems/
 ├── SETUP_CLAUDE.md          # Hướng dẫn cài Playwright MCP, Connectors & Cowork Schedule
-├── AI_FULL_FLOW_MANUAL.md      # Quy trình 8 chặng Manual Testing — chạy skill nào, theo thứ tự nào
+├── AI_FULL_FLOW_MANUAL.md      # Quy trình 8 chặng Manual Testing — chạy workflow nào, theo thứ tự nào
 ├── AI_FULL_FLOW_AUTOMATION.md  # Quy trình 8 chặng Automation — nối tiếp từ bộ TC đã review
 │
 │ ══════════ ĐẦU RA — dữ liệu của dự án đang làm ══════════
 ├── docs/
 │   ├── requirements/
 │   │   ├── README.md                          # DANH MỤC module: prefix đã chiếm, mã REQ kế tiếp
-│   │   ├── _discovery/                        # bản đồ hệ thống: system_map.md (web + mobile) · api_map.md · sources/gsheet_*.md (bản chụp ticket)
+│   │   ├── _discovery/                        # bản đồ hệ thống: system_map.md (web + mobile) · api_map.md
 │   │   └── <module>/                          # MỘT nghiệp vụ = MỘT thư mục, chung mọi nền tảng
 │   │       ├── REQUIREMENTS_<TÊN_MODULE>_SUMMARY.md       # INDEX — tên file bất biến: phần chung + Bản đồ tài liệu
 │   │       ├── web/                           # TẦNG NỀN TẢNG — chỉ 3 tên: web · mobile · api
@@ -118,30 +100,30 @@ claude-testing-skills-QA-CD/
 │       └── <module>/user_guide_<module>.md    # INDEX — tên file bất biến
 ```
 
-> **Chuyển sang dự án mới:** chỉ cần xoá phần **ĐẦU RA** — `rm -rf docs memories/systems .playwright-mcp task.md .claude/settings.local.json`. Agent tự tạo lại cấu trúc `docs/` ở lần chạy skill đầu tiên. Chi tiết xem [CLAUDE.md](CLAUDE.md) mục 6b.
+> **Chuyển sang dự án mới:** chỉ cần xoá phần **ĐẦU RA** — `rm -rf docs .playwright-mcp task.md .claude/settings.local.json`. Agent tự tạo lại cấu trúc `docs/` ở lần chạy workflow đầu tiên. Chi tiết xem [CLAUDE.md](CLAUDE.md) mục 6b.
 
 ### `.claude/` — Bộ não của AI Agent trên Claude Code
 
 | Thư mục         | Vai trò                                                                                                                                                                                                                                                                                                                                                                                                                                             |
 | --------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `skills/` — workflow | 42 skill workflow (không có tiền tố `skills-`), gọi bằng `/tên-skill`: `/discover-system`, `/fetch-gsheet-requirements`, `/compare-ui-from-figma-design`, `/generate-automation-web`, `/generate-automation-mobile`, `/generate-automation-api`, `/generate-testcases-api`, `/generate-requirements-from-website`, `/generate-requirements-from-mobile`, `/generate-requirements-from-api`, `/update-requirements-from-ticket`, `/generate-testcases-manual-rbt`, `/update-testcases-from-impact`, `/generate-automation-from-testcases`, `/update-automation-from-impact`, `/run-and-fix-tests`, `/heal-locators`, `/review-automation-code`, `/execute-test-cases`, `/retest-fixed-bugs`, `/analyze-test-report`, `/create-bug-report`, `/review-testcases`, `/generate-traceability-matrix`, `/generate-master-test-plan`, `/generate-test-progress-report`, `/generate-test-summary-report`, `/analyze-defect-trends`, `/assess-release-risk`, `/select-regression-tests`, `/generate-user-guide`, `/generate-api-mocks`... |
+| `skills/` — workflow | 43 workflow (skill không có tiền tố `skills-`), gọi bằng `/tên`: `/discover-system`, `/compare-ui-from-figma-design`, `/generate-automation-web`, `/generate-automation-mobile`, `/generate-automation-api`, `/generate-testcases-api`, `/generate-requirements-from-website`, `/generate-requirements-from-mobile`, `/generate-requirements-from-api`, `/update-requirements-from-ticket`, `/generate-testcases-manual-rbt`, `/update-testcases-from-impact`, `/generate-automation-from-testcases`, `/update-automation-from-impact`, `/run-and-fix-tests`, `/heal-locators`, `/review-automation-code`, `/execute-test-cases`, `/retest-fixed-bugs`, `/analyze-test-report`, `/create-bug-report`, `/review-testcases`, `/generate-traceability-matrix`, `/generate-master-test-plan`, `/generate-test-progress-report`, `/generate-test-summary-report`, `/analyze-defect-trends`, `/assess-release-risk`, `/select-regression-tests`, `/generate-user-guide`, `/generate-api-mocks`... |
 | `rules/`        | 7 quy tắc bắt buộc: automation chung, reporting (Allure), locator strategy, Playwright, Selenium, Appium, so thiết kế Figma                                                                                                                                                                                                                                                                                                                                                                |
-| `skills/` — nền tảng | 23 skill nền tảng (tiền tố `skills-`), được skill workflow nạp: requirements analyzer, **figma design comparator**, automation engineer, manual testing, manual test executor, UI debug (web), **mobile debug (Appium — Native/Flutter/Hybrid)**, locator healer, test data generator, framework architect, **google sheet integration** (đọc ticket thay Jira), bug reporter, test report analyzer, **test progress reporter**, **test summary reporter**, **quality insights** (xu hướng lỗi · rủi ro release · chọn test), **user guide writer** (DOC/LIVE/VIDEO · ảnh + video có highlight · đa ngôn ngữ · HTML nhúng media), testcase reviewer, automation code reviewer, coverage traceability, api mocking...                                                                                                                              |
+| `skills/` — nền tảng | 23 skill nền tảng (tiền tố `skills-`), được workflow nạp: requirements analyzer, **figma design comparator**, automation engineer, manual testing, manual test executor, UI debug (web), **mobile debug (Appium — Native/Flutter/Hybrid)**, locator healer, test data generator, framework architect, jira integration, bug reporter, test report analyzer, **test progress reporter**, **test summary reporter**, **quality insights** (xu hướng lỗi · rủi ro release · chọn test), **user guide writer** (DOC/LIVE/VIDEO · ảnh + video có highlight · đa ngôn ngữ · HTML nhúng media), testcase reviewer, automation code reviewer, coverage traceability, api mocking...                                                                                                                              |
 | `settings.json` | Cấu hình quyền hạn: cho phép/cấm các hành động cụ thể (đọc file, chạy test, push code...). Riêng `settings.local.json` là cấu hình **cục bộ từng máy** — đã gitignore, không commit                                                                                                                                                                                                                                                                 |
 
-> **📌**Mỗi quy trình là một skill `.claude/skills/<tên-skill>/SKILL.md` (kebab-case; skill workflow **không** có tiền tố `skills-`, skill nền tảng có tiền tố `skills-`). Gọi skill bằng `/<tên-skill>` — VD `.claude/skills/generate-automation-from-testcases/SKILL.md` → `/generate-automation-from-testcases` — hoặc mô tả việc cần làm, Claude tự chọn skill có mô tả khớp.
+> **📌 Lưu ý về cấu trúc:** Claude Code đã gộp custom command vào skill — repo này **không còn** `.claude/commands/`. Mỗi workflow là một skill `.claude/skills/<tên-workflow>/SKILL.md` (kebab-case, **không** có tiền tố `skills-`), vẫn gọi bằng `/<tên-workflow>` như trước. Ví dụ: `.claude/skills/generate-automation-from-testcases/SKILL.md` → `/generate-automation-from-testcases`.
 
 ---
 
 ## `plans/` — Phiếu Đầu Vào
 
-Chứa phiếu người dùng **tự điền** — thứ agent không suy ra được từ hệ thống hay `docs/`. Các quy trình nhiều bước (AI-RBT 6 bước, automation, cross-module) đã nằm trọn trong skill, gọi bằng `/tên-skill`.
+Chứa phiếu người dùng **tự điền** — thứ agent không suy ra được từ hệ thống hay `docs/`. Các quy trình nhiều bước (AI-RBT 6 bước, automation, cross-module) đã nằm trọn trong skill, gọi bằng `/tên`.
 
 | Thư mục                   | Nội dung                                                                                                                         | Dùng với                     |
 | ------------------------- | -------------------------------------------------------------------------------------------------------------------------------- | ---------------------------- |
-| `plans/master-test-plan/` | Phiếu `test_plan.config.yaml` (tên ô tiếng Việt, chú thích giá trị hợp lệ) + mẫu đã điền đủ `test_plan.template.yaml` (hệ thống hư cấu ShopMini — chỉ để tham khảo cách điền) | `/generate-master-test-plan` |
+| `plans/master-test-plan/` | Phiếu `test_plan.config.yaml` (tên ô tiếng Việt, chú thích giá trị hợp lệ) + khung rỗng `test_plan.template.yaml` + plan mẫu đã điền | `/generate-master-test-plan` |
 
-**Cách dùng:** Điền `plans/master-test-plan/test_plan.config.yaml` → gọi skill `/generate-master-test-plan`. Không muốn điền tay → gọi skill kèm tên mốc, agent hỏi một lượt rồi tự ghi vào phiếu.
+**Cách dùng:** Điền `plans/master-test-plan/test_plan.config.yaml` → gọi `/generate-master-test-plan`. Không muốn điền tay → gọi lệnh kèm tên mốc, agent hỏi một lượt rồi tự ghi vào phiếu.
 
 ### `prompts/` — Prompt Mẫu Dùng Nhanh
 
@@ -162,7 +144,7 @@ Dành cho tác vụ **đơn lẻ**, chỉ cần copy → thay `[...]` bằng d�
 | 07  | `prompt_07_generate_test_data.txt`              | Sinh test data có cấu trúc                                              |
 | 08  | `prompt_08_analyze_flaky_tests.txt`             | Phân tích test không ổn định                                            |
 | 09  | `prompt_09_generate_api_tests.txt`              | **[Mới]** Viết test API 12 status codes & OWASP Security                |
-| 10  | `prompt_10_create_bug_report.txt`               | **[Mới]** Sinh bug report chuẩn từ test FAIL, lưu file `.md` trong `docs/bugs/` |
+| 10  | `prompt_10_create_bug_report.txt`               | **[Mới]** Sinh bug report chuẩn từ test FAIL, tùy chọn đẩy Jira         |
 | 11  | `prompt_11_analyze_test_report.txt`             | **[Mới]** Phân tích test report, gom nhóm failure theo root cause       |
 | 12  | `prompt_12_review_testcases.txt`                | **[Mới]** Review chất lượng manual TCs theo rubric 6 tiêu chí · Mode AUTOMATION: TC nào làm automation được |
 | 13  | `prompt_13_generate_traceability_matrix.txt`    | **[Mới]** Sinh ma trận truy vết RTM 3 tầng                              |
@@ -189,7 +171,6 @@ Dành cho tác vụ **đơn lẻ**, chỉ cần copy → thay `[...]` bằng d�
 | 34  | `prompt_34_analyze_defect_trends.txt`         | **[Mới]** Xu hướng lỗi & vấn đề lặp lại toàn dự án — nhóm nguyên nhân gốc, điểm nóng module × nền tảng |
 | 35  | `prompt_35_assess_release_risk.txt`           | **[Mới]** Chấm rủi ro release theo module × nền tảng — 5 yếu tố minh bạch, không go/no-go |
 | 36  | `prompt_36_select_regression_tests.txt`       | **[Mới]** Chọn + xếp hạng TC cho một thay đổi trong quỹ phút — danh sách dán thẳng cho `/execute-test-cases` |
-| 37  | `prompt_37_fetch_gsheet_requirements.txt`     | **[Mới]** Lấy ticket / user story từ **Google Sheet** theo mã ticket · module · trạng thái → bản chụp `.md` |
 
 > Danh mục đầy đủ chia theo 8 nhóm tra cứu: [`prompts/README.md`](prompts/README.md)
 
@@ -199,9 +180,11 @@ Dành cho tác vụ **đơn lẻ**, chỉ cần copy → thay `[...]` bằng d�
 
 ### Cách 1: Claude Code CLI (Terminal)
 
-1. **Clone repo này về máy** — hoặc chỉ copy thư mục `.claude` + file `CLAUDE.md`.
+1. **Clone Repo này về máy:**
+   Hoặc bạn có thể copy trực tiếp thư mục `.claude` từ repo này.
 
-2. **Tích hợp vào dự án:** copy `.claude` và `CLAUDE.md` vào thư mục gốc của dự án Automation hoặc Manual Test đang làm.
+2. **Tích hợp vào dự án của bạn:**
+   Copy thư mục `.claude` vào thư mục gốc (root directory) của dự án Automation hoặc Manual Test mà bạn đang làm việc.
 
 3. **Mở terminal và khởi chạy Claude Code:**
 
@@ -209,39 +192,38 @@ Dành cho tác vụ **đơn lẻ**, chỉ cần copy → thay `[...]` bằng d�
    claude
    ```
 
-   Claude Code tự nhận thư mục `.claude` và file `CLAUDE.md` ở thư mục gốc, áp dụng ngay Rule và Skill của team.
+   Claude Code tự động nhận diện thư mục `.claude` và file `CLAUDE.md` ở thư mục gốc, áp dụng ngay các Rule, Skill, Workflow của **Anh Tester** đã thiết lập sẵn.
 
-4. **Gọi skill:**
-   Gõ `/` trong Claude Code để xem danh sách skill, chọn skill cần dùng. Ví dụ:
+4. **Sử dụng slash commands:**
+   Gõ `/` trong Claude Code để xem danh sách workflows có sẵn. Ví dụ:
    ```
-   /fetch-gsheet-requirements
-   /generate-testcases-manual-rbt
    /generate-automation-from-testcases
+   /generate-testcases-manual-rbt
+   /generate-cross-module-test-plan
    ```
-   Hoặc nói thẳng yêu cầu (*"lấy ticket TK-12 trên sheet rồi phân tích"*) — Claude tự chọn skill có mô tả khớp.
 
 ### Cách 2: Claude Code trong VS Code
 
-1. **Cài extension Claude Code** từ VS Code Marketplace.
+1. **Cài đặt extension Claude Code** từ VS Code Marketplace.
 
 2. **Mở dự án** đã chứa thư mục `.claude` trong VS Code.
 
 3. **Mở Claude Code panel** (Ctrl+Shift+P → "Claude Code: Open").
 
-4. **Bắt đầu trò chuyện** — Claude Code tự nhận cấu hình `.claude` và `CLAUDE.md`.
+4. **Bắt đầu trò chuyện** — Claude Code sẽ tự động nhận diện cấu hình `.claude` và `CLAUDE.md`.
 
 ### Bước tiếp theo: Kết nối công cụ → [SETUP_CLAUDE.md](SETUP_CLAUDE.md)
 
-Copy `.claude` vào dự án là AI đã có **Rule / Skill**. Để AI **mở được browser thật**, **đọc ticket trên Google Sheet riêng tư**, hay **gửi báo cáo vào Slack**, cần kết nối thêm công cụ.
+Copy `.claude` vào dự án là AI đã có **Rule / Skill / Workflow**. Nhưng để AI **mở được browser thật**, **đọc Jira**, hay **gửi báo cáo vào Slack**, bạn cần kết nối thêm công cụ bên ngoài.
 
 📖 **Xem hướng dẫn đầy đủ tại [SETUP_CLAUDE.md](SETUP_CLAUDE.md):**
 
-| Nội dung | Vì sao cần |
-| --- | --- |
+| Nội dung                                                       | Vì sao cần                                                                                                                                                                     |
+| -------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
 | **Cài Playwright MCP thủ công** (Developer → Local MCP Server) | **Bắt buộc** cho `/discover-system`, `/execute-test-cases`, `/generate-requirements-from-website`, `/generate-automation-web` — không có thì AI không mở được browser |
-| **Connectors: Google Drive / Slack / GitHub / Claude in Chrome** | Đọc ticket trên Google Sheet riêng tư (sheet chia sẻ link thì không cần), gửi report vào Slack, đọc log CI từ GitHub Actions |
-| **Cowork Schedule** — tự động chạy task theo lịch | Ví dụ sẵn: mỗi sáng đọc task từ Slack và ước lượng effort · cuối ngày tổng hợp kết quả GitHub Actions gửi vào kênh Slack |
-| **Checklist nghiệm thu & bảng lỗi thường gặp** | Xử lý nhanh `spawn npx ENOENT` trên Windows, connector kẹt OAuth, task chạy sai múi giờ |
+| **Connectors: Atlassian / Slack / GitHub / Claude in Chrome**  | Kéo requirement từ Jira, gửi report vào Slack, đọc log CI từ GitHub Actions                                                                                                    |
+| **Cowork Schedule** — tự động chạy task theo lịch              | Ví dụ sẵn: mỗi sáng đọc task từ Slack và ước lượng effort · cuối ngày tổng hợp kết quả GitHub Actions gửi vào kênh Slack                                                       |
+| **Checklist nghiệm thu & bảng lỗi thường gặp**                 | Xử lý nhanh `spawn npx ENOENT` trên Windows, connector kẹt OAuth, task chạy sai múi giờ                                                                                        |
 
 > ⚡ **Cài nhanh nhất:** nếu chỉ cần Playwright MCP cho Claude Code CLI, chạy đúng 1 lệnh ở thư mục gốc dự án:
 >
@@ -253,10 +235,22 @@ Copy `.claude` vào dự án là AI đã có **Rule / Skill**. Để AI **mở �
 
 ---
 
-## 📄 Giấy Phép & Nguồn Gốc
+## 🤝 Cộng đồng học tập
 
-Repo dùng nội bộ cho **Team QA Chí Doanh** — kiểm tra điều khoản giấy phép của bản gốc trước khi chia sẻ repo ra ngoài team.
+- Tham gia cộng đồng **Anh Tester** để cùng trao đổi:
+  - 📘 **Fanpage Facebook:** [Anh Tester](https://www.facebook.com/anhtester)
+  - 👥 **Group Facebook Automation:** [Cộng đồng Automation Testing](https://www.facebook.com/groups/automationtest)
+  - 👥 **Group Facebook Manual:** [Cộng đồng Manual Testing](https://www.facebook.com/groups/manualtest)
+  - ✈️ **Telegram Automation:** [Cộng đồng Automation Testing](https://t.me/+kSUGJ3pVvxkyZWU1)
+  - ✈️ **Telegram Manual:** [Cộng đồng Manual Testing](https://t.me/+8eChRz7OVqliZWRl)
 
 ---
 
-**Team QA Chí Doanh** 🎯
+## 📄 License
+
+Dự án này CÓ PHÍ, chỉ dành cho HỌC VIÊN chính thức của Anh Tester.
+
+---
+
+Anh Tester Automation Testing 🎯  
+https://anhtester.com

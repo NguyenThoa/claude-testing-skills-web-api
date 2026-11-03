@@ -13,7 +13,7 @@
 ```
 
 # TÙY CHỌN
-- Độ hạt test case: [GỘP (mặc định — biến thể cùng trường gom vào 1 TC có Bảng biến thể) / TÁCH (mỗi biến thể 1 TC — khi cần 1 dòng/TC trên Google Sheet / Excel)]
+- Độ hạt test case: [GỘP (mặc định — biến thể cùng trường gom vào 1 TC có Bảng biến thể) / TÁCH (mỗi biến thể 1 TC — khi cần 1 dòng/TC trên Jira, TestRail, Xray)]
 - Prefix TC ID: [VD: CRM_CUST — để trống nếu muốn agent tự đặt]
 - Giới hạn phạm vi: [VD: "Chỉ màn hình Danh sách + Thêm mới" / để trống = toàn module]
 

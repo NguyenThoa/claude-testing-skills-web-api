@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
-<title>Traceability Viewer — Team QA Chí Doanh</title>
+<title>Traceability Viewer — Anh Tester</title>
 <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='7' fill='%234DBD44'/%3E%3Cpath d='M8 11h16M8 16h16M8 21h16M13 8v16' stroke='white' stroke-width='2.4' fill='none' stroke-linecap='round'/%3E%3C/svg%3E">
 <style>
 :root{
@@ -249,7 +249,7 @@ footer{text-align:center;color:var(--muted);font-size:12px;padding:18px}
   <div class="kv" id="dKv"></div>
 </div>
 
-<footer>Team QA Chí Doanh · claude-testing-skills — dữ liệu lưu trong localStorage của trình duyệt này</footer>
+<footer>Anh Tester · claude-testing-skills — dữ liệu lưu trong localStorage của trình duyệt này</footer>
 
 <script>
 /* ============================ PARSER ============================
@@ -405,7 +405,7 @@ function parseDoc(text, fileName){
       continue;
     }
     if(iMod>=0 && colIdx(H,/^việc$/i)>=0){                              // Việc cần làm (file chung)
-      const iV=colIdx(H,/^việc$/i), iQ=colIdx(H,/số lượng/i), iC=colIdx(H,/^(command|skill)$/i);
+      const iV=colIdx(H,/^việc$/i), iQ=colIdx(H,/số lượng/i), iC=colIdx(H,/command/i);
       for(const r of t.rows){ const v=cell(r,iV); if(v) doc.todo.push({task:v, module:cell(r,iMod), qty:cell(r,iQ), cmd:cell(r,iC)}); }
       continue;
     }
@@ -742,7 +742,7 @@ function renderTodo(M){
   let items=M.index?.todo?.length ? M.index.todo : M.mods.flatMap(d=>d.todo);
   if(selMod) items=items.filter(t=>String(t.module).toUpperCase().includes(selMod));
   $('#cntTodo').textContent=items.length;
-  $('#tabTodo').innerHTML=items.length?`<div class="tablewrap"><table><thead><tr><th>#</th><th>Việc</th><th>Module</th><th>Số lượng</th><th>Skill</th></tr></thead><tbody>${
+  $('#tabTodo').innerHTML=items.length?`<div class="tablewrap"><table><thead><tr><th>#</th><th>Việc</th><th>Module</th><th>Số lượng</th><th>Command</th></tr></thead><tbody>${
     items.map((t,i)=>`<tr><td class="num">${i+1}</td><td>${esc(t.task)}</td><td>${esc(t.module)}</td><td class="num">${esc(t.qty||'—')}</td><td>${t.cmd?`<code>${esc(t.cmd)}</code>`:'—'}</td></tr>`).join('')}</tbody></table></div>`
     :'<div class="tablewrap"><div class="ok">✅ Không có việc nào được ghi trong RTM.</div></div>';
 }

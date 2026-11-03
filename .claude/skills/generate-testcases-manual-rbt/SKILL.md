@@ -82,17 +82,9 @@ Thực hiện theo hướng dẫn chi tiết trong skill `skills-rbt-manual-test
 5. Dự kiến **>30 TC** → tạo `task.md` (hoặc dùng task list của Claude Code), cập nhật sau mỗi batch.
 6. Chat chỉ hiện: kế hoạch batch → tiến độ từng batch → Bảng Đối Soát Coverage + tóm tắt đường dẫn file.
 
-### Bước 7: Review độc lập — subagent `testcase-reviewer`
-
-Chạy **tự động**, ngay khi bộ TC đã ghi xong file và **không còn chỉnh sửa** (user đã duyệt, Quality Gate đã qua). Không hỏi user có muốn review không.
-
-1. Gọi subagent **`testcase-reviewer`** (Agent tool, `subagent_type: testcase-reviewer`, chạy foreground). Subagent **không thấy hội thoại** — prompt giao việc phải tự đủ: module · nền tảng · đường dẫn file TC (file nền tảng / `parts/` + index) · đường dẫn file REQ · phạm vi: cả bộ TC vừa sinh. **Không** kể lý do vì sao TC được viết như vậy, không dặn chỗ nào "đã ổn".
-2. Nhận tóm tắt → chuyển nguyên cho user: đường dẫn báo cáo review, xếp loại 🟢🟡🔴, coverage gap, chỗ lệch với bảng tự đối soát.
-3. Có TC 🟡/🔴 hoặc gap → hỏi user có chạy `/review-testcases` mode **FIX** theo báo cáo không. **Không** tự sửa TC, **không** tự gọi lại reviewer — chỉ gọi lại khi user yêu cầu sau khi sửa.
-
 ## Output
 
-- Bảng Test Cases Markdown hoàn chỉnh (có cột **REQ ID**) kèm Automation Metadata (`Automation`, `Auto Type`, `Tags`), sẵn sàng copy sang Excel hoặc sync trực tiếp vào Google Sheets
+- Bảng Test Cases Markdown hoàn chỉnh (có cột **REQ ID**) kèm Automation Metadata (`Automation`, `Auto Type`, `Tags`), sẵn sàng copy sang Excel/Jira/TestRail hoặc sync trực tiếp vào Google Sheets
 - Traceability Matrix + **Bảng Đối Soát Coverage** (REQ × số TC × đủ Positive/Negative/Boundary)
 - **Bảng Đối soát loại kiểm thử (4 vòng)** — mọi nhánh V1–V4 × ✅/➖/⏭️/🔴 × TC ID (kèm số biến thể nếu GỘP) hoặc lý do (➖) · lý do + ai quyết + điều kiện rà lại (⏭️)
 - Danh sách Ambiguities đã giải quyết

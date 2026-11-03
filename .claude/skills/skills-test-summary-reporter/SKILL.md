@@ -103,7 +103,7 @@ Mỗi tiêu chí chấm **Đạt / Không đạt / Không áp dụng**, kèm s�
 | `docs/traceability/traceability_matrix.md` — file chung: độ phủ theo module, ⬛ module ngoài RTM; chi tiết theo `## Bản đồ tài liệu` sang file module (không có file chung thì đọc thẳng `docs/traceability/<module>/traceability_matrix_<module>.md`; RTM kiểu cũ ở chỗ khác vẫn đọc) | Độ phủ REQ ↔ TC ↔ Automation · REQ 🟠 chỉ có checklist · REQ ⏭️ loại trừ (đã trừ khỏi mẫu số — nêu số lượng). **Kiểm `Ngày sinh` / `Mốc git` từng module ở Bản đồ tài liệu** — module có RTM sinh trước lần sửa TC cuối cùng thì ghi *"RTM đã cũ, sinh ngày …"* ở mục 6 | Nếu có |
 | Report automation trong `reports/` | Kết quả suite tự động | Nếu có |
 
-> Thiếu `docs/bugs/` → hỏi user bug đang theo dõi ở đâu (VD tab Google Sheet → đọc qua `skills-gsheet-integration`), đừng bỏ trống mục bug.
+> Thiếu `docs/bugs/` (đội dùng Jira) → lấy qua `skills-jira-integration`, đừng bỏ trống mục bug.
 >
 > 📂 Tài liệu sinh trước khi có tầng nền tảng **không** bị di chuyển — quét **cả** `<module>/<nền-tảng>/` lẫn `<module>/`, nếu không báo cáo sẽ thiếu lần chạy và bug của module làm theo kiểu cũ. Lần chạy kiểu cũ không ghi nền tảng → tính là `web` nếu execution report chạy trên trình duyệt, ngược lại ghi `—` và nêu ở mục 2.
 
@@ -252,7 +252,7 @@ Báo cáo này tương ứng với **ISO/IEC/IEEE 29119-3 — Test Completion Re
 
 ## 7. Đề xuất hành động
 
-| Ưu tiên | Việc | Ai làm | Skill |
+| Ưu tiên | Việc | Ai làm | Command |
 |---|---|---|---|
 | 🔴 Trước release | Fix BUG_customers_1785700456_TC012 hoặc PM duyệt ngoại lệ | Dev / PM | — |
 | 🟠 Trước release | Xin tài khoản Manager để khảo sát module Báo cáo | QA | `/generate-requirements-from-website` |

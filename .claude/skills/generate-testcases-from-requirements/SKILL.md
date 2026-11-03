@@ -111,14 +111,6 @@ Quy tắc đầy đủ (2 kiểu gộp được phép · bảng CẤM gộp · t
 - **Chạy thẳng hết mọi batch trong 1 lượt** — không dừng hỏi "có tiếp tục không"
 - Dự kiến **>30 TC** → tạo `task.md` (hoặc dùng task list của Claude Code) và cập nhật sau mỗi batch
 
-## Bước cuối: Review độc lập — subagent `testcase-reviewer`
-
-Chạy **tự động**, ngay khi bộ TC đã ghi xong file và **không còn chỉnh sửa** (user đã duyệt, Quality Gate đã qua). Không hỏi user có muốn review không.
-
-1. Gọi subagent **`testcase-reviewer`** (Agent tool, `subagent_type: testcase-reviewer`, chạy foreground). Subagent **không thấy hội thoại** — prompt giao việc phải tự đủ: module · nền tảng · đường dẫn file TC (file nền tảng / `parts/` + index) · đường dẫn file REQ · phạm vi: cả bộ TC vừa sinh. **Không** kể lý do vì sao TC được viết như vậy, không dặn chỗ nào "đã ổn".
-2. Nhận tóm tắt → chuyển nguyên cho user: đường dẫn báo cáo review, xếp loại 🟢🟡🔴, coverage gap, chỗ lệch với bảng tự đối soát.
-3. Có TC 🟡/🔴 hoặc gap → hỏi user có chạy `/review-testcases` mode **FIX** theo báo cáo không. **Không** tự sửa TC, **không** tự gọi lại reviewer — chỉ gọi lại khi user yêu cầu sau khi sửa.
-
 ## Khi nào chuyển sang FULL RBT
 
 Agent **tự động đề xuất chuyển mode** nếu phát hiện:

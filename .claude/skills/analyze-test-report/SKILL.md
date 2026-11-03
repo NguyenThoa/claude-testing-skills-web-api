@@ -136,7 +136,7 @@ Xuất `docs/executions/<module>/<nền-tảng>/analysis_<timestamp>.md` (lần 
 
 ## 2. Phân loại FAIL theo nguyên nhân gốc
 
-| Category | Số TC | TC ID | Hành động | Skill |
+| Category | Số TC | TC ID | Hành động | Command |
 |---|---|---|---|---|
 | 🐛 Bug ứng dụng | 2 | TC_011 · TC_024 | Báo bug | `/create-bug-report` |
 | 📝 TC viết sai | 1 | TC_017 | Sửa TC | `/review-testcases` |

@@ -34,7 +34,7 @@ Sử dụng skill này khi:
 - Phân rã hệ thống thành modules / features
 - Xây dựng traceability matrix
 - Áp dụng Risk-Based Testing (đánh giá rủi ro cho test cases)
-- Chuẩn hóa test cases sang bảng Markdown (Google Sheet/Excel format)
+- Chuẩn hóa test cases sang bảng Markdown (Jira/Excel format)
 - Sinh test cases nhanh từ requirements đơn giản
 - Sinh checklist rà soát ngắn để tick tay (smoke / regression / release-readiness / post-hotfix)
 - **Cập nhật bộ TC đã có** khi requirements đổi theo ticket (Mode DELTA)
@@ -76,7 +76,7 @@ Kích hoạt khi:
 - User cần **danh sách tick tay** ngắn gọn, KHÔNG cần steps chi tiết
 - User muốn rút gọn bộ TC chi tiết đã có thành checklist chạy nhanh
 
-> Phân biệt: user cần **chạy tay nhanh và tick** → CHECKLIST. User cần **bộ TC lưu trữ, giao cho automation, quản lý trên Google Sheet** → QUICK hoặc FULL RBT.
+> Phân biệt: user cần **chạy tay nhanh và tick** → CHECKLIST. User cần **bộ TC lưu trữ, giao cho automation, import Jira/TestRail** → QUICK hoặc FULL RBT.
 
 ### → Mode DELTA
 
@@ -421,7 +421,7 @@ Cùng một module, cùng một mức bao phủ, số TC có thể chênh nhau *
 
 **Chọn TÁCH khi có ít nhất một trong các điều kiện sau** — ngoài ra luôn dùng GỘP:
 
-- Khách hàng / quy trình yêu cầu **mỗi TC là một dòng** trên Google Sheet / Excel (tính công theo số TC, hoặc gán người thực hiện theo từng TC)
+- Khách hàng / quy trình yêu cầu **mỗi TC là một dòng** trong Jira, TestRail, Xray (tính công theo số TC, hoặc gán người thực hiện theo từng TC)
 - Cần **pass-rate theo từng biến thể** để báo cáo chất lượng
 - Module thuộc diện **kiểm định / audit** cần vết thực thi rời cho từng case
 - User yêu cầu rõ
@@ -524,7 +524,7 @@ Sinh test cases **nhanh, đủ chất lượng** từ requirements/user stories 
    - Localization & UTF-8 / Emoji
    - Keyboard Accessibility (A11y)
    - HTTP Status Codes (cho API TCs)
-9. **Xuất ra bảng Markdown** chuẩn có đầy đủ metadata cho Automation, sẵn sàng sync vào Google Sheets hoặc Excel. Cột `Automation` chấm theo [Tiêu chí chấm cột Automation](references/automation_criteria.md), ghi mục `## Đối soát cột Automation` vào index.
+9. **Xuất ra bảng Markdown** chuẩn có đầy đủ metadata cho Automation, sẵn sàng sync vào Google Sheets hoặc Jira/TestRail. Cột `Automation` chấm theo [Tiêu chí chấm cột Automation](references/automation_criteria.md), ghi mục `## Đối soát cột Automation` vào index.
 10. **Chạy Self-Quality Gate (11 Tiêu chí, 0–10):** Rà soát lại 100% test cases + đối soát coverage (6) + đối soát evidence (7) + **rà ngôn ngữ kiểm chứng** (8) + **rà đặc tính chất lượng ISO/IEC 25010** (9) + **đối soát loại kiểm thử 4 vòng** (10) trước khi xuất kết quả.
 
 ## Bảng Output Standard (chuẩn hóa đầy đủ Metadata)
@@ -1131,7 +1131,7 @@ Quy trình bài bản, tuần tự cho module phức tạp. Bao gồm phân tíc
 
 ### Bước 6: Template Mapping (Chuẩn hóa Format & Metadata)
 
-**Mục đích:** Đóng gói test cases thành bảng Markdown chuẩn đầy đủ metadata cho Automation, sẵn sàng copy sang Excel hoặc sync vào Google Sheets.
+**Mục đích:** Đóng gói test cases thành bảng Markdown chuẩn đầy đủ metadata cho Automation, sẵn sàng copy sang Excel/Jira hoặc sync vào Google Sheets.
 
 **Agent phải:**
 1. Chuẩn hóa toàn bộ test cases vào bảng Markdown:
@@ -1158,7 +1158,7 @@ Quy trình bài bản, tuần tự cho module phức tạp. Bao gồm phân tíc
 
 Sinh **checklist ngắn gọn để tick tay** khi cần chạy nhanh — smoke trước release, bàn giao cho tester thủ công, rà soát sau hotfix. Mỗi mục là **1 dòng kiểm tra được trong vài phút**, KHÔNG phải test case có steps chi tiết.
 
-> **Ranh giới với QUICK/FULL RBT:** Checklist trả lời "đã rà hết chưa?", test case trả lời "rà bằng cách nào?". Nếu user cần steps chi tiết, test data đầy đủ, quản lý trên Google Sheet hay giao cho automation → dùng QUICK hoặc FULL RBT, KHÔNG dùng mode này.
+> **Ranh giới với QUICK/FULL RBT:** Checklist trả lời "đã rà hết chưa?", test case trả lời "rà bằng cách nào?". Nếu user cần steps chi tiết, test data đầy đủ, import Jira/TestRail hay giao cho automation → dùng QUICK hoặc FULL RBT, KHÔNG dùng mode này.
 
 ## 2 Nguồn Input
 
@@ -1477,7 +1477,7 @@ Vì vậy Mode DELTA đặt việc **bảo toàn TC ID** lên trên mọi mục 
 | Output | Mô tả |
 |--------|--------|
 | Mục Assumptions | Các giả định đã áp dụng khi requirement mơ hồ (ASM-XX) — gồm cả xung đột tài liệu ↔ evidence |
-| Bảng TC Markdown | Test Cases đầy đủ (có cột REQ ID), sẵn sàng copy sang Excel / Google Sheet |
+| Bảng TC Markdown | Test Cases đầy đủ (có cột REQ ID), sẵn sàng copy sang Excel/Jira |
 | Bảng Đối Soát Coverage | Mỗi REQ ID × số TC × đủ Positive/Negative/Boundary (tiêu chí 6) |
 | **Bảng Đối Soát Evidence** | Mỗi ảnh × màn hình/trạng thái × TC dựa vào × đầy đủ hay cắt cụt (tiêu chí 7) |
 | **Vùng chưa có evidence** | Danh sách màn hình/trạng thái không có ảnh chống lưng + TC bị gắn `@NeedsVerify` |
@@ -1494,7 +1494,7 @@ Vì vậy Mode DELTA đặt việc **bảo toàn TC ID** lên trên mọi mục 
 | 3 | Module Decomposition + Dependencies |
 | 4 | Traceability Matrix + High-Level Scenarios **xếp theo 4 vòng** (mỗi nhánh chấm sơ bộ ✅/➖/⏭️) + **mức rủi ro · độ sâu** từng Module |
 | 5 | Test Cases chi tiết (REQ ID + Risk Level + Test Data), sinh **tuần tự V1 → V4** |
-| 6 | Bảng Markdown chuẩn (Google Sheet/Excel ready) + Bảng Đối Soát Coverage + **Bảng Đối Soát Evidence** + **Bảng Đối soát loại kiểm thử (4 vòng)** + **Bảng rà soát đặc tính chất lượng (ISO/IEC 25010:2023)** + **Đối soát cột Automation** |
+| 6 | Bảng Markdown chuẩn (Jira/Excel ready) + Bảng Đối Soát Coverage + **Bảng Đối Soát Evidence** + **Bảng Đối soát loại kiểm thử (4 vòng)** + **Bảng rà soát đặc tính chất lượng (ISO/IEC 25010:2023)** + **Đối soát cột Automation** |
 
 ### Mode CHECKLIST
 

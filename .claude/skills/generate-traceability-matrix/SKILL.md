@@ -27,7 +27,7 @@ description: Sinh ma trận truy vết (RTM) Requirements ↔ Test Cases ↔ Aut
 
 | Nguồn | Bắt buộc? | Ghi chú |
 |---|---|---|
-| Requirements (markdown/Google Sheet/user stories) | Cần ≥2 nguồn | Ticket trên sheet lấy bằng `/fetch-gsheet-requirements`. Ghi lại Story chứa từng REQ |
+| Requirements (markdown/Jira export/user stories) | Cần ≥2 nguồn | Có thể lấy từ `/fetch-jira-requirements`. Ghi lại Story chứa từng REQ |
 | Manual test cases (markdown/Excel/CSV) | Cần ≥2 nguồn | Index TC có bảng *REQ cố ý KHÔNG có TC* — nguồn của trạng thái ⏭️ |
 | Automation scripts (path thư mục test) | Cần ≥2 nguồn | Agent tự scan `.spec.ts`, `*Test.java`, `.py` |
 | Checklist (`docs/checklists/**/checklist_*.md`) | Nguồn phụ — không tính vào "≥2 nguồn" | Agent tự quét — smoke/regression lấy file mới nhất theo ngày, post-hotfix lấy mọi file, release lấy file của mốc (luật ở skill, bảng *Nguồn trong `docs/`*) |
