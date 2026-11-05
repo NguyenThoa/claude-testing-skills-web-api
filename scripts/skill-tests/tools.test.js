@@ -369,7 +369,7 @@ test('--update-existing không tạo Test mới và gỡ TC Deprecated khỏi Te
 });
 
 const importCli = path.join(scripts, 'import_results.js');
-const { inspectResults, importResults, injectTestKeys } = require(importCli);
+const { inspectResults, importResults, injectTestKeys, markKnownBugs } = require(importCli);
 const junitXml = `<testsuites><testsuite name="s">
 <testcase name="a" classname="c"><properties><property name="test_key" value="PROJ-1"/></properties></testcase>
 <testcase name="b" classname="c"/>
@@ -407,6 +407,38 @@ test('import gắn test_key theo TC ID ở tên hoặc property, bỏ qua test k
   assert.match(content, /name="CRM_A_TC_001 - a > b"><properties><property name="test_key" value="P-1"\/><\/properties><\/testcase>/);
   assert.match(content, /<properties><property name="test_key" value="P-2"\/><property name="testId"/);
   assert.match(content, /<property name="test_key" value="P-3"\/><\/properties><failure>/);
+});
+
+test('import chuyển test @KnownBug thành FAIL, kể cả khi runner ghi pass hoặc skip', () => {
+  const xml = `<testsuite>
+<testcase name="CRM_A_TC_001 - pass giả"/>
+<testcase name="CRM_A_TC_002 - xfail"><skipped type="pytest.xfail" message="BUG"/></testcase>
+<testcase name="CRM_A_TC_003 - có property"><properties><property name="x" value="y"/></properties></testcase>
+<testcase name="CRM_A_TC_004 - @KnownBug:BUG_1"/>
+<testcase name="CRM_A_TC_005 - đã đỏ"><failure>sai</failure></testcase>
+<testcase name="CRM_A_TC_006 - bình thường"/>
+</testsuite>`;
+  const { content, marked, missing } = markKnownBugs('junit', xml, ['CRM_A_TC_001', 'CRM_A_TC_002', 'CRM_A_TC_003', 'CRM_A_TC_005']);
+  assert.deepEqual(missing, []);
+  assert.equal(marked.length, 5);
+  assert.equal((content.match(/<failure/g) || []).length, 5);
+  assert.doesNotMatch(content, /<skipped/);
+  assert.match(content, /<\/properties><failure/);
+  assert.match(content, /TC_006 - bình thường"\/>/);
+  assert.deepEqual(inspectResults('junit', content), { total: 6, withoutKey: 6 });
+});
+
+test('import xray chuyển testKey được khai thành FAIL', () => {
+  const json = JSON.stringify({ tests: [{ testKey: 'P-1', status: 'PASS' }, { testKey: 'P-2', status: 'PASS', comment: '@KnownBug:BUG_1' }, { testKey: 'P-3', status: 'PASS' }] });
+  const { content, marked } = markKnownBugs('xray', json, ['P-1']);
+  assert.deepEqual(marked, ['P-1', 'P-2']);
+  assert.deepEqual(JSON.parse(content).tests.map(test => test.status), ['FAIL', 'FAIL', 'PASS']);
+});
+
+test('import dừng khi --known-bugs không có trong file', () => {
+  const res = runImport(['--format', 'junit', '--file', fixture('r4.xml', junitXml), '--project', 'PROJ', '--known-bugs', 'CRM_A_TC_999', '--dry-run']);
+  assert.equal(res.status, 1);
+  assert.match(res.stderr, /CRM_A_TC_999/);
 });
 
 test('import dừng trước khi gọi Jira khi còn test chưa có mã', () => {
@@ -496,6 +528,29 @@ test('Quality Insights tính tầm ảnh hưởng theo Risk Level và @HighImpac
   const res = spawnSync(python, ['-I', '-c', code], { encoding: 'utf8', env: { ...process.env, PYTHONIOENCODING: 'utf-8' } });
   assert.equal(res.status, 0, res.stderr);
   assert.deepEqual(JSON.parse(res.stdout), [true, true, false]);
+});
+
+test('Quality Insights không để vùng rất bất ổn xuống Thấp chỉ vì B thấp', t => {
+  const python = ['python', 'python3'].find(cmd => spawnSync(cmd, ['--version']).status === 0);
+  if (!python) return t.skip('máy không có Python');
+  const code = [
+    'import sys, json, datetime, importlib.util as u',
+    `s = u.spec_from_file_location('qi', r'${path.join(root, 'scripts/quality-insights/qi.py')}')`,
+    "m = u.module_from_spec(s); sys.modules['qi'] = m; s.loader.exec_module(m)",
+    "base = {'system': 'x', 'module': 'cust', 'platform': 'web'}",
+    "tc = {**base, 'id': 'CRM_CUST_TC_001', 'deprecated': False, 'reqs': [], 'risk': 'Low', 'tags': []}",
+    "bugs = [{**base, 'id': f'B{i}', 'state': 'open', 'severity': 'Major'} for i in range(3)]",
+    "impact = {**{k: base[k] for k in ('system', 'module')}, 'ticket': 'T-1', 'date': '05-11-2026', 'reqs': [], 'changes': {'remove': ['REQ-CUST-01']}}",
+    "d = {'bugs': bugs, 'runs': [], 'testcases': {tc['id']: tc}, 'impacts': [impact]}",
+    "r = m.build_risk(d, datetime.date(2026, 11, 5), None, None)['rows'][0]",
+    "print(json.dumps({'level': r['level'], 'score': r['score'], 'likelihood': r['likelihood'], 'B': r['B']}))"
+  ].join('\n');
+  const res = spawnSync(python, ['-I', '-c', code], { encoding: 'utf8', env: { ...process.env, PYTHONIOENCODING: 'utf-8' } });
+  assert.equal(res.status, 0, res.stderr);
+  const row = JSON.parse(res.stdout);
+  assert.equal(row.B, 0);
+  assert.ok(row.likelihood >= 4 && row.score < 8, JSON.stringify(row));
+  assert.equal(row.level, 'Trung bình');
 });
 
 test('viewer test case nhận tên cột mới ở cả mã nguồn và bundle', () => {

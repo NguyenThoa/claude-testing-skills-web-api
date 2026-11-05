@@ -27,6 +27,7 @@ Dùng khi **UI vừa đổi** (deploy frontend mới, redesign module) làm loca
 
 ## ⚠️ Nguyên tắc thực thi
 
+- **Kiểm môi trường trước khi mở trình duyệt, gọi API hoặc chạy test:** phân loại host theo mục *Môi trường production* của `CLAUDE.md` và ghi kết quả vào report. Không có dấu hiệu môi trường test thì dừng, hỏi user
 - **Tất cả output bằng Tiếng Việt**
 - **TUYỆT ĐỐI KHÔNG ĐOÁN locator** — mọi locator mới phải verify trên DOM thực tế
 - **Thứ tự bắt buộc:** `navigate` → `wait_for(page_load)` → `snapshot` → đối chiếu (KHÔNG resize — viewport đã đúng từ `--viewport-size` lúc launch)
@@ -88,11 +89,14 @@ Với mỗi locator, xác định trạng thái:
 | 🔴 **Gãy** | Match 0 element |
 | 🔴 **Mơ hồ** | Match >1 element (strict mode violation) |
 | 🔴 **Sai element** | Match 1 element nhưng **không phải** element cần — nguy hiểm nhất, test vẫn chạy mà thao tác nhầm chỗ |
+| 🚩 **Nghi đổi hành vi** | Element biến mất mà không có element cùng chức năng, đổi nhãn hoặc đổi nghĩa, hoặc phải qua thêm bước mới tới được |
 | ❓ **Chưa kiểm được** | Không đưa được về trạng thái chứa element — ghi rõ lý do, KHÔNG đoán |
+
+> 🚩 **không phải việc của heal.** Đối chiếu REQ và TC: có ticket đổi yêu cầu → `/update-testcases-from-impact`; trái REQ → `/create-bug-report`; chưa rõ → hỏi user. Thay locator ở đây sẽ làm test xanh và che mất thay đổi.
 
 ### Bước 4: Sinh Locator Thay Thế
 
-Cho mọi mục 🔴/⚠️, dùng `skills-smart-locator-agent` sinh locator mới theo đúng thứ tự ưu tiên của framework, rồi **verify ngay trên DOM**: match đúng 1 element, đúng element mục tiêu, còn đúng sau khi reload trang.
+Cho mọi mục 🔴/⚠️ (trừ 🚩), dùng `skills-smart-locator-agent` sinh locator mới theo đúng thứ tự ưu tiên của framework, rồi **verify ngay trên DOM**: match đúng 1 element, đúng element mục tiêu, còn đúng sau khi reload trang.
 
 ### Bước 5: Báo Cáo (CHECKPOINT)
 

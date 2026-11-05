@@ -46,6 +46,8 @@ Mẫu báo cáo: `plans/design-compare/report_template.md` nếu project có (m�
 
 ## ⚠️ Ranh giới của workflow này
 
+> **Kiểm môi trường trước khi mở trình duyệt, gọi API hoặc chạy test:** phân loại host theo mục *Môi trường production* của `CLAUDE.md` và ghi kết quả vào report. Không có dấu hiệu môi trường test thì dừng, hỏi user.
+
 | Workflow này **CÓ** làm | Workflow này **KHÔNG** làm |
 |---|---|
 | Đọc Figma **chỉ đọc**, so với UI thật, ghi DIFF có số đo + ảnh | ❌ Sửa file Figma · ❌ sửa code app |

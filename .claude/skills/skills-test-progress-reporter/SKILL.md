@@ -138,7 +138,8 @@ File: `docs/executions/test_progress_<slug>_<YYYYMMDD>.md` — `YYYYMMDD` là **
 | Kỳ báo cáo | <DD-MM-YYYY> → <DD-MM-YYYY> (<N> ngày làm việc) · múi giờ <…> |
 | Mốc · Plan | <Mốc> · [test_plan_<slug>.md](../test-plans/test_plan_<slug>.md) v<x> |
 | Báo cáo kỳ trước | [test_progress_<slug>_<YYYYMMDD>.md](…) — hoặc `Đây là kỳ đầu tiên` |
-| Người lập | <QA Lead> (agent hỗ trợ) |
+| Người lập | Agent `<model>`, tổng hợp từ file nguồn |
+| Người duyệt | <QA Lead>, hoặc `⏳ Chưa duyệt` |
 | Nguồn dữ liệu | <N> execution report · <N> retest report · <N> bug report · <nguồn khác> |
 | Nội dung | Lập theo nội dung báo cáo tiến độ của ISTQB CTFL v4.0 mục 5.3.2 |
 

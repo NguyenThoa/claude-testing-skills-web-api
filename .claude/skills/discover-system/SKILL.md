@@ -15,6 +15,8 @@ description: Khám phá hệ thống ở cấp toàn cục — web và API (Swag
 
 ## ⚠️ Ranh giới của workflow này — đọc trước khi chạy
 
+> **Kiểm môi trường trước khi mở trình duyệt, gọi API hoặc chạy test:** phân loại host theo mục *Môi trường production* của `CLAUDE.md` và ghi kết quả vào report. Không có dấu hiệu môi trường test thì dừng, hỏi user.
+
 | Workflow này **CÓ** làm | Workflow này **KHÔNG** làm |
 |---|---|
 | Liệt kê toàn bộ module / trang / entity của hệ thống | ❌ Sinh `REQ-XXX-NN` — **tuyệt đối không gán mã REQ** |

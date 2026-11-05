@@ -15,6 +15,7 @@ Chạy bộ manual test cases trực tiếp trên browser thật, đối chiếu
 
 ## ⚠️ Nguyên tắc
 
+- **Kiểm môi trường trước khi mở trình duyệt, gọi API hoặc chạy test:** phân loại host theo mục *Môi trường production* của `CLAUDE.md` và ghi kết quả vào report. Không có dấu hiệu môi trường test thì dừng, hỏi user
 - **Chạy thật, không suy đoán** — mọi PASS/FAIL phải dựa trên quan sát UI qua `snapshot`
 - **TC là chuẩn** — thực tế lệch TC thì ghi FAIL, **TUYỆT ĐỐI KHÔNG sửa TC** cho khớp
 - **Headed mode, viewport theo `--viewport-size` lúc launch** (bảng ở `.claude/rules/playwright_rules.md` mục 1) — tester phải nhìn được agent đang thao tác, KHÔNG resize phóng vượt cửa sổ
@@ -51,6 +52,8 @@ Chạy bộ manual test cases trực tiếp trên browser thật, đối chiếu
 2. Tạo thư mục evidence `docs/executions/<module>/<nền-tảng>/<run_id>/evidence/` và — khi `Quay video` ≠ `Không` — thư mục **`video/` ngang cấp** — `<nền-tảng>` là nền tảng của file TC đang chạy. Workflow này chạy trên **trình duyệt** nên là `web`; TC `@API` không chạy ở đây. Checklist Release-readiness (`docs/checklists/_release/<nền-tảng>/`) thì `<module>` là **`_release`**
 3. Khởi tạo file report `docs/executions/<module>/<nền-tảng>/<run_id>/execution_report.md` với phần header — **bắt buộc** có ô `Loại nguồn` (`Bộ TC` / `Checklist <loại> · <Mã checklist>`) và ô `Video`
 4. `Quay video` ≠ `Không`: kiểm có tool `browser_start_video` — không có → config `"capabilities": ["devtools"]` chưa nạp: dừng, báo user khởi động lại Claude Code hoặc chạy với `Quay video: Không`
+
+> **File TC thuộc `api/`:** workflow này không gọi API thay tester. Đi theo ô `Cách chạy API` của plan. `tự động hoá`: dùng `/generate-automation-api`, kết quả ở `reports/`. `kiểm thử viên tự chạy`: agent sinh sẵn `docs/executions/<module>/api/<run_id>/execution_report.md` đủ header và bảng TC, để trống cột kết quả. Tester gọi API, tự chấm, lưu request/response đã che vào `evidence/`. Agent không chấm thay. `ngoài phạm vi`: không chạy, ghi rõ trong plan.
 
 ### Bước 3: Khởi tạo browser & đăng nhập
 1. `browser_navigate(url)`

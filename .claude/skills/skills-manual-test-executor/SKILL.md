@@ -15,6 +15,7 @@ Skill biến bộ manual test cases thành **kết quả kiểm thử thật**. 
 - **Chạy thật, không suy đoán:** mọi kết luận PASS/FAIL phải dựa trên quan sát UI thực tế qua snapshot/screenshot
 - **TC là chuẩn, không phải hệ thống:** khi thực tế lệch TC → ghi FAIL. **TUYỆT ĐỐI KHÔNG sửa TC cho khớp thực tế**
 - **An toàn dữ liệu trước tốc độ:** môi trường dùng chung thì thao tác phá huỷ bị chặn, dữ liệu tạo ra phải dọn
+- **Ghi đúng ai chạy:** kết quả do agent chấm thì không ghi tên tester là người thực hiện. Người xem lại kết quả ghi ở ô `Người soát xét`
 
 ---
 
@@ -199,7 +200,7 @@ docs/executions/<module>/<nền-tảng>/<run_id>/      (retest: retest_<timestam
 | Giá trị | Khi nào chọn | Làm gì |
 |---|---|---|
 | **`Có`** (mặc định) | Mọi lần chạy, trừ khi user nói khác | Quay mọi TC đã chạy, giữ hết |
-| **`Chỉ giữ FAIL`** | Bộ TC lớn, chỉ cần video cho chỗ lỗi — tiết kiệm dung lượng repo | Vẫn **quay mọi TC** (chưa chạy thì chưa biết TC có fail không), chấm xong TC `✅ PASS` thì **xoá ngay** file video của TC đó; giữ `❌ FAIL` và `⚠️ BLOCKED`. Cột `Video` của TC PASS ghi `—` |
+| **`Chỉ giữ FAIL`** | Bộ TC lớn, chỉ cần video cho chỗ lỗi — tiết kiệm dung lượng đĩa | Vẫn **quay mọi TC** (chưa chạy thì chưa biết TC có fail không), chấm xong TC `✅ PASS` thì **xoá ngay** file video của TC đó; giữ `❌ FAIL` và `⚠️ BLOCKED`. Cột `Video` của TC PASS ghi `—` |
 | **`Không`** | User nói *"không quay video"*, *"tắt video"*, *"không cần video"*… | Bỏ hết bước quay, **không** tạo thư mục `video/`, **không** thêm cột `Video` / dòng `Video` vào report |
 
 - Lấy theo **lời user ở lần chạy đó** — không nhớ sang lần chạy sau; lần sau không nói thì lại `Có`
@@ -232,7 +233,7 @@ docs/executions/<module>/<nền-tảng>/<run_id>/      (retest: retest_<timestam
 - Bảng mục 2: thêm cột **cuối** `Video` = `[▶](video/<TC_ID>.webm)` (nhiều file thì `[▶](…) · [▶ tab 2](video/<TC_ID>-1.webm)`) · TC SKIPPED ghi `—`. `scripts/execution-viewer` đọc bảng theo **tên cột**, cột thêm vào không làm hỏng việc đọc
 - Chi tiết FAIL / REG: thêm dòng `| Video | <video src="video/<TC_ID>.webm" title="<TC_ID> — <mô tả chỗ fail>" controls></video> |` ngay dưới dòng `Evidence` — người đọc HTML xem được tại chỗ
 
-> 🔒 Video ghi lại **mọi thứ** hiện trên màn hình — trên môi trường dùng chung là cả dữ liệu khách hàng của người khác, và **không** che được sau khi quay như ảnh. Cùng quy tắc với ảnh evidence: không đưa lên repo công khai. Chỉ mở trang danh sách nhiều dữ liệu khi TC thật sự cần.
+> 🔒 Video ghi lại **mọi thứ** hiện trên màn hình — trên môi trường dùng chung là cả dữ liệu khách hàng của người khác, và **không** che được sau khi quay như ảnh. `.gitignore` đã chặn `video/` và file HTML nhúng trong `docs/executions/`. Cần chia sẻ thì gửi qua kho nội bộ có phân quyền. Chỉ mở trang danh sách nhiều dữ liệu khi TC thật sự cần.
 
 ---
 
@@ -290,7 +291,8 @@ File: `docs/executions/<module>/<nền-tảng>/<run_id>/execution_report.md` —
 | Môi trường | `<URL môi trường test>` — `<Staging/UAT/Production>` |
 | Build / Version | <bắt buộc — số build, hoặc `❓ không rõ`> |
 | Tài khoản | `<tài khoản test>` (`<role>`) |
-| Người thực hiện | <tên tester> (agent hỗ trợ) |
+| Người thực hiện | Agent `<model>` chạy và chấm. Tester tự chạy thì ghi tên tester |
+| Người soát xét | <tên>, hoặc `⏳ Chưa soát xét` |
 | Bắt đầu → Kết thúc | 02-08-2026 09:15 → 10:40 (85 phút) |
 | Môi trường dùng chung? | Có — auto-skip TC phá huỷ đang BẬT |
 | Video | Có — 1 video/TC tại `video/` (WebM 1600×750) |

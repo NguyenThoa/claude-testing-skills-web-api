@@ -157,3 +157,7 @@ __pycache__/
 
 # Cache chay Xray export — chua du lieu Jira that
 .claude/skills/skills-xray-export/.cache_*.json
+
+# Video và HTML nhúng ảnh của lần chạy: quay màn hình thật, không che được, file lớn
+docs/executions/**/video/
+docs/executions/**/*.html

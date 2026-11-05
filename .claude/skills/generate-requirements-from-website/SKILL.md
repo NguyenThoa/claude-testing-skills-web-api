@@ -20,6 +20,8 @@ description: Sinh tài liệu requirements (REQ ID) cho một module từ websit
 
 Workflow này giúp bạn phân tích một module hoặc trang web được cung cấp và sinh ra tài liệu Yêu cầu (Requirements) chi tiết, chuẩn xác, **có mã REQ ID truy vết được**, phục vụ cho quá trình kiểm thử hoặc phát triển.
 
+> **Kiểm môi trường trước khi mở trình duyệt, gọi API hoặc chạy test:** phân loại host theo mục *Môi trường production* của `CLAUDE.md` và ghi kết quả vào report. Không có dấu hiệu môi trường test thì dừng, hỏi user.
+
 ## Các bước thực hiện:
 
 1. **Tiếp nhận thông tin (Information Gathering):**

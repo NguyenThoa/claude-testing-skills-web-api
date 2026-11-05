@@ -27,6 +27,7 @@ Workflow đọc **file test case API**, sinh project automation (client · DTO �
 
 ## ⚠️ Nguyên tắc thực thi
 
+- **Kiểm môi trường trước khi mở trình duyệt, gọi API hoặc chạy test:** phân loại host theo mục *Môi trường production* của `CLAUDE.md` và ghi kết quả vào report. Không có dấu hiệu môi trường test thì dừng, hỏi user
 - **Tất cả output bằng Tiếng Việt**
 - **Đầu vào là TC, không phải spec.** Chưa có file TC API → **dừng**, đề nghị chạy `/generate-testcases-api` trước. Spec + `api_map.md` chỉ dùng để lấy schema (DTO), auth và base path — **không** tự sinh thêm kịch bản ngoài TC
 - **KHÔNG đoán** schema/endpoint — lấy từ snapshot spec trong `_discovery/sources/`, resolve `$ref`

@@ -23,6 +23,7 @@ Tài liệu để **người dùng cuối làm được việc**, không phải 
 
 ## ⚠️ Nguyên tắc thực thi
 
+- **Kiểm môi trường trước khi mở trình duyệt, gọi API hoặc chạy test:** phân loại host theo mục *Môi trường production* của `CLAUDE.md` và ghi kết quả vào report. Không có dấu hiệu môi trường test thì dừng, hỏi user
 - **Output theo ngôn ngữ `lang`** chốt ở Bước 0 (mặc định Tiếng Việt; gửi khách nước ngoài thường `en`) — nội dung, tiêu đề mục, chú thích trên ảnh/video, chữ giao diện HTML. Viết cho người **không biết thuật ngữ hệ thống**
 - ⭐ **Mọi ảnh và video có highlight** — khung đỏ + số thứ tự click + dải chú thích. Không có ảnh trơn ở bất kỳ mode nào
 - **Luôn xuất HTML** (`--standalone`, ảnh + video nhúng sẵn) ngay sau khi có bản Markdown

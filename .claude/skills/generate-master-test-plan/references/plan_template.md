@@ -204,7 +204,7 @@ Ghi plan đúng cấu trúc dưới đây, thay các ô `<…>` bằng dữ li�
 
 **Nguyên tắc:**
 - Script chỉ tính là xong khi đạt Definition of Done của `CLAUDE.md` — PASS ổn định ≥ 2 lần liên tiếp, đủ Allure metadata và screenshot
-- Kết quả automation **báo riêng**, không cộng vào pass rate manual của tiêu chí exit #3, #4
+- Kết quả automation **báo riêng**, không cộng vào pass rate manual của tiêu chí exit #3, #4. Cặp module × `api` chạy bằng automation thì tính vào #7, #8 theo TC ID
 - Test chập chờn → `/analyze-flaky-tests`, **không** chạy lại tới khi xanh · UI đổi → `/heal-locators` · yêu cầu đổi → `/update-automation-from-impact`
 
 ## 4. Tiêu chí Vào / Ra
@@ -392,7 +392,7 @@ TC FAIL ──/create-bug-report──→ 🔴 Đang mở ──Dev sửa──�
 |---|---|---|
 | 🔴 Đang mở | Tester | Bug report đủ Build/Version · TC ID · REQ ID · evidence |
 | 🟡 Đã fix — chờ retest | Dev | Có build chứa bản sửa |
-| ⬛ Đóng | Tester | Retest `FIXED` — lặp ≥ 2 lần theo Steps gốc |
+| ⬛ Đóng | Tester xác nhận | Retest `FIXED` — lặp ≥ 2 lần theo Steps gốc, có người chịu trách nhiệm xác nhận |
 | 🔴 Mở lại | Tester | Retest `NOT_FIXED` hoặc `PARTIAL` — **không** tạo bug trùng |
 
 > Phiếu `Quy trình trạng thái: riêng` (VD workflow Jira có *Từ chối* · *Trùng* · *Hoãn*) → thay sơ đồ và bảng bằng quy trình đó, **giữ** cột *Ai chuyển* và *Điều kiện*. Bug *Hoãn* vẫn tính là **đang mở** khi chấm tiêu chí exit #1, #2 — trừ khi người có quyền ở 4.2 chấp nhận bằng văn bản.

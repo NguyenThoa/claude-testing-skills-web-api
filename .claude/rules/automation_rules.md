@@ -131,7 +131,7 @@ test('CRM_CUST_TC_018 - ...', async ({ page }) => {
 - Assertion phơi bug phải có message riêng để khớp. Lỗi khác (locator gãy, timeout, lỗi môi trường) phải làm test đỏ, không được tính là đang phơi bug
 - pytest: `raises=AssertionError` loại lỗi thao tác, nhưng `expect` của Playwright Python báo `AssertionError` cả khi element không có, nên vẫn mở report kiểm đúng assertion
 - Báo cáo tách nhóm **Đang phơi bug**: không tính PASS, bug vẫn đếm vào tiêu chí exit
-- Runner có thể ghi các test này là pass hoặc skip. Trước khi đẩy kết quả lên Xray phải chuyển chúng thành FAIL
+- Runner có thể ghi các test này là pass hoặc skip. Đẩy kết quả lên Xray phải khai chúng ở `--known-bugs` của `import_results.js` để chuyển thành FAIL
 
 ## 7. Report
 

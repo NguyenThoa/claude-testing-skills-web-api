@@ -194,3 +194,70 @@ test('settings chặn đủ lệnh git đổi trạng thái code', () => {
   }
   assert.ok(!permissions.allow.includes('Bash(npx *)'));
 });
+
+test('TC API có đường chạy, không agent nào chấm thay tester', () => {
+  assert.match(skill('execute-test-cases'), /File TC thuộc `api\/`[\s\S]*Agent không chấm thay/);
+  assert.match(skill('skills-test-summary-reporter'), /`Cách chạy API` = `tự động hoá`/);
+});
+
+test('agent không tự đóng bug, viewer và qi hiểu trạng thái chờ xác nhận', () => {
+  const retest = skill('retest-fixed-bugs');
+  assert.match(retest, /Agent không tự đóng bug/);
+  assert.doesNotMatch(retest, /\| ✅ FIXED \| `🟢 Đã đóng/);
+  assert.match(read('scripts/bugs-viewer/bundle.html'), /chờ xác nhận\/i\.test\(retest\[0\]\.result\) \? 'PENDING'/);
+  assert.match(read('scripts/quality-insights/qi.py'), /'Đã fix', 'chờ retest'/);
+});
+
+test('flaky có lối ra cho lỗi sản phẩm chập chờn', () => {
+  assert.match(skill('analyze-flaky-tests'), /Lỗi sản phẩm chập chờn[\s\S]*\/create-bug-report/);
+  assert.match(skill('create-bug-report'), /lỗi sản phẩm chập chờn/);
+});
+
+test('heal không thay locator khi hành vi đổi', () => {
+  assert.match(skill('heal-locators'), /Nghi đổi hành vi[\s\S]*\(trừ 🚩\)/);
+  assert.match(skill('skills-locator-healer-agent'), /Không Heal Khi Hành Vi Đổi/);
+});
+
+test('report ghi đúng agent chạy, không ghi agent hỗ trợ', () => {
+  assert.deepEqual(findInDocs(/\(agent hỗ trợ\)/), []);
+  for (const name of ['skills-manual-test-executor', 'retest-fixed-bugs']) {
+    assert.match(skill(name), /Người soát xét/, name);
+  }
+});
+
+test('workflow chạm hệ thống thật có bước kiểm môi trường', () => {
+  for (const name of ['execute-test-cases', 'retest-fixed-bugs', 'heal-locators', 'run-and-fix-tests', 'generate-automation-web', 'generate-automation-api', 'update-automation-from-impact', 'generate-user-guide', 'analyze-flaky-tests', 'create-bug-report', 'compare-ui-from-figma-design', 'discover-system', 'generate-requirements-from-website', 'generate-requirements-from-api', 'generate-testcases-api']) {
+    assert.match(skill(name), /^(- |> )\*\*Kiểm môi trường trước khi/m, name);
+  }
+  const templates = read('.claude/skills/skills-framework-architect/references/CODE_TEMPLATES.md');
+  assert.equal((templates.match(/ALLOWED_TEST_HOST/g) || []).length >= 6, true);
+});
+
+test('mẫu chặn host: nhận host test, từ chối host lạ', () => {
+  const isTest = /(^|[.-])(dev|test|qa|staging|uat|sandbox|preview)([.-]|$)|^(localhost|127\.0\.0\.1)$/i;
+  assert.match(read('.claude/skills/skills-framework-architect/references/CODE_TEMPLATES.md'), /const TEST_HOST = \/\(\^\|\[\.-\]\)/);
+  for (const host of ['localhost', '127.0.0.1', 'staging.acme.vn', 'crm-uat.acme.vn', 'qa.acme.vn']) assert.match(host, isTest);
+  for (const host of ['acme.vn', 'contest.acme.vn', 'latest-news.vn', 'developer.acme.vn']) assert.doesNotMatch(host, isTest);
+});
+
+test('settings chặn đường lách và thao tác xoá trên Jira', () => {
+  const { permissions } = JSON.parse(read('.claude/settings.json'));
+  for (const command of ['npm exec*', 'npm x *', 'npm publish*', 'mvn deploy*', 'git -C*', 'git -c*']) {
+    assert.ok(permissions.deny.includes(`Bash(${command})`), command);
+    assert.ok(permissions.deny.includes(`PowerShell(${command})`), command);
+  }
+  for (const tool of ['jira_delete_issue', 'confluence_delete_page', 'confluence_delete_attachment']) {
+    assert.ok(permissions.deny.includes(`mcp__jira-cybertech__${tool}`), tool);
+  }
+});
+
+test('video và HTML nhúng của lần chạy không vào git', () => {
+  const ignore = read('.gitignore');
+  assert.match(ignore, /^docs\/executions\/\*\*\/video\/$/m);
+  assert.match(ignore, /^docs\/executions\/\*\*\/\*\.html$/m);
+});
+
+test('agent không tự đứng tên quyết định bỏ test', () => {
+  assert.match(read('.claude/skills/skills-manual-testcase-v3/references/mode_quick.md'), /⏳ chờ duyệt/);
+  assert.match(read('.claude/skills/skills-manual-testcase-v3/references/quality_gates.md'), /⏳ chờ duyệt/);
+});

@@ -162,7 +162,7 @@ def collect_bugs(root):
             m = re.match(r'^\| \[(BUG_[^\]]+)\]', line)
             if m:
                 cells = split_row(line)
-                st = next((c for c in cells if any(w in c for w in ('Đang mở', 'Đã đóng', 'chờ retest', 'rà lại', 'không phải lỗi'))), '')
+                st = next((c for c in cells if any(w in c for w in ('Đang mở', 'Đã đóng', 'Đã fix', 'chờ retest', 'rà lại', 'không phải lỗi'))), '')
                 status_from_catalog[m.group(1)] = st
     bugs = []
     for f in sorted((root / 'docs' / 'bugs').rglob('BUG_*.md')):
@@ -642,6 +642,8 @@ def build_risk(d, today, tickets, since, want=()):
             level, override = 'Cao', 'nâng lên Cao vì còn lỗi Critical đang mở'
         elif not unit_tcs and level != 'Cao':
             level, override = 'Cao', 'nâng lên Cao vì chưa có TC nào — không có bằng chứng kiểm thử'
+        elif likelihood >= 4 and level == 'Thấp':
+            level, override = 'Trung bình', 'nâng lên Trung bình vì Khả năng ≥ 4 — B chỉ đếm tỷ lệ TC High, không chứng minh vùng này an toàn'
         rows.append({'unit': u, 'C': C, 'D': D, 'I': I, 'G': G, 'B': B, 'likelihood': likelihood, 'impact': impact,
                      'score': score, 'level': level, 'override': override, 'evidence': ev, 'run_data': I_known})
     rows.sort(key=lambda r: (-{'Cao': 3, 'Trung bình': 2, 'Thấp': 1}[r['level']], -r['score']))
@@ -660,7 +662,7 @@ def md_risk(r):
         L.append(f"| {i} | {unit_label(x['unit'])} | {x['C']} | {x['D']} | {x['I']}{'' if x['run_data'] else ' ⬛'} | {x['G']} | {x['B']} | "
                  f"{x['likelihood']} | {x['impact']} | **{x['score']}** | {LVL_ICON[x['level']]} {x['level']}{' ¹' if x['override'] else ''} |")
     L += ['', '> Mỗi yếu tố 0–3. Khả năng = 1 + (C+D+I+G)/12 × 4 · Tác động = 1 + B/3 × 4 · Điểm = Khả năng × Tác động (1–25) · '
-          '🔴 ≥ 15 · 🟠 8–14,9 · 🟢 < 8. ¹ Nâng mức: còn lỗi Critical mở, hoặc chưa có TC nào. ⬛ = thiếu dữ liệu, tính như có rủi ro.', '',
+          '🔴 ≥ 15 · 🟠 8–14,9 · 🟢 < 8. ¹ Nâng mức: còn lỗi Critical mở, chưa có TC nào, hoặc Khả năng ≥ 4 (ít nhất 🟠). ⬛ = thiếu dữ liệu, tính như có rủi ro.', '',
           '### Căn cứ từng yếu tố', '']
     for x in r['rows']:
         e = x['evidence']

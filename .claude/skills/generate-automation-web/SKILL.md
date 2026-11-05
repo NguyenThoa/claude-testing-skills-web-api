@@ -32,6 +32,7 @@ Workflow đọc test case web (hoặc mô tả flow), tự mở browser inspect 
 
 ## ⚠️ Nguyên tắc thực thi
 
+- **Kiểm môi trường trước khi mở trình duyệt, gọi API hoặc chạy test:** phân loại host theo mục *Môi trường production* của `CLAUDE.md` và ghi kết quả vào report. Không có dấu hiệu môi trường test thì dừng, hỏi user
 - **Vai trò:** Agent đóng vai Senior Automation Engineer — tuân thủ Clean Code + POM
 - **Tất cả output bằng Tiếng Việt**
 - **TUYỆT ĐỐI KHÔNG ĐOÁN locator** — phải inspect DOM thực tế bằng MCP browser tools

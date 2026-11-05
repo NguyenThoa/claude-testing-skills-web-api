@@ -15,6 +15,7 @@ Workflow này giúp agent tự động phân tích các automation test không �
 
 ## ⚠️ Nguyên tắc thực thi
 
+- **Kiểm môi trường trước khi mở trình duyệt, gọi API hoặc chạy test:** phân loại host theo mục *Môi trường production* của `CLAUDE.md` và ghi kết quả vào report. Không có dấu hiệu môi trường test thì dừng, hỏi user
 - **Tất cả output bằng Tiếng Việt**
 - **KHÔNG đoán** nguyên nhân — phải phân tích log, code, và DOM thực tế
 - **Phải chờ user xác nhận** danh sách fix tại Bước 3 trước khi sửa code (Mode FIX)
@@ -84,6 +85,9 @@ Agent cần ít nhất **1 trong các input** sau từ user:
 | 🖼️ **UI Animation / Transition** | `Element is not clickable`, `intercept`, fail ngẫu nhiên khi click | Modal animation chưa hoàn thành, overlay che button |
 | 📱 **Viewport / Responsive** | Element bị ẩn, scroll không tới, fail ở resolution khác | Button nằm ngoài viewport trên CI (headless 800x600) |
 | 🧹 **Cleanup / Teardown** | Fail ở lần chạy thứ 2+, pass lần đầu | Test không cleanup data → lần sau bị conflict |
+| 🐛 **Lỗi sản phẩm chập chờn** | Locator, wait, data đều đúng. Ở lần fail, app thật sự trả sai so với REQ | Thỉnh thoảng lưu đơn trả 500, tổng tiền sai khi hai request chạy gần nhau |
+
+> 🐛 không phải lỗi của test. **Cấm** sửa bằng retry, nới assertion hay tăng timeout. Giữ nguyên test, chuyển `/create-bug-report` kèm tần suất x/y và log của lần fail. Không gắn `@KnownBug`, vì expected-fail chặt sẽ đỏ ở lần test pass; ghi mã bug vào báo cáo flaky và báo user.
 
 2. **Inspect code** chi tiết, kiểm tra từng anti-pattern:
 

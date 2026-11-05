@@ -7,6 +7,7 @@
 > - Smart waits — **không** `Thread.sleep()` / `waitForTimeout()`
 > - Logger thay cho `System.out.println()` / `console.log()`
 > - Credentials đọc từ `.env`, không commit
+> - `BASE_URL` không có dấu hiệu môi trường test thì dừng ngay. Host test không có dấu hiệu đó: user xác nhận rồi đặt `ALLOWED_TEST_HOST`, đúng luật *Môi trường production* của `CLAUDE.md`
 
 ---
 
@@ -27,8 +28,19 @@ function required(key: string): string {
   return value;
 }
 
+const TEST_HOST = /(^|[.-])(dev|test|qa|staging|uat|sandbox|preview)([.-]|$)|^(localhost|127\.0\.0\.1)$/i;
+
+function testBaseUrl(): string {
+  const url = required('BASE_URL');
+  const host = new URL(url).hostname;
+  if (!TEST_HOST.test(host) && process.env.ALLOWED_TEST_HOST !== host) {
+    throw new Error(`${host} không có dấu hiệu môi trường test. Hỏi user rồi đặt ALLOWED_TEST_HOST`);
+  }
+  return url;
+}
+
 export const env = {
-  baseURL: required('BASE_URL'),
+  baseURL: testBaseUrl(),
   username: required('TEST_USERNAME'),
   password: required('TEST_PASSWORD'),
   headless: process.env.HEADLESS !== 'false',
@@ -267,7 +279,16 @@ public class ConfigReader {
         return value;
     }
 
-    public String getBaseUrl()  { return required("base.url"); }
+    public String getBaseUrl() {
+        String url = required("base.url");
+        String host = java.net.URI.create(url).getHost();
+        if (!host.matches("(?i)(.*[.-])?(dev|test|qa|staging|uat|sandbox|preview)([.-].*)?|localhost|127\\.0\\.0\\.1")
+                && !host.equals(System.getenv("ALLOWED_TEST_HOST"))) {
+            throw new IllegalStateException(host + " không có dấu hiệu môi trường test. Hỏi user rồi đặt ALLOWED_TEST_HOST");
+        }
+        return url;
+    }
+
     public String getUsername() { return required("test.username"); }
     public String getPassword() { return required("test.password"); }
     public boolean isHeadless() { return Boolean.parseBoolean(get("headless")); }
@@ -559,6 +580,8 @@ Chưa có mẫu code. Cấu trúc thư mục ở `PROJECT_STRUCTURE.md`; nói r�
 
 ```python
 import os
+import re
+from urllib.parse import urlparse
 from types import SimpleNamespace
 
 import pytest
@@ -576,6 +599,13 @@ def playwright_instance() -> Playwright:
 
 # Debug có giao diện: HEADLESS=false. Cờ --headed của pytest-playwright không tác dụng lên fixture tự viết này
 HEADLESS = os.getenv("HEADLESS", "true").lower() != "false"
+TEST_HOST = re.compile(r"(^|[.-])(dev|test|qa|staging|uat|sandbox|preview)([.-]|$)|^(localhost|127\.0\.0\.1)$", re.I)
+
+
+def assert_test_host(url: str) -> None:
+    host = urlparse(url).hostname or ""
+    if not TEST_HOST.search(host) and os.getenv("ALLOWED_TEST_HOST") != host:
+        raise RuntimeError(f"{host} không có dấu hiệu môi trường test. Hỏi user rồi đặt ALLOWED_TEST_HOST")
 
 
 @pytest.fixture(scope="session")
@@ -596,6 +626,7 @@ def browser(playwright_instance: Playwright) -> Browser:
 @pytest.fixture
 def page(browser: Browser) -> Page:
     viewport = {"width": 1920, "height": 1080} if HEADLESS else {"width": 1600, "height": 750}
+    assert_test_host(os.environ["BASE_URL"])
     context = browser.new_context(base_url=os.environ["BASE_URL"], viewport=viewport)
     page = context.new_page()
     yield page

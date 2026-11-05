@@ -112,9 +112,3 @@ test.describe('Tên Module', () => {
 Gõ **tên biến** thay cho giá trị: `browser_type(text = "TEST_PASSWORD")`. Giá trị do server thay vào, không đi qua hội thoại. Cách khai báo và danh sách tên biến: `CLAUDE.md` mục tài khoản, mật khẩu.
 
 Ô không che ký tự (`type=text`) vẫn hiện giá trị trên ảnh chụp và video, nên kiểm evidence trước khi lưu.
-
-## Nhập mật khẩu và token qua Playwright MCP
-
-Gõ **tên biến** thay cho giá trị: `browser_type(text = "TEST_PASSWORD")`. Giá trị do server thay vào, không đi qua hội thoại. Cách khai báo và danh sách tên biến: `CLAUDE.md` mục tài khoản, mật khẩu.
-
-Ô không che ký tự (`type=text`) vẫn hiện giá trị trên ảnh chụp và video, nên kiểm evidence trước khi lưu.

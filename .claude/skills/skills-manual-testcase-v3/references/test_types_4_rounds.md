@@ -168,7 +168,7 @@ Bảng đối soát 4 vòng có **bốn** trạng thái, không phải ba:
 |---|---|---|
 | `✅` | Có TC | TC ID (kèm số biến thể nếu GỘP) |
 | `➖` | **Không áp dụng** — không có thứ đó để kiểm (module không có CRUD, không có dropdown, không có tích hợp) | Lý do kỹ thuật |
-| `⏭️` | **Cố ý bỏ** — có thứ đó, kiểm được, nhưng **quyết định không kiểm** vì rủi ro thấp | **Lý do + ai quyết định + điều kiện rà lại** |
+| `⏭️` | **Cố ý bỏ** — có thứ đó, kiểm được, nhưng **quyết định không kiểm** vì rủi ro thấp | **Lý do + ai quyết định + điều kiện rà lại.** Ai quyết định là người đã chốt trong chat, chưa có thì `⏳ chờ duyệt`, không ghi agent |
 | `🔴` | Thiếu — phải bổ sung trước khi xuất | — |
 
 > 🚨 **`➖` và `⏭️` KHÔNG được dùng lẫn.** `➖` là **sự thật kỹ thuật** ("hệ thống không có cái đó"). `⏭️` là **một quyết định có người chịu trách nhiệm** ("có, nhưng chúng tôi chấp nhận rủi ro không kiểm"). Khi có sự cố production, hai câu đó dẫn tới hai cuộc họp hoàn toàn khác nhau. Ghi `➖` cho thứ thật ra là `⏭️` là **giấu quyết định** — nguy hiểm hơn cả bỏ trống ô.

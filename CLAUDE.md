@@ -514,7 +514,7 @@ rm -rf docs .playwright-mcp task.md .claude/settings.local.json
 
 ⚠️ **`.claude/settings.local.json`** là permission tích luỹ theo từng máy/phiên, thường chứa đường dẫn tuyệt đối của dự án cũ. Đã đưa vào `.gitignore` — nếu file còn bị git theo dõi từ trước, gỡ bằng: `git rm --cached .claude/settings.local.json`
 
-⚠️ **Trước khi xoá, kiểm tra ảnh + video trong `docs/executions/*/run_*/evidence/` · `video/`, `docs/design-reviews/*/run_*/evidence/` và `docs/user-guides/*/images/`** — screenshot chụp hệ thống thật, thường chứa dữ liệu khách hàng (tên, email, số tiền). Quan trọng hơn nữa: **đừng commit chúng lên repo công khai**.
+⚠️ **Trước khi xoá, kiểm tra ảnh + video trong `docs/executions/*/run_*/evidence/` · `video/`, `docs/design-reviews/*/run_*/evidence/` và `docs/user-guides/*/images/`** — screenshot chụp hệ thống thật, thường chứa dữ liệu khách hàng (tên, email, số tiền). Quan trọng hơn nữa: **đừng commit chúng lên repo công khai**. `.gitignore` chặn sẵn video và HTML nhúng trong `docs/executions/`; ảnh PNG vẫn được commit để bug link tới, nên phải soát trước khi commit.
 
 Không cần dọn gì thêm. Agent tự tạo lại `docs/` và 2 file danh mục (`docs/requirements/README.md`, `docs/testcases/README.md`) ở lần chạy workflow đầu tiên — xem skill `skills-requirements-analyzer` mục 5.7.1.
 

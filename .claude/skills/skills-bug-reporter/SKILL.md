@@ -61,7 +61,7 @@ Sử dụng skill này khi:
 
 ## Evidence
 - Screenshot: [<tên file>.png](<path/link>) — **link tới ảnh gốc** trong `docs/executions/<module>/<nền-tảng>/run_*/evidence/` (đường dẫn tương đối từ file bug: `../../../executions/<module>/<nền-tảng>/run_<timestamp>/evidence/<tên>.png`), **KHÔNG** chép ảnh sang `docs/bugs/` — một nguồn sự thật. Ảnh chụp thêm lúc tái hiện thì lưu vào `evidence/` của lần chạy tương ứng rồi link. BẮT BUỘC viết đúng cú pháp link Markdown `[]()` nếu ảnh còn xem được; `bugs-viewer` chỉ nhận diện ảnh viết theo cú pháp này làm evidence bấm-xem-được. Ảnh cũ đã mất (không còn truy cập) thì ghi tên file bằng code span `` `tên_file.png` `` (KHÔNG bọc trong `[]()`) để không hiện nhầm thành ảnh "chưa nạp, kéo vào là được"
-- Video: [▶ <TC_ID>.webm](../../../executions/<module>/<nền-tảng>/run_<timestamp>/video/<TC_ID>.webm) — video của chính TC fail do `/execute-test-cases` quay (thư mục `video/` ngang cấp `evidence/`). Cũng **chỉ link**, không chép file. Lần chạy không có video (chạy cũ, hoặc chạy với `Quay video: Không`) thì bỏ dòng này
+- Video: [▶ <TC_ID>.webm](../../../executions/<module>/<nền-tảng>/run_<timestamp>/video/<TC_ID>.webm) — video của chính TC fail do `/execute-test-cases` quay (thư mục `video/` ngang cấp `evidence/`). Cũng **chỉ link**, không chép file. `video/` không được commit nên link chỉ mở được trên máy đã chạy. Lần chạy không có video (chạy cũ, hoặc chạy với `Quay video: Không`) thì bỏ dòng này
 - Error log / Stack trace: (code block)
 - Console / Network log: (nếu liên quan)
 
@@ -114,7 +114,7 @@ Chi tiết quy trình: workflow `/retest-fixed-bugs`.
 ## Workflow
 
 1. **Collect** — Đọc test fail: error log, screenshot, test file, test data
-2. **Reproduce** — Tái hiện lỗi (chạy lại test hoặc thao tác trên browser qua MCP) để xác nhận không phải flaky. Nếu nghi flaky → chuyển sang skill `skills-flaky-test-analyzer` trước
+2. **Reproduce** — Tái hiện lỗi (chạy lại test hoặc thao tác trên browser qua MCP) để xác nhận không phải flaky. Nếu nghi flaky → chuyển sang skill `skills-flaky-test-analyzer` trước. Kết luận là lỗi sản phẩm chập chờn thì viết bug kèm tần suất x/y
 3. **Isolate** — Rút gọn steps to reproduce về mức tối thiểu
 4. **Classify** — Gán Severity/Priority theo bảng chuẩn
 5. **Write** — Điền template, đính kèm evidence
@@ -162,7 +162,7 @@ Danh mục là **điểm vào tầng bug** và cũng là file `scripts/bugs-view
 Trước khi bàn giao bug report, verify:
 
 - [ ] Steps to reproduce đã tối giản, người khác làm theo tái hiện được
-- [ ] Đã tái hiện ít nhất 1 lần để loại trừ flaky
+- [ ] Đã tái hiện ít nhất 1 lần để loại trừ flaky, hoặc có kết luận lỗi sản phẩm chập chờn kèm tần suất x/y
 - [ ] Expected có căn cứ (requirement/spec), không phải suy đoán
 - [ ] Có ít nhất 1 evidence (screenshot hoặc log)
 - [ ] Test data traceable — dev có thể tìm đúng record trong DB

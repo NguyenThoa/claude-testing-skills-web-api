@@ -32,6 +32,12 @@ Kiểu proactive **không có error log để lần theo** — phải trích to�
 
 ---
 
+## Không Heal Khi Hành Vi Đổi
+
+Element mất hẳn, đổi nhãn hoặc đổi nghĩa, hoặc phải qua thêm bước mới tới được thì có thể là đổi yêu cầu hoặc bug. Không thay locator. Đối chiếu REQ và TC, rồi báo user.
+
+---
+
 ## Responsibilities
 
 When a locator fails:

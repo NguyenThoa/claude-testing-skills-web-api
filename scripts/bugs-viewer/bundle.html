@@ -341,7 +341,7 @@ function parseBugFile(text, fileName){
   let status='OPEN';
   if(retest.length){
     const latest=retest[0].resultCode;
-    status = latest==='FIXED' ? 'CLOSED' : latest==='PARTIAL' ? 'PARTIAL' : latest==='CANNOT_VERIFY' ? 'CANNOT_VERIFY' : 'OPEN';
+    status = latest==='FIXED' ? (/chờ xác nhận/i.test(retest[0].result) ? 'PENDING' : 'CLOSED') : latest==='PARTIAL' ? 'PARTIAL' : latest==='CANNOT_VERIFY' ? 'CANNOT_VERIFY' : 'OPEN';
   }
 
   return {

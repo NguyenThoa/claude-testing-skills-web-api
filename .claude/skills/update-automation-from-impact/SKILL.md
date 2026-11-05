@@ -51,6 +51,7 @@ Mắt xích **cuối** của chuỗi delta 3 tầng: requirements đổi → TC 
 
 ## ⚠️ Nguyên tắc thực thi
 
+- **Kiểm môi trường trước khi mở trình duyệt, gọi API hoặc chạy test:** phân loại host theo mục *Môi trường production* của `CLAUDE.md` và ghi kết quả vào report. Không có dấu hiệu môi trường test thì dừng, hỏi user
 - **Tất cả output bằng Tiếng Việt**
 - 🚨 **CẤM sinh lại cả file/module.** Chỉ sửa đúng dòng liên quan TC đã đổi. Sinh lại là xoá sạch công sửa tay và các fix đã tích luỹ
 - 🚨 **CẤM xoá file script** của TC `🗑️ Deprecated` — theo `automation_rules.md` mục 4, đánh dấu skip + báo user, chờ xác nhận mới gỡ

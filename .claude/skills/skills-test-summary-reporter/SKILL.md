@@ -107,14 +107,14 @@ Mỗi tiêu chí chấm **Đạt / Không đạt / Không áp dụng**, kèm s�
 | `docs/test-plans/test_plan_<mốc>.md` | Tiêu chí exit đã công bố (mục 4.2) · mục tiêu kiểm thử (1.1) · phạm vi module × nền tảng (2.1) · ngoài phạm vi (2.2) · lịch & ước lượng công sức (7.1 · 7.2) · rủi ro dự án (8.1) | Nếu có |
 | `docs/executions/test_progress_<mốc>_*.md` | Chỉ số từng kỳ · **thời lượng trở ngại** · rủi ro đã xảy ra · sai lệch lịch — ISTQB CTFL v4.0 mục 5.3.2: báo cáo tổng hợp *"uses test progress reports"* | Nếu có |
 | `docs/quality-insights/release_risk_<mốc>_*.md` · `defect_trends_*.md` (bản mới nhất) | Đơn vị 🔴/🟠/⬛ → *Vùng chưa kiểm thử* + rủi ro tồn đọng · rủi ro đã công bố đã thành lỗi chưa · vấn đề lặp lại → *Tình hình lỗi*. Ghi ngày lập — số có thể cũ hơn execution report | Nếu có |
-| `docs/executions/<module>/<nền-tảng>/run_*/execution_report.md` · kiểu cũ `docs/executions/<module>/run_*/` | PASS/FAIL/BLOCKED/SKIPPED từng module × nền tảng — phân loại **bộ TC / checklist** theo ô `Loại nguồn` | ✅ |
+| `docs/executions/<module>/<nền-tảng>/run_*/execution_report.md` · kiểu cũ `docs/executions/<module>/run_*/` | PASS/FAIL/BLOCKED/SKIPPED từng module × nền tảng — phân loại **bộ TC / checklist** theo ô `Loại nguồn`. Có run `⏳ Chưa soát xét` thì nêu số run ở phần rủi ro | ✅ |
 | `docs/executions/_release/<nền-tảng>/run_*/execution_report.md` | Kết quả checklist Release-readiness — chọn lần chạy có `Nguồn TC` là `checklist_release_<mốc>.md`, quy từng mục về module theo cột `Module` | Nếu có |
 | `docs/executions/<module>/<nền-tảng>/retest_*/retest_report.md` · kiểu cũ `docs/executions/<module>/retest_*/` | Bug đã verify fix · regression phát sinh | Nếu có |
 | `docs/bugs/README.md` + `docs/bugs/<module>/<nền-tảng>/BUG_*.md` · kiểu cũ `docs/bugs/<module>/BUG_*.md` | Bug đang mở theo Severity · Lịch sử retest | ✅ |
 | `docs/design-reviews/README.md` (+ `_<hệ-thống>/README.md`) → báo cáo `run_*/design_compare_report.md` gần nhất mỗi module × nền tảng | DIFF thiết kế còn 🔴 Mở theo mức độ và người xử lý — **không** cộng vào số TC/pass rate; DIFF High `Dev` mở là rủi ro chất lượng giao diện, DIFF `Cần PO quyết` chưa quyết là việc tồn đọng của PO | Nếu có |
 | `docs/requirements/README.md` | **Module chưa recon** — vùng mù, mục 1 của báo cáo | ✅ |
 | `docs/traceability/traceability_matrix.md` — file chung: độ phủ theo module, ⬛ module ngoài RTM; chi tiết theo `## Bản đồ tài liệu` sang file module (không có file chung thì đọc thẳng `docs/traceability/<module>/traceability_matrix_<module>.md`; RTM kiểu cũ ở chỗ khác vẫn đọc) | Độ phủ REQ ↔ TC ↔ Automation · REQ 🟠 chỉ có checklist · REQ ⏭️ loại trừ (đã trừ khỏi mẫu số — nêu số lượng). **Kiểm `Ngày sinh` / `Mốc git` từng module ở Bản đồ tài liệu** — module có RTM sinh trước lần sửa TC cuối cùng thì ghi *"RTM đã cũ, sinh ngày …"* ở mục 6 | Nếu có |
-| Report automation trong `reports/` | Kết quả suite tự động | Nếu có |
+| Report automation trong `reports/` | Kết quả suite tự động, báo riêng. Cặp module × `api` có `Cách chạy API` = `tự động hoá`: tính vào tiêu chí #7, #8 theo TC ID, ghi build và ngày chạy, không cộng vào #3, #4. `reports/` không được commit, thiếu file thì ghi ⬛ chưa có bằng chứng | Nếu có |
 
 > Thiếu `docs/bugs/` (đội dùng Jira) → lấy qua `skills-jira-integration`, đừng bỏ trống mục bug.
 >
@@ -157,7 +157,8 @@ Báo cáo này tương ứng với **ISO/IEC/IEEE 29119-3 — Test Completion Re
 | Build tính tiêu chí | v2.4.3 — theo plan mục 4.2 |
 | Môi trường | Staging — `<URL>` |
 | Khoảng thời gian | 01-08-2026 → 12-08-2026 |
-| Người lập | <tên QA> (agent hỗ trợ) |
+| Người lập | Agent `<model>`, tổng hợp từ file nguồn |
+| Người duyệt | <tên QA>, hoặc `⏳ Chưa duyệt` |
 | Nguồn dữ liệu | 6 execution report (4 bộ TC · 2 checklist) · 2 retest report · 14 bug report |
 | Cấu trúc tài liệu | Biên soạn **theo cấu trúc** ISO/IEC/IEEE 29119-3 — Test Completion Report · ánh xạ ở mục 9 |
 

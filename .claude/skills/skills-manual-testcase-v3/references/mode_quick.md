@@ -10,7 +10,7 @@ Sinh một lượt cho module có requirement đã rõ. **Không dừng hỏi Q&
 3. **Ghi Assumptions** ở đầu file: `ASM-<MODULE>-nn | Điểm chưa rõ | Giả định đã áp dụng | TC bị ảnh hưởng`. Xung đột tài liệu với ảnh phải xử lý theo bảng phân loại ở `evidence_and_language.md`.
 4. **Chấm `Risk Level` và chọn độ sâu** (`test_types_4_rounds.md`), ghi căn cứ vào dòng kế hoạch. User phủ quyết tại đây.
 5. **Chốt độ hạt GỘP / TÁCH** (`granularity.md`). Mặc định GỘP.
-6. **Lập kế hoạch 4 vòng:** chấm từng nhánh `✅ sẽ sinh` / `➖ không áp dụng + lý do` / `⏭️ cố ý bỏ + lý do + ai quyết + điều kiện rà lại`. Nhánh V3 `API` · `Database` · `Integration` · `Logging/Audit` lấy theo dòng `Năng lực kiểm thử của QA` ở `docs/requirements/README.md`. Công bố kế hoạch batch ra chat.
+6. **Lập kế hoạch 4 vòng:** chấm từng nhánh `✅ sẽ sinh` / `➖ không áp dụng + lý do` / `⏭️ cố ý bỏ + lý do + ai quyết + điều kiện rà lại`. Nhánh V3 `API` · `Database` · `Integration` · `Logging/Audit` lấy theo dòng `Năng lực kiểm thử của QA` ở `docs/requirements/README.md`. Công bố kế hoạch batch ra chat. Agent không tự đứng tên quyết định `⏭️`: ô `ai quyết` ghi người đã chốt trong chat, chưa có thì ghi `⏳ chờ duyệt` và liệt kê lúc bàn giao. Mục `⏳` chưa được trừ khỏi mẫu số tiêu chí exit #8.
 7. **Thiết kế và sinh TC** tuần tự V1 → V4, áp dụng kỹ thuật, 15 loại field, Component-Level và Scenarios Chuyên Sâu (`test_design_techniques.md`).
 8. **Ghi file** theo `format_v3.md` và `output_files.md`, kèm `automation_matrix.md` chấm theo `automation_criteria.md`.
 9. **Chạy Self-Quality Gate** (`quality_gates.md`) và ghi các bảng đối soát.

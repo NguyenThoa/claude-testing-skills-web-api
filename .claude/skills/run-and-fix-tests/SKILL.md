@@ -27,6 +27,7 @@ Workflow dành cho **suite đã tồn tại** — chạy regression/smoke hằng
 
 ## ⚠️ Nguyên tắc thực thi
 
+- **Kiểm môi trường trước khi mở trình duyệt, gọi API hoặc chạy test:** phân loại host theo mục *Môi trường production* của `CLAUDE.md` và ghi kết quả vào report. Không có dấu hiệu môi trường test thì dừng, hỏi user
 - **Tất cả output bằng Tiếng Việt**
 - 🚨 **CẤM tuyệt đối: sửa test cho xanh khi nguyên nhân là bug của app.** Không nới lỏng assertion, không đổi expected value theo actual, không thêm retry để né, không `skip`/`.only`/`@Ignore` để giấu. Nhóm 🐛 App Bug giữ nguyên assertion: chưa có bug thì sang `/create-bug-report`, có bug đang mở thì gắn `@KnownBug:<BUG_ID>` theo `automation_rules.md` mục 6.1
 - **KHÔNG đoán category** — phải đọc error message + stack trace thực tế của từng test fail
@@ -91,7 +92,7 @@ python -m pytest -m smoke
 | 🐛 **Application Bug** | ❌ **KHÔNG sửa assertion** | Chưa có bug → `/create-bug-report`. Có bug đang mở → gắn `@KnownBug:<BUG_ID>` + expected-fail chặt (`automation_rules.md` mục 6.1) |
 | 🐞 **`@KnownBug` fail đúng assertion** | Không cần sửa | Xếp nhóm **Đang phơi bug**, không tính PASS. Kiểm bug còn mở; bug đã đóng → chuyển dòng dưới |
 | 🎉 **`@KnownBug` bỗng PASS** | ❌ Không tự gỡ tag | Runner báo đỏ vì expected-fail không còn đúng → `/retest-fixed-bugs`. Bug FIXED mới gỡ tag và expected-fail |
-| 🎯 **Locator gãy** | ✅ | Skill `skills-locator-healer-agent` (Bước 5) |
+| 🎯 **Locator gãy** | ✅ | Skill `skills-locator-healer-agent` (Bước 5). Element mất hẳn hoặc đổi nghĩa thì không phải locator gãy: xếp 🐛 và đối chiếu REQ |
 | ⏱️ **Flaky / Timing** | ✅ | Skill `skills-flaky-test-analyzer` |
 | 📊 **Test data** | ✅ | Sửa data generation — random + traceable |
 | 🧪 **Test script lỗi** | ✅ | Sửa code test |

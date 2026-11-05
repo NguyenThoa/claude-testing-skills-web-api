@@ -76,7 +76,7 @@ Trước khi xuất kết quả cuối cùng cho user, Agent **BẮT BUỘC** t�
 
 - [ ] **10. Đối soát loại kiểm thử 4 vòng** (theo **Bản Đồ Loại Kiểm Thử — 4 Vòng**) — áp dụng **QUICK · FULL RBT · DELTA**, KHÔNG áp dụng CHECKLIST:
   - Đã chấm **mọi nhánh** của cả 4 vòng, không ô nào trống. Xuất **Bảng Đối soát loại kiểm thử** đặt cuối tài liệu TC, **trước** bảng ISO 25010
-  - Ô `➖` ghi **lý do kỹ thuật**; ô `⏭️` ghi **lý do + ai quyết định + điều kiện rà lại**; ô 🔴 phải bổ sung TC **trước khi xuất**
+  - Ô `➖` ghi **lý do kỹ thuật**; ô `⏭️` ghi **lý do + ai quyết định + điều kiện rà lại** (chưa có người chốt thì `⏳ chờ duyệt`, không ghi agent); ô 🔴 phải bổ sung TC **trước khi xuất**
   - **`➖` và `⏭️` không được dùng lẫn** — `➖` là sự thật kỹ thuật (hệ thống không có cái đó), `⏭️` là quyết định chấp nhận rủi ro. Ghi `➖` cho thứ thật ra là `⏭️` là **giấu quyết định**
   - Mức rủi ro đã chấm và **độ sâu tương ứng** (Đầy đủ / Tiêu chuẩn / Tối giản) phải ghi ở đầu tài liệu TC, kèm dòng **"Nâng lên khi…"**
   - **Ba nhánh không bao giờ được `➖`:** `UI cơ bản` (V1) · `Validation` (V2, khi có field nhập) · `Permission` (V3, khi có ≥2 role)

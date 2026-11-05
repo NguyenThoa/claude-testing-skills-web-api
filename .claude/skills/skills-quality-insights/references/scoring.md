@@ -38,7 +38,12 @@ Tác động  = 1 + B / 3 × 4                    → 1..5
 🔴 Cao ≥ 15 · 🟠 Trung bình 8 – 14,9 · 🟢 Thấp < 8
 Còn lỗi Critical mở → ít nhất 🔴 (ghi chú ¹)
 Chưa có TC nào   → ít nhất 🔴 (ghi chú ¹) — đơn vị trong phạm vi mà không có bằng chứng kiểm thử
+Khả năng ≥ 4     → ít nhất 🟠 (ghi chú ¹) — B thấp không được che vùng rất bất ổn
 ```
+
+**Vì sao có sàn theo Khả năng:** Điểm là phép nhân, nên B = 0 làm Tác động = 1 và Điểm tối đa chỉ còn 5. B đếm tỷ lệ TC chấm High, không đo tác động thật, nên không được kéo một vùng đầy lỗi xuống 🟢.
+
+**Giới hạn với nền tảng `api`:** script chỉ đọc `docs/executions/`, không đọc `reports/`. Đơn vị `api` chạy bằng automation sẽ có I và G xấu do thiếu dữ liệu. Agent đối chiếu `reports/` và ghi vào mục *Phương pháp* của báo cáo.
 
 **Vì sao B lấy từ `Risk Level` và `@HighImpact` của TC:** QA đã chấm tác động có căn cứ ở bước RBT (`skills-manual-testcase-v3` mục *Độ sâu theo rủi ro*), dùng lại để không chấm hai lần theo hai cách khác nhau. `Risk Level` nay gồm cả khả năng lỗi, nên chức năng tác động Cao mà khả năng lỗi thấp được đánh dấu bằng `@HighImpact`; thiếu tag này thì B tính thấp đi. Bộ TC cũ chấm trước 05-11-2026 có `Risk Level` chỉ theo tác động.
 
@@ -100,3 +105,4 @@ Chỉ so **cùng TC ID**, **cùng nền tảng**, **chỉ lần chạy bộ TC**
 | Ngày | Thay đổi |
 |---|---|
 | 26-10-2026 | Khởi tạo |
+| 05-11-2026 | Thêm sàn 🟠 khi Khả năng ≥ 4, ghi giới hạn của nền tảng `api` |

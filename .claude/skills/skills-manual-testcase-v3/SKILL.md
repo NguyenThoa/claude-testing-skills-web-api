@@ -13,7 +13,7 @@ Một skill cho toàn bộ vòng đời manual test case trên web. File này l�
 
 | Mode | Dùng khi | Workflow | Dừng chờ user |
 |---|---|---|---|
-| **QUICK** | Requirement đã rõ, module đơn giản | `/generate-testcases-from-requirements` | Không; mơ hồ ghi `ASM` |
+| **QUICK** | Requirement đã rõ, module đơn giản | `/generate-testcases-from-requirements` | Không; mơ hồ ghi `ASM`, `⏭️` chưa có người chốt ghi `⏳ chờ duyệt` |
 | **FULL RBT** | Module phức tạp, rủi ro cao, requirement chưa rõ | `/generate-testcases-manual-rbt` | Bước 2 và Bước 4 |
 | **CHECKLIST** | Smoke, post-hotfix, regression, release-readiness | `/generate-checklist-test` | Không |
 | **DELTA** | Requirement của bộ TC **đã có** vừa đổi | `/update-testcases-from-impact` | Theo workflow |

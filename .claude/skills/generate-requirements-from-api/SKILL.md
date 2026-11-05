@@ -28,6 +28,8 @@ description: Sinh tài liệu requirements (REQ ID) cho module API từ đặc t
 
 ## ⚠️ Ranh giới của workflow này
 
+> **Kiểm môi trường trước khi mở trình duyệt, gọi API hoặc chạy test:** phân loại host theo mục *Môi trường production* của `CLAUDE.md` và ghi kết quả vào report. Không có dấu hiệu môi trường test thì dừng, hỏi user.
+
 | Workflow này **CÓ** làm | Workflow này **KHÔNG** làm |
 |---|---|
 | Sinh REQ cho **một** module API (hoặc mặt API của một module đã có web) | ❌ Khám phá cả hệ thống, cấp prefix — việc của `/discover-system` (nhánh API) |

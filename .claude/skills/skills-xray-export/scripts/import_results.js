@@ -15,6 +15,7 @@ Tuỳ chọn:
   --test-plan <KEY>   Test Plan gắn với Test Execution (junit)
   --cache <file>      File cache TC ID ↔ mã Test (junit), lặp được. Mặc định đọc mọi .cache_*.json của skill
   --allow-new-tests   Cho phép đẩy test chưa có mã Xray, có thể tạo Test mới
+  --known-bugs <mã>   Test @KnownBug cần chuyển thành FAIL, cách nhau bằng dấu phẩy, lặp được. junit: TC ID, xray: testKey
   --dry-run           Chỉ đọc file và xem trước, không gọi Jira
   --yes               Xác nhận đã được user duyệt, cho phép ghi lên Jira`;
 
@@ -25,6 +26,8 @@ const TESTCASE = /<testcase\b(?:"[^"]*"|'[^']*'|[^>"'])*?(?:\/>|>[\s\S]*?<\/test
 const OPENING_TAG = /^<testcase\b(?:"[^"]*"|'[^']*'|[^>"'])*?(\/?)>/;
 const HAS_TEST_KEY = /<property\b[^>]*\bname=["']test_key["']/;
 const TC_ID = /[A-Z][A-Z0-9]*(?:_[A-Z0-9]+)*_TC_\d+/g;
+const KNOWN_BUG = /@KnownBug/;
+const KNOWN_BUG_FAILURE = '<failure message="@KnownBug: bug đang mở, test phơi đúng lỗi"/>';
 
 /** Gộp các file cache thành bảng TC ID → mã Test. TC ID trỏ tới hai mã khác nhau thì bỏ, không đoán. */
 function loadKeyMap(cacheFiles) {
@@ -59,6 +62,39 @@ function injectTestKeys(content, keyMap) {
     return testcase.replace(opening[0], `${opening[0]}<properties>${property}</properties>`);
   });
   return { content: result, injected };
+}
+
+/** Chuyển test đang phơi bug thành FAIL. Runner ghi chúng là pass hoặc skip, đẩy nguyên lên Xray sẽ thành PASS giả. */
+function markKnownBugs(format, content, ids) {
+  const wanted = new Set(ids);
+  const seen = new Set();
+  const marked = new Set();
+  if (format === 'xray') {
+    const data = JSON.parse(content);
+    for (const test of data.tests || []) {
+      if (wanted.has(test.testKey)) seen.add(test.testKey);
+      else if (!KNOWN_BUG.test(test.comment || '')) continue;
+      test.status = 'FAIL';
+      marked.add(test.testKey);
+    }
+    return { content: JSON.stringify(data), marked: [...marked], missing: ids.filter(id => !seen.has(id)) };
+  }
+  const result = content.replace(TESTCASE, testcase => {
+    const opening = testcase.match(OPENING_TAG);
+    const properties = testcase.match(/<properties>[\s\S]*?<\/properties>/);
+    const head = `${opening[0]}${properties ? properties[0] : ''}`;
+    const listed = (head.match(TC_ID) || []).filter(id => wanted.has(id));
+    listed.forEach(id => seen.add(id));
+    if (listed.length === 0 && !KNOWN_BUG.test(head)) return testcase;
+    marked.add(listed[0] || opening[0]);
+    if (/<(?:failure|error)\b/.test(testcase)) return testcase;
+    if (opening[1]) return `${opening[0].slice(0, -2)}>${KNOWN_BUG_FAILURE}</testcase>`;
+    const body = testcase.replace(/<skipped\b(?:[^>]*\/>|[\s\S]*?<\/skipped>)/, '');
+    return properties
+      ? body.replace('</properties>', () => `</properties>${KNOWN_BUG_FAILURE}`)
+      : body.replace(opening[0], () => `${opening[0]}${KNOWN_BUG_FAILURE}`);
+  });
+  return { content: result, marked: [...marked], missing: ids.filter(id => !seen.has(id)) };
 }
 
 /** Đọc file kết quả, trả về số test và số test chưa có mã Xray. */
@@ -111,6 +147,7 @@ async function main() {
         'test-plan': { type: 'string' },
         cache: { type: 'string', multiple: true },
         'allow-new-tests': { type: 'boolean', default: false },
+        'known-bugs': { type: 'string', multiple: true },
         'dry-run': { type: 'boolean', default: false },
         yes: { type: 'boolean', default: false }
       }
@@ -133,6 +170,11 @@ async function main() {
     const filePath = path.resolve(values.file);
     if (!fs.existsSync(filePath)) throw new Error(`Không tìm thấy file: ${filePath}`);
     options = { ...values, filePath, content: fs.readFileSync(filePath, 'utf8') };
+    const knownBugIds = (values['known-bugs'] || []).flatMap(item => item.split(',')).map(item => item.trim()).filter(Boolean);
+    const known = markKnownBugs(values.format, options.content, knownBugIds);
+    if (known.missing.length > 0) throw new Error(`--known-bugs không có trong file kết quả: ${known.missing.join(', ')}`);
+    options.content = known.content;
+    console.log(`Test @KnownBug đẩy lên là FAIL: ${known.marked.length}`);
     if (values.format === 'junit') {
       const skillDir = path.resolve(__dirname, '..');
       const cacheFiles = values.cache
@@ -191,4 +233,4 @@ if (require.main === module) {
   });
 }
 
-module.exports = { inspectResults, importResults, injectTestKeys, loadKeyMap };
+module.exports = { inspectResults, importResults, injectTestKeys, loadKeyMap, markKnownBugs };

@@ -13,6 +13,7 @@ Workflow này đóng **vòng lặp cuối** của quy trình kiểm thử: dev b
 
 ## ⚠️ Nguyên tắc thực thi
 
+- **Kiểm môi trường trước khi mở trình duyệt, gọi API hoặc chạy test:** phân loại host theo mục *Môi trường production* của `CLAUDE.md` và ghi kết quả vào report. Không có dấu hiệu môi trường test thì dừng, hỏi user
 - **Tất cả output bằng Tiếng Việt**
 - **KHÔNG chấm FIXED vì "không thấy lỗi nữa"** — phải chạy **đúng Steps to Reproduce trong bug report gốc**, không rút gọn, không đi đường khác
 - **KHÔNG sửa bug report gốc** cho khớp hành vi mới — chỉ **thêm** mục Lịch sử retest. Nội dung gốc là bằng chứng lịch sử
@@ -131,7 +132,8 @@ Evidence: `docs/executions/<module>/<nền-tảng>/retest_<timestamp>/evidence/`
 | Build lúc log bug → Build retest | v2.4.1 → v2.4.3 |
 | Môi trường | `<URL>` — Staging |
 | Tài khoản | `<tài khoản test>` (`<role>`) |
-| Người thực hiện | <tên tester> (agent hỗ trợ) |
+| Người thực hiện | Agent `<model>` chạy và chấm |
+| Người soát xét | <tên>, hoặc `⏳ Chưa soát xét` |
 | Thời gian | 12-08-2026 14:10 → 14:55 (45 phút) |
 | Môi trường dùng chung? | Có — auto-skip TC phá huỷ đang BẬT |
 | Video | Có — 1 video/lần lặp + 1 video/TC regression tại `video/` (WebM 1600×750) |
@@ -209,7 +211,7 @@ Thêm mục **Lịch sử retest** vào cuối file `docs/bugs/<module>/<nền-t
 
 | Ngày | Build | Kết quả | Retest report | Ghi chú |
 |---|---|---|---|---|
-| 12-08-2026 | v2.4.3 | ✅ FIXED | [retest_1785700456](../../../executions/customers/web/retest_1785700456/retest_report.md) | Kèm 1 regression mới: BUG_customers_1785700456_TC012 |
+| 12-08-2026 | v2.4.3 | ✅ FIXED — chờ xác nhận | [retest_1785700456](../../../executions/customers/web/retest_1785700456/retest_report.md) | Kèm 1 regression mới: BUG_customers_1785700456_TC012 |
 | 08-08-2026 | v2.4.2 | ❌ NOT_FIXED | [retest_1785350000](…) | Lỗi vẫn tái hiện 2/2 lần |
 ```
 
@@ -219,10 +221,12 @@ Thêm mục **Lịch sử retest** vào cuối file `docs/bugs/<module>/<nền-t
 
 | Kết quả retest | Ghi vào cột `Trạng thái` |
 |---|---|
-| ✅ FIXED | `🟢 Đã đóng (retest <DD-MM-YYYY>)` |
+| ✅ FIXED | `🟡 Đã fix — retest đạt <DD-MM-YYYY>, chờ xác nhận` |
 | ❌ NOT_FIXED | `🔴 **Đang mở** — NOT_FIXED <DD-MM-YYYY>` |
 | 🟡 PARTIAL | `🔴 **Đang mở** — PARTIAL <DD-MM-YYYY>` |
 | ⚠️ CANNOT_VERIFY | `⚠️ Cần rà lại — CANNOT_VERIFY <DD-MM-YYYY>` |
+
+**Agent không tự đóng bug.** Dòng Lịch sử retest ghi `✅ FIXED — chờ xác nhận`, rồi hỏi user trong chat. User xác nhận thì thêm dòng mới `✅ FIXED` với Ghi chú `Xác nhận đóng: <tên>`, và đổi cột `Trạng thái` thành `🟢 Đã đóng (retest <DD-MM-YYYY>)`. Chưa xác nhận thì bug vẫn tính là chưa đóng ở mọi báo cáo.
 
 Bỏ bước này thì danh mục vẫn báo bug đã FIXED là *Đang mở* — người đọc danh mục (hoặc bugs-viewer khi chỉ nạp danh mục) thấy sai trạng thái.
 
@@ -242,7 +246,7 @@ Bug **đẩy lên Jira** → cập nhật trạng thái tương ứng qua `skill
 - [ ] Mode FULL: đã ghi rõ phạm vi regression đã chọn **và phần cố ý bỏ**
 - [ ] TC regression FAIL đã tách thành **bug mới**, không gộp vào bug cũ
 - [ ] Đã thêm dòng vào Lịch sử retest của bug gốc, **không** sửa nội dung gốc
-- [ ] Đã cập nhật cột `Trạng thái` của bug trong `docs/bugs/README.md` khớp kết quả retest
+- [ ] Đã cập nhật cột `Trạng thái` của bug trong `docs/bugs/README.md` khớp kết quả retest · bug FIXED chỉ đóng sau khi user xác nhận trong chat
 - [ ] Dữ liệu test đã dọn (môi trường dùng chung)
 
 **Báo cáo cho user:** kết quả từng bug (FIXED/NOT_FIXED/PARTIAL/CANNOT_VERIFY) · số regression phát hiện · bug đề xuất đóng · bug đề xuất mở mới · khuyến nghị có nên đưa fix này lên production không · bug FIXED có TC hoặc script `@KnownBug:<BUG_ID>` → nhắc gỡ tag và expected-fail · **🔔 bảng cập nhật Xray thủ công** cho TC regression đã chạy: `TC ID · Mã Test trên Xray · Kết quả · Build · Link evidence` (mã tra trong `.claude/skills/skills-xray-export/.cache_*.json`, không có thì ghi `— chưa có trên Xray`; chỉ liệt kê, không tự ghi Jira).

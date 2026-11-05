@@ -35,7 +35,7 @@ Detect flaky tests caused by:
 
 1. **Detect** — Identify the failing test and reproduce the failure
 2. **Inspect** — Read error logs, stack traces, and screenshots
-3. **Classify** — Categorize the root cause (locator / timing / data / environment)
+3. **Classify** — Categorize the root cause (locator / timing / data / environment / lỗi sản phẩm chập chờn). App thật sự trả sai ở lần fail thì không sửa test, chuyển `/create-bug-report` kèm tần suất x/y
 4. **Fix** — Apply the appropriate fix strategy
 5. **Verify** — Re-run test multiple times to confirm stability
 

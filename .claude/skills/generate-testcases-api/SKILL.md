@@ -26,6 +26,7 @@ Chạy thẳng workflow này khi chưa có hai tầng trước vẫn được �
 
 ## ⚠️ Nguyên tắc thực thi
 
+- **Kiểm môi trường trước khi mở trình duyệt, gọi API hoặc chạy test:** phân loại host theo mục *Môi trường production* của `CLAUDE.md` và ghi kết quả vào report. Không có dấu hiệu môi trường test thì dừng, hỏi user
 - **Tất cả output bằng Tiếng Việt**
 - **KHÔNG đoán** schema/endpoint — phải đọc spec thực tế (JSON/YAML)
 - **KHÔNG tin spec suông** — spec là *lời khai*, không phải *hành vi*. Phải gọi thật để kiểm chứng (Bước 1b)
