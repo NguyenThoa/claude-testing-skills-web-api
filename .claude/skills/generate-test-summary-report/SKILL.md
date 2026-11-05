@@ -61,7 +61,7 @@ Glob theo bảng Input của skill, **ghi lại đường dẫn từng file** đ
 | Module trong phạm vi nhưng **không có execution report** | Ghi vào mục 2 "chưa được kiểm thử" — **KHÔNG** bỏ qua im lặng |
 | Không có `docs/bugs/` (đội dùng Jira) | Lấy qua `skills-jira-integration`. Không lấy được → ghi rõ "không đối chiếu được tình hình bug", và **hạ mức tin cậy của khuyến nghị** |
 | Không có `docs/requirements/README.md` | ⚠️ Không xác định được vùng mù → ghi rõ: *"chưa khảo sát cấp hệ thống, không kết luận được đã phủ hết hệ thống hay chưa"* |
-| Nhiều run **bộ TC** cùng một module × nền tảng | Gộp: **mỗi TC lấy kết quả của lần chạy mới nhất có chạy TC đó** — không lấy nguyên run mới nhất (run chạy lại 3 TC BLOCKED sẽ thay số của cả 36 TC). Nêu trend ở phần ghi chú nếu có khác biệt đáng kể |
+| Nhiều run **bộ TC** cùng một module × nền tảng | Gộp: **mỗi TC lấy kết quả của lần chạy mới nhất có chạy TC đó trên build hợp lệ** (TC chỉ có kết quả trên build khác vào nhóm ⏳ Cần chạy lại) — không lấy nguyên run mới nhất (run chạy lại 3 TC BLOCKED sẽ thay số của cả 36 TC). Nêu trend ở phần ghi chú nếu có khác biệt đáng kể |
 | Có run **checklist** | Báo ở bảng 4b riêng, **không** cộng vào bảng bộ TC. Cách tính vào tiêu chí exit theo bảng *Kết quả checklist trong các tiêu chí* của skill |
 | Module × nền tảng **chỉ** có run checklist | Tiêu chí #7 chưa đạt — ghi *"chỉ rà checklist <loại>"* ở mục 2 |
 | Mục checklist FAIL (build mới) mà `TC ID liên quan` PASS ở run bộ TC (build cũ) | Regression — nêu ở mục 5, ghi cả hai nguồn |
@@ -118,7 +118,7 @@ Theo **Report Template** trong skill, đủ 9 mục theo đúng thứ tự:
 
 ## Bàn giao
 
-**Checklist trước khi báo xong:** dùng nguyên **Quality Checklist** của skill (15 mục). Bốn mục hay sai nhất:
+**Checklist trước khi báo xong:** dùng nguyên **Quality Checklist** của skill. Bốn mục hay sai nhất:
 
 - [ ] Vùng chưa test đặt **trước** tỷ lệ
 - [ ] Khuyến nghị GO vẫn liệt kê rủi ro

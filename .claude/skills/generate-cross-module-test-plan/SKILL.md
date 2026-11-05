@@ -81,14 +81,18 @@ và đó thường là phần tốn thời gian nhất.
 
 Chọn 1 trong 3:
   (A) Cung cấp business rules → tôi điền luôn Expected Output      [tốt nhất]
-  (B) Chạy BROWSER mode, tôi chạy thật vài bộ để suy ra output rule
+  (B) Chạy BROWSER mode: tôi chạy thật vài bộ để ghi nhận hành vi hiện tại, PO xác nhận rồi mới dùng làm Expected
   (C) Vẫn chạy, chấp nhận ma trận chỉ có input — bạn tự điền expected
 
 Chọn?
 ```
 
 > **KHÔNG tự bịa business rules để "cho đủ"** — thà ma trận trống còn hơn ma trận sai.
-> Nếu user chọn (C) → tiếp tục bình thường, nhưng ghi rõ trong artifact rằng Expected Output **chưa được xác định**.
+>
+> **Hành vi của app không phải Expected.** App sai thì kết quả chạy thật cũng sai. Expected chỉ lấy từ REQ, business rule, hoặc PO xác nhận. Kết quả suy từ chạy thật ghi `⚠️ Theo hiện trạng`, mở `AMB-<MODULE>-nn`, chưa tính vào độ phủ output; TC sinh từ dòng đó gắn `@NeedsVerify`.
+>
+> **Trước khi chạy thật hoặc tạo dữ liệu:** xác định môi trường theo `CLAUDE.md` mục *Môi trường production* và hỏi có dùng chung không. Dùng chung thì được user xác nhận mới tạo dữ liệu, ghi lại ID để dọn.
+> Nếu user chọn (C) → tiếp tục bình thường, nhưng ghi rõ trong file kết quả rằng Expected Output **chưa được xác định**.
 
 ---
 
@@ -96,7 +100,7 @@ Chọn?
 
 #### Mode DOCUMENT:
 
-1. **Đọc tài liệu** user cung cấp (file local → `Read`, URL → `WebFetch`, inline → parse trực tiếp)
+1. **Đọc tài liệu** user cung cấp (file local → `Read`, URL → tải thô `curl -sSL -o <file>` rồi `Read`, inline → parse trực tiếp). **Không** dùng `WebFetch` vì nội dung bị tóm tắt và tài liệu dài bị cắt âm thầm. Trang cần đăng nhập, Jira, Confluence → dùng `/fetch-jira-requirements` hoặc nhờ user xuất file
 2. **Extract danh sách modules** từ tài liệu:
    - Tìm các phần (sections) mô tả từng bước/module trong luồng
    - Xác định thứ tự modules (module nào trước, module nào sau)
@@ -197,7 +201,7 @@ Agent hỗ trợ **3 chiến lược** — user chọn hoặc agent đề xuất
 > `Output coverage: 6/6 template được cover ✅` hoặc liệt kê template còn thiếu + bổ sung bộ.
 >
 > Nếu chưa biết Expected Output (user chọn phương án (C) ở Bước 0) → rule này **tạm hoãn**,
-> ghi rõ trong artifact: `⚠️ Output coverage CHƯA verify được — thiếu business rules`.
+> ghi rõ trong file kết quả: `⚠️ Output coverage CHƯA verify được — thiếu business rules`.
 
 #### 3A. Output-Class Coverage (MẶC ĐỊNH — KHUYẾN NGHỊ)
 
@@ -218,7 +222,7 @@ Agent hỗ trợ **3 chiến lược** — user chọn hoặc agent đề xuất
 **Số lượng:** Thường 10-20 bộ. Agent đề xuất → user xác nhận ở Bước 4.
 
 > **Khi nào KHÔNG dùng 3A:** Chưa có business rules → không xác định được output class.
-> Lúc đó fallback sang 3B (pairwise) và ghi rõ giới hạn trong artifact.
+> Lúc đó fallback sang 3B (pairwise) và ghi rõ giới hạn trong file kết quả.
 
 #### 3B. Pairwise Testing (Bổ sung, hoặc fallback khi chưa có business rules)
 
@@ -312,9 +316,9 @@ Agent hỗ trợ **3 chiến lược** — user chọn hoặc agent đề xuất
 
 > Đây là **checkpoint DUY NHẤT** — agent dừng ở đây chờ user xác nhận.
 
-1. **Sinh artifact chính:**
+1. **Sinh file chính:**
 
-   **File: `cross_module_test_plan_<feature>.md`**
+   **File: `docs/test-plans/cross-module/cross_module_test_plan_<feature>.md`**
    - Module Inventory (Bước 1)
    - Dependencies Matrix (Bước 2)
    - Dimension Catalog + Constraints (Bước 2)
@@ -352,7 +356,7 @@ Agent hỗ trợ **3 chiến lược** — user chọn hoặc agent đề xuất
 
 | Mục tiêu | Workflow tiếp theo |
 |----------|-------------------|
-| Sinh **test cases chi tiết** cho từng bộ kết hợp | `/generate-testcases-manual-rbt` — input = ma trận |
+| Sinh **test cases chi tiết** cho từng bộ kết hợp | `/generate-testcases-manual-rbt` — input = ma trận. Mỗi TC phải trỏ về REQ; luồng chưa có REQ thì bổ sung REQ trước |
 | Tạo **test data thật trên hệ thống** qua browser pipeline | `/generate-combinatorial-test-data` — mode PIPELINE |
 | Sinh **automation scripts** | `/generate-automation-from-testcases` — input = test cases |
 
@@ -378,14 +382,14 @@ Agent hỗ trợ **3 chiến lược** — user chọn hoặc agent đề xuất
 **User nói:** "Inspect app bảo hiểm tại https://example.com, luồng tạo hợp đồng"
 
 **Agent thực hiện:**
-1. **Bước 0:** Không có business rules → **cảnh báo user**, user chọn (B) — chạy thật vài bộ để suy ra rule
+1. **Bước 0:** Không có business rules → **cảnh báo user**, user chọn (B). Agent xác định môi trường, hỏi có dùng chung không
 2. Navigate qua 3 modules, snapshot mỗi module
 3. Extract dimensions từ DOM: Loại BH (3), Gói (4), Kỳ hạn (3), PTTT (2) = 72 bộ full
-4. Chạy 4 bộ mẫu trên app → phát hiện 6 template hợp đồng khác nhau
-5. Chuyển sang 3A với 6 output class vừa tìm được → **13 bộ**
-6. Output: Ma trận 13 bộ, **coverage 6/6 template ✅** + Data Flow
+4. Chạy 4 bộ mẫu trên app → ghi nhận 6 template hợp đồng, đánh dấu `⚠️ Theo hiện trạng`, mở `AMB`
+5. PO xác nhận 6 output class → chuyển sang 3A, **13 bộ**. PO chưa xác nhận → giữ 3B pairwise
+6. Output: Ma trận 13 bộ, ghi rõ coverage output dựa trên xác nhận của ai + Data Flow
 
-> Nếu user chọn (C) ở Bước 0 → dùng 3B pairwise thuần (~15 bộ), artifact ghi rõ
+> Nếu user chọn (C) ở Bước 0 → dùng 3B pairwise thuần (~15 bộ), file kết quả ghi rõ
 > `⚠️ Output coverage CHƯA verify được — thiếu business rules`
 
 ---
@@ -419,4 +423,4 @@ Agent hỗ trợ **3 chiến lược** — user chọn hoặc agent đề xuất
 - [ ] **(Pairwise)** `is_valid()` map constraint theo TÊN dimension, không theo index
 - [ ] Ma trận chỉ chứa bộ kết hợp hợp lệ (đã loại constraints)
 - [ ] User đã xác nhận ma trận tại Bước 4
-- [ ] Artifact output đã lưu đúng vị trí project
+- [ ] File kết quả đã lưu đúng vị trí project

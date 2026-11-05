@@ -11,7 +11,7 @@ description: Sinh tài liệu requirements (REQ ID) cho module API từ đặc t
 >
 > | Mục skill | Dùng để |
 > |---|---|
-> | **2 + 2.1 + 2.2** | Đánh mã REQ/AMB/RISK · nối tiếp mã · **chung prefix với web/mobile cùng nghiệp vụ** |
+> | **2 + 2.1 + 2.2** | Đánh mã REQ/AMB/RISK · nối tiếp mã · **chung prefix với web cùng nghiệp vụ** |
 > | **3.3** | Đối chiếu khi có cả tài liệu nghiệp vụ lẫn spec |
 > | **3.4** (toàn bộ) | Lấy nguồn · ranh giới module · ma trận auth · kiểm chứng gọi thật · trích REQ · tài liệu API dạng văn bản · mục 6 áp cho API |
 > | **4 + 4.3** | AMB/RISK + Cổng Tự Soát REQ |
@@ -20,7 +20,7 @@ description: Sinh tài liệu requirements (REQ ID) cho module API từ đặc t
 > | **6** + bảng thay đổi **3.4.7** | Cấu trúc tài liệu đầu ra |
 > | **7.1 + 7.4** | Strict rules chung + riêng nhánh API |
 >
-> ❌ **KHÔNG dùng** mục 3.1 (UI Recon web), 3.5 (Mobile Recon), 7.2 (luật cấm gọi API là của nhánh UI).
+> ❌ **KHÔNG dùng** mục 3.1 (UI Recon web), 7.2 (luật cấm gọi API là của nhánh UI).
 
 Đây là bản API của `/generate-requirements-from-website`: **tầng module**, đầu ra là `REQUIREMENTS_<TÊN_MODULE>_SUMMARY.md` có mã REQ để tầng test case (`/generate-testcases-api`) và `/generate-traceability-matrix` neo vào.
 
@@ -30,10 +30,10 @@ description: Sinh tài liệu requirements (REQ ID) cho module API từ đặc t
 
 | Workflow này **CÓ** làm | Workflow này **KHÔNG** làm |
 |---|---|
-| Sinh REQ cho **một** module API (hoặc mặt API của một module đã có web/app) | ❌ Khám phá cả hệ thống, cấp prefix — việc của `/discover-system` (nhánh API) |
+| Sinh REQ cho **một** module API (hoặc mặt API của một module đã có web) | ❌ Khám phá cả hệ thống, cấp prefix — việc của `/discover-system` (nhánh API) |
 | Trích REQ từ spec / Postman / tài liệu văn bản, có trích dẫn vị trí | ❌ Sinh test cases — việc của `/generate-testcases-api` · sinh code — `/generate-automation-api` |
 | Gọi thật **có kiểm soát** để nâng REQ lên mức kiểm chứng | ❌ Sửa/xoá bất kỳ bản ghi nào không do chính phiên này tạo |
-| Ghi REQ vào tầng `api/` của **cùng** thư mục module với web/mobile, REQ dùng chung lên index | ❌ Mở prefix hay tài liệu riêng cho "phần API" của một module đã có |
+| Ghi REQ vào tầng `api/` của **cùng** thư mục module với web, REQ dùng chung lên index | ❌ Mở prefix hay tài liệu riêng cho "phần API" của một module đã có |
 | Không cần Ticket ID | ❌ Phân tích ticket — việc của `/analyze-requirement-document` |
 
 ---
@@ -60,7 +60,7 @@ description: Sinh tài liệu requirements (REQ ID) cho module API từ đặc t
 
 | Tình huống | Thư mục đầu ra | Prefix |
 |---|---|---|
-| API là **mặt khác** của hệ thống đã có web/app trong repo | `docs/requirements/<module>/api/requirements_<module>_api.md` + index `REQUIREMENTS_<TÊN_MODULE>_SUMMARY.md` — **cùng thư mục module** với web/mobile | **Prefix của module đã có** (skill 2.2) |
+| API là **mặt khác** của hệ thống đã có web trong repo | `docs/requirements/<module>/api/requirements_<module>_api.md` + index `REQUIREMENTS_<TÊN_MODULE>_SUMMARY.md` — **cùng thư mục module** với web | **Prefix của module đã có** (skill 2.2) |
 | Hệ thống **chỉ có API**, là hệ thống đầu tiên của repo | `docs/requirements/<module>/api/` + index | Prefix mới, chốt ở tầng khám phá |
 | Hệ thống **chỉ có API**, repo đã có hệ thống khác | `docs/requirements/_<hệ-thống>/<module>/api/` + index | `REQ-<HỆ_THỐNG>-<MODULE>-<nn>` (CLAUDE.md mục 6b) |
 | Không chắc API có thuộc hệ thống đang có hay không | ⛔ **Hỏi user một câu** — đoán sai là hoặc nhân đôi REQ, hoặc trộn hai hệ thống |
@@ -83,7 +83,7 @@ Công bố ngay câu đầu tiên: *"Sinh REQ cho module `<PREFIX>` — nguồn 
 2. **Spec snapshot:** mọi operation thuộc tag của module — **resolve `$ref`** khi trích schema request/response. Postman: mọi request trong folder. Tài liệu văn bản: đúng các mục/bảng phủ module, ghi vị trí
 3. **Tài liệu requirements đã có của module** (`REQUIREMENTS_<TÊN_MODULE>_SUMMARY.md`), nếu có:
    - Lấy **mã kế tiếp** (skill 2.1) — REQ API đánh **tiếp**, không mở dải riêng
-   - Liệt kê REQ web/mobile có rule **nằm ở server** (khoá tài khoản, trùng email, giới hạn độ dài) — ở Bước 3 sẽ **mở rộng nền tảng** cho REQ đó thay vì sinh REQ mới
+   - Liệt kê REQ web có rule **nằm ở server** (khoá tài khoản, trùng email, giới hạn độ dài) — ở Bước 3 sẽ **mở rộng nền tảng** cho REQ đó thay vì sinh REQ mới
 4. **Tài liệu nghiệp vụ khác** user đưa (spec chức năng, ticket) → đối chiếu theo skill 3.3
 
 ### Bước 2: Kiểm chứng bằng gọi thật — mức module
@@ -115,11 +115,11 @@ Theo skill **3.4.5** (dữ kiện nào thành REQ nào) và **3.4.7** (mục 6 �
 - **Ma trận trạng thái** khi có `enum` trạng thái + operation đổi trạng thái
 - Cột `Nguồn` dùng **thang 4 mức API** của skill 3.4.5
 
-**Nối với REQ web/mobile đã có (skill 2.2):**
+**Nối với REQ web đã có (skill 2.2):**
 
 | Tình huống | Xử lý |
 |---|---|
-| Rule API **trùng** một REQ đã có, và gọi thật cho kết quả khớp | **Không** cấp mã mới — REQ cũ đang ở `web/` / `mobile/` thì **chuyển dòng lên index**, cột `Nền tảng` thêm `API`; đã ở index thì chỉ sửa cột. Nhật ký loại `🟢 Thêm` · *"Mở rộng nền tảng: + API"* |
+| Rule API **trùng** một REQ đã có, và gọi thật cho kết quả khớp | **Không** cấp mã mới — REQ cũ đang ở `web/` thì **chuyển dòng lên index**, cột `Nền tảng` thêm `API`; đã ở index thì chỉ sửa cột. Nhật ký loại `🟢 Thêm` · *"Mở rộng nền tảng: + API"* |
 | Rule trùng nhưng hành vi **khác** (UI chặn, API nhận) | REQ riêng ở `api/` + `AMB-<MODULE>-XX` 🔴 *"cố ý hay lỗi?"* — mặc định nghi là lỗi, thường là lỗ hổng bỏ qua validation phía client |
 | Module cũ chưa có tầng nền tảng (tài liệu một file) | Chuyển một lần theo skill mục 5.3 (REQ chỉ áp web sang `web/`, mã giữ nguyên, ghi Nhật ký) rồi mới ghi phần API |
 | Rule chỉ có ở API | REQ mới nối tiếp mã, ghi ở `api/` |
@@ -156,7 +156,7 @@ Chạy đủ 9 câu của skill 4.3, **cộng**:
 - [ ] Không bản ghi có sẵn nào bị sửa/xoá; mọi bản ghi test đã dọn
 - [ ] Danh mục, `api_map.md`, Nhật ký thay đổi của module khớp nhau
 
-**Báo cáo cho user:** số REQ mới · số REQ web/mobile được mở rộng sang API · số REQ ở từng mức nguồn · phát hiện lệch pha · AMB 🔴 cần PO trả lời · **lệnh kế tiếp**:
+**Báo cáo cho user:** số REQ mới · số REQ web được mở rộng sang API · số REQ ở từng mức nguồn · phát hiện lệch pha · AMB 🔴 cần PO trả lời · **lệnh kế tiếp**:
 
 ```
 /generate-testcases-api   ← sinh TC API neo vào REQ vừa sinh

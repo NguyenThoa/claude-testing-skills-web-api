@@ -1,6 +1,19 @@
+---
+paths:
+  - "**/*.spec.ts"
+  - "**/*.spec.js"
+  - "**/*.test.ts"
+  - "**/*.java"
+  - "**/test_*.py"
+  - "**/pages/**"
+  - "**/playwright.config.*"
+  - "**/pom.xml"
+  - "**/allurerc.*"
+---
+
 # Quy Tắc Report (Allure & tương đương)
 
-> Áp dụng cho **mọi** script automation sinh ra, bất kể framework (Playwright, Selenium, Appium) hay ngôn ngữ.
+> Áp dụng cho **mọi** script automation sinh ra, bất kể framework (Playwright, Selenium) hay ngôn ngữ.
 >
 > **Nguyên tắc gốc:** Report phải đọc hiểu được bởi người **không xem code** — QA lead, BA, PM. Nhìn vào Test Body là biết test đã làm gì, ở bước nào, kết quả ra sao.
 
@@ -171,7 +184,7 @@ Config đầy đủ từng stack: [`CODE_TEMPLATES.md`](../skills/skills-framewo
 ### Quy tắc kèm theo
 
 - **`.gitignore` PHẢI có dòng `reports/`** — không commit output test lên repo
-- **`.gitignore` cũng phải chặn `.allure/`** — nơi `allure-maven` tải CLI về
+- **`.gitignore` cũng phải chặn `.allure/`** — nơi giải nén bộ CLI Allure của project Java
 - **CI upload artifact** trỏ vào `reports/` (1 artifact duy nhất, không upload lẻ từng thư mục)
 - **KHÔNG** để thư mục mặc định của tool nằm ở root: `allure-results/`, `test-results/`, `playwright-report/`, `target/surefire-reports/` — phải trỏ lại vào `reports/`
 - Ảnh trong `reports/screenshots/` chụp hệ thống thật, **thường chứa dữ liệu khách hàng** — thêm lý do nữa để không commit

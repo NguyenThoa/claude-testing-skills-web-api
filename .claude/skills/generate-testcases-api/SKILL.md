@@ -3,7 +3,9 @@ name: generate-testcases-api
 description: Sinh API test cases từ đặc tả — Swagger UI / Scalar / Redoc / OpenAPI / Postman — neo vào REQ của /generate-requirements-from-api, có kiểm chứng bằng gọi thật. Tự nhận nguồn URL hay file. KHÔNG sinh code — automation dùng /generate-automation-api.
 ---
 
-> **Skill nền tảng cần nạp trước:** `skills-requirements-analyzer` · `skills-test-data-generator` — đọc `.claude/skills/<tên-skill>/SKILL.md` của từng skill trước khi bắt đầu.
+> **Skill nền tảng cần nạp trước:** `skills-api-testcase-v3` · `skills-requirements-analyzer` · `skills-test-data-generator` — đọc `.claude/skills/<tên-skill>/SKILL.md` của từng skill trước khi bắt đầu.
+
+> **ƯU TIÊN:** Sinh TC theo **`skills-api-testcase-v3`**. Chỗ nào trong workflow này khác về format bảng, cấu trúc mục, Q&A thì theo skill v3; đường dẫn và tên file theo `CLAUDE.md` mục 6b.
 
 # Workflow: Sinh API Test Cases
 
@@ -75,7 +77,7 @@ Chạy thẳng workflow này khi chưa có hai tầng trước vẫn được �
    - **Utility** — Health check, config, metadata
 6. **Gán mã module** theo skill **3.4.2**:
    - **Đọc `README.md` danh mục trước** để không trùng prefix đã chiếm
-   - API của hệ thống **đã có web/app** → ghép `tag` vào module đã có, **dùng prefix cũ** (skill 2.2) — không mở prefix riêng cho API
+   - API của hệ thống **đã có web** → ghép `tag` vào module đã có, **dùng prefix cũ** (skill 2.2) — không mở prefix riêng cho API
    - Hệ thống **chỉ có API** → `tags` làm ranh giới module. Là hệ thống thứ hai của repo (namespace) thì REQ mang mã hệ thống ngắn (2–4 ký tự, VD `BK`) → `REQ-<HỆ_THỐNG>-<MODULE>-<nn>`
    - TC ID **luôn** là `<HỆ_THỐNG>_<MODULE>_TC_<nnn>` với tiền tố hệ thống đã chốt ở danh mục — dùng lại, không đặt mới
 
@@ -130,7 +132,7 @@ Cập nhật `README.md` danh mục hệ thống (tạo mới nếu chưa có): 
    - **429:** Too Many Requests (Rate Limiting)
    - **500:** Server error
 
-2. **Với mỗi endpoint** trong scope đã xác nhận, sinh test scenarios theo 7 loại:
+2. **Với mỗi endpoint** trong scope đã xác nhận, chấm `Risk Level` rồi sinh test scenarios theo section mà mức đó yêu cầu (`test_design_api.md` mục 4). Phần rút ghi `⏭️` kèm căn cứ; 4 thứ không bao giờ rút vẫn phải có. Các loại scenario:
    - **✅ Happy Path** — Request hợp lệ, response đúng schema + status code
    - **❌ Negative — Validation** — Thiếu required fields, sai data type, vượt max length
    - **❌ Negative — Auth** — Không có token, token hết hạn, token sai role
@@ -143,7 +145,7 @@ Cập nhật `README.md` danh mục hệ thống (tạo mới nếu chưa có): 
    - Data valid cho Happy Path
    - Data invalid cho Negative cases (mỗi field 1 bộ negative)
    - Boundary values theo schema constraints (minLength, maxLength, min, max, pattern)
-   - Data phải **unique + traceable** (VD: `auto_api_1712049200@test.com`)
+   - Data phải **unique + traceable** (VD: `auto_api_1712049200@yopmail.com`)
 
 4. **Field-Level Validation cho Request Body (BẮT BUỘC):**
 
@@ -177,22 +179,21 @@ Cập nhật `README.md` danh mục hệ thống (tạo mới nếu chưa có): 
    ```
    docs/testcases/[_<hệ-thống>/]<module>/TEST_CASES_<TÊN_MODULE>_SUMMARY.md               ← INDEX, TÊN FILE BẤT BIẾN — tổng hợp + Bản đồ tài liệu
    docs/testcases/[_<hệ-thống>/]<module>/api/test_cases_<module>_api.md       ← TC API của module
-   docs/testcases/[_<hệ-thống>/]<module>/api/parts/part_NN_api_<slug>.md      ← khi file API > 40 TC
    ```
 
    **Một file mỗi module**, không gộp 35 endpoint vào một file khổng lồ. Tên file bám đúng mẫu để `/generate-traceability-matrix` map được RTM.
 
-   **Module đã có TC của web/mobile** (chung prefix — skill 2.2) → TC API ghi vào `api/test_cases_<module>_api.md` **cùng thư mục module**, TC ID **nối tiếp** dải chung đã dùng (đọc `docs/testcases/README.md`), gắn tag `@API`, và thêm dòng API vào `## Bản đồ tài liệu` của index. ❌ Không mở dải TC ID riêng cho API.
+   **Module đã có TC của web** (chung prefix — skill 2.2) → TC API ghi vào `api/test_cases_<module>_api.md` **cùng thư mục module**, TC ID **nối tiếp** dải chung đã dùng (đọc `docs/testcases/README.md`), gắn tag `@API`, và thêm dòng API vào `## Bản đồ tài liệu` của index. ❌ Không mở dải TC ID riêng cho API.
 
 2. Cấu trúc mỗi file:
    - **Tổng quan** — Base URL, Version, Auth method, số endpoint của module, link ngược về `_discovery/api_map.md` và `REQUIREMENTS_<TÊN_MODULE>_SUMMARY.md`
    - **Endpoint Catalog** — Bảng: `| # | Method | Path | Auth | Mô tả | Số Test Cases |`
-   - **Test Cases chi tiết** — theo từng endpoint, bảng TC dùng **đúng tên cột** của skill `skills-rbt-manual-testing` mục *Bảng Output Standard* (`TC ID · REQ ID · Module · Risk Level · Test Scenario · Pre-Condition · Test Steps · Test Data · Expected Result · Priority · Automation · Auto Type · Tags`) — `scripts/testcases-viewer` và `/generate-automation-api` đọc theo tên cột. `Auto Type` = `API`, `Tags` có `@API`. Mỗi TC có **TC ID** `<HỆ_THỐNG>_<MODULE>_TC_<nnn>` và **REQ ID** trỏ vào REQ API (hoặc `⚠️ Chưa có REQ` — Bước 2)
+   - **Test Cases chi tiết** — theo từng endpoint, bảng TC dùng **đúng format** của skill `skills-api-testcase-v3` mục 1 — `scripts/testcases-viewer` và `/generate-automation-api` đọc theo tên cột. `Type` trong `automation_matrix.md` = `API`, `Tags` có `@API`. Mỗi TC có **TC ID** `<HỆ_THỐNG>_<MODULE>_TC_<nnn>` và **REQ ID** trỏ vào REQ API (hoặc `⚠️ Chưa có REQ` — Bước 2)
    - **Test Data Matrix** — data valid/invalid/boundary cho mỗi model
    - **Dependencies & Execution Order** — thứ tự chạy test
    - **TC treo** — TC chưa viết được, kèm mã AMB đang chặn
 
-   > 🚨 **Một request chứng minh được nhiều REQ vẫn phải tách TC.** VD `POST /api/login` không gửi token → `200` vừa là *"đăng nhập thành công"* vừa là *"đăng nhập không cần token"* — nếu hai REQ đó **không** có TC nào khác thì phải là **hai TC**, mỗi TC một Expected cốt lõi. Gộp lại thì khi FAIL không biết REQ nào hỏng, và RTM báo cả hai "đã phủ" dù không TC nào **chỉ** kiểm riêng từng cái. Chạy phép thử **6b** của skill `skills-rbt-manual-testing` (có mẫu script) trước khi ghi file. **Số TC ít hơn số REQ không phải lỗi**, nhưng là tín hiệu bắt buộc chạy phép thử này.
+   > 🚨 **Một request chứng minh được nhiều REQ vẫn phải tách TC.** VD `POST /api/login` không gửi token → `200` vừa là *"đăng nhập thành công"* vừa là *"đăng nhập không cần token"* — nếu hai REQ đó **không** có TC nào khác thì phải là **hai TC**, mỗi TC một Expected cốt lõi. Gộp lại thì khi FAIL không biết REQ nào hỏng, và RTM báo cả hai "đã phủ" dù không TC nào **chỉ** kiểm riêng từng cái. Chạy phép thử **6b** của skill `skills-manual-testcase-v3` (có mẫu script) trước khi ghi file. **Số TC ít hơn số REQ không phải lỗi**, nhưng là tín hiệu bắt buộc chạy phép thử này.
 
 3. **Cập nhật `README.md` danh mục**: dải TC ID đã dùng · mã kế tiếp · cột `Nền tảng` (số TC API) · ngày cập nhật · dòng nhật ký.
 
@@ -215,7 +216,7 @@ Cập nhật `README.md` danh mục hệ thống (tạo mới nếu chưa có): 
 
 ### Test cases
 
-- `docs/testcases/[_<hệ-thống>/]<module>/api/test_cases_<module>_api.md` + cập nhật index `TEST_CASES_<TÊN_MODULE>_SUMMARY.md` — mỗi module 1 file API (chung thư mục module và dải TC ID với TC web/mobile), đủ 12 Status Codes, 7 loại Test Scenarios, OWASP Security, Test Data Matrix, TC ID truy vết được.
+- `docs/testcases/[_<hệ-thống>/]<module>/api/test_cases_<module>_api.md` + cập nhật index `TEST_CASES_<TÊN_MODULE>_SUMMARY.md` — mỗi module 1 file API (chung thư mục module và dải TC ID với TC web), đủ section theo `Risk Level` của từng endpoint, Test Data Matrix, TC ID truy vết được.
 
 ---
 

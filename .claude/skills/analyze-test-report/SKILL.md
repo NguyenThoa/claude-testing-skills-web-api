@@ -45,17 +45,17 @@ Hai nguồn report khác nhau về bản chất; chọn nhầm nhánh là phân 
 **Bước 1: Parse Report**
 1. Xác định format (Playwright JSON / Allure / JUnit XML / TestNG XML)
 2. Trích xuất từng test: tên, status, duration, error message, retry count
-3. Tách FLAKY (pass sau retry) riêng khỏi FAIL thật
+3. Tách FLAKY (pass sau retry) riêng khỏi FAIL thật, tách test `@KnownBug` vào nhóm Đang phơi bug trước khi tính pass rate
 
 **Bước 2: Phân Loại Failure**
 1. Đọc error message + stack trace của TỪNG test fail
-2. Gán category theo bảng **Failure Categories** trong skill: 🐛 App Bug / 🎯 Locator / ⏱️ Flaky / 📊 Data / 🌐 Environment / 🧪 Script
+2. Gán category theo bảng **Failure Categories** trong skill: 🐛 App Bug / 🎯 Locator / ⏱️ Flaky / 📊 Data / 🌐 Environment / 🧪 Script / 🐞 Đang phơi bug / 🎉 `@KnownBug` bỗng PASS
 3. Gom nhóm failure có chung root cause (cùng page object, cùng API, cùng thời điểm)
 
-**Bước 3: So Sánh Trend** (nếu có report cũ) — New failures / Recurring (≥3 lần) / Fixed
+**Bước 3: So Sánh Trend** (nếu có report cũ) — New failures / Recurring (≥ 2 lần) / Fixed
 
 **Bước 4: Báo Cáo**
-1. Xuất `test_report_analysis.md` theo template trong skill
+1. Xuất `reports/test_report_analysis.md` theo template trong skill
 2. Thứ tự xử lý: Environment → App Bugs (`/create-bug-report`) → Locator (`/heal-locators`) → Flaky (`/analyze-flaky-tests`)
 3. User muốn **sửa luôn cho suite xanh lại** thay vì chỉ đọc report → chuyển sang `/run-and-fix-tests`
 
@@ -172,7 +172,7 @@ Xuất `docs/executions/<module>/<nền-tảng>/analysis_<timestamp>.md` (lần 
 
 | Nhánh | File |
 |---|---|
-| AUTOMATION | `test_report_analysis.md` — tổng quan · phân loại failure · pattern · trend · thứ tự xử lý |
+| AUTOMATION | `reports/test_report_analysis.md` — tổng quan · phân loại failure · pattern · trend · thứ tự xử lý |
 | MANUAL | `docs/executions/<module>/<nền-tảng>/analysis_<timestamp>.md` — theo template trên |
 
 **Bước tiếp theo gợi ý cho user:**

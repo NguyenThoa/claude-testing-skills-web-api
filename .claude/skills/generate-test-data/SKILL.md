@@ -86,7 +86,7 @@ Với mỗi field đã xác định, sinh data theo bảng sau:
 ```
 Ví dụ:
 ```
-email:    auto_register_1712049200@test.com
+email:    auto_register_1712049200@yopmail.com
 username: user_login_1712049200
 code:     TC_BOOK_1712049200
 ```
@@ -98,7 +98,7 @@ code:     TC_BOOK_1712049200
 | **Missing required** | Bỏ trống field bắt buộc | `email: ""` |
 | **Invalid format** | Sai format | `email: "not-an-email"` |
 | **Invalid type** | Sai kiểu dữ liệu | `price: "abc"` (expect number) |
-| **Duplicate** | Giá trị đã tồn tại | `email: "existing@test.com"` |
+| **Duplicate** | Giá trị đã tồn tại | `email: "existing@yopmail.com"` |
 | **Invalid characters** | Ký tự không được phép | `name: "<script>alert(1)</script>"` |
 | **Wrong relationship** | Vi phạm quan hệ fields | `password_confirm ≠ password` |
 
@@ -120,7 +120,7 @@ code:     TC_BOOK_1712049200
 |------|--------|-------|
 | **Unicode** | Ký tự đặc biệt Unicode | `"Nguyễn Văn 🎉"` |
 | **Very long** | Chuỗi cực dài | `"a" * 10000` |
-| **Whitespace** | Khoảng trắng đầu/cuối | `"  email@test.com  "` |
+| **Whitespace** | Khoảng trắng đầu/cuối | `"  email@yopmail.com  "` |
 | **SQL injection** | Pattern SQL injection | `"'; DROP TABLE users; --"` |
 | **HTML tags** | HTML trong text field | `"<b>bold</b><img src=x onerror=alert(1)>"` |
 | **Null/undefined** | Giá trị null | `null` |
@@ -145,7 +145,7 @@ Trả kết quả theo format User yêu cầu (mặc định: JSON):
       "id": "POS_01",
       "description": "Đăng ký thành công với tất cả fields hợp lệ",
       "data": {
-        "email": "auto_register_1712049200@test.com",
+        "email": "auto_register_1712049200@yopmail.com",
         "password": "Test@12345",
         "name": "Auto User Register",
         "phone": "0912345001"
@@ -175,7 +175,7 @@ Trả kết quả theo format User yêu cầu (mặc định: JSON):
     {
       "id": "BND_01",
       "description": "Password đúng min length (6 chars)",
-      "data": { "email": "auto_bnd01_1712049200@test.com", "password": "Abc@12", "name": "Test User" },
+      "data": { "email": "auto_bnd01_1712049200@yopmail.com", "password": "Abc@12", "name": "Test User" },
       "expectedResult": "Thành công",
       "targetField": "password",
       "boundaryType": "min"
@@ -185,7 +185,7 @@ Trả kết quả theo format User yêu cầu (mặc định: JSON):
     {
       "id": "EDGE_01",
       "description": "Name chứa Unicode tiếng Việt + emoji",
-      "data": { "email": "auto_edge01_1712049200@test.com", "password": "Test@12345", "name": "Nguyễn Văn 🎉" },
+      "data": { "email": "auto_edge01_1712049200@yopmail.com", "password": "Test@12345", "name": "Nguyễn Văn 🎉" },
       "expectedResult": "Thành công — hệ thống chấp nhận Unicode",
       "targetField": "name",
       "edgeType": "unicode"
@@ -199,9 +199,9 @@ Trả kết quả theo format User yêu cầu (mặc định: JSON):
 ```markdown
 | ID | Category | Description | email | password | name | Expected Result |
 |----|----------|-------------|-------|----------|------|-----------------|
-| POS_01 | Positive | Đăng ký thành công | auto_reg@test.com | Test@12345 | Auto User | 201 Created |
+| POS_01 | Positive | Đăng ký thành công | auto_reg@yopmail.com | Test@12345 | Auto User | 201 Created |
 | NEG_01 | Negative | Email trống | (empty) | Test@12345 | Test User | 422: Email is required |
-| BND_01 | Boundary | Password min length | auto_bnd@test.com | Abc@12 | Test User | 201 Created |
+| BND_01 | Boundary | Password min length | auto_bnd@yopmail.com | Abc@12 | Test User | 201 Created |
 ```
 
 #### Format Code (TypeScript example)
@@ -210,7 +210,7 @@ Trả kết quả theo format User yêu cầu (mặc định: JSON):
 // test-data/registration.data.ts
 export const registrationData = {
   positive: {
-    email: `auto_register_${Date.now()}@test.com`,
+    email: `auto_register_${Date.now()}@yopmail.com`,
     password: 'Test@12345',
     name: 'Auto User Register',
     phone: '0912345001',
@@ -218,11 +218,11 @@ export const registrationData = {
   negative: {
     emptyEmail: { email: '', password: 'Test@12345', name: 'Test' },
     invalidEmail: { email: 'not-email', password: 'Test@12345', name: 'Test' },
-    shortPassword: { email: `auto_neg_${Date.now()}@test.com`, password: '123', name: 'Test' },
+    shortPassword: { email: `auto_neg_${Date.now()}@yopmail.com`, password: '123', name: 'Test' },
   },
   boundary: {
-    minPassword: { email: `auto_bnd_${Date.now()}@test.com`, password: 'Abc@12', name: 'Test' },
-    maxName: { email: `auto_bnd_${Date.now()}@test.com`, password: 'Test@12345', name: 'A'.repeat(100) },
+    minPassword: { email: `auto_bnd_${Date.now()}@yopmail.com`, password: 'Abc@12', name: 'Test' },
+    maxName: { email: `auto_bnd_${Date.now()}@yopmail.com`, password: 'Test@12345', name: 'A'.repeat(100) },
   },
 };
 ```
@@ -246,13 +246,13 @@ export const registrationData = {
 
 | ❌ Không được làm | ✅ Thay thế đúng |
 |-------------------|-----------------| 
-| Dùng placeholder (`email hợp lệ`, `mã số hợp lệ`) | Giá trị cụ thể: `auto_tc01@test.com`, `KH-2026-0012` |
+| Dùng placeholder (`email hợp lệ`, `mã số hợp lệ`) | Giá trị cụ thể: `auto_tc01@yopmail.com`, `KH-2026-0012` |
 | Hardcode data trùng lặp giữa các test | Random data với prefix + timestamp |
-| Dùng dữ liệu cá nhân thật | Data giả lập: `auto_*@test.com` |
+| Dùng dữ liệu cá nhân thật | Data giả lập: `auto_*@yopmail.com` |
 | Chỉ sinh positive data | Bắt buộc cả 4 categories: Positive + Negative + Boundary + Edge |
 | Sinh data không có expected result | Mỗi data set PHẢI nêu rõ expected result |
 | Đoán validation rules không kiểm tra | Inspect DOM/Spec hoặc hỏi User |
-| Đọc `.env` để lấy credentials | Hỏi User hoặc dùng placeholder `[FROM_ENV]` |
+| Ghi giá trị credentials từ `.env` vào file data | Ghi placeholder `[FROM_ENV]`; lúc chạy mới đọc `.env` |
 
 ---
 

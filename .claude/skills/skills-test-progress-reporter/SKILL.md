@@ -180,7 +180,7 @@ File: `docs/executions/test_progress_<slug>_<YYYYMMDD>.md` — `YYYYMMDD` là **
 | Module × nền tảng | Chạy trong kỳ | Chưa chạy | ✅ PASS | ❌ FAIL | ⚠️ BLOCKED | ⏭️ SKIP | Pass rate | Nguồn |
 |---|---|---|---|---|---|---|---|---|
 
-> Pass rate = PASS / (PASS + FAIL + BLOCKED). Nhiều lần chạy trong kỳ → lấy lần mới nhất của mỗi TC. Chỉ tính lần chạy **bộ TC** — lần chạy checklist vào bảng dưới, **không** cộng vào đây (12 mục smoke không phải 12 TC).
+> Pass rate = PASS / (PASS + FAIL + BLOCKED). Nhiều lần chạy trong kỳ → lấy lần mới nhất của mỗi TC. Ghi build của từng lần chạy ở cột Nguồn. Chỉ tính lần chạy **bộ TC** — lần chạy checklist vào bảng dưới, **không** cộng vào đây (12 mục smoke không phải 12 TC).
 
 **Checklist đã rà trong kỳ** *(báo riêng)*
 
@@ -189,8 +189,10 @@ File: `docs/executions/test_progress_<slug>_<YYYYMMDD>.md` — `YYYYMMDD` là **
 
 ### 3.3 Automation *(báo riêng, không cộng vào 3.2)*
 
-| Suite | Số lần chạy trong kỳ | Lần gần nhất: PASS / FAIL | Nguồn |
+| Suite | Số lần chạy trong kỳ | Lần gần nhất: PASS / FAIL / Đang phơi bug | Nguồn |
 |---|---|---|---|
+
+> Test `@KnownBug` vào cột Đang phơi bug, không tính PASS.
 
 ### 3.4 Lỗi
 
@@ -208,11 +210,13 @@ File: `docs/executions/test_progress_<slug>_<YYYYMMDD>.md` — `YYYYMMDD` là **
 | Chỉ số | Kỳ này | Kỳ trước | Nguồn |
 |---|---|---|---|
 | REQ trong phạm vi có ≥ 1 TC | | | |
-| REQ Critical có TC PASS | | | |
+| REQ có TC P1 đã PASS | | | |
+| REQ đã duyệt `✅` có ≥ 1 TC | | | |
+| REQ `⏳` theo hiện trạng | | | |
 
 ### 3.6 Ảnh chụp tiêu chí exit — xu hướng giữa đợt
 
-> ⚠️ **Chưa phải đánh giá kết thúc.** Bảng chỉ cho thấy khoảng cách còn lại tới ngưỡng. Kết luận release thuộc `/generate-test-summary-report` cuối đợt.
+> ⚠️ **Chưa phải đánh giá kết thúc.** Bảng chỉ cho thấy khoảng cách còn lại tới ngưỡng. Chỉ tính kết quả trên `Build tính tiêu chí` của plan mục 4.2; kết quả build khác ghi riêng số ⏳ Cần chạy lại. Kết luận release thuộc `/generate-test-summary-report` cuối đợt.
 
 | # | Tiêu chí (theo plan 4.2) | Ngưỡng | Hiện tại | Khoảng cách | Xu hướng so với kỳ trước |
 |---|---|---|---|---|---|
@@ -252,7 +256,7 @@ File: `docs/executions/test_progress_<slug>_<YYYYMMDD>.md` — `YYYYMMDD` là **
 
 | Đề xuất | Lý do (dẫn số liệu) | Ai quyết định | Cần sửa plan? |
 |---|---|---|---|
-| Ưu tiên chạy TC Priority High của `PRJ` trước | 🟡 nguy cơ trễ code freeze · mục 2 | QA Lead | Không |
+| Ưu tiên chạy TC P1 của `PRJ` trước | 🟡 nguy cơ trễ code freeze · mục 2 | QA Lead | Không |
 | Lùi code freeze 2 ngày | Môi trường sập 1,5 ngày · mục 4 | PM | **Có** → `/generate-master-test-plan` cập nhật mục 7.1 |
 
 > Đề xuất nào đụng phạm vi · lịch · nhân lực · tiêu chí → **phải** cập nhật plan bằng `/generate-master-test-plan`, không sửa ngầm trong báo cáo tiến độ.

@@ -15,7 +15,7 @@ description: Phân tích requirement document (Jira ticket, .docx/.pdf/.xlsx/.cs
 > | **5** | Quy tắc quy mô/tách file |
 > | **7.1** + **7.3** | Strict rules chung + strict rules riêng nhánh tài liệu |
 >
-> ❌ **KHÔNG dùng mục 3.1** (UI Recon) và **mục 6** (cấu trúc tài liệu đặc tả module) — workflow này có template riêng ở phần "Cấu trúc Output" bên dưới.
+> ❌ **KHÔNG dùng mục 3.1** (UI Recon) và **mục 6** (cấu trúc tài liệu đặc tả module), trừ 6.1 · 6.2 · 6.9 khi đưa REQ vào tài liệu module — workflow này có template riêng ở phần "Cấu trúc Output" bên dưới.
 
 # Workflow: Phân Tích Requirement Document
 
@@ -30,7 +30,7 @@ Workflow này phân tích requirement documents (Jira tickets, .doc files, user 
 - User nói: "phân tích requirement", "review yêu cầu", "analyze this ticket"
 
 > **KHÔNG dùng workflow này khi:**
-> - Nguồn sự thật là hệ thống đang chạy (không có tài liệu) → `/generate-requirements-from-website` (web) · `/generate-requirements-from-mobile` (app mobile)
+> - Nguồn sự thật là hệ thống đang chạy (không có tài liệu) → `/generate-requirements-from-website` (web)
 > - Đầu vào là **đặc tả API** — OpenAPI/Swagger/Scalar/Redoc, Postman collection, hoặc `.docx`/`.pdf` mô tả endpoint — mà **không** gắn với một ticket → `/generate-requirements-from-api`. Workflow đó không cần Ticket ID, và ghi vào `REQUIREMENTS_<TÊN_MODULE>_SUMMARY.md` thay vì `analysis_<TICKET-ID>.md`
 
 ### ⛔ Bước 0 — Chốt chặn đầu vào (BẮT BUỘC, làm TRƯỚC mọi thứ khác)
@@ -41,8 +41,8 @@ Workflow này nhận **tài liệu nguồn** (ticket, spec, user story) và sinh
 
 | Dấu hiệu tệp là ĐẦU RA, không phải đầu vào | Thuộc workflow nào | Route đúng |
 |---|---|---|
-| Tên khớp `REQUIREMENTS_<TÊN_MODULE>_SUMMARY.md`, hoặc có bảng `REQ ID`/`Dải mã đã dùng`/`Nhật ký thay đổi` | `/generate-requirements-from-website` | Cập nhật theo ticket → `/update-requirements-from-ticket` · Sinh TC → `/generate_testcases_*` |
-| Tên khớp `system_map.md`, hoặc nằm trong `_discovery/` (trừ `sources/`) | `/discover-system` | Recon chi tiết một module → `/generate-requirements-from-website` (web) · `/generate-requirements-from-mobile` (app) |
+| Tên khớp `REQUIREMENTS_<TÊN_MODULE>_SUMMARY.md`, hoặc có bảng `REQ ID`/`Dải mã đã dùng`/`Nhật ký thay đổi` | `/generate-requirements-from-website` | Cập nhật theo ticket → `/update-requirements-from-ticket` · Sinh TC → `/generate-testcases-from-requirements` · `/generate-testcases-manual-rbt` |
+| Tên khớp `system_map.md`, hoặc nằm trong `_discovery/` (trừ `sources/`) | `/discover-system` | Recon chi tiết một module → `/generate-requirements-from-website` (web) |
 | Tên khớp `api_map.md` | `/discover-system` nhánh API · `/generate-testcases-api` | Sinh REQ cho module API → **`/generate-requirements-from-api`** · Sinh TC API → `/generate-testcases-api` |
 | Tên khớp `analysis_<TICKET-ID>.md`, `impact_<TICKET-ID>.md`, `TEST_CASES_<TÊN_MODULE>_SUMMARY.md` | chính workflow này hoặc tầng test case | Hỏi user muốn làm gì với nó |
 
@@ -117,10 +117,10 @@ Agent cần thu thập từ user:
 2. **User Story** — Trích xuất format "As a... I want... So that..."
 3. **Phạm vi áp dụng (Scope)** — Xác định rõ các module/page/component bị ảnh hưởng
 4. **Acceptance Criteria** — Phân rã từng AC thành các nhóm logic, bao gồm:
-   - ⚠️ **TRƯỚC KHI GÁN MÃ — kiểm tra dải REQ đã tồn tại:** mở `docs/requirements/<module>/REQUIREMENTS_<TÊN_MODULE>_SUMMARY.md`. Nếu module đã có tài liệu, **đánh tiếp từ số cuối cùng** (VD module đã dùng tới `REQ-PRJ-65` → ticket này bắt đầu từ `REQ-PRJ-66`), **TUYỆT ĐỐI KHÔNG** đánh lại từ `01`. Xem **mục 2.1** của skill `skills-requirements-analyzer`.
+   - ⚠️ **TRƯỚC KHI GÁN MÃ — kiểm tra dải REQ đã tồn tại:** lấy số lớn nhất trên `Mã kế tiếp` của `docs/requirements/README.md`, `REQUIREMENTS_<TÊN_MODULE>_SUMMARY.md`, file nền tảng và mọi file trong `<module>/analysis/` rồi **đánh tiếp** (VD đã dùng tới `REQ-PRJ-65` → ticket này bắt đầu từ `REQ-PRJ-66`), **TUYỆT ĐỐI KHÔNG** đánh lại từ `01`. Xem **mục 2.1** của skill `skills-requirements-analyzer`.
    - **Gán mã `REQ-<MODULE>-<SỐ>` cho từng AC/rule** (theo Quy Ước Đánh Mã trong skill `skills-requirements-analyzer`) — mỗi rule đủ nhỏ để test độc lập; mã này sẽ được dùng lại ở cột `REQ ID` của bảng test cases
    - **Ghi nguồn** cho mỗi REQ mới: `Ticket <ID>` / `AC#<n>` — để truy được mã đến từ đợt phân tích nào
-   - Nếu AC **sửa hành vi của một REQ đã có** (không phải thêm mới): giữ nguyên mã cũ, ghi chú `Cập nhật bởi ticket <ID>` — không cấp mã mới cho cùng một hành vi
+   - Nếu AC **sửa hành vi của một REQ đã có** (không phải thêm mới): giữ nguyên mã cũ, ghi chú `Cập nhật bởi ticket <ID>` trong file phân tích — không cấp mã mới cho cùng một hành vi, **không** sửa dòng REQ trong tài liệu module (việc đó và Impact Report thuộc `/update-requirements-from-ticket`)
    - Mô tả chi tiết từng AC
    - Bảng so sánh (nếu có cột mới, field mới, rule mới)
    - Phân biệt rõ **mặc định vs tùy chọn** (nếu applicable)
@@ -133,7 +133,7 @@ Nếu user cung cấp mockup/screenshot:
 2. **Liệt kê components** — Tables, forms, modals, buttons, dropdowns, tabs
 3. **Chi tiết fields** — Tên field, loại (input/dropdown/date picker), label, placeholder
 4. **So sánh** mockup với document — phát hiện inconsistency
-5. **Chụp quan sát** vào carousel trong artifact (nếu hình có sẵn)
+5. **Ghi quan sát** vào mục tương ứng của `analysis_<TICKET-ID>.md`, kèm link ảnh nếu hình có sẵn
 
 ### Bước 4: Phân tích Dependencies (Phụ thuộc)
 
@@ -207,12 +207,16 @@ Với mỗi risk, ghi rõ:
 2. **Checklist AC** — Tóm tắt tất cả AC dạng checkbox, nhóm theo chức năng
 3. **Khuyến nghị kiểm thử** — Gợi ý top 10 điều cần quan tâm nhất khi test
 4. **Quyết định cấu trúc đầu ra** — xem mục "Quy mô tài liệu" bên dưới trước khi ghi file
-5. **Xuất Artifact** — Lưu toàn bộ phân tích vào file `.md`
-6. **Cập nhật ngược dải REQ** — nếu module đã có `docs/requirements/<module>/REQUIREMENTS_<TÊN_MODULE>_SUMMARY.md`, bổ sung dòng ghi dải REQ vừa cấp thêm vào bảng metadata của file đó:
-   ```markdown
-   | Dải REQ đã dùng | REQ-PRJ-01 → REQ-PRJ-78 (đợt 1: UI recon 01→65 · đợt 2: ticket ABC-123 66→78) |
-   ```
-   Bước này giữ cho lần chạy sau biết phải đánh tiếp từ đâu — **không được bỏ qua**.
+5. **Ghi file** — Lưu toàn bộ phân tích vào file `.md`
+6. **Đưa REQ mới vào tài liệu module** — **không được bỏ qua**, nếu không RTM và bước sinh TC sẽ không thấy REQ, lần chạy sau có thể đụng mã:
+   - **Module chưa có index:** tạo `docs/requirements/<module>/REQUIREMENTS_<TÊN_MODULE>_SUMMARY.md` tối thiểu: metadata (6.1) · bảng REQ (6.2) · `## Bản đồ tài liệu` · Nhật ký (6.9). Không suy diễn field hay màn hình chưa khảo sát. Dòng module ở danh mục để `Trạng thái recon` = 🟨, ghi *mới có REQ từ ticket*. Khảo sát sau thì `/generate-requirements-from-website` bổ sung vào đúng file này và đổi sang ✅
+   - **Ghi dòng REQ mới:** áp ≥ 2 nền tảng hoặc chưa rõ nền tảng → index (chưa rõ thì cột `Nền tảng` ghi `❓`, kèm `AMB-<MODULE>-nn`); chỉ một nền tảng → file nền tảng. Trạng thái 🟢, `Duyệt` = `⏳` trừ khi ticket ghi rõ người và ngày duyệt, `Nguồn` = `Ticket <ID> · AC#<n>`. File phân tích giữ phân tích chi tiết và trỏ tới mã, tài liệu module là nơi duy nhất có dòng REQ để RTM đọc
+   - **Cập nhật dải mã ở 2 nơi:** metadata của index và cột `REQ đã dùng` · `Mã kế tiếp` của `docs/requirements/README.md`:
+     ```markdown
+     | Dải mã đã dùng | REQ-PRJ-01 → REQ-PRJ-78 (đợt 1: UI recon 01→65 · đợt 2: ticket ABC-123 66→78) |
+     ```
+   - **Ghi Nhật ký (6.9):** ngày · ticket · REQ đã thêm
+   - AC sửa hoặc bỏ REQ cũ: không ghi vào tài liệu module ở bước này, báo user chạy `/update-requirements-from-ticket`
 
 ## Quy mô tài liệu (Scaling)
 
@@ -249,15 +253,15 @@ docs/requirements/<module>/analysis/
 - File con giữ: AC chi tiết + phân tích mockup của riêng ticket đó
 - Index **BẮT BUỘC** có mục `## Bản đồ tài liệu` liệt kê file con kèm dải REQ mà file đó chứa
 
-## Cấu trúc Output (Template Artifact)
+## Cấu trúc Output (Template tài liệu)
 
 > [!IMPORTANT]
 > **Workflow này dùng template 10 mục dưới đây — KHÔNG dùng cấu trúc mục 6 của skill.**
 > Mục 6 của skill (`Field Specifications`, `Ma trận Phân quyền`…) dành cho `/generate-requirements-from-website`, đầu ra là **tài liệu đặc tả module** (`REQUIREMENTS_<TÊN_MODULE>_SUMMARY.md`). Còn workflow này sinh **tài liệu phân tích ticket** (`analysis_<TICKET-ID>.md`) — hai thứ khác nhau.
 >
-> Từ skill, workflow này chỉ mượn: **mục 2 + 2.1** (đánh mã), **3.2** (trích xuất tài liệu), **4** (AMB/RISK), **5** (scaling), **7.1 + 7.3** (strict rules).
+> Từ skill, workflow này chỉ mượn: **mục 2 + 2.1** (đánh mã), **3.2** (trích xuất tài liệu), **4** (AMB/RISK), **5** (scaling), **6.1 · 6.2 · 6.9** (metadata, bảng REQ, Nhật ký — chỉ khi đưa REQ vào tài liệu module), **7.1 + 7.3** (strict rules).
 
-Agent PHẢI xuất artifact theo cấu trúc sau:
+Agent PHẢI ghi file theo cấu trúc sau:
 
 ```markdown
 # 📋 Phân Tích Requirement: [TICKET-ID]
@@ -339,14 +343,15 @@ Agent PHẢI xuất artifact theo cấu trúc sau:
 - **PHẢI lập bảng đối chiếu chéo** (Bước 4b) khi có ≥ 2 nguồn
 - **PHẢI phân biệt "Không đề cập trong tài liệu"** (thiếu → cần hỏi) với **"Không áp dụng"** (đã cân nhắc, không liên quan)
 - **PHẢI ghi rõ mức độ đầy đủ** ở bảng metadata — nếu thiếu AC thì nói thẳng "chưa đủ để sinh test case"
-- **PHẢI cập nhật ngược dải REQ** vào `docs/requirements/<module>/REQUIREMENTS_<TÊN_MODULE>_SUMMARY.md` sau khi phân tích xong (Bước 6.6)
-- **PHẢI viết bằng Tiếng Việt**, format Markdown, xuất Artifact
-- **PHẢI copy hình ảnh** vào thư mục artifacts nếu cần embed trong artifact
+- **PHẢI đưa REQ mới vào tài liệu module và cập nhật dải mã** ở index + danh mục sau khi phân tích xong (Bước 6.6)
+- **PHẢI viết bằng Tiếng Việt**, format Markdown, ghi file `analysis_<TICKET-ID>.md`
+- **PHẢI copy hình ảnh** vào `docs/requirements/<module>/analysis/evidence/` nếu cần nhúng vào tài liệu
 
 ## Mối quan hệ với workflows khác
 
 | Sau khi phân tích xong | Workflow tiếp theo |
 |---|---|
+| Ticket có AC sửa hoặc bỏ REQ đã có | `/update-requirements-from-ticket` — cập nhật REQ, xuất Impact Report |
 | Cần sinh test cases nhanh | `/generate-testcases-from-requirements` |
 | Cần sinh test cases bài bản (RBT 6 bước) | `/generate-testcases-manual-rbt` |
 | Cần sinh automation scripts | `/generate-automation-from-testcases` |

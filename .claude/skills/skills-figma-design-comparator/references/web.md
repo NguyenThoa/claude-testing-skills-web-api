@@ -2,7 +2,7 @@
 
 > Bước 3 của skill. Mode **MOBILE-WEB** (trình duyệt trên điện thoại) dùng chung mục 2–6 và đọc thêm **mục 7**. Quy tắc trình duyệt: [`playwright_rules.md`](../../../rules/playwright_rules.md) · CLAUDE.md mục Browser Rules.
 >
-> Web đo được **nhiều hơn** mobile: `collect_dom.js` đọc computed style (cỡ chữ, độ đậm, font thực sự được vẽ, màu chính xác) và khung chữ thật (ink box). Đổi lại, web có nhiều **biến** hơn: breakpoint, font tải chậm, thanh cuộn, nội dung tải lười, animation. Mục 1–3 là để khử các biến đó **trước** khi đo.
+> `collect_dom.js` đọc computed style (cỡ chữ, độ đậm, font thực sự được vẽ, màu chính xác) và khung chữ thật (ink box). Đổi lại, web có nhiều **biến** hơn: breakpoint, font tải chậm, thanh cuộn, nội dung tải lười, animation. Mục 1–3 là để khử các biến đó **trước** khi đo.
 
 ---
 
@@ -105,7 +105,7 @@ python scripts/design-compare/dc.py visual figma_<id>.png  <mã>_app.png --desig
 
 Web không có status bar → **không** cần `--design-top` / `--actual-top`, trừ khi khung Figma có vẽ thanh trình duyệt / thanh trạng thái giả (khi đó `--design-top` = đáy khối đó).
 
-| Web đo được mà mobile không | Đọc thế nào |
+| Web đo được | Đọc thế nào |
 |---|---|
 | Cỡ chữ, độ đậm (computed) | Lệch 1 px là **số đo thật**, không phải sai số |
 | Font thực sự được vẽ (`collect_dom.js` dò font đầu tiên trong stack có trên máy) | Khác font thiết kế → kiểm danh sách font đã tải (mục 2). Font hệ thống thay font web = font web không tải |
@@ -158,12 +158,8 @@ Kiểm chứng 26-10-2026 (`@playwright/mcp --device "Pixel 7"`): UA Android, `m
 
 `browser_run_code_unsafe` + `Emulation.setDeviceMetricsOverride` / `setUserAgentOverride` trông như chạy được (`innerWidth` báo 390) — nhưng **lệnh chụp ảnh của Playwright đặt lại viewport desktop**: ảnh ra layout 1600 px, sau đó `innerWidth` cũng về 1600. Không có lỗi nào báo. **Không** dùng cách này (rule mục 8).
 
-### 7.3 Máy thật (Chrome Android / Safari iOS) — chỉ để xác nhận bằng mắt
+### 7.3 Ghi vào đâu
 
-Cần đúng engine của máy (font hệ thống, cách Safari vẽ form, thanh địa chỉ co giãn): mở trình duyệt trên thiết bị qua Appium (`browserName: Chrome` / `Safari` — skill `skills-mobile-debug-agent`). appium-mcp **không** chạy được JS trong trang → không có `collect_dom.js`, không có số đo font/màu. Dùng ảnh máy thật để **đặt cạnh** ảnh Figma và soát mắt; số đo lấy từ `playwright-mobile`. Báo cáo ghi rõ ảnh nào từ máy thật.
-
-### 7.4 Ghi vào đâu
-
-- Thư mục: `docs/design-reviews/<module>/web/run_<…>/` (tầng nền tảng chỉ có `web` · `mobile` · `api`) — ô **Biến thể** ở đầu báo cáo: `Mobile web — <thiết bị> · <bề ngang>`
+- Thư mục: `docs/design-reviews/<module>/web/run_<…>/` (tầng nền tảng chỉ có `web` · `api`) — ô **Biến thể** ở đầu báo cáo: `Mobile web — <thiết bị> · <bề ngang>`
 - Danh mục: một dòng riêng cho `web` × `Mobile web` (khác dòng `web` × `Desktop`) — *So lại* tìm lượt chạy gần nhất theo cặp nền tảng × biến thể
-- Khung Figma dùng chung với app → tra *Sổ khung Figma* trước khi cấp mã (rule mục 6 — *một lệch, không log trùng*)
+- Khung Figma dùng chung với biến thể khác → tra *Sổ khung Figma* trước khi cấp mã (rule mục 6 — *một lệch, không log trùng*)

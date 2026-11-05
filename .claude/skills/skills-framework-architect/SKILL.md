@@ -1,13 +1,13 @@
 ---
 name: skills-framework-architect
-description: Skill thiết kế và scaffold automation framework hoàn chỉnh cho Playwright, Selenium, và Appium — bao gồm project structure, base classes, config management, reporting, và CI/CD integration.
+description: Skill thiết kế và scaffold automation framework hoàn chỉnh cho Playwright và Selenium — bao gồm project structure, base classes, config management, reporting, và CI/CD integration.
 ---
 
 # Framework Architect
 
 ## Description
 
-Skill chuyên biệt giúp agent thiết kế, scaffold và triển khai automation framework từ đầu. Hỗ trợ đa nền tảng (Web, Mobile, API) với các framework phổ biến nhất.
+Skill chuyên biệt giúp agent thiết kế, scaffold và triển khai automation framework từ đầu. Hỗ trợ đa nền tảng (Web, API) với các framework phổ biến nhất.
 
 Agent có thể:
 
@@ -46,13 +46,6 @@ Trigger keywords: "create framework", "design framework", "scaffold project", "t
 | **Selenium + Java** | Java | TestNG | Allure, ExtentReports | Maven / Gradle |
 | **Selenium + Python** | Python | Pytest | Allure, pytest-html | pip |
 
-### 📱 Mobile Automation
-
-| Stack | Ngôn ngữ | Runner | Report | Build Tool |
-|---|---|---|---|---|
-| **Appium + Java** | Java | TestNG | Allure, ExtentReports | Maven / Gradle |
-| **Appium + Python** | Python | Pytest | Allure, pytest-html | pip |
-
 ### 🔌 API Automation
 
 | Stack | Ngôn ngữ | Runner | Report |
@@ -80,7 +73,6 @@ Mỗi framework PHẢI bao gồm các thành phần sau (tùy chỉnh theo stack
 ### 3. Browser / Driver Management (Mandatory)
 - **Playwright:** playwright.config.ts / conftest.py với browser setup
 - **Selenium:** WebDriverManager hoặc Driver Factory pattern — **`ThreadLocal`, có `remove()` ở teardown**
-- **Appium:** Desired Capabilities factory, Appium server config — **port riêng từng device**
 - Driver **KHÔNG** được là static dùng chung — parallel luôn bật nên đây là điều kiện đúng/sai, không phải tối ưu
 
 ### 4. Base Classes (Mandatory)
@@ -118,7 +110,6 @@ Mỗi framework PHẢI bao gồm các thành phần sau (tùy chỉnh theo stack
 ### 9. Parallel Execution (Mandatory — LUÔN bật)
 - **Mặc định 5 luồng**, khai đúng **một chỗ**: `WORKERS` (Playwright) · `-n 5` (pytest-xdist) · `thread-count="5"` (TestNG)
 - Playwright thêm `fullyParallel: true` — song song cả trong cùng một file
-- **Appium là ngoại lệ:** số luồng = **số device thật**, mỗi device có `systemPort`/`wdaLocalPort` riêng
 - Điều kiện đi kèm: driver theo thread · không static mutable dùng chung · test data unique từng test · không phụ thuộc thứ tự chạy
 - 🚨 Test đỏ khi bật parallel = **test sai**, sửa test chứ không hạ số luồng để giấu
 
@@ -134,7 +125,7 @@ Mỗi framework PHẢI bao gồm các thành phần sau (tùy chỉnh theo stack
 
 ## Project Structure Templates
 
-> **📍 NGUỒN DUY NHẤT:** Toàn bộ cấu trúc thư mục cho **8 stacks** nằm ở [`references/PROJECT_STRUCTURE.md`](references/PROJECT_STRUCTURE.md).
+> **📍 NGUỒN DUY NHẤT:** Toàn bộ cấu trúc thư mục của các stack nằm ở [`references/PROJECT_STRUCTURE.md`](references/PROJECT_STRUCTURE.md).
 > **KHÔNG** sao chép template vào file này — mọi thay đổi cấu trúc chỉ sửa ở một nơi để tránh drift.
 
 | # | Stack | Mục trong `PROJECT_STRUCTURE.md` |
@@ -144,8 +135,6 @@ Mỗi framework PHẢI bao gồm các thành phần sau (tùy chỉnh theo stack
 | 3 | Playwright + Python | § 3 |
 | 4 | Selenium + Java | § 4 |
 | 5 | Selenium + Python | § 5 |
-| 6 | Appium + Java | § 6 |
-| 7 | Appium + Python | § 7 |
 | 8 | REST Assured (Java) | § 8 |
 
 **API testing bằng Playwright API** (TypeScript / Python) không có template riêng — dùng lại cấu trúc § 1 / § 3, thay thư mục `pages/` bằng `api/` (API client classes) và thêm `test-data/schemas/` cho JSON Schema validation.
@@ -201,7 +190,6 @@ Agent PHẢI tuân thủ các rules chi tiết:
 - `.claude/rules/locator_strategy.md` — Locator selection priority
 - `.claude/rules/playwright_rules.md` — Playwright-specific rules
 - `.claude/rules/selenium_rules.md` — Selenium-specific rules
-- `.claude/rules/appium_rules.md` — Appium mobile automation rules
 - `CLAUDE.md` > "Browser Rules" — Bảng viewport headed/headless, quy tắc không resize khi dùng Playwright MCP
 - `CLAUDE.md` > "Cleanup & Delivery" — Definition of Done trước khi bàn giao
 
@@ -211,6 +199,6 @@ Agent PHẢI tuân thủ các rules chi tiết:
 
 | File | Vai trò |
 |---|---|
-| [`references/PROJECT_STRUCTURE.md`](references/PROJECT_STRUCTURE.md) | **Nguồn duy nhất** của project structure (8 stacks) |
+| [`references/PROJECT_STRUCTURE.md`](references/PROJECT_STRUCTURE.md) | **Nguồn duy nhất** của project structure |
 | [`references/CODE_TEMPLATES.md`](references/CODE_TEMPLATES.md) | Code mẫu base classes / factory / config — copy & sửa, không viết lại từ đầu |
 | `.claude/skills/generate-automation-framework/SKILL.md` | Workflow 6 bước thực thi scaffold |

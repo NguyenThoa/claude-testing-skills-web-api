@@ -43,7 +43,14 @@ Báo cáo này đưa ra **khuyến nghị go/no-go kèm căn cứ**. Quyết đ�
 4. **BLOCKED không phải PASS.** Trừ khỏi phần đã kiểm chứng, nêu riêng
 5. **Số liệu mâu thuẫn giữa các nguồn → báo ra, không tự chọn số đẹp hơn**
 6. **Không gộp kết quả checklist với kết quả bộ TC.** Mục checklist là đơn vị rà nhanh, không phải TC — 12 mục smoke cộng vào 36 TC thì cả tổng lẫn pass rate đều vô nghĩa. Phân loại từng lần chạy theo ô `Loại nguồn` ở header execution report (thiếu ô → `Nguồn TC` nằm trong `docs/checklists/` là checklist, còn lại là bộ TC). Kết quả checklist báo ở **bảng riêng** (mục 4b)
-7. **Số của một module × nền tảng = kết quả mới nhất của TỪNG TC**, không phải "lần chạy mới nhất". Lần chạy sau thường chỉ chạy lại vài TC BLOCKED/FAIL — lấy nguyên lần đó làm số chính là báo 3 TC thay cho 36. Gộp mọi lần chạy **bộ TC** cùng `Nguồn TC`, mỗi TC lấy kết quả của lần chạy mới nhất có chạy TC đó (cùng cách `scripts/execution-viewer` gộp)
+7. **Số của một module × nền tảng = kết quả mới nhất của TỪNG TC**, không phải "lần chạy mới nhất". Lần chạy sau thường chỉ chạy lại vài TC BLOCKED/FAIL — lấy nguyên lần đó làm số chính là báo 3 TC thay cho 36. Gộp mọi lần chạy **bộ TC** cùng `Nguồn TC`, mỗi TC lấy kết quả của lần chạy mới nhất có chạy TC đó (cùng cách `scripts/execution-viewer` gộp; viewer chưa lọc theo build, nên phần lọc ở #9 làm trong báo cáo)
+8. **Tách độ phủ theo trạng thái duyệt của REQ.** Mục độ phủ in 2 dòng: REQ `✅` đã duyệt và REQ `⏳` theo hiện trạng. PASS trên REQ `⏳` ghi là "giữ hiện trạng", không ghi "đúng yêu cầu". Không chặn go/no-go, nhưng tỷ lệ REQ `⏳` của phần P1 phải nêu ở rủi ro tồn đọng
+9. **Tiêu chí exit chỉ tính kết quả trên build hợp lệ.** Build hợp lệ lấy ở plan mục 4.2 *Build tính tiêu chí*; không có plan thì hỏi user. TC chỉ có kết quả trên build khác, hoặc report thiếu ô `Build / Version`, vào nhóm **⏳ Cần chạy lại**, in riêng:
+   - #3: tính vào mẫu số, không tính PASS — P1 chưa chạy lại phải kéo tỷ lệ xuống
+   - #4 · #5: không tính, vì chưa chạy trên build này
+   - #6: không tính là PASS · #7: cặp module × nền tảng chỉ có kết quả build khác là **chưa đạt**
+   - Ngoại lệ: vùng không đổi có thể giữ kết quả cũ khi PM chấp nhận bằng văn bản; ghi rõ TC, build gốc, người chấp nhận
+10. **Test automation `@KnownBug` báo nhóm riêng "Đang phơi bug".** Runner có thể ghi các test này là pass hoặc skip, nên phải tách ra trước khi tính tỷ lệ: không tính PASS. Bug của chúng vẫn đếm ở #1 · #2
 
 ---
 
@@ -63,20 +70,22 @@ Báo cáo này đưa ra **khuyến nghị go/no-go kèm căn cứ**. Quyết đ�
 |---|---|---|
 | 1 | Bug **Critical** đang mở | **0** |
 | 2 | Bug **Major** đang mở | 0, hoặc có workaround được PM chấp nhận bằng văn bản |
-| 3 | Pass rate TC **Priority High** | **≥ 95%** |
+| 3 | Pass rate TC **P1** | **≥ 95%** |
 | 4 | Pass rate toàn bộ TC đã chạy | ≥ 90% |
 | 5 | Tỷ lệ **BLOCKED** | ≤ 5% |
-| 6 | REQ mức Critical có ít nhất 1 TC **PASS** | 100% |
+| 6 | Mỗi REQ có TC **P1** đều có ít nhất 1 TC P1 **PASS** | 100% |
 | 7 | Module trong phạm vi release đã có TC và đã chạy — tính trên **từng cặp module × nền tảng** trong phạm vi | 100% |
 
-> Tiêu chí #7 chấm theo **cặp module × nền tảng**: module có web đã chạy nhưng mobile trong phạm vi chưa chạy thì cặp mobile là **chưa đạt** — không được tính đủ nhờ lần chạy web.
+> Tiêu chí #3 và #6 tính trên cột `Priority` của TC. Bộ TC cũ còn Priority dạng chữ thì quy đổi theo `CLAUDE.md` trước khi chấm: `Critical` = P1 · `High`, `Medium` = P2 · `Low` = P3.
+>
+> Tiêu chí #7 chấm theo **cặp module × nền tảng**: module có web đã chạy nhưng API trong phạm vi chưa chạy thì cặp API là **chưa đạt** — không được tính đủ nhờ lần chạy web.
 
 **Kết quả checklist trong các tiêu chí:**
 
 | Tiêu chí | Checklist có được tính? |
 |---|---|
-| #3 · #4 · #5 — pass rate, tỷ lệ BLOCKED | ❌ Không — các tiêu chí này đo **bộ TC**. Plan có tiêu chí bổ sung riêng cho checklist (VD *"smoke 100% mục P1 PASS"*) thì chấm tiêu chí đó trên bảng 4b, quy đổi `P1` = High · `P2` = Medium · `P3` = Low |
-| #6 — REQ Critical có TC PASS | ⚠️ Chỉ khi REQ **không có TC nào** (checklist REQ-based) — mục checklist có `REQ ID` đó PASS thì tính, và cột *Thực tế* ghi rõ số REQ đạt nhờ checklist (VD `12/12 · 2 REQ chỉ có checklist PASS`). REQ đã có TC thì phải có TC PASS |
+| #3 · #4 · #5 — pass rate, tỷ lệ BLOCKED | ❌ Không — các tiêu chí này đo **bộ TC**. Plan có tiêu chí bổ sung riêng cho checklist (VD *"smoke 100% mục P1 PASS"*) thì chấm tiêu chí đó trên bảng 4b, theo đúng Priority `P1` · `P2` · `P3` của mục |
+| #6 — REQ có TC P1 đã PASS | ⚠️ Chỉ khi REQ **không có TC nào** (checklist REQ-based) — mục checklist `P1` có `REQ ID` đó PASS thì tính, và cột *Thực tế* ghi rõ số REQ đạt nhờ checklist (VD `12/12 · 2 REQ chỉ có checklist PASS`). REQ đã có TC thì phải có TC PASS |
 | #7 — module × nền tảng đã có TC và đã chạy | ❌ Cặp chỉ có lần chạy checklist là **chưa đạt** — ghi *"chỉ rà checklist <loại>"* ở mục 2 |
 
 > 🚨 **Checklist mới hơn mà FAIL, bộ TC cũ hơn mà PASS → tin checklist.** Mục checklist FAIL có `TC ID liên quan` đã PASS ở lần chạy bộ TC trước đó trên build cũ hơn = **build mới đã vỡ**. Nêu ở mục 5 như regression, ghi cả hai nguồn — **không** để con số PASS cũ của bộ TC che đi.
@@ -141,6 +150,7 @@ Báo cáo này tương ứng với **ISO/IEC/IEEE 29119-3 — Test Completion Re
 |---|---|
 | Phạm vi báo cáo | <module nào, build nào> |
 | Build / Version | v2.4.3 |
+| Build tính tiêu chí | v2.4.3 — theo plan mục 4.2 |
 | Môi trường | Staging — `<URL>` |
 | Khoảng thời gian | 01-08-2026 → 12-08-2026 |
 | Người lập | <tên QA> (agent hỗ trợ) |
@@ -184,7 +194,7 @@ Báo cáo này tương ứng với **ISO/IEC/IEEE 29119-3 — Test Completion Re
 |---|---|---|---|---|
 | 1 | Bug Critical đang mở | 0 | 0 | ✅ Đạt |
 | 2 | Bug Major đang mở | 0 / có workaround | 1 (có workaround) | 🟡 Ngoại lệ — chờ PM duyệt |
-| 3 | Pass rate TC High | ≥ 95% | 97.2% | ✅ Đạt |
+| 3 | Pass rate TC P1 | ≥ 95% | 97.2% | ✅ Đạt |
 | 7 | Module trong phạm vi đã chạy | 100% | 5/6 | ❌ Không đạt |
 
 > Bộ tiêu chí đang dùng: **mặc định của agent** — cần PM xác nhận hoặc thay bằng tiêu chí dự án.
@@ -193,18 +203,21 @@ Báo cáo này tương ứng với **ISO/IEC/IEEE 29119-3 — Test Completion Re
 
 ## 4. Kết quả kiểm thử theo module
 
-| Module | Nền tảng | Tổng TC | ✅ PASS | ❌ FAIL | ⚠️ BLOCKED | ⏭️ SKIP | Pass rate | Nguồn |
-|---|---|---|---|---|---|---|---|---|
-| Khách hàng | Web | 36 | 30 | 3 | 1 | 2 | 88.2% | [run_1785700456](docs/executions/customers/web/run_1785700456/execution_report.md) |
-| Khách hàng | Mobile | 12 | 11 | 1 | 0 | 0 | 91.7% | [run_1785790000](…) |
-| Đăng nhập | Web | 18 | 18 | 0 | 0 | 0 | 100% | [run_1785612000](…) |
-| **Tổng** | | **66** | **59** | **4** | **1** | **2** | **92.2%** | |
+| Module | Nền tảng | Tổng TC | ✅ PASS | ❌ FAIL | ⚠️ BLOCKED | ⏭️ SKIP | ⏳ Cần chạy lại | Pass rate | Nguồn |
+|---|---|---|---|---|---|---|---|---|---|
+| Khách hàng | Web | 36 | 28 | 3 | 1 | 2 | 2 | 87.5% | [run_1785700456](docs/executions/customers/web/run_1785700456/execution_report.md) |
+| Đăng nhập | Web | 18 | 18 | 0 | 0 | 0 | 0 | 100% | [run_1785612000](…) |
+| **Tổng** | | **66** | **57** | **4** | **1** | **2** | **2** | **91.9%** | |
 
-> Mỗi dòng là **một module × một nền tảng**, chỉ tính lần chạy **bộ TC** — mỗi TC lấy kết quả mới nhất trong mọi lần chạy bộ TC ở `docs/executions/<module>/<nền-tảng>/` (Nguyên tắc số liệu #7). Cột Nguồn liệt kê đủ các lần chạy đã gộp. Module khai có nền tảng mà chưa có lần chạy nào ở nền tảng đó → vẫn ghi dòng, cột kết quả `—`, và đưa vào rủi ro: *chưa kiểm trên <nền tảng>*.
+> Mỗi dòng là **một module × một nền tảng**, chỉ tính lần chạy **bộ TC** — mỗi TC lấy kết quả mới nhất **trên build hợp lệ** trong mọi lần chạy bộ TC ở `docs/executions/<module>/<nền-tảng>/` (Nguyên tắc số liệu #7, #9). Cột Nguồn liệt kê đủ các lần chạy đã gộp. Module khai có nền tảng mà chưa có lần chạy nào ở nền tảng đó → vẫn ghi dòng, cột kết quả `—`, và đưa vào rủi ro: *chưa kiểm trên <nền tảng>*.
 
-> Pass rate = PASS / (PASS + FAIL + BLOCKED). SKIPPED không tính vào mẫu số nhưng vẫn là **nợ kiểm thử** ở mục 2.
+> Pass rate = PASS / (PASS + FAIL + BLOCKED). SKIPPED không tính vào mẫu số nhưng vẫn là **nợ kiểm thử** ở mục 2. ⏳ Cần chạy lại không tính vào pass rate ở bảng này; riêng tiêu chí #3 phải tính TC P1 ⏳ vào mẫu số.
 
-**Automation** (báo riêng, không cộng vào bảng trên): 120 test · 114 PASS · 6 FAIL · pass rate 95.0% — [reports/allure-report](…)
+**⏳ Cần chạy lại:** 2 TC — CRM_CUST_TC_021, CRM_CUST_TC_022: chỉ có kết quả trên v2.4.1. Không có TC nào thì ghi `Không có`. TC được giữ kết quả cũ theo ngoại lệ thì ghi TC, build gốc, người chấp nhận.
+
+**Automation** (báo riêng, không cộng vào bảng trên): 120 test · 108 PASS · 6 FAIL · 6 Đang phơi bug · pass rate 94.7% = 108 / (108 + 6) — [reports/allure-report](…)
+
+**Đang phơi bug:** 6 test `@KnownBug` — không tính PASS dù runner ghi pass hoặc skip. Bug của chúng vẫn đếm ở tiêu chí #1 · #2. Ghi từng cặp test ↔ `BUG_ID`; không có thì ghi `Không có`.
 
 ### 4b. Kết quả rà checklist (báo riêng, không cộng vào bảng trên)
 
@@ -241,9 +254,11 @@ Báo cáo này tương ứng với **ISO/IEC/IEEE 29119-3 — Test Completion Re
 
 | Chỉ số | Giá trị | Nguồn |
 |---|---|---|
-| REQ có ít nhất 1 TC | 48/52 = 92.3% | [traceability_matrix.md](docs/traceability/traceability_matrix.md) · sinh 08-08-2026 |
+| REQ `✅` đã duyệt có ít nhất 1 TC | 30/32 = 93.8% | [traceability_matrix.md](docs/traceability/traceability_matrix.md) · sinh 08-08-2026 |
+| REQ `⏳` theo hiện trạng có ít nhất 1 TC | 18/20 = 90.0% — PASS ở nhóm này ghi là "giữ hiện trạng", không ghi "đúng yêu cầu" | |
 | REQ chỉ có checklist (🟠) | 1 | |
-| REQ Critical có TC PASS | 12/12 = 100% | |
+| REQ có TC P1 đã PASS | 12/12 = 100% | |
+| REQ có TC P1 còn `⏳` | 3/12 = 25.0% — nêu ở rủi ro tồn đọng mục 1 | |
 | TC đã automate | 30/54 = 55.6% | |
 
 **4 REQ chưa có TC:** REQ-CUST-19, REQ-CUST-22, REQ-LOGIN-08, REQ-LOGIN-09 → đề nghị bổ sung trước release sau.
@@ -316,6 +331,7 @@ Báo cáo này tương ứng với **ISO/IEC/IEEE 29119-3 — Test Completion Re
 - [ ] Tiêu chí exit ghi rõ là của dự án hay bộ mặc định của agent
 - [ ] Mọi số có link về file nguồn
 - [ ] Manual và automation báo **riêng**, không cộng gộp
+- [ ] Kết quả ngoài build hợp lệ nằm ở nhóm ⏳ Cần chạy lại; độ phủ tách REQ `✅` và `⏳`; test `@KnownBug` không tính PASS
 - [ ] Lần chạy **checklist** báo ở bảng 4b, **không** cộng vào bảng bộ TC; số bộ TC lấy kết quả mới nhất của **từng TC**, không lấy nguyên lần chạy mới nhất
 - [ ] Mục checklist FAIL trên build mới mà TC liên quan PASS trên build cũ → đã nêu như regression ở mục 5
 - [ ] BLOCKED và SKIPPED không bị tính lẫn vào phần đã kiểm chứng

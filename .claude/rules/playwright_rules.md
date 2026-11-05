@@ -1,3 +1,12 @@
+---
+paths:
+  - "**/*.spec.ts"
+  - "**/*.spec.js"
+  - "**/*.test.ts"
+  - "**/playwright.config.*"
+  - "**/pages/**/*.ts"
+---
+
 # Quy Tắc Dành Riêng Cho Playwright
 
 > Áp dụng khi thiết lập và chạy automation với Playwright (TypeScript hoặc Java).
@@ -39,13 +48,13 @@
 
 ## 3. Thứ Tự Ưu Tiên Locator Playwright
 
-Playwright cung cấp bộ locator semantic hướng người dùng. Ưu tiên sử dụng thay vì CSS/XPath:
+Thứ tự theo `locator_strategy.md` mục 1:
 
 1. `getByRole()` — Tốt nhất cho semantic elements (button, link, heading...)
 2. `getByLabel()` — Tốt nhất cho form fields có label
 3. `getByPlaceholder()` — Tốt nhất cho inputs có placeholder text
-4. `getByText()` — Tốt nhất cho text content
-5. `getByTestId()` — Tốt nhất khi element có `data-testid`
+4. `getByTestId()` — Tốt nhất khi element có `data-testid`
+5. `getByText()` — Tốt nhất cho text content
 6. `locator("css")` — Fallback khi không có lựa chọn tốt hơn
 
 Ví dụ:

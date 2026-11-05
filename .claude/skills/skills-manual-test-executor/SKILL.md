@@ -22,7 +22,7 @@ Skill biến bộ manual test cases thành **kết quả kiểm thử thật**. 
 
 Sử dụng skill này khi:
 
-- Đã có bộ manual test cases (từ `skills-rbt-manual-testing`) và cần **chạy kiểm chứng thật**
+- Đã có bộ manual test cases (từ `skills-manual-testcase-v3`) và cần **chạy kiểm chứng thật**
 - Cần chạy smoke/regression bằng tay trước release
 - Cần thực thi checklist (từ CHECKLIST mode) trên môi trường thật
 - Cần báo cáo kết quả PASS/FAIL có evidence cho PO/QA lead
@@ -33,14 +33,14 @@ Sử dụng skill này khi:
 - Cần sinh code automation → `skills-qa-automation-engineer`
 - Cần phân tích report **đã có sẵn** từ automation (Playwright/Allure/JUnit) → `skills-test-report-analyzer`
 - Chỉ cần inspect DOM / lấy locator → `skills-ui-debug-agent`
-- Chưa có TC, cần sinh TC trước → `skills-rbt-manual-testing`
+- Chưa có TC, cần sinh TC trước → `skills-manual-testcase-v3`
 
 ---
 
 ## Vị trí trong chuỗi công việc
 
 ```
-skills-rbt-manual-testing          skills-manual-test-executor          skills-bug-reporter
+skills-manual-testcase-v3          skills-manual-test-executor          skills-bug-reporter
   test_cases_*.md          ──→      execution_report.md         ──→      bug_*.md (mỗi TC FAIL)
   checklist_*.md                            │
                                             └──→  skills-test-report-analyzer
@@ -55,7 +55,7 @@ skills-rbt-manual-testing          skills-manual-test-executor          skills-b
 |---|---|---|
 | File TC hoặc checklist | ⭐ Bắt buộc | VD `docs/testcases/customers/web/test_cases_customers_web.md` · `docs/testcases/customers/web/parts/part_01_web_danh_sach.md` · `docs/checklists/customers/web/checklist_smoke_20261009.md` · `docs/checklists/_release/web/checklist_release_release_2.0.md`. User đưa file **index** → đọc `## Bản đồ tài liệu`, chỉ lấy file `web/` · Danh sách TC ID từ `/select-regression-tests` (`docs/quality-insights/test_selection_*.md`) → **không** cần đưa file TC: agent tra file TC chứa từng TC ID |
 | Phạm vi chạy | ⭐ Bắt buộc | Toàn bộ file · theo tag (`@Smoke`) · theo TC ID range · theo nhóm chức năng · **danh sách TC ID** theo thứ tự (khối *Phạm vi cho `/execute-test-cases`* của `/select-regression-tests`) |
-| Môi trường & tài khoản | ⭐ Bắt buộc | URL, tài khoản đăng nhập, build/version đang test |
+| Môi trường & tài khoản | ⭐ Bắt buộc | URL, tài khoản đăng nhập, build/version đang test. **Build bắt buộc:** thiếu thì hỏi user một câu; không ai biết thì vẫn chạy, ghi `❓ không rõ` — kết quả đó không được tính cho tiêu chí exit. Áp mục **An Toàn Khi Agent Chạy** của `CLAUDE.md`: URL không rõ là môi trường test thì dừng hỏi. Ghi loại môi trường vào header report |
 | Mức độ dùng chung của môi trường | ⭐ Bắt buộc | Dùng chung → bật auto-skip TC phá huỷ; môi trường riêng → có thể chạy đầy đủ |
 | Quay video | Tuỳ chọn — mặc định **`Có`** | `Có` · `Chỉ giữ FAIL` · `Không` — xem bảng **Bật / tắt** ở mục *Video quay màn hình*. User không nói → `Có`, **không** hỏi thêm |
 
@@ -160,7 +160,7 @@ Khi một TC FAIL:
 
 ## Quản lý Test Data & Cleanup (BẮT BUỘC)
 
-- Mọi dữ liệu tạo ra phải **traceable**: `Auto_<Module>_<timestamp>`, `auto_<loại>_<timestamp>@auto.test`
+- Mọi dữ liệu tạo ra phải **traceable**: `Auto_<Module>_<timestamp>`, `auto_<loại>_<timestamp>@yopmail.com`
 - Agent **ghi sổ** mọi bản ghi đã tạo trong lúc chạy (tên + ID + nơi tạo)
 - Cuối buổi chạy: **dọn sạch** toàn bộ dữ liệu đã tạo
 - Report **bắt buộc** có mục "Dữ liệu đã tạo & dọn dẹp" — bản nào chưa xoá được phải ghi rõ để người khác xử lý
@@ -286,7 +286,7 @@ File: `docs/executions/<module>/<nền-tảng>/<run_id>/execution_report.md` —
 | Nguồn TC | docs/testcases/customers/web/parts/part_01_web_danh_sach.md |
 | Phạm vi | 36 TC (toàn bộ Part 1) · loại 2 TC `@Deprecated` |
 | Môi trường | `<URL môi trường test>` — `<Staging/UAT/Production>` |
-| Build / Version | (nếu có) |
+| Build / Version | <bắt buộc — số build, hoặc `❓ không rõ`> |
 | Tài khoản | `<tài khoản test>` (`<role>`) |
 | Người thực hiện | <tên tester> (agent hỗ trợ) |
 | Bắt đầu → Kết thúc | 02-08-2026 09:15 → 10:40 (85 phút) |
@@ -328,7 +328,7 @@ File: `docs/executions/<module>/<nền-tảng>/<run_id>/execution_report.md` —
 | | |
 |---|---|
 | REQ ID | REQ-CUST-04 |
-| Priority | High |
+| Priority | P1 |
 | Bước fail | Bước 4 · biến thể `b` (`' OR 1=1--`) — biến thể `a`, `c` PASS |
 | **Expected** | Bảng hiển thị trạng thái "không có kết quả", trang không báo lỗi |
 | **Actual** | Trang hiện thông báo lỗi cơ sở dữ liệu, bảng không hiển thị |

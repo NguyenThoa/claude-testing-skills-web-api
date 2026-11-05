@@ -1,3 +1,10 @@
+---
+paths:
+  - "**/*.java"
+  - "**/testng*.xml"
+  - "**/pom.xml"
+---
+
 # Quy Tắc Dành Riêng Cho Selenium WebDriver
 
 > Áp dụng khi tự động hóa browser với Java và Selenium WebDriver.
@@ -64,9 +71,9 @@ Wait<WebDriver> fluentWait = new FluentWait<>(driver)
 
 ## 3. Thiết Lập Browser
 
-- **Viewport:** Đặt viewport desktop (`1920x1080`) khi debug:
+- **Viewport:** Headed dùng cửa sổ `1614×885` (viewport ≈ `1600×750`, theo `CLAUDE.md`), headless dùng `1920×1080`:
   ```java
-  driver.manage().window().setSize(new Dimension(1920, 1080));
+  driver.manage().window().setSize(headless ? new Dimension(1920, 1080) : new Dimension(1614, 885));
   ```
 - **Headed mode:** Bắt buộc khi debug (không set `--headless`)
 - **Headless mode:** Chỉ dùng khi test đã PASS trên headed hoặc trong CI/CD

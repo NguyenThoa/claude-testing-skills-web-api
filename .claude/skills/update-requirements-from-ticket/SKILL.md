@@ -21,10 +21,10 @@ Module đang phát triển thì ticket liên tục sửa/bổ sung yêu cầu. W
 > **KHÔNG dùng workflow này khi:**
 > | Tình huống | Dùng thay thế |
 > |---|---|
-> | Module **chưa có** tài liệu requirements | `/generate-requirements-from-website` (web) · `/generate-requirements-from-mobile` (app) · `/generate-requirements-from-api` (API) · hoặc `/analyze-requirement-document` |
+> | Module **chưa có** tài liệu requirements | `/generate-requirements-from-website` (web) · `/generate-requirements-from-api` (API) · hoặc `/analyze-requirement-document` |
 > | **Spec API đổi phiên bản** (không có ticket) | `/generate-requirements-from-api` — tự chạy delta khi `sha256` spec khác snapshot |
-> | Chỉ cần phân tích ticket, chưa muốn động vào tài liệu module | `/analyze-requirement-document` |
-> | Cần sinh lại test case sau khi cập nhật | `/generate-testcases-manual-rbt` (chỉ cho REQ 🟡/🟢 mới) |
+> | Chỉ cần phân tích ticket và thêm REQ mới, chưa xử lý REQ cũ bị sửa/bỏ, chưa cần Impact Report | `/analyze-requirement-document` |
+> | Cần xử lý test case sau khi cập nhật | REQ 🟡 → `/update-testcases-from-impact` · REQ 🟢 → `/generate-testcases-from-requirements` hoặc `/generate-testcases-manual-rbt` chế độ BỔ SUNG |
 
 ## Đầu vào (Input)
 
@@ -65,11 +65,20 @@ Theo **mục 3.2** của skill — ủy quyền skill `docx`/`xlsx`/`pdf` đúng
 | ⏸️ **TRÙNG** | Ticket nhắc lại đúng điều REQ cũ đã nói | Không đổi gì. Ghi vào báo cáo là "đã có sẵn, không tác động" |
 
 **Quy tắc phân loại — chống cấp mã trùng lặp:**
+- ❗ Ticket đã qua `/analyze-requirement-document`: REQ mới của nó đã có trong tài liệu module, `Nguồn` ghi đúng ticket này. **Không** cấp lại mã, vẫn liệt kê trong Impact Report như 🟢 Thêm để TC được viết.
 - ❗ Trước khi xếp một AC vào nhóm **THÊM**, phải **rà soát toàn bộ REQ hiện có** xem đã có REQ nào mô tả cùng hành vi chưa. Cấp mã mới cho hành vi đã tồn tại là lỗi nặng nhất của workflow này — nó tạo REQ trùng và làm RTM đếm coverage sai.
 - Ranh giới SỬA vs THÊM: **cùng hành vi, khác tham số** → SỬA. **Hành vi mới hoàn toàn** → THÊM.
   - VD: "Deadline bắt buộc sau Start Date" khi đã có REQ "Deadline là tuỳ chọn" → **SỬA** REQ cũ
   - VD: "Thêm field Priority" → **THÊM** REQ mới
 - Không chắc thuộc nhóm nào → xếp tạm vào SỬA và **hỏi user**, không tự quyết.
+
+**Cột `Duyệt` sau khi phân loại:**
+
+| Nhóm | `Duyệt` |
+|---|---|
+| 🟢 Thêm · ⚪ Chưa build | ✅ kèm người và ngày khi ticket ghi rõ người duyệt, còn lại ⏳ |
+| 🟡 Sửa | REQ đang ✅ mà nội dung đổi thì **về ⏳**, trừ khi ticket ghi rõ người và ngày duyệt bản mới. Báo số REQ về ⏳ trong Impact Report |
+| 🔴 Bỏ · ⏸️ Trùng | Giữ nguyên |
 
 ### Bước 4: Đối chiếu với Ambiguity đang treo
 
@@ -85,7 +94,7 @@ Ambiguity **mới** phát hiện từ ticket này → đánh số tiếp theo d�
 
 ### Bước 5: Áp thay đổi vào tài liệu
 
-Sửa **tại chỗ** `REQUIREMENTS_<TÊN_MODULE>_SUMMARY.md`, theo đúng thứ tự:
+Sửa **tại chỗ**. REQ áp ≥ 2 nền tảng nằm ở `REQUIREMENTS_<TÊN_MODULE>_SUMMARY.md`, REQ chỉ một nền tảng nằm ở `<nền-tảng>/requirements_<module>_<nền-tảng>.md`: REQ ở đâu sửa ở đó. Metadata và Nhật ký luôn ở index. Theo đúng thứ tự:
 
 1. **Bảng REQ (mục 6.2):** thêm dòng mới / sửa nội dung + trạng thái / đổi trạng thái 🔴
 2. **Field Spec, Validation Messages, ma trận** (6.3–6.6): cập nhật phần bị tác động
@@ -94,7 +103,7 @@ Sửa **tại chỗ** `REQUIREMENTS_<TÊN_MODULE>_SUMMARY.md`, theo đúng thứ
 5. **Nhật ký thay đổi (6.9):** thêm dòng mới **lên đầu bảng**, một dòng cho mỗi nhóm thay đổi
 6. **Metadata (6.1):** cập nhật `Dải mã đã dùng` và `Mã kế tiếp`
 7. **Danh mục toàn hệ thống** `docs/requirements/README.md` — **BẮT BUỘC**, đây là chỗ hay quên nhất:
-   - Bảng mục 1: cột `REQ đã dùng`, `Mã kế tiếp`, `AMB treo`, `Cập nhật`. Module mới chỉ được `/discover-system` phát hiện (đang ⬜) mà ticket này là lần đầu sinh REQ → đổi `Trạng thái recon` sang ✅ và điền `Mức phủ tài liệu`
+   - Bảng mục 1: cột `REQ đã dùng`, `Mã kế tiếp`, `AMB treo`, `Cập nhật`. Module mới chỉ được `/discover-system` phát hiện (đang ⬜) mà ticket này là lần đầu sinh REQ → đổi `Trạng thái recon` sang 🟨 (mới có REQ từ ticket, chưa khảo sát) và điền `Mức phủ tài liệu`
    - Bảng mục 2: số lượng REQ theo trạng thái 🟢/🟡/🔴/⚪ của module này và dòng Tổng
    - Mục 3: thêm/gỡ ambiguity 🔴 High vừa phát sinh hoặc vừa được trả lời
 
@@ -120,11 +129,11 @@ Nội dung file:
 | ⏸️ Trùng, không tác động | 4 | REQ-PRJ-14, 15, 22, 30 |
 
 ### Test case cần xử lý
-| TC ID | REQ liên quan | Hành động | Lý do |
-|---|---|---|---|
-| TC-PRJ-18 | REQ-PRJ-42 | ⚠️ Review & sửa | Deadline đổi từ tuỳ chọn sang bắt buộc |
-| TC-PRJ-31 | REQ-PRJ-58 | 🗑️ Deprecated | Chức năng Copy Project đã bị gỡ |
-| — | REQ-PRJ-79 → 81 | ➕ Viết mới | Yêu cầu mới chưa có TC |
+| TC ID | Nền tảng | REQ liên quan | Hành động | Lý do |
+|---|---|---|---|---|
+| CRM_PRJ_TC_018 | web | REQ-PRJ-42 | ⚠️ Review & sửa | Deadline đổi từ tuỳ chọn sang bắt buộc |
+| CRM_PRJ_TC_031 | web | REQ-PRJ-58 | 🗑️ Deprecated | Chức năng Copy Project đã bị gỡ |
+| — | web | REQ-PRJ-79 → 81 | ➕ Viết mới | Yêu cầu mới chưa có TC |
 
 ### Ambiguity
 | Mã | Chuyển trạng thái | Ghi chú |
@@ -168,8 +177,8 @@ Nội dung file:
 
 | Tình huống | Workflow |
 |---|---|
-| Trước đó — tạo tài liệu module lần đầu | `/generate-requirements-from-website` (web) · `/generate-requirements-from-mobile` (app) · `/generate-requirements-from-api` (API) |
-| Trước đó — phân tích ticket độc lập, chưa merge vào module | `/analyze-requirement-document` |
+| Trước đó — tạo tài liệu module lần đầu | `/generate-requirements-from-website` (web) · `/generate-requirements-from-api` (API) |
+| Trước đó — phân tích ticket, đã thêm REQ mới vào module | `/analyze-requirement-document` |
 | Sau đó — **cập nhật TC bị ảnh hưởng (🟡) + đánh dấu Deprecated TC bị gỡ (🗑️)** | `/update-testcases-from-impact` ⭐ mắt xích kế tiếp |
 | Sau đó — sinh TC cho REQ mới (🟢) | `/generate-testcases-manual-rbt` hoặc `/generate-testcases-from-requirements` |
 | Sau đó — chấm chất lượng bộ TC **sau khi** đã đồng bộ | `/review-testcases` |

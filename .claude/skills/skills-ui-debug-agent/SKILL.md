@@ -1,6 +1,6 @@
 ---
 name: skills-ui-debug-agent
-description: Skill inspect ứng dụng WEB bằng browser tools, phân tích DOM elements, xác định locators ổn định, debug UI automation failures, và hỗ trợ sinh Page Object classes. App mobile (Appium) dùng skills-mobile-debug-agent.
+description: Skill inspect ứng dụng WEB bằng browser tools, phân tích DOM elements, xác định locators ổn định, debug UI automation failures, và hỗ trợ sinh Page Object classes.
 ---
 
 # UI Debug Agent
@@ -9,13 +9,12 @@ description: Skill inspect ứng dụng WEB bằng browser tools, phân tích DO
 
 Skill chuyên biệt giúp agent inspect ứng dụng **web** trực tiếp trên browser thật, phân tích DOM, thu thập locators ổn định, và debug các vấn đề UI automation.
 
-> 📱 **App mobile (Android / iOS / Flutter) → dùng [`skills-mobile-debug-agent`](../skills-mobile-debug-agent/SKILL.md).** UI hierarchy của mobile không phải DOM, và app Flutter thì khác cả hai — skill này không xử lý được.
 
 Agent có thể:
 
 - Mở browser thật, navigate đến bất kỳ URL nào
 - Inspect DOM elements — xác định attributes, hierarchy, state
-- Thu thập locators ổn định cho Playwright, Selenium, Appium
+- Thu thập locators ổn định cho Playwright, Selenium
 - Debug automation failures (element not found, click intercepted, timeout)
 - Capture UI state (snapshot, screenshot) để phân tích
 - Phân tích dynamic content, iframe, shadow DOM, SPA navigation
@@ -87,8 +86,8 @@ browser_wait_for → chờ indicator page đã load (text hoặc thời gian)
 ```
 
 Nếu trang yêu cầu đăng nhập:
-- Hỏi user credentials HOẶC dùng fixture sẵn có trong project
-- **KHÔNG đọc file `.env` trực tiếp** (quy tắc bảo mật)
+- Dùng fixture sẵn có trong project, hoặc tài khoản trong `.env`
+- Đọc `.env` ở gốc project theo `CLAUDE.md`, không in giá trị ra log. Thiếu biến thì báo tên biến và nhờ user tự thêm vào `.env`, không hỏi giá trị trong chat
 
 ### 2. Thu thập DOM Structure
 
@@ -113,8 +112,8 @@ Với mỗi element cần locator, áp dụng **priority order** theo framework:
 | 1 ⭐ | `getByRole()` | `getByRole('button', {name: 'Submit'})` | Element có role + accessible name rõ ràng |
 | 2 | `getByLabel()` | `getByLabel('Email')` | Form input có label |
 | 3 | `getByPlaceholder()` | `getByPlaceholder('Enter email')` | Input có placeholder, không có label |
-| 4 | `getByText()` | `getByText('Welcome back')` | Text content unique |
-| 5 | `getByTestId()` | `getByTestId('submit-btn')` | Element có data-testid attribute |
+| 4 | `getByTestId()` | `getByTestId('submit-btn')` | Element có data-testid attribute |
+| 5 | `getByText()` | `getByText('Welcome back')` | Text content unique |
 | 6 | CSS | `page.locator('.submit-button')` | Không có semantic option nào phù hợp |
 | 7 | XPath | `page.locator('//div[@class="x"]')` | Last resort — tránh dùng |
 
@@ -128,25 +127,6 @@ Với mỗi element cần locator, áp dụng **priority order** theo framework:
 | 4 | `By.cssSelector()` | `By.cssSelector(".login-form button")` |
 | 5 | `By.xpath()` | `By.xpath("//button[text()='Login']")` |
 
-**Appium (Mobile):**
-
-| Priority | Locator | Ví dụ |
-|---|---|---|
-| 1 ⭐ | Accessibility ID | `MobileBy.accessibilityId("loginButton")` |
-| 2 | ID (resource-id) | `MobileBy.id("com.app:id/login_btn")` |
-| 3 | Name | `MobileBy.name("Login")` |
-| 4 | XPath (relative) | `MobileBy.xpath("//android.widget.Button[@text='Login']")` |
-
-### 4. Verify Locator
-
-Sau khi xác định locator, **bắt buộc verify** trên DOM thực tế:
-
-```
-browser_snapshot → tìm element bằng ref
-browser_click/type(ref) → thử tương tác
-browser_snapshot → xác nhận kết quả
-```
-
 **Locator được chấp nhận khi:**
 - [ ] Unique trên page (chỉ match 1 element)
 - [ ] Ổn định qua nhiều lần reload
@@ -159,8 +139,8 @@ browser_snapshot → xác nhận kết quả
 ## Xử lý tình huống đặc biệt
 
 ### Trang yêu cầu đăng nhập
-- Dùng fixture login sẵn có trong project hoặc hỏi user credentials
-- **KHÔNG đọc .env trực tiếp**
+- Dùng fixture login sẵn có trong project, hoặc tài khoản trong `.env`
+- Đọc `.env` ở gốc project theo `CLAUDE.md`, không in giá trị ra log. Thiếu biến thì báo tên biến và nhờ user tự thêm vào `.env`, không hỏi giá trị trong chat
 - Sau khi login, navigate đến trang cần inspect
 
 ### Modal / Dialog / Popup
@@ -232,5 +212,4 @@ Agent PHẢI tuân thủ các rules chi tiết:
 - `.claude/rules/locator_strategy.md` — Master locator priority map
 - `.claude/rules/playwright_rules.md` — Playwright browser setup and locator rules
 - `.claude/rules/selenium_rules.md` — Selenium locator and wait rules
-- `.claude/rules/appium_rules.md` — Appium mobile locator rules
 - `.claude/rules/automation_rules.md` — General automation best practices

@@ -245,7 +245,7 @@ Bug **đẩy lên Jira** → cập nhật trạng thái tương ứng qua `skill
 - [ ] Đã cập nhật cột `Trạng thái` của bug trong `docs/bugs/README.md` khớp kết quả retest
 - [ ] Dữ liệu test đã dọn (môi trường dùng chung)
 
-**Báo cáo cho user:** kết quả từng bug (FIXED/NOT_FIXED/PARTIAL/CANNOT_VERIFY) · số regression phát hiện · bug đề xuất đóng · bug đề xuất mở mới · khuyến nghị có nên đưa fix này lên production không.
+**Báo cáo cho user:** kết quả từng bug (FIXED/NOT_FIXED/PARTIAL/CANNOT_VERIFY) · số regression phát hiện · bug đề xuất đóng · bug đề xuất mở mới · khuyến nghị có nên đưa fix này lên production không · bug FIXED có TC hoặc script `@KnownBug:<BUG_ID>` → nhắc gỡ tag và expected-fail · **🔔 bảng cập nhật Xray thủ công** cho TC regression đã chạy: `TC ID · Mã Test trên Xray · Kết quả · Build · Link evidence` (mã tra trong `.claude/skills/skills-xray-export/.cache_*.json`, không có thì ghi `— chưa có trên Xray`; chỉ liệt kê, không tự ghi Jira).
 
 ---
 

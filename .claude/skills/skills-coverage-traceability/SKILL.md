@@ -27,8 +27,8 @@ Sử dụng skill này khi:
 | **Requirements** | Markdown, Jira export, user stories, file phân tích từ `skills-requirements-analyzer` | ID dạng `REQ-xxx`, `US-xxx`, hoặc heading đánh số |
 | **Manual Test Cases** | Markdown, Excel/CSV | ID dạng `TC_xxx` |
 | **Automation Scripts** | `.spec.ts`, `*Test.java`, `.py` | Tên test method/block, annotation/tag chứa TC ID |
-| **Checklist** *(nguồn phụ)* | `docs/checklists/<module>/<nền-tảng>/checklist_*.md` · `docs/checklists/_release/<nền-tảng>/checklist_release_*.md` | Cột `REQ ID` của từng mục · mã mục `<Mã checklist>-<nn>` (quy tắc ở skill `skills-rbt-manual-testing`, mục *Mã checklist & mã mục*) |
-| **Kết quả chạy** *(nguồn phụ)* | `docs/executions/<module>/<nền-tảng>/run_*/execution_report.md` · `retest_*/retest_report.md` | Cột `TC ID` + `Kết quả`. Lấy **kết quả mới nhất của TỪNG TC**, không phải "lần chạy mới nhất" — lần chạy sau thường chỉ chạy lại một phần (cùng luật `skills-test-summary-reporter`). Lần chạy **checklist** không tính |
+| **Checklist** *(nguồn phụ)* | `docs/checklists/<module>/<nền-tảng>/checklist_*.md` · `docs/checklists/_release/<nền-tảng>/checklist_release_*.md` | Cột `REQ ID` của từng mục · mã mục `<Mã checklist>-<nn>` (quy tắc ở skill `skills-manual-testcase-v3`, mục *Mã checklist & mã mục*) |
+| **Kết quả chạy** *(nguồn phụ)* | `docs/executions/<module>/<nền-tảng>/run_*/execution_report.md` · `retest_*/retest_report.md` | Cột `TC ID` + `Kết quả`. Lấy **kết quả mới nhất của TỪNG TC**, không phải "lần chạy mới nhất" — lần chạy sau thường chỉ chạy lại một phần (cùng luật `skills-test-summary-reporter`). Lần chạy **checklist** không tính. Mỗi kết quả ghi kèm `Build / Version`. Khi RTM sinh cho một mốc có plan: kết quả trên build khác build tính tiêu chí, hoặc report thiếu ô Build → hiện `⏳ Cần chạy lại`, không vào Pass rate |
 | **Bug** *(nguồn phụ)* | `docs/bugs/README.md` | Cột `TC liên quan` + `Trạng thái`. Bug **đang mở** → hậu tố 🐞. Bug **đã đóng** của TC đang FAIL → kết quả FAIL đã lỗi thời, đề xuất chạy lại thay vì mở bug mới. `TC liên quan` có thể mang hậu tố biến thể (`CRM_LOGIN_TC_018-a`) — so theo TC ID gốc |
 
 > Thiếu 1 trong 3 nguồn chính → vẫn sinh RTM 2 chiều với nguồn có sẵn, ghi rõ ở ô `Nguồn đã quét`. TC/test không có ID chuẩn → đề xuất bổ sung ID trước, hoặc map tạm theo tên/mô tả (đánh dấu ⚠️ map suy luận). Nguồn phụ thiếu thì cột tương ứng **ẩn đi**, không in cột toàn `—`.
@@ -61,7 +61,7 @@ Sử dụng skill này khi:
 3. **1 requirement có thể map nhiều TC** và ngược lại — RTM là quan hệ n-n
 4. **KHÔNG bịa mapping** — không chắc thì để trống và liệt kê vào mục "cần xác nhận"
 5. **Checklist là nguồn phụ, KHÔNG thay TC.** Mục checklist map về REQ qua cột `REQ ID` và ghi vào cột `Checklist` của ma trận. Cột `Trạng thái` / `Execution ID` của file checklist là **bản sao để đọc** — kết quả chạy luôn lấy từ execution report, không đọc cột này (đọc là đếm hai lần). REQ **chỉ** có mục checklist, không có TC nào → trạng thái 🟠 **Chỉ có checklist**: không tính vào Requirement Coverage, không xếp chung 🔴 (đã có người rà, chỉ chưa có cách rà lặp lại được) — đề xuất sinh TC. Mục checklist TC-based đã có `TC ID liên quan` thì REQ đã được phủ qua TC, cột `Checklist` chỉ để tra
-6. **TC mang tag `@Deprecated`** (chức năng đã gỡ — tiền tố `🗑️ Deprecated (…) —` ở `Test Scenario`) **không** được tính là đang phủ REQ và **không** vào mẫu số Automation Coverage. Liệt kê riêng: script automation còn trỏ vào TC `@Deprecated` là **script cần gỡ / skip**, không phải orphan
+6. **TC mang tag `@Deprecated`** (chức năng đã gỡ — tiền tố `🗑️ Deprecated (…) —` ở `Test Summary`) **không** được tính là đang phủ REQ và **không** vào mẫu số Automation Coverage. Liệt kê riêng: script automation còn trỏ vào TC `@Deprecated` là **script cần gỡ / skip**, không phải orphan
 7. **REQ loại trừ có chủ đích → ⏭️, KHÔNG phải 🔴.** REQ không có TC **và** có căn cứ ghi sẵn trong tài liệu — dòng ở bảng *REQ cố ý KHÔNG có TC* của index TC, REQ trạng thái ⚪ *Chưa implement* hoặc 🔴 *Deprecated* — được xếp ⏭️ **Loại trừ**, ghi lý do + căn cứ (mã AMB / quyết định PO), và **trừ khỏi mẫu số** mọi chỉ số. Không có căn cứ trong tài liệu thì **vẫn là 🔴** — agent không tự quyết REQ nào được loại trừ
 
 ---
@@ -90,7 +90,8 @@ REQ ⚪ *Chưa implement* mà **có** TC thì giữ trạng thái theo bảng tr
 | Metric | Công thức | Ý nghĩa |
 |---|---|---|
 | **Requirement Coverage** | # REQ có ≥1 TC / REQ trong phạm vi | Requirement nào chưa được test |
-| **Platform Coverage** | # cặp (REQ × nền tảng REQ khai) có ≥1 TC trên đúng nền tảng đó / tổng số cặp | REQ khai `Web · Android` mà chỉ có TC web → nền tảng Android **chưa phủ**, không được tính là đã phủ nhờ TC web. Module một nền tảng: 1 dòng; nhiều nền tảng: mỗi nền tảng 1 dòng |
+| **Platform Coverage** | # cặp (REQ × nền tảng REQ khai) có ≥1 TC trên đúng nền tảng đó / tổng số cặp | REQ khai `Web · API` mà chỉ có TC web → nền tảng API **chưa phủ**, không được tính là đã phủ nhờ TC web. Module một nền tảng: 1 dòng; nhiều nền tảng: mỗi nền tảng 1 dòng |
+| **Requirement Coverage trên REQ đã duyệt** | # REQ `✅` có ≥1 TC / # REQ `✅` trong phạm vi. In ngay dưới Requirement Coverage, kèm số REQ `⏳` | Phần còn lại là test giữ hiện trạng, không phải bằng chứng app đúng yêu cầu. REQ không có cột `Duyệt` coi là `⏳` |
 | **Automation Coverage** | # TC có ≥1 script / tổng TC (trừ `@Deprecated`) | TC nào còn chạy tay |
 | **Pass rate lần chạy gần nhất** | # TC PASS / # TC đã có kết quả (kết quả mới nhất của từng TC) | Chỉ in khi module có ít nhất 1 lần chạy. Ghi kèm số TC **chưa từng chạy** |
 | **REQ chỉ có checklist** | # REQ có mục checklist nhưng 0 TC | Vùng đã rà nhanh nhưng chưa có TC để chạy lại, chưa automate được |
@@ -146,7 +147,7 @@ RTM được đọc bởi QA lead, PM, khách — người **không** mở file 
 ```markdown
 # Ma Trận Truy Vết (RTM) — <Tên hệ thống> · Tổng hợp
 
-> **Tóm tắt:** 124/124 REQ trong phạm vi đã có TC (100%) · **0/180 TC có script automation** · 51/180 TC đã chạy ít nhất 1 lần · **chỉ 2/23 module** nằm trong RTM này
+> **Tóm tắt:** 124/124 REQ trong phạm vi đã có TC (100%), trong đó 80/124 REQ đã duyệt `✅` · **0/180 TC có script automation** · 51/180 TC đã chạy ít nhất 1 lần · **chỉ 2/23 module** nằm trong RTM này
 
 | Thông tin | Nội dung |
 |---|---|
@@ -186,7 +187,7 @@ RTM được đọc bởi QA lead, PM, khách — người **không** mở file 
 | `PRJ` | — chưa sinh | — | — |
 ```
 
-**Thứ tự Việc cần làm** (chỉ in dòng có số lượng > 0): 🔴 REQ chưa có TC → 🟠 REQ chỉ có checklist → ❌ TC FAIL, tách 3 nhánh: *có bug đang mở* → `/retest-fixed-bugs` · *chỉ có bug đã đóng* (kết quả FAIL đã lỗi thời — TC hoặc kết luận bug đổi sau lần chạy) → chạy lại bằng `/execute-test-cases` · *chưa có bug nào* → `/create-bug-report` → ▶️ TC chưa từng chạy → 🗑️ script trỏ vào TC Deprecated → ⚠️ mapping suy luận cần xác nhận → 🟡 automate TC Critical/High.
+**Thứ tự Việc cần làm** (chỉ in dòng có số lượng > 0): 🔴 REQ chưa có TC → 🟠 REQ chỉ có checklist → ❌ TC FAIL, tách 3 nhánh: *có bug đang mở* → `/retest-fixed-bugs` · *chỉ có bug đã đóng* (kết quả FAIL đã lỗi thời — TC hoặc kết luận bug đổi sau lần chạy) → chạy lại bằng `/execute-test-cases` · *chưa có bug nào* → `/create-bug-report` → ▶️ TC chưa từng chạy → 🗑️ script trỏ vào TC Deprecated → ⚠️ mapping suy luận cần xác nhận → 🟡 automate TC `P1` trước, rồi `P2`.
 
 ---
 
@@ -210,6 +211,7 @@ RTM được đọc bởi QA lead, PM, khách — người **không** mở file 
 | Chỉ số | Tiến độ | Giá trị |
 |---|---|---|
 | Requirement Coverage | `▰▰▰▰▰▰▰▰▰▰` | **40/40** (100%) REQ trong phạm vi |
+| Requirement Coverage trên REQ đã duyệt | `▰▰▰▰▰▰▱▱▱▱` | 24/40 REQ `✅` có TC · 16 REQ `⏳` theo hiện trạng |
 | Platform Coverage · web | `▰▰▰▰▰▰▰▰▰▰` | 40/40 cặp REQ × nền tảng |
 | Automation Coverage | `▱▱▱▱▱▱▱▱▱▱` | **0/51** TC (0%) |
 | Pass rate lần chạy gần nhất | `▰▰▰▰▰▰▰▰▰▱` | 45/51 (88%) · ❌ 6 FAIL · 0 TC chưa chạy |
@@ -223,7 +225,7 @@ RTM được đọc bởi QA lead, PM, khách — người **không** mở file 
 ## 2. Việc cần làm
 
 1. ❌ **6 TC FAIL ở lần chạy gần nhất** — 5 TC đã có bug đang mở → `/retest-fixed-bugs` khi Dev báo fix
-2. 🟡 **Bắt đầu automate:** 22 TC Critical/High đã chấm `Automation = Yes` → `/generate-automation-from-testcases`
+2. 🟡 **Bắt đầu automate:** 22 TC `P1` · `P2` đã chấm `Automation = Yes` → `/generate-automation-from-testcases`
 
 ## 3. Ma trận chi tiết
 
@@ -246,13 +248,13 @@ RTM được đọc bởi QA lead, PM, khách — người **không** mở file 
 
 | Priority | Automation = Yes | Partial | No | Tổng |
 |---|:-:|:-:|:-:|:-:|
-| Critical | 8 | 1 | 0 | 9 |
+| P1 | 8 | 1 | 0 | 9 |
 
 <details><summary>Danh sách đầy đủ 51 TC (xếp theo Priority)</summary>
 
 | TC ID | Priority | Automation dự kiến | Ghi chú |
 |---|---|---|---|
-| CRM_LOGIN_TC_005 | Critical | Yes | — |
+| CRM_LOGIN_TC_005 | P1 | Yes | — |
 
 </details>
 
@@ -314,6 +316,6 @@ RTM được đọc bởi QA lead, PM, khách — người **không** mở file 
 ## Rules References
 
 - `.claude/skills/skills-requirements-analyzer/SKILL.md` — Nguồn requirements chuẩn
-- `.claude/skills/skills-rbt-manual-testing/SKILL.md` — Sinh TC lấp gap
+- `.claude/skills/skills-manual-testcase-v3/SKILL.md` — Sinh TC lấp gap
 - `.claude/skills/skills-testcase-reviewer/SKILL.md` — Review chất lượng TC hiện có
 - `scripts/traceability-viewer/README.md` — Viewer đọc RTM; đổi tên cột ở đây thì phải sửa parser ở đó

@@ -3,6 +3,8 @@ name: analyze-flaky-tests
 description: Phân tích automation tests không ổn định (flaky), xác định root cause và tự động khắc phục. Hỗ trợ 2 mode — ANALYZE (chỉ báo cáo) và FIX (báo cáo + tự sửa code).
 ---
 
+> **Rule phải đọc trước:** `.claude/rules/automation_rules.md` · `.claude/rules/locator_strategy.md` · `.claude/rules/playwright_rules.md` hoặc `.claude/rules/selenium_rules.md` theo framework đang dùng. Các rule này chỉ tự nạp khi đã mở file khớp `paths`, nên workflow phải tự đọc.
+
 > **Skill nền tảng cần nạp trước:** `skills-flaky-test-analyzer` · `skills-smart-locator-agent` · `skills-locator-healer-agent` — đọc `.claude/skills/<tên-skill>/SKILL.md` của từng skill trước khi bắt đầu.
 
 # Workflow: Phân Tích & Khắc Phục Flaky Tests
@@ -45,18 +47,18 @@ Agent cần ít nhất **1 trong các input** sau từ user:
 ### Bước 1: Thu thập thông tin & Tái hiện lỗi (Detect & Reproduce)
 
 1. **Đọc test file** bằng `Read`:
-   - Xác định framework (Playwright / Selenium / Appium / Pytest / TestNG)
+   - Xác định framework (Playwright / Selenium / Pytest / TestNG)
    - Ghi nhận cấu trúc: Page Objects, fixtures, helper functions
    - Đánh dấu các vùng code nghi ngờ (waits, locators, assertions, setup/teardown)
 
 2. **Chạy test** để tái hiện lỗi (nếu chưa có error log):
-   - Chạy test **3 lần liên tiếp** bằng `run_command`:
+   - Chạy test **10 lần liên tiếp**, tắt retry. Test lỗi 10% vẫn có 73% khả năng qua 3 lần, 35% qua 10 lần:
      ```bash
      # Playwright
-     npx playwright test <test_file> --retries=0 --reporter=list
+     npx playwright test <test_file> --retries=0 --repeat-each=10 --reporter=list
 
      # Pytest
-     python -m pytest <test_file> -v --count=3
+     python -m pytest <test_file> -v --count=10   # cần pytest-repeat
 
      # Maven/TestNG
      mvn test -Dtest=<TestClass> -Dsurefire.rerunFailingTestsCount=0
@@ -112,7 +114,7 @@ Agent cần ít nhất **1 trong các input** sau từ user:
 
 ### Bước 3: Lập báo cáo & Đề xuất fix (Report — CHECKPOINT)
 
-1. **Tạo artifact** `flaky_analysis.md` với cấu trúc:
+1. **Tạo file** `docs/quality-insights/flaky_analysis_<YYYYMMDD>.md` (gọi tắt `flaky_analysis.md` bên dưới) với cấu trúc:
 
    ```markdown
    # Báo Cáo Phân Tích Flaky Test
@@ -169,7 +171,7 @@ Agent cần ít nhất **1 trong các input** sau từ user:
    **Fix Test Data:**
    ```
    ❌ const email = "test@email.com"
-   ✅ const email = `auto_${Date.now()}@test.com`
+   ✅ const email = `auto_${Date.now()}@yopmail.com`
    ```
 
    **Fix Test Independence:**
@@ -177,42 +179,42 @@ Agent cần ít nhất **1 trong các input** sau từ user:
    - Loại bỏ dependency giữa các test cases
    - Đảm bảo mỗi test tự tạo precondition riêng
 
-2. **Sử dụng** `replace_file_content` hoặc `multi_replace_file_content` để áp dụng thay đổi
-3. **Ghi chú** mỗi thay đổi vào artifact `flaky_analysis.md`
+2. **Sử dụng** `Edit` để áp dụng thay đổi
+3. **Ghi chú** mỗi thay đổi vào file `flaky_analysis.md`
 
 ### Bước 5: Verify & Đảm bảo ổn định (Verify Stability)
 
 > Chỉ thực hiện khi ở **Mode FIX**
 
-1. **Chạy test 3 lần liên tiếp** sau khi fix:
+1. **Chạy test 10 lần liên tiếp** sau khi fix, cùng số worker với CI:
    ```bash
    # Playwright
-   npx playwright test <test_file> --retries=0 --repeat-each=3
+   npx playwright test <test_file> --retries=0 --repeat-each=10
 
    # Pytest
-   python -m pytest <test_file> -v --count=3
+   python -m pytest <test_file> -v --count=10   # cần pytest-repeat
 
    # Maven
-   mvn test -Dtest=<TestClass> (chạy 3 lần thủ công)
+   mvn test -Dtest=<TestClass>   # thêm tạm @Test(invocationCount = 10), gỡ sau khi verify
    ```
 
 2. **Đánh giá kết quả:**
 
    | Kết quả | Hành động |
    |---|---|
-   | ✅ **3/3 PASS** | Test đã ổn định → cập nhật artifact, báo cáo thành công |
-   | ⚠️ **2/3 PASS** | Vẫn còn flaky → quay lại Bước 2 phân tích lần fail, fix tiếp (tối đa 3 vòng) |
-   | ❌ **0-1/3 PASS** | Fix sai hướng → rollback, phân tích lại root cause |
+   | ✅ **10/10 PASS** | Test đã ổn định → cập nhật file `flaky_analysis.md`, báo cáo thành công |
+   | ⚠️ **7–9/10 PASS** | Vẫn còn flaky → quay lại Bước 2 phân tích lần fail, fix tiếp (tối đa 3 vòng) |
+   | ❌ **Dưới 7/10 PASS** | Fix sai hướng → dùng `Edit` hoàn tác đúng thay đổi vừa sửa, phân tích lại root cause. Không dùng lệnh git đổi trạng thái code |
 
 3. **Stability Checklist** (phải đạt toàn bộ trước khi kết thúc):
    - [ ] Locator unique và ổn định qua nhiều lần reload
    - [ ] Không có hard sleep / fixed delay
    - [ ] Test data unique + traceable mỗi lần chạy
    - [ ] Test độc lập — không phụ thuộc thứ tự chạy
-   - [ ] Test pass **3+ lần liên tiếp**
+   - [ ] Test pass **10/10 lần liên tiếp**
    - [ ] Không còn debug log / commented code
 
-4. **Cập nhật artifact** `flaky_analysis.md`:
+4. **Cập nhật file** `flaky_analysis.md`:
    - Thêm section "Kết quả sau fix" với bảng kết quả chạy
    - Đánh dấu trạng thái: ✅ STABILIZED / ⚠️ PARTIALLY FIXED / ❌ STILL FLAKY
 
@@ -230,7 +232,7 @@ Agent cần ít nhất **1 trong các input** sau từ user:
 ## Output
 
 ### Mode ANALYZE
-- Artifact `flaky_analysis.md`:
+- File `flaky_analysis.md`:
   - Tổng quan test (file, framework, tần suất fail)
   - Root Cause Analysis (bảng phân loại)
   - Đề xuất fix chi tiết (code cũ → code mới)
@@ -239,5 +241,5 @@ Agent cần ít nhất **1 trong các input** sau từ user:
 ### Mode FIX
 - Tất cả output của Mode ANALYZE, cộng thêm:
   - Code đã được sửa (các file đã thay đổi)
-  - Kết quả verify (3 lần chạy PASS/FAIL)
+  - Kết quả verify (10 lần chạy PASS/FAIL)
   - Trạng thái cuối: STABILIZED / PARTIALLY FIXED / STILL FLAKY

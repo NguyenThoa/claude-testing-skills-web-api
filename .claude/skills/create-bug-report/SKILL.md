@@ -27,6 +27,7 @@ description: Sinh bug report chuẩn từ test FAIL — thu thập evidence, vi�
 ## Các bước thực hiện
 
 ### Bước 1: Thu thập & Tái hiện
+0. **Tra bug trùng trước:** tìm TC ID trong `docs/bugs/README.md` và tag `@KnownBug:<BUG_ID>` của test. Đã có bug đang mở cho đúng lỗi này → **không** tạo bug mới, ghi thêm build và lần tái hiện vào file bug đó, báo user
 1. Đọc test file / mô tả lỗi, error log, screenshot có sẵn
 2. Tái hiện lỗi: chạy lại test HOẶC thao tác trên browser qua Playwright MCP (`navigate → wait_for(page_load) → thao tác → screenshot khi lỗi xuất hiện`)
 3. Nếu KHÔNG tái hiện được → dừng, báo user và đề xuất `/analyze-flaky-tests`

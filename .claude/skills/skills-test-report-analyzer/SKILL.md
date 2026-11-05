@@ -49,7 +49,7 @@ Sử dụng skill này khi:
 ## Responsibilities
 
 1. **Parse report** — đọc đúng format, trích xuất: tên test, status, duration, error message, retry count
-2. **Tổng hợp số liệu** — PASS / FAIL / SKIP / FLAKY (pass sau retry), tổng thời gian chạy
+2. **Tổng hợp số liệu** — PASS / FAIL / SKIP / FLAKY (pass sau retry) / Đang phơi bug (`@KnownBug`), tổng thời gian chạy. Tách nhóm Đang phơi bug **trước** khi tính pass rate, vì runner có thể ghi các test này là pass hoặc skip
 3. **Gom nhóm failure** theo root cause category (bảng bên dưới) — KHÔNG liệt kê từng test rời rạc
 4. **Phát hiện pattern** — nhiều test fail cùng 1 nguyên nhân (VD: cùng 1 page object, cùng 1 API down)
 5. **So sánh trend** — nếu có report cũ: test nào mới fail, test nào fail liên tục, test nào vừa được fix
@@ -67,6 +67,8 @@ Sử dụng skill này khi:
 | 📊 **Test data** | `Duplicate`, `Not found`, conflict parallel | Sửa data generation |
 | 🌐 **Environment** | `ECONNREFUSED`, `502/503`, toàn bộ suite fail | Kiểm tra env trước, KHÔNG sửa test |
 | 🧪 **Test script lỗi** | Syntax error, import fail, assertion viết sai | Sửa test code |
+| 🐞 **Đang phơi bug** | Test `@KnownBug:<BUG_ID>` fail đúng assertion phơi bug | Không tính PASS. Kiểm `BUG_ID` còn mở; bug đã đóng hoặc không tìm thấy → báo |
+| 🎉 **`@KnownBug` bỗng PASS** | Expected-fail không còn đúng, runner báo đỏ | `/retest-fixed-bugs`, bug FIXED mới gỡ tag |
 
 > **Nguyên tắc phân loại:** Đọc error message + stack trace thực tế. KHÔNG đoán category khi chưa xem log.
 
@@ -153,6 +155,8 @@ Glob `docs/executions/<module>/<nền-tảng>/run_*/execution_report.md` (và `d
 
 ## Report Template
 
+Mẫu dưới cho nhánh automation, lưu ở `reports/test_report_analysis.md`. Report manual dùng mẫu `analysis_<timestamp>.md` trong workflow `/analyze-test-report`, có BLOCKED, nợ kiểm thử và dữ liệu chưa dọn.
+
 ```markdown
 # Báo Cáo Phân Tích Test Run
 
@@ -164,6 +168,7 @@ Glob `docs/executions/<module>/<nền-tảng>/run_*/execution_report.md` (và `d
 | ❌ FAIL | y |
 | ⏭️ SKIP | z |
 | 🔁 FLAKY (pass sau retry) | w |
+| 🐞 Đang phơi bug (không tính PASS) | k |
 | Thời gian chạy | mm:ss |
 
 ## Phân loại Failure
@@ -177,7 +182,7 @@ Glob `docs/executions/<module>/<nền-tảng>/run_*/execution_report.md` (và `d
 
 ## So sánh với lần chạy trước (nếu có)
 - 🆕 Mới fail: ...
-- 🔄 Fail liên tục (≥3 lần): ...
+- 🔁 Fail liên tục (≥ 2 lần): ...
 - ✅ Đã fix: ...
 
 ## Thứ tự xử lý đề xuất
@@ -193,6 +198,7 @@ Glob `docs/executions/<module>/<nền-tảng>/run_*/execution_report.md` (và `d
 - [ ] Mọi failure đều được gán category dựa trên log thực tế
 - [ ] Failure có chung root cause được gom nhóm, không đếm trùng
 - [ ] Flaky (pass sau retry) tách riêng khỏi FAIL thật
+- [ ] Test `@KnownBug` tách riêng, không tính PASS, đã kiểm mã bug còn mở
 - [ ] Đề xuất hành động cụ thể cho từng nhóm, có skill/workflow liên quan
 - [ ] Báo cáo bằng Tiếng Việt, số liệu chính xác khớp report gốc
 

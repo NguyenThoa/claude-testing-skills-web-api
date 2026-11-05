@@ -3,6 +3,8 @@ name: generate-automation-web
 description: Sinh automation web (Playwright / Selenium) — 2 mode TC (từ file test case web, mặc định) và FLOW (chưa có TC, chạy thật UI flow trên browser). Inspect DOM thật, sinh POM + test, chạy và tự sửa đến khi PASS 2 lần liên tiếp.
 ---
 
+> **Rule phải đọc trước:** `.claude/rules/automation_rules.md` · `.claude/rules/reporting_rules.md` · `.claude/rules/locator_strategy.md` · `.claude/rules/playwright_rules.md` hoặc `.claude/rules/selenium_rules.md` theo framework đang dùng. Các rule này chỉ tự nạp khi đã mở file khớp `paths`, nên workflow phải tự đọc.
+
 > **Skill nền tảng cần nạp trước:** `skills-qa-automation-engineer` · `skills-ui-debug-agent` · `skills-smart-locator-agent` · `skills-test-data-generator` — đọc `.claude/skills/<tên-skill>/SKILL.md` của từng skill trước khi bắt đầu.
 
 # Workflow: Sinh Automation Web
@@ -15,7 +17,7 @@ description: Sinh automation web (Playwright / Selenium) — 2 mode TC (từ fil
 
 Workflow đọc test case web (hoặc mô tả flow), tự mở browser inspect UI, thu thập locator thực tế, sinh automation script hoàn chỉnh (POM + Test), chạy và tự sửa lỗi cho đến khi PASS ổn định.
 
-> Được gọi thẳng, hoặc qua bộ định tuyến `/generate-automation-from-testcases` khi file TC thuộc tầng `web/`. App mobile → `/generate-automation-mobile` · API → `/generate-automation-api`.
+> Được gọi thẳng, hoặc qua bộ định tuyến `/generate-automation-from-testcases` khi file TC thuộc tầng `web/`. API → `/generate-automation-api`.
 
 ---
 
@@ -36,7 +38,7 @@ Workflow đọc test case web (hoặc mô tả flow), tự mở browser inspect 
 - **Mode FLOW: phải chạy từng bước UI trên browser thật** trước khi sinh code
 - **Desktop viewport headed theo `--viewport-size` lúc launch** — KHÔNG gọi `browser_resize` (xem `.claude/rules/playwright_rules.md` mục 1)
 - ⚠️ **Rule E3 (CRITICAL):** Khi test FAIL → tự đọc log → phân tích → sửa code → chạy lại. **CẤM hỏi user trong quá trình fix lỗi.** Chỉ hỏi khi gặp business rule mâu thuẫn hoặc hết 5 vòng auto-heal
-- **Artifact `task.md`** — PHẢI tạo để theo dõi tiến độ
+- **File `task.md`** — PHẢI tạo để theo dõi tiến độ
 
 ## Input cần thu thập
 
@@ -71,7 +73,7 @@ Nếu user chưa cung cấp đủ → hỏi trước khi bắt đầu.
 1. **Parse UI steps** từ user input — chuyển mô tả bằng lời thành danh sách bước có cấu trúc:
    ```
    Step 1: Navigate to https://example.com/login
-   Step 2: Enter username "admin@test.com"
+   Step 2: Enter username "admin@yopmail.com"
    Step 3: Enter password "***"
    Step 4: Click Login button
    Step 5: Verify dashboard is displayed
@@ -87,7 +89,7 @@ Nếu user chưa cung cấp đủ → hỏi trước khi bắt đầu.
    | Playwright | Python | Pytest | Khi project dùng Python |
    | Selenium | Java | TestNG | Khi user yêu cầu Java |
 
-4. **Tạo artifact `task.md`** để theo dõi tiến độ:
+4. **Tạo file `task.md`** để theo dõi tiến độ:
    ```markdown
    # Automation Web — Progress (mode TC)
    - [x] Bước 1: Phân tích test cases
@@ -147,7 +149,7 @@ Nếu user chưa cung cấp đủ → hỏi trước khi bắt đầu.
    | Tình huống | Cách xử lý |
    |---|---|
    | URL bị chặn / cần VPN | Thông báo user |
-   | Cần đăng nhập | Dùng fixture sẵn có hoặc hỏi user credentials |
+   | Cần đăng nhập | Dùng fixture sẵn có hoặc tài khoản trong `.env`. Thiếu biến thì báo tên biến, không hỏi giá trị trong chat |
    | Element không tìm thấy | Snapshot lại → thử locator khác → báo user nếu DOM thay đổi |
    | Page chưa load xong | `browser_wait_for` text/element → retry |
    | Modal/popup xuất hiện | Xử lý popup trước → tiếp tục flow |
@@ -243,7 +245,7 @@ Nếu user chưa cung cấp đủ → hỏi trước khi bắt đầu.
    ```
    Format: <prefix>_<testName>_<timestamp>
    Ví dụ:
-   - Email:    auto_login_1712049200@test.com
+   - Email:    auto_login_1712049200@yopmail.com
    - Username: auto_user_1712049200
    - Code:     TC_REG_1712049200
    ```
@@ -251,7 +253,7 @@ Nếu user chưa cung cấp đủ → hỏi trước khi bắt đầu.
 3. **Sensitive data** (credentials):
    - Đọc từ env variables hoặc config file
    - **KHÔNG hardcode** trong test code
-   - **KHÔNG đọc .env trực tiếp** (quy tắc bảo mật)
+   - Lúc inspect và debug: Đọc `.env` ở gốc project theo `CLAUDE.md`, không in giá trị ra log. Thiếu biến thì báo tên biến và nhờ user tự thêm vào `.env`, không hỏi giá trị trong chat
 
 ### Bước 5: Sinh Automation Scripts (Test Classes)
 
@@ -345,7 +347,7 @@ Nếu user chưa cung cấp đủ → hỏi trước khi bắt đầu.
      5. Ghi log vào task.md: "Vòng 2: Fix locator XYZ → PASS"
    ```
 
-   ⚠️ **Assertion fail vì ứng dụng làm sai so với TC → KHÔNG sửa kỳ vọng cho xanh.** Giữ assertion, đánh dấu test đang phơi bug, đề xuất `/create-bug-report`. Chỉ sửa assertion khi chính test viết sai so với TC.
+   ⚠️ **Assertion fail vì ứng dụng làm sai so với TC → KHÔNG sửa kỳ vọng cho xanh.** Giữ assertion, đề xuất `/create-bug-report`; có bug đang mở thì gắn `@KnownBug:<BUG_ID>` + expected-fail chặt theo `automation_rules.md` mục 6.1. Chỉ sửa assertion khi chính test viết sai so với TC.
 
 3. **⚠️ Rule E3 — CẤM HỎI USER khi fix lỗi.** Chỉ được hỏi khi:
    - Business logic mâu thuẫn (TC nói A nhưng app hiển thị B)
@@ -371,7 +373,7 @@ Nếu user chưa cung cấp đủ → hỏi trước khi bắt đầu.
    - [ ] Không còn hardcoded test data (email, password)
    - [ ] Import gọn gàng — không unused imports
 
-2. **Cập nhật artifact `task.md`** với kết quả cuối:
+2. **Cập nhật file `task.md`** với kết quả cuối:
    ```markdown
    ## Kết Quả
    | TC ID | Title | Status | Stability | Ghi chú |
@@ -387,7 +389,7 @@ Nếu user chưa cung cấp đủ → hỏi trước khi bắt đầu.
    ```
 
 3. **Báo cáo** cho user:
-   - Mode đã chạy · Tổng: X PASS / Y FAIL (phơi bug) / Z SKIP
+   - Mode đã chạy · Tổng: X PASS / Y Đang phơi bug (`@KnownBug`, không tính PASS) / Z SKIP
    - Danh sách files đã tạo/sửa
    - Known issues / limitations
    - Bảng Locator Collection (reference)
@@ -395,7 +397,7 @@ Nếu user chưa cung cấp đủ → hỏi trước khi bắt đầu.
 
 ## Output
 
-- **Artifact `task.md`** — checklist tiến độ + kết quả chạy test
+- **File `task.md`** — checklist tiến độ + kết quả chạy test
 - **Page Object classes** — 1 file per page, locators verified từ DOM
 - **Test classes** — automation scripts hoàn chỉnh, đã PASS 2 lần liên tiếp
 - **Test data utilities** — generators cho data unique + traceable

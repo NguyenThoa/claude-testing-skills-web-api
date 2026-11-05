@@ -3,6 +3,8 @@ name: review-automation-code
 description: Review chất lượng automation script đã viết — chấm rubric 6 nhóm theo Definition of Done, bắt hard sleep/locator inline/thiếu Allure metadata/assertion yếu. Hỗ trợ 2 mode — REVIEW (chỉ báo cáo) và FIX (báo cáo + sửa code).
 ---
 
+> **Rule phải đọc trước:** `.claude/rules/automation_rules.md` · `.claude/rules/reporting_rules.md` · `.claude/rules/locator_strategy.md`. Các rule này chỉ tự nạp khi đã mở file khớp `paths`, nên workflow phải tự đọc.
+
 > **Skill nền tảng cần nạp trước:** `skills-automation-code-reviewer` · `skills-smart-locator-agent` — đọc `.claude/skills/<tên-skill>/SKILL.md` của từng skill trước khi bắt đầu.
 
 # Workflow: Review Automation Code
@@ -48,7 +50,7 @@ Kiểm code automation **đã tồn tại** theo Definition of Done trong `CLAUD
 
 ### Bước 1: Khoanh Vùng
 
-1. Xác định stack (Playwright TS / Selenium Java / Appium / Pytest) từ `package.json` / `pom.xml`
+1. Xác định stack (Playwright TS / Selenium Java / Pytest) từ `package.json` / `pom.xml`
 2. Liệt kê file trong phạm vi, tách rõ **test file** và **page object**
 3. Chạy bộ pattern quét nhanh trong skill để khoanh vùng vi phạm — kết quả là **manh mối**, chưa phải kết luận
 
@@ -97,7 +99,7 @@ Thứ tự: vi phạm chặn bàn giao trước, rồi 🔴, rồi 🟡.
 ### Bước 7: Chạy Lại & Xác Nhận
 
 1. Chạy toàn bộ phạm vi vừa sửa — **phải PASS 2 lần liên tiếp**
-2. Test đang xanh mà sau khi sửa chuyển đỏ → rollback thay đổi đó, ghi nhận vào báo cáo
+2. Test đang xanh mà sau khi sửa chuyển đỏ → dùng `Edit` hoàn tác đúng thay đổi đó, ghi nhận vào báo cáo
 3. Mở report kiểm mắt thường theo checklist mục 7 của `reporting_rules.md`: tên test Tiếng Việt, có step, có ảnh cuối, không có `stdout`
 4. Cập nhật báo cáo: điểm trước → điểm sau
 

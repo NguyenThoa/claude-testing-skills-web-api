@@ -67,14 +67,7 @@ Locator is considered broken when:
 - Inspect the target area in DOM
 
 ### Step 3: Find Alternative Locator
-Try the following in priority order:
-
-1. Accessibility attributes (`aria-label`, `role`)
-2. `data-testid` / `data-test`
-3. `id` (if stable, not auto-generated)
-4. Semantic locator (Playwright `getByRole`, `getByLabel`)
-5. `css selector` (stable attributes)
-6. `xpath` (relative, not positional)
+Try locators in the order of `.claude/rules/locator_strategy.md` section 1.
 
 ### Step 4: Validate & Replace
 - Verify the new locator matches exactly one element

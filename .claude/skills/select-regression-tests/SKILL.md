@@ -3,7 +3,7 @@ name: select-regression-tests
 description: Chọn và xếp hạng test case cho một thay đổi (ticket / Impact Report / danh sách REQ / build mới) trong quỹ thời gian có hạn — nhóm Bắt buộc · Smoke · Theo điểm, mở rộng theo module phụ thuộc, liệt kê đủ TC cố ý bỏ kèm lý do. Điểm minh bạch từ scripts/quality-insights/qi.py. Danh sách dùng thẳng làm phạm vi cho /execute-test-cases. KHÔNG chạy test.
 ---
 
-> **Skill nền tảng cần nạp trước:** `skills-quality-insights` · `skills-rbt-manual-testing` · `skills-manual-test-executor` — đọc `.claude/skills/<tên-skill>/SKILL.md` của từng skill trước khi bắt đầu.
+> **Skill nền tảng cần nạp trước:** `skills-quality-insights` · `skills-manual-testcase-v3` · `skills-manual-test-executor` — đọc `.claude/skills/<tên-skill>/SKILL.md` của từng skill trước khi bắt đầu.
 
 # Workflow: Chọn Test Thông Minh Cho Một Thay Đổi
 

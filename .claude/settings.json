@@ -2,15 +2,52 @@
   "skillListingBudgetFraction": 0.02,
   "permissions": {
     "allow": [
-      "Read project files",
-      "Read .env files",
-      "Run npm and npx commands",
-      "Run playwright tests",
-      "Run maven commands",
-      "Execute shell commands for testing"
+      "Bash(npm *)",
+      "Bash(npx playwright *)",
+      "Bash(npx allure *)",
+      "Bash(npx tsc *)",
+      "Bash(mvn *)",
+      "Bash(python scripts/quality-insights/qi.py *)",
+      "Bash(python scripts/user-guide/md2html.py *)",
+      "Bash(python scripts/design-compare/dc.py *)",
+      "PowerShell(npm *)",
+      "PowerShell(npx playwright *)",
+      "PowerShell(npx allure *)",
+      "PowerShell(npx tsc *)",
+      "PowerShell(mvn *)",
+      "PowerShell(python scripts/quality-insights/qi.py *)",
+      "PowerShell(python scripts/user-guide/md2html.py *)",
+      "PowerShell(python scripts/design-compare/dc.py *)"
+    ],
+    "ask": [
+      "Bash(rm *)",
+      "PowerShell(Remove-Item *)"
     ],
     "deny": [
-      "Delete source files without confirmation"
+      "Bash(git pull*)",
+      "Bash(git checkout*)",
+      "Bash(git merge*)",
+      "Bash(git rebase*)",
+      "Bash(git reset*)",
+      "Bash(git restore*)",
+      "Bash(git switch*)",
+      "Bash(git stash*)",
+      "Bash(git clean*)",
+      "Bash(git revert*)",
+      "Bash(git push --force*)",
+      "Bash(git push -f*)",
+      "PowerShell(git pull*)",
+      "PowerShell(git checkout*)",
+      "PowerShell(git merge*)",
+      "PowerShell(git rebase*)",
+      "PowerShell(git reset*)",
+      "PowerShell(git restore*)",
+      "PowerShell(git switch*)",
+      "PowerShell(git stash*)",
+      "PowerShell(git clean*)",
+      "PowerShell(git revert*)",
+      "PowerShell(git push --force*)",
+      "PowerShell(git push -f*)"
     ]
   }
 }

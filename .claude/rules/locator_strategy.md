@@ -1,3 +1,12 @@
+---
+paths:
+  - "**/*.spec.ts"
+  - "**/*.spec.js"
+  - "**/*.java"
+  - "**/test_*.py"
+  - "**/pages/**"
+---
+
 # Chiến Lược Chọn Locator (Áp Dụng Mọi Framework)
 
 > Độ ổn định và khả năng đọc hiểu của locator quyết định sức khỏe của một automation framework.
@@ -5,14 +14,19 @@
 
 ## 1. Bản Đồ Ưu Tiên (Master Priority Map)
 
-Thứ tự ưu tiên từ cao đến thấp:
+Đây là **nguồn duy nhất** của thứ tự locator, nơi khác chỉ dẫn về đây:
 
-1. Thuộc tính Accessibility / Aria (semantic, hỗ trợ screen reader)
-2. Thuộc tính test chuyên dụng (`data-testid`, `data-test`, `data-qa`)
-3. Thuộc tính định danh chính (`id`, `resource-id`, `name`)
-4. Hàm semantic riêng framework (Playwright: `getByRole`, `getByLabel`...)
-5. CSS Selector
-6. XPath (lựa chọn cuối cùng)
+| # | Playwright | Selenium |
+|---|---|---|
+| 1 | `getByRole` | `id` ổn định |
+| 2 | `getByLabel` | `data-testid` · `data-test` · `data-qa` |
+| 3 | `getByPlaceholder` | `name` |
+| 4 | `getByTestId` | CSS Selector |
+| 5 | `getByText` | XPath tương đối |
+| 6 | CSS Selector | |
+| 7 | XPath tương đối | |
+
+`getByTestId` đứng trước `getByText` vì chữ đổi theo ngôn ngữ và nội dung. Team cam kết giữ `data-testid` thì được ưu tiên nó trước các hàm semantic, ghi lý do trong Page Object.
 
 ## 2. Quy Tắc Ổn Định (Stability Rules)
 
@@ -40,4 +54,3 @@ Trước khi đưa locator vào code, phải kiểm tra:
 Chi tiết locator cho từng framework xem tại:
 - Playwright: `.claude/rules/playwright_rules.md` (Section 3)
 - Selenium: `.claude/rules/selenium_rules.md` (Section 1)
-- Appium: `.claude/rules/appium_rules.md` (Section 1)

@@ -3,6 +3,8 @@ name: generate-automation-api
 description: Sinh automation API từ file test case API (docs/testcases/<module>/api/) — REST Assured / Playwright API / Pytest Requests / Supertest. Fixture 2 tài khoản cho BOLA/IDOR, dọn dữ liệu, attach request/response đã che, chạy và tự sửa đến khi PASS — không hạ assertion để né bug.
 ---
 
+> **Rule phải đọc trước:** `.claude/rules/automation_rules.md` · `.claude/rules/reporting_rules.md`. Các rule này chỉ tự nạp khi đã mở file khớp `paths`, nên workflow phải tự đọc.
+
 > **Skill nền tảng cần nạp trước:** `skills-qa-automation-engineer` · `skills-test-data-generator` · `skills-requirements-analyzer` — đọc `.claude/skills/<tên-skill>/SKILL.md` của từng skill trước khi bắt đầu.
 
 # Workflow: Sinh Automation API
@@ -14,7 +16,7 @@ description: Sinh automation API từ file test case API (docs/testcases/<module
 
 Workflow đọc **file test case API**, sinh project automation (client · DTO · fixture · test), chạy và tự sửa đến khi PASS ổn định.
 
-> Được gọi thẳng, hoặc qua bộ định tuyến `/generate-automation-from-testcases` khi file TC thuộc tầng `api/`. Web → `/generate-automation-web` · App mobile → `/generate-automation-mobile`.
+> Được gọi thẳng, hoặc qua bộ định tuyến `/generate-automation-from-testcases` khi file TC thuộc tầng `api/`. Web → `/generate-automation-web`.
 
 **Vị trí trong chuỗi:**
 
@@ -30,7 +32,7 @@ Workflow đọc **file test case API**, sinh project automation (client · DTO �
 - **KHÔNG đoán** schema/endpoint — lấy từ snapshot spec trong `_discovery/sources/`, resolve `$ref`
 - **Chỉ gọi API khi dòng `Gọi API` ở danh mục `docs/requirements/README.md` là ✅** và đã chốt môi trường
 - ⚠️ **Rule E3:** Khi test FAIL → tự đọc log → phân tích → sửa → chạy lại. KHÔNG hỏi user trong quá trình fix lỗi
-- **Artifact `task.md`** — PHẢI tạo để theo dõi tiến độ
+- **File `task.md`** — PHẢI tạo để theo dõi tiến độ
 
 ## 🚨 Quy tắc dữ liệu test (BẮT BUỘC — đọc trước request đầu tiên)
 
@@ -82,11 +84,12 @@ Theo skill `skills-framework-architect` (project mới) hoặc cấu trúc sẵn
 ### Bước 3: Sinh test
 
 1. **Mỗi TC → 1 test**; TC có Bảng biến thể → test tham số hoá, mỗi biến thể một bộ dữ liệu
-2. **Assertions bắt buộc:**
-   - ✅ HTTP Status Code (exact match) — theo **kỳ vọng của TC**
-   - ✅ Response body structure & JSON Schema validation
-   - ✅ Response time SLA (< 2 giây)
-   - ✅ Headers & Sensitive Data masking check
+2. **Assertions theo TC, không thêm ngoài TC:**
+   - ✅ HTTP Status Code (exact match) và nội dung response theo **kỳ vọng của TC**
+   - ✅ JSON Schema khi TC yêu cầu và snapshot spec có schema
+   - ✅ Thời gian phản hồi chỉ assert khi REQ hoặc TC có ngưỡng. Không có thì ghi vào report, không assert: tự đặt ngưỡng dễ gây fail giả
+   - ✅ Header, che dữ liệu nhạy cảm khi TC yêu cầu
+   - Thấy thiếu kiểm tra → đề xuất bổ sung TC, không tự thêm assertion
 3. **Best practices:**
    - Dynamic Auth Token (không hardcode) — base URL + credentials để ở `.env`, **không** commit
    - Parameterized tests
@@ -99,7 +102,7 @@ Theo skill `skills-framework-architect` (project mới) hoặc cấu trúc sẵn
 1. **Chạy test** bằng `Bash` (hoặc `PowerShell` trên Windows) — `npm test`, `mvn test`, `pytest`…
 2. **Test chạy lâu** → `run_in_background: true`, nhận thông báo khi xong. **KHÔNG** poll bằng `sleep`
 3. **Auto-Heal:** FAIL → tự đọc log, sửa code và chạy lại (tối đa 5 vòng) mà KHÔNG làm phiền user
-4. **⚠️ Chỉ sửa test, KHÔNG sửa kỳ vọng để né bug app.** Test FAIL vì hệ thống sai (như phát hiện `F-nn`) → giữ nguyên assertion, đánh dấu TC là **đang phơi bug**, đề xuất `/create-bug-report`. Hạ assertion cho xanh báo cáo là **cấm**
+4. **⚠️ Chỉ sửa test, KHÔNG sửa kỳ vọng để né bug app.** Test FAIL vì hệ thống sai (như phát hiện `F-nn`) → giữ nguyên assertion, đề xuất `/create-bug-report`; có bug đang mở thì gắn `@KnownBug:<BUG_ID>` + expected-fail chặt theo `automation_rules.md` mục 6.1. Hạ assertion cho xanh báo cáo là **cấm**
 5. **Verify stability** — TC mà hệ thống đúng phải PASS **2 lần liên tiếp**
 
 ### Bước 5: Dọn dữ liệu & bàn giao
@@ -107,14 +110,14 @@ Theo skill `skills-framework-architect` (project mới) hoặc cấu trúc sẵn
 1. **Dọn dữ liệu** sau lần chạy cuối — báo cáo rõ: tạo bao nhiêu bản ghi, dọn bao nhiêu, còn sót gì
 2. **Code cleanup:** không debug log, không commented code, không unused import, không hardcode token/URL
 3. **Báo cáo** cho user:
-   - **"PASS 100%" chỉ áp dụng cho TC mà hệ thống đúng** — tách 2 nhóm: PASS · FAIL **phơi bug** (kèm đề xuất bug report), cộng SKIP (kèm lý do)
+   - **"PASS 100%" chỉ áp dụng cho TC mà hệ thống đúng** — tách 2 nhóm: PASS · **Đang phơi bug** (`@KnownBug`, không tính PASS; chưa có bug thì kèm đề xuất bug report), cộng SKIP (kèm lý do)
    - Danh sách files đã tạo/sửa
    - TC chưa automate được và vì sao (VD phụ thuộc AMB 🔴 chưa chốt)
 
 ## Output
 
 - Source code automation hoàn chỉnh (client · DTO · fixture · test) + report trong `reports/`
-- **Artifact `task.md`** — tiến độ + kết quả từng TC
+- **File `task.md`** — tiến độ + kết quả từng TC
 - Báo cáo số bản ghi tạo / dọn
 
 ## Checklist trước khi báo hoàn thành

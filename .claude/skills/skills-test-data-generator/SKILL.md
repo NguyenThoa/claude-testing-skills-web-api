@@ -64,9 +64,11 @@ test_login_1712024100
 
 ### Email
 ```
-auto_<testName>_<timestamp>@test.com
+auto_<testName>_<timestamp>@yopmail.com
 ```
-Example: `auto_register_20260402@test.com`
+Example: `auto_register_1712049200@yopmail.com`
+
+> ⚠️ `@yopmail.com` là **hộp thư công khai**: mail được gửi thật và ai biết tên hộp thư đều đọc được. Chỉ dùng cho dữ liệu test, không gửi dữ liệu khách hàng, mật khẩu hay mã OTP của tài khoản thật. Hệ thống chặn email dùng một lần thì hỏi user domain thay thế.
 
 ### Username
 ```
@@ -80,11 +82,13 @@ Random 10-digit number starting with valid prefix
 ```
 Example: `0912345678`
 
+> Không chắc số sinh ra là số ảo. Không chạy luồng gửi SMS trên cổng thật nếu chưa có số test của đội dự án.
+
 ### Password
 ```
-Mix of uppercase, lowercase, digits, special chars
+Sinh ngẫu nhiên đủ ràng buộc của field, hoặc lấy từ `.env`
 ```
-Example: `Test@12345`
+Không dùng mật khẩu cố định dùng chung. Tài liệu chỉ ghi hình thái, VD `<12 ký tự: hoa, thường, số, ký tự đặc biệt>`
 
 ---
 
@@ -135,11 +139,11 @@ Provide data in structured format:
 ```json
 {
   "positive": [
-    { "email": "auto_tc01_20260402@test.com", "password": "Test@12345" }
+    { "email": "auto_tc01_1712049200@yopmail.com", "password": "<sinh ngẫu nhiên>" }
   ],
   "negative": [
-    { "email": "", "password": "Test@12345", "expectedError": "Email is required" },
-    { "email": "invalid-email", "password": "Test@12345", "expectedError": "Invalid email format" }
+    { "email": "", "password": "<sinh ngẫu nhiên>", "expectedError": "Email is required" },
+    { "email": "invalid-email", "password": "<sinh ngẫu nhiên>", "expectedError": "Invalid email format" }
   ],
   "boundary": [
     { "email": "a@b.co", "password": "12345678", "note": "Min length" }

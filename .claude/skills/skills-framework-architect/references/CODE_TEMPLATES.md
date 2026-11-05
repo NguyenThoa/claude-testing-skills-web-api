@@ -1,9 +1,9 @@
 # Code Templates — Base Classes
 
-> Code mẫu **chạy được ngay** cho các thành phần lõi của framework. Agent copy & điều chỉnh theo project, **KHÔNG** viết lại từ đầu.
+> Code mẫu cho các thành phần lõi của framework. Agent copy & điều chỉnh theo project, **KHÔNG** viết lại từ đầu. Sinh xong phải chạy build và ít nhất 1 test thật; mẫu không thay được bước này.
 >
 > Nguyên tắc chung áp dụng cho mọi template:
-> - Viewport `1920x1080` · headless đọc từ env, không hardcode
+> - Viewport theo chế độ: headed `1600×750`, headless `1920×1080` (`CLAUDE.md`) · headless đọc từ env, không hardcode
 > - Smart waits — **không** `Thread.sleep()` / `waitForTimeout()`
 > - Logger thay cho `System.out.println()` / `console.log()`
 > - Credentials đọc từ `.env`, không commit
@@ -56,11 +56,12 @@ export default defineConfig({
     ['html', { outputFolder: 'reports/html', open: 'never' }],
     ['list'],
     ['allure-playwright', { resultsDir: 'reports/allure-results' }],
+    // Đầu vào của /import-test-results-xray
+    ['junit', { outputFile: 'reports/junit.xml' }],
   ],
   use: {
     baseURL: env.baseURL,
     headless: env.headless,
-    viewport: { width: 1920, height: 1080 },
     // 'off' vì ảnh được attach thủ công ở afterEach cho CẢ pass lẫn fail — xem § 7.1
     screenshot: 'off',
     video: 'retain-on-failure',
@@ -68,7 +69,14 @@ export default defineConfig({
     actionTimeout: 15_000,
   },
   projects: [
-    { name: 'chromium', use: { ...devices['Desktop Chrome'] } },
+    {
+      name: 'chromium',
+      use: {
+        ...devices['Desktop Chrome'],
+        // Phải đặt SAU devices: preset có viewport riêng và đè cấu hình ở use cấp trên
+        viewport: env.headless ? { width: 1920, height: 1080 } : { width: 1600, height: 750 },
+      },
+    },
   ],
 });
 ```
@@ -142,7 +150,7 @@ export class TestData {
   }
 
   static email(testName: string): string {
-    return `auto_${testName}_${this.stamp()}@auto.test`;
+    return `auto_${testName}_${this.stamp()}@yopmail.com`;
   }
 
   static username(testName: string): string {
@@ -185,8 +193,9 @@ public class PlaywrightFactory {
         BROWSER.set(PLAYWRIGHT.get().chromium().launch(
                 new BrowserType.LaunchOptions().setHeadless(config.isHeadless())));
 
+        boolean headless = config.isHeadless();
         CONTEXT.set(BROWSER.get().newContext(new Browser.NewContextOptions()
-                .setViewportSize(1920, 1080)));
+                .setViewportSize(headless ? 1920 : 1600, headless ? 1080 : 750)));
 
         PAGE.set(CONTEXT.get().newPage());
         PAGE.get().navigate(config.getBaseUrl());
@@ -215,7 +224,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.util.Properties;
 
-/** Singleton đọc config.properties, cho phép override bằng system property. */
+/** Singleton đọc cấu hình: system property, rồi biến môi trường, rồi config.properties. */
 public class ConfigReader {
 
     private static ConfigReader instance;
@@ -240,15 +249,38 @@ public class ConfigReader {
         return instance;
     }
 
-    /** System property thắng file — tiện truyền -Dheadless=true trên CI. */
+    /** Thứ tự: -Dbase.url, rồi BASE_URL (secrets trên CI, .env đã nạp), rồi config.properties. */
     public String get(String key) {
-        return System.getProperty(key, properties.getProperty(key));
+        String system = System.getProperty(key);
+        if (system != null) {
+            return system;
+        }
+        String env = System.getenv(key.toUpperCase().replace('.', '_'));
+        return env != null ? env : properties.getProperty(key);
     }
 
-    public String getBaseUrl()  { return get("base.url"); }
+    private String required(String key) {
+        String value = get(key);
+        if (value == null || value.isBlank()) {
+            throw new IllegalStateException("Thiếu cấu hình bắt buộc: " + key);
+        }
+        return value;
+    }
+
+    public String getBaseUrl()  { return required("base.url"); }
+    public String getUsername() { return required("test.username"); }
+    public String getPassword() { return required("test.password"); }
     public boolean isHeadless() { return Boolean.parseBoolean(get("headless")); }
     public int getTimeout()     { return Integer.parseInt(get("timeout")); }
 }
+```
+
+### `src/main/resources/config.properties`
+
+```properties
+# Không ghi URL thật, tài khoản, mật khẩu vào file này. Truyền qua biến môi trường BASE_URL, TEST_USERNAME, TEST_PASSWORD
+headless=false
+timeout=30
 ```
 
 ### `src/main/java/com/project/pages/BasePage.java`
@@ -303,13 +335,17 @@ import org.testng.annotations.BeforeMethod;
 
 public abstract class BaseTest {
 
-    protected PlaywrightFactory factory;
-    protected Page page;
+    // parallel="methods" dùng CHUNG một instance test class cho mọi thread.
+    // Không giữ page làm field: lấy theo thread từ factory.
+    private final PlaywrightFactory factory = new PlaywrightFactory();
+
+    protected Page page() {
+        return PlaywrightFactory.getPage();
+    }
 
     @BeforeMethod(alwaysRun = true)
     public void setUp() {
-        factory = new PlaywrightFactory();
-        page = factory.initBrowser();
+        factory.initBrowser();
     }
 
     /** Đính ảnh trạng thái cuối cho MỌI test — cả PASS lẫn FAIL. Xem § 7.3. */
@@ -318,7 +354,7 @@ public abstract class BaseTest {
         String name = result.isSuccess()
                 ? "trang_thai_cuoi_cua_test"
                 : "trang_thai_khi_that_bai";
-        ScreenshotUtil.captureAndAttach(page, name);
+        ScreenshotUtil.captureAndAttach(page(), name);
         factory.closeBrowser();
     }
 }
@@ -372,15 +408,16 @@ public class DriverFactory {
         ConfigReader config = ConfigReader.getInstance();
 
         ChromeOptions options = new ChromeOptions();
-        if (config.isHeadless()) {
+        boolean headless = config.isHeadless();
+        if (headless) {
             options.addArguments("--headless=new");
         }
-        options.addArguments("--window-size=1920,1080");
         options.addArguments("--disable-gpu", "--no-sandbox");
 
         // Selenium 4.6+ tự quản lý driver binary — không cần WebDriverManager
         WebDriver driver = new ChromeDriver(options);
-        driver.manage().window().setSize(new Dimension(1920, 1080));
+        // Headed: cửa sổ 1614×885 cho viewport ≈ 1600×750 (CLAUDE.md). Headless: 1920×1080
+        driver.manage().window().setSize(headless ? new Dimension(1920, 1080) : new Dimension(1614, 885));
         driver.manage().timeouts().pageLoadTimeout(Duration.ofSeconds(config.getTimeout()));
 
         DRIVER.set(driver);
@@ -472,7 +509,7 @@ public final class TestDataGenerator {
     }
 
     public static String email(String testName) {
-        return String.format("auto_%s_%d@auto.test", testName, stamp());
+        return String.format("auto_%s_%d@yopmail.com", testName, stamp());
     }
 
     public static String username(String testName) {
@@ -510,105 +547,9 @@ public final class ScreenshotUtil {
 
 ---
 
-## 4. Appium + Java (Maven + TestNG)
+## 4. Selenium + Python (Pytest)
 
-### `src/main/java/com/project/drivers/AppiumDriverFactory.java`
-
-```java
-package com.project.drivers;
-
-import io.appium.java_client.AppiumDriver;
-import io.appium.java_client.android.AndroidDriver;
-import io.appium.java_client.ios.IOSDriver;
-import org.openqa.selenium.remote.DesiredCapabilities;
-
-import java.net.MalformedURLException;
-import java.net.URL;
-
-public class AppiumDriverFactory {
-
-    private static final ThreadLocal<AppiumDriver> DRIVER = new ThreadLocal<>();
-
-    public static AppiumDriver initDriver(String platform, String deviceKey) {
-        DesiredCapabilities caps = CapabilitiesManager.load(platform, deviceKey);
-        URL serverUrl = appiumServerUrl();
-
-        AppiumDriver driver = "android".equalsIgnoreCase(platform)
-                ? new AndroidDriver(serverUrl, caps)
-                : new IOSDriver(serverUrl, caps);
-
-        DRIVER.set(driver);
-        return driver;
-    }
-
-    private static URL appiumServerUrl() {
-        String url = System.getProperty("appium.server", "http://127.0.0.1:4723");
-        try {
-            return new URL(url);
-        } catch (MalformedURLException e) {
-            throw new IllegalStateException("Appium server URL không hợp lệ: " + url, e);
-        }
-    }
-
-    public static AppiumDriver getDriver() {
-        return DRIVER.get();
-    }
-
-    public static void quitDriver() {
-        if (DRIVER.get() != null) {
-            DRIVER.get().quit();
-            DRIVER.remove();
-        }
-    }
-}
-```
-
-### `src/main/java/com/project/screens/BaseScreen.java`
-
-```java
-package com.project.screens;
-
-import io.appium.java_client.AppiumBy;
-import io.appium.java_client.AppiumDriver;
-import org.openqa.selenium.By;
-import org.openqa.selenium.WebElement;
-import org.openqa.selenium.support.ui.ExpectedConditions;
-import org.openqa.selenium.support.ui.WebDriverWait;
-
-import java.time.Duration;
-
-public abstract class BaseScreen {
-
-    protected final AppiumDriver driver;
-    protected final WebDriverWait wait;
-
-    protected BaseScreen(AppiumDriver driver) {
-        this.driver = driver;
-        this.wait = new WebDriverWait(driver, Duration.ofSeconds(15));
-    }
-
-    protected WebElement waitForVisible(By locator) {
-        return wait.until(ExpectedConditions.visibilityOfElementLocated(locator));
-    }
-
-    protected void tap(By locator) {
-        wait.until(ExpectedConditions.elementToBeClickable(locator)).click();
-    }
-
-    protected void type(By locator, String value) {
-        WebElement element = waitForVisible(locator);
-        element.clear();
-        element.sendKeys(value);
-    }
-
-    /** Scroll tới element theo text (Android) — thay cho việc tap mù vào vùng off-screen. */
-    protected WebElement scrollToText(String text) {
-        return driver.findElement(AppiumBy.androidUIAutomator(
-                "new UiScrollable(new UiSelector().scrollable(true))"
-                        + ".scrollIntoView(new UiSelector().text(\"" + text + "\"))"));
-    }
-}
-```
+Chưa có mẫu code. Cấu trúc thư mục ở `PROJECT_STRUCTURE.md`; nói rõ với user rằng base class do agent tự viết rồi mới scaffold.
 
 ---
 
@@ -618,6 +559,7 @@ public abstract class BaseScreen {
 
 ```python
 import os
+from types import SimpleNamespace
 
 import pytest
 from dotenv import load_dotenv
@@ -632,19 +574,30 @@ def playwright_instance() -> Playwright:
         yield p
 
 
+# Debug có giao diện: HEADLESS=false. Cờ --headed của pytest-playwright không tác dụng lên fixture tự viết này
+HEADLESS = os.getenv("HEADLESS", "true").lower() != "false"
+
+
+@pytest.fixture(scope="session")
+def config() -> SimpleNamespace:
+    return SimpleNamespace(
+        username=os.environ["TEST_USERNAME"],
+        password=os.environ["TEST_PASSWORD"],
+    )
+
+
 @pytest.fixture(scope="session")
 def browser(playwright_instance: Playwright) -> Browser:
-    headless = os.getenv("HEADLESS", "true").lower() != "false"
-    browser = playwright_instance.chromium.launch(headless=headless)
+    browser = playwright_instance.chromium.launch(headless=HEADLESS)
     yield browser
     browser.close()
 
 
 @pytest.fixture
 def page(browser: Browser) -> Page:
-    context = browser.new_context(viewport={"width": 1920, "height": 1080})
+    viewport = {"width": 1920, "height": 1080} if HEADLESS else {"width": 1600, "height": 750}
+    context = browser.new_context(base_url=os.environ["BASE_URL"], viewport=viewport)
     page = context.new_page()
-    page.goto(os.environ["BASE_URL"])
     yield page
     context.close()
 
@@ -709,7 +662,7 @@ def _stamp() -> int:
 
 
 def email(test_name: str) -> str:
-    return f"auto_{test_name}_{_stamp()}@auto.test"
+    return f"auto_{test_name}_{_stamp()}@yopmail.com"
 
 
 def username(test_name: str) -> str:
@@ -809,7 +762,7 @@ jobs:
 
       - name: Sinh Allure report
         if: always()
-        # allure-maven tự tải CLI về project — CI không cài Allure riêng
+        # CLI đã giải nén vào .allure/ ở phase validate (§ 7.5B) — CI không cài Allure riêng
         run: mvn allure:report
 
       - uses: actions/upload-artifact@v4
@@ -831,7 +784,7 @@ jobs:
 **`src/tests/auth/login.spec.ts`** — test mẫu đủ metadata + step + ảnh cuối
 
 ```typescript
-import { allure } from 'allure-playwright';
+import * as allure from 'allure-js-commons';
 import { test, expect } from '../../fixtures/base.fixture';
 import { env } from '../../utils/env.config';
 
@@ -847,7 +800,8 @@ test.describe('Đăng nhập', () => {
     });
   });
 
-  test('Đăng nhập thành công với tài khoản admin hợp lệ', async ({ loginPage, dashboardPage }) => {
+  // Tên test chứa TC ID để /import-test-results-xray tra được mã Test trên Xray
+  test('CRM_LOGIN_TC_001 - Đăng nhập thành công với tài khoản admin hợp lệ', async ({ loginPage, dashboardPage }) => {
     await allure.description(
       'Kiểm tra người dùng đăng nhập bằng email và mật khẩu hợp lệ '
       + 'thì được chuyển vào Dashboard và thấy menu điều hướng.',
@@ -876,6 +830,7 @@ test.describe('Đăng nhập', () => {
 
 ```typescript
 import { test } from '@playwright/test';
+import { BasePage } from './base.page';
 
 export class LoginPage extends BasePage {
   readonly emailInput = this.page.getByLabel('Email');
@@ -903,11 +858,14 @@ export class LoginPage extends BasePage {
 addopts = """
     --alluredir=reports/allure-results
     --allure-no-capture
+    --junitxml=reports/junit.xml
     --html=reports/html/index.html
     --self-contained-html
     -n 5
     -v
 """
+# xunit1 mới ghi property testId của từng test vào JUnit XML
+junit_family = "xunit1"
 testpaths = ["src/tests"]
 log_file = "reports/logs/pytest.log"
 log_file_level = "INFO"
@@ -962,7 +920,9 @@ class TestLogin:
     @allure.severity(allure.severity_level.BLOCKER)
     @allure.tag("smoke", "login")
     @allure.label("testId", "CRM_LOGIN_TC_001")
-    def test_login_with_valid_credentials(self, page, config):
+    def test_login_with_valid_credentials(self, page, config, record_property):
+        # Để /import-test-results-xray tra được mã Test trên Xray
+        record_property("testId", "CRM_LOGIN_TC_001")
         login_page = LoginPage(page)
         dashboard_page = DashboardPage(page)
 
@@ -1003,18 +963,43 @@ class LoginPage(BasePage):
         self.submit()
 ```
 
-### 7.3 TestNG + Java (Selenium / Playwright / Appium)
+### 7.3 TestNG + Java (Selenium / Playwright)
 
-**`BaseTest.java`** — đính ảnh cuối **mọi** test
+**`BaseTest.java`** (bản Selenium) — đính ảnh cuối **mọi** test. Bản Playwright Java ở § 2
 
 ```java
-@AfterMethod(alwaysRun = true)
-public void tearDown(ITestResult result) {
-    String name = result.isSuccess()
-            ? "trang_thai_cuoi_cua_test"
-            : "trang_thai_khi_that_bai";
-    ScreenshotUtil.captureAndAttach(DriverFactory.getDriver(), name);
-    DriverFactory.quitDriver();
+package com.project.base;
+
+import com.project.config.ConfigReader;
+import com.project.drivers.DriverFactory;
+import com.project.utils.ScreenshotUtil;
+import org.openqa.selenium.WebDriver;
+import org.testng.ITestResult;
+import org.testng.annotations.AfterMethod;
+import org.testng.annotations.BeforeMethod;
+
+public abstract class BaseTest {
+
+    // Chỉ đọc nên dùng chung giữa các thread được. Driver thì lấy theo thread, không giữ làm field
+    protected final ConfigReader config = ConfigReader.getInstance();
+
+    protected WebDriver driver() {
+        return DriverFactory.getDriver();
+    }
+
+    @BeforeMethod(alwaysRun = true)
+    public void setUp() {
+        DriverFactory.initDriver();
+    }
+
+    @AfterMethod(alwaysRun = true)
+    public void tearDown(ITestResult result) {
+        String name = result.isSuccess()
+                ? "trang_thai_cuoi_cua_test"
+                : "trang_thai_khi_that_bai";
+        ScreenshotUtil.captureAndAttach(driver(), name);
+        DriverFactory.quitDriver();
+    }
 }
 ```
 
@@ -1037,11 +1022,12 @@ public class LoginTest extends BaseTest {
     @Severity(SeverityLevel.BLOCKER)
     @Description("Kiểm tra người dùng đăng nhập bằng email và mật khẩu hợp lệ "
             + "thì được chuyển vào Dashboard và thấy menu điều hướng.")
+    // Surefire ghi tên method vào JUnit XML. Cần đẩy lên Xray thì đặt TC ID trong tên method, hoặc dùng định dạng xray
     public void testLoginWithValidCredentials() {
         Allure.label("testId", "CRM_LOGIN_TC_001");
 
-        LoginPage loginPage = new LoginPage(driver);
-        DashboardPage dashboardPage = new DashboardPage(driver);
+        LoginPage loginPage = new LoginPage(driver());
+        DashboardPage dashboardPage = new DashboardPage(driver());
 
         Allure.step("Arrange: Mở trang Login", () -> loginPage.open());
 
@@ -1059,6 +1045,19 @@ public class LoginTest extends BaseTest {
 
 ```java
 public class LoginPage extends BasePage {
+
+    // Thay bằng locator đã inspect trên DOM thật
+    private static final By EMAIL_INPUT = By.id("email");
+    private static final By PASSWORD_INPUT = By.id("password");
+    private static final By SUBMIT_BUTTON = By.cssSelector("button[type='submit']");
+
+    public LoginPage(WebDriver driver) {
+        super(driver);
+    }
+
+    public void open() {
+        driver.get(ConfigReader.getInstance().getBaseUrl() + "/login");
+    }
 
     @Step("Nhập email: {email}")
     public void enterEmail(String email) {
@@ -1166,7 +1165,9 @@ mvn allure:serve      # Java + Maven
   "devDependencies": {
     "@playwright/test": "^1.56.0",
     "allure-playwright": "^3.10.2",
-    "allure": "^3.15.0"
+    "allure-js-commons": "^3.10.2",
+    "allure": "^3.15.0",
+    "dotenv": "^16.4.5"
   }
 }
 ```
@@ -1292,7 +1293,7 @@ chmod +x .allure/allure-2.45.0/bin/allure
 
 **Ghi chú bắt buộc**
 
-- `resultsDirectory` phải trùng `allure.results.directory` đã khai ở surefire (§ 7.3) — lệch là report rỗng
+- `resultsDirectory` phải trùng `allure.results.directory` đã khai ở surefire (§ 7.4) — lệch là report rỗng
 - `.gitignore` thêm `.allure/` — 30 MB, không commit
 - **Máy không có mạng:** bộ CLI vẫn về được nếu `~/.m2` đã có artifact (copy `~/.m2/repository/io/qameta/allure/allure-commandline/` sang máy đó), hoặc chép nguyên thư mục `.allure/` sang. Cần cam kết chạy được offline tuyệt đối thì **bỏ `.allure/` khỏi `.gitignore` và commit thẳng vào repo** — đổi 30 MB lấy việc clone về là chạy được ngay
 - Thêm **Maven Wrapper** để người khác khỏi cài Maven: `mvn -N wrapper:wrapper` → commit `mvnw`, `mvnw.cmd`, `.mvn/`. Sau đó dùng `./mvnw allure:serve`
@@ -1419,7 +1420,6 @@ node_modules/
 | Playwright TS | `playwright.config.ts` ← `.env` | `workers: 5` | `WORKERS=2 npx playwright test` |
 | Pytest | `pyproject.toml` → `addopts` | `-n 5` | `pytest -n 2` (cờ dòng lệnh thắng) |
 | TestNG | `testng.xml` | `thread-count="5"` | Sửa `thread-count` |
-| Appium | `testng.xml` | **= số device thật** | Thêm/bớt khối `<test>` |
 
 ### 8.1 Playwright + TypeScript
 
@@ -1498,34 +1498,7 @@ public static void quitDriver() {
 - `data-provider-thread-count` điều khiển riêng luồng của `@DataProvider(parallel = true)`
 - Muốn ghi đè số luồng từ dòng lệnh (`-Dparallel`, `-DthreadCount` của surefire): **kiểm chứng trên project thật trước**, tuỳ tổ hợp phiên bản surefire/TestNG mà cấu hình trong `testng.xml` có thể thắng — đừng ghi vào README như sự thật khi chưa thử
 
-### 8.4 Appium — song song = nhiều device, không phải nhiều thread
-
-```xml
-<suite name="Mobile Suite" parallel="tests" thread-count="2">
-  <test name="Pixel_7">
-    <parameter name="deviceName"  value="Pixel_7"/>
-    <parameter name="udid"        value="emulator-5554"/>
-    <parameter name="systemPort"  value="8201"/>
-    <classes><class name="com.project.tests.LoginMobileTest"/></classes>
-  </test>
-  <test name="Pixel_8">
-    <parameter name="deviceName"  value="Pixel_8"/>
-    <parameter name="udid"        value="emulator-5556"/>
-    <parameter name="systemPort"  value="8202"/>
-    <classes><class name="com.project.tests.LoginMobileTest"/></classes>
-  </test>
-</suite>
-```
-
-🚨 **Không thể chạy 5 luồng trên 1 emulator.** `thread-count` = **số device đang chạy thật**. Mỗi device phải có:
-
-| Capability | Nền tảng | Vì sao |
-|---|---|---|
-| `udid` | cả hai | Chỉ đích danh device |
-| `systemPort` | Android | Port của UiAutomator2 — trùng là 2 phiên giẫm nhau |
-| `wdaLocalPort` | iOS | Port của WebDriverAgent — cùng lý do |
-
-### 8.5 Điều kiện để parallel không đẻ ra flaky
+### 8.4 Điều kiện để parallel không đẻ ra flaky
 
 | Yêu cầu | Vi phạm điển hình | Hậu quả |
 |---|---|---|
@@ -1537,205 +1510,6 @@ public static void quitDriver() {
 | Cleanup theo phạm vi test | Xoá sạch bảng ở teardown | Xoá mất data của luồng đang chạy |
 
 > 🚨 **Test đỏ khi bật parallel = test đang sai, không phải parallel sai.** Sửa test data / khử shared state, **KHÔNG** hạ `WORKERS=1` để giấu. Hạ số luồng chỉ hợp lệ khi giới hạn nằm ở **app** (không chịu nổi nhiều phiên) hoặc **hạ tầng** (runner 2 vCPU) — và phải ghi lý do vào README.
-
----
-
-## 9. Mobile (Appium Java) — Native Android · Native iOS · Flutter
-
-> Quy tắc đầy đủ: [`.claude/rules/appium_rules.md`](../../../rules/appium_rules.md) · Recon & thu locator: [`skills-mobile-debug-agent`](../../skills-mobile-debug-agent/SKILL.md)
-
-### 9.1 Capabilities theo loại app — `capabilities/devices.json`
-
-```json
-{
-  "android_native": {
-    "platformName": "Android",
-    "appium:automationName": "UiAutomator2",
-    "appium:deviceName": "Pixel_7",
-    "appium:udid": "emulator-5554",
-    "appium:systemPort": 8201,
-    "appium:appPackage": "com.application.xyz",
-    "appium:appActivity": "com.application.xyz.MainActivity",
-    "appium:autoGrantPermissions": true,
-    "appium:newCommandTimeout": 120
-  },
-  "ios_native": {
-    "platformName": "iOS",
-    "appium:automationName": "XCUITest",
-    "appium:deviceName": "iPhone 15",
-    "appium:platformVersion": "17.5",
-    "appium:udid": "auto",
-    "appium:wdaLocalPort": 8101,
-    "appium:bundleId": "com.application.xyz",
-    "appium:autoAcceptAlerts": true,
-    "appium:newCommandTimeout": 120
-  },
-  "flutter_android": {
-    "_comment": "Đường A — semantics + UiAutomator2. Chạy được cả bản RELEASE",
-    "platformName": "Android",
-    "appium:automationName": "UiAutomator2",
-    "appium:deviceName": "Pixel_7",
-    "appium:systemPort": 8203,
-    "appium:appPackage": "com.application.flutter",
-    "appium:appActivity": ".MainActivity",
-    "appium:autoGrantPermissions": true
-  },
-  "flutter_ios": {
-    "_comment": "Đường A — semantics + XCUITest",
-    "platformName": "iOS",
-    "appium:automationName": "XCUITest",
-    "appium:deviceName": "iPhone 15",
-    "appium:wdaLocalPort": 8103,
-    "appium:bundleId": "com.application.flutter",
-    "appium:autoAcceptAlerts": true
-  }
-}
-```
-
-> **Real device iOS** thêm: `appium:xcodeOrgId`, `appium:xcodeSigningId`, `appium:updatedWDABundleId`. Chưa ký WDA thì phiên **không mở được** — lỗi này không liên quan gì tới locator.
-
-### 9.2 Screen Object — locator tách theo nền tảng
-
-```java
-package com.project.screens;
-
-import io.appium.java_client.AppiumBy;
-import io.appium.java_client.AppiumDriver;
-import io.qameta.allure.Step;
-import org.openqa.selenium.By;
-
-public class LoginScreen extends BaseScreen {
-
-    // Locator khai theo nền tảng NGAY TRONG Screen class.
-    // KHÔNG rải if (isAndroid) khắp test class.
-    private final By emailInput   = byPlatform(
-            AppiumBy.accessibilityId("email_input"),
-            AppiumBy.accessibilityId("email_input"));
-
-    private final By passwordInput = byPlatform(
-            AppiumBy.accessibilityId("password_input"),
-            AppiumBy.accessibilityId("password_input"));
-
-    private final By loginButton  = byPlatform(
-            AppiumBy.id("com.application.xyz:id/btn_login"),
-            AppiumBy.iOSNsPredicateString(
-                    "type == 'XCUIElementTypeButton' AND name == 'btn_login'"));
-
-    public LoginScreen(AppiumDriver driver) {
-        super(driver);
-    }
-
-    @Step("Đăng nhập bằng tài khoản {email}")
-    public HomeScreen login(String email, String password) {
-        type(emailInput, email);
-        type(passwordInput, password);
-        tap(loginButton);
-        return new HomeScreen(driver);
-    }
-}
-```
-
-**`byPlatform` trong `BaseScreen`** — một chỗ duy nhất phân nhánh nền tảng:
-
-```java
-protected By byPlatform(By android, By ios) {
-    return isAndroid() ? android : ios;
-}
-
-protected boolean isAndroid() {
-    return "android".equalsIgnoreCase(
-            String.valueOf(driver.getCapabilities().getCapability("platformName")));
-}
-```
-
-### 9.3 Flutter — Đường A (semantics), dùng cho stack Java
-
-Dev bọc widget:
-
-```dart
-Semantics(
-  label: 'login_button',      // → content-desc (Android) · accessibility label (iOS)
-  child: ElevatedButton(onPressed: _login, child: const Text('Đăng nhập')),
-)
-```
-
-QA lấy element — **một locator dùng chung cả 2 nền tảng**:
-
-```java
-private final By loginButton = AppiumBy.accessibilityId("login_button");
-```
-
-🚨 **`Key('login_button')` KHÔNG ra `content-desc`.** Chỉ flutter driver (Đường B) thấy `Key`. Dev báo "đã thêm Key" = **chưa dùng được** với Đường A.
-
-**Cuộn trong danh sách Flutter** — item chưa cuộn tới thì chưa render, chưa tồn tại trong semantics tree:
-
-```java
-@Step("Cuộn tới mục {label}")
-protected void scrollToInFlutterList(String label) {
-    By target = AppiumBy.accessibilityId(label);
-    for (int i = 0; i < 10 && driver.findElements(target).isEmpty(); i++) {
-        swipeUp();          // cuộn từng bước rồi TÌM LẠI
-    }
-    waitForVisible(target); // không thấy sau 10 lần cuộn → fail thật, không tăng timeout
-}
-```
-
-### 9.4 Gesture helper — đúng theo nền tảng
-
-```java
-@Step("Cuộn tới element")
-protected void scrollToElement(String textOrLabel) {
-    if (isAndroid()) {
-        driver.findElement(AppiumBy.androidUIAutomator(
-                "new UiScrollable(new UiSelector().scrollable(true))"
-              + ".scrollIntoView(new UiSelector().description(\"" + textOrLabel + "\"))"));
-    } else {
-        driver.executeScript("mobile: scroll", Map.of(
-                "direction", "down",
-                "predicateString", "name == '" + textOrLabel + "'"));
-    }
-}
-
-@Step("Vuốt lên")
-protected void swipeUp() {
-    Dimension size = driver.manage().window().getSize();
-    int startY = (int) (size.height * 0.7);
-    int endY   = (int) (size.height * 0.3);
-    int x      = size.width / 2;
-
-    PointerInput finger = new PointerInput(PointerInput.Kind.TOUCH, "finger");
-    Sequence swipe = new Sequence(finger, 1)
-            .addAction(finger.createPointerMove(Duration.ZERO,
-                    PointerInput.Origin.viewport(), x, startY))
-            .addAction(finger.createPointerDown(PointerInput.MouseButton.LEFT.asArg()))
-            .addAction(finger.createPointerMove(Duration.ofMillis(600),
-                    PointerInput.Origin.viewport(), x, endY))
-            .addAction(finger.createPointerUp(PointerInput.MouseButton.LEFT.asArg()));
-
-    driver.perform(List.of(swipe));
-}
-```
-
-> Toạ độ ở đây tính **theo tỉ lệ màn hình** — chấp nhận được cho gesture. Nhưng **tap element bằng toạ độ cứng thì cấm** (xem `appium_rules.md` mục 5).
-
-### 9.5 Hybrid — đổi context
-
-```java
-@Step("Thao tác trong WebView")
-protected void inWebView(Runnable actions) {
-    String original = driver.getContext();
-    String webview = driver.getContextHandles().stream()
-            .filter(c -> c.startsWith("WEBVIEW"))
-            .findFirst()
-            .orElseThrow(() -> new IllegalStateException("Không tìm thấy WEBVIEW context"));
-    driver.context(webview);
-    try {
-        actions.run();
-    } finally {
-        driver.context(original);   // BẮT BUỘC — quên là mọi locator native sau đó fail
-    }
-}
-```
 
 ---
 
@@ -1751,5 +1525,4 @@ protected void inWebView(Runnable actions) {
 - [ ] README có mục "Mở report", **không** hướng dẫn cài Allure lên máy — có ghi rõ đường cho máy chỉ có Node và cho người chỉ xem (single-file HTML)
 - [ ] **Parallel bật sẵn 5 luồng** (§ 8) — chạy thử thấy nhiều worker/thread trong log
 - [ ] Số luồng khai **đúng 1 chỗ**; driver theo `ThreadLocal`, không có static mutable dùng chung
-- [ ] Appium: `thread-count` = số device thật, mỗi device có `systemPort`/`wdaLocalPort` riêng
 - [ ] `.github/workflows/` có workflow chạy được — headless, `WORKERS` khai ở cấp workflow, upload `reports/` với `if: always()`

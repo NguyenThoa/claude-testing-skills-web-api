@@ -31,7 +31,7 @@ Số liệu do **`scripts/quality-insights/qi.py`** tính — đọc thẳng `do
 | `skills-test-report-analyzer` | **Một** lần chạy (± so lần trước của cùng nguồn) | Vì sao lần chạy này fail |
 | `skills-test-progress-reporter` | **Một kỳ** trong đợt | Có kịp tiến độ không |
 | `skills-test-summary-reporter` | **Cả đợt**, tại mốc | Có release được không (go/no-go) |
-| `skills-rbt-manual-testing` | **Một module**, lúc thiết kế TC | Rủi ro *thiết kế* → độ sâu TC |
+| `skills-manual-testcase-v3` | **Một module**, lúc thiết kế TC | Rủi ro *thiết kế* → độ sâu TC |
 | **Skill này** | **Cắt ngang** mọi module × nền tảng × thời gian | Lỗi lặp ở đâu · vùng nào nóng · chạy gì trước |
 
 > ⛔ Skill này **không** khuyến nghị go/no-go — đó là việc của `/generate-test-summary-report`. Báo cáo rủi ro release là **đầu vào** cho báo cáo đó, không thay thế.
@@ -47,7 +47,7 @@ Số liệu do **`scripts/quality-insights/qi.py`** tính — đọc thẳng `do
 | 3 | **Tôn trọng cỡ mẫu.** Dưới 5 lỗi thật hoặc dưới 3 mốc thời gian → gọi là *quan sát*, **không** gọi là *xu hướng*, không ngoại suy | 5 bug không vẽ ra được đường xu hướng; nói "lỗi đang giảm" từ 3 điểm là bịa |
 | 4 | **Điểm số minh bạch.** Mỗi điểm rủi ro / điểm chọn TC hiện đủ thành phần (`+40 trỏ REQ đổi · +15 Risk High …`). Thang và trọng số ở [`references/scoring.md`](references/scoring.md) | Người đọc phải cãi được với con số. Điểm hộp đen thì không ai sửa được khi nó sai |
 | 5 | **Không tự sửa file nguồn.** Không đổi trạng thái bug, không sửa TC, không ghi nhóm nguyên nhân ngược vào file bug | Báo cáo này là **ảnh chụp phân tích**. Việc cần làm trên nguồn → ghi ở mục *Đề xuất hành động* kèm workflow, user tự gọi |
-| 6 | **Nền tảng tách riêng.** Đơn vị phân tích là `module × nền tảng` (`web` · `mobile` · `api`), hệ thống thứ hai (`_<hệ-thống>/`) ghi rõ namespace | Lỗi Android không làm web rủi ro hơn; gộp lại là che mất lỗi đặc thù nền tảng |
+| 6 | **Nền tảng tách riêng.** Đơn vị phân tích là `module × nền tảng` (`web` · `api`), hệ thống thứ hai (`_<hệ-thống>/`) ghi rõ namespace | Lỗi API không làm web rủi ro hơn; gộp lại là che mất lỗi đặc thù nền tảng |
 | 7 | **FAIL không phải lúc nào cũng là lỗi app.** TC fail chưa có bug → đọc mục *Chi tiết TC FAIL* của execution report, phân loại *lỗi app* / *TC sai* / *môi trường* trước khi gọi là "lỗi rò rỉ" | Đếm TC viết sai thành lỗi sản phẩm là thổi phồng rủi ro và đổ oan cho dev |
 
 ---
@@ -65,7 +65,7 @@ python scripts/quality-insights/qi.py select  --ticket <ID> | --req REQ-…,REQ-
 |---|---|
 | `docs/bugs/**/BUG_*.md` | Severity · trạng thái (file bug, rơi về danh mục) · `Test case liên quan` · `REQ ID liên quan` / `Requirement` (mã **đầu ô** là REQ chính) · `Ngày phát hiện` · bảng `Lịch sử retest` · dòng `Nghi ngờ root cause` |
 | `docs/executions/**/run_*/execution_report.md` | Bảng có cột `TC ID` + `Kết quả` · `Loại nguồn` · `Bắt đầu → Kết thúc` (thời lượng → phút/TC) |
-| `docs/testcases/**/<web\|mobile\|api>/**/*.md` | Bảng TC: `REQ ID` · `Risk Level` · `Priority` · `Tags` (`@Smoke` · `@CriticalPath` · `@Deprecated` · `@PersonalOnly` · `@KnownBug`) |
+| `docs/testcases/**/<web\|api>/**/*.md` | Bảng TC: `REQ ID` · `Risk Level` · `Priority` · `Tags` (`@Smoke` · `@CriticalPath` · `@Deprecated` · `@PersonalOnly` · `@KnownBug`) |
 | `docs/requirements/**/impact/impact_<TICKET>.md` | Mục `## Tóm tắt`: dòng 🟢 Thêm · 🟡 Sửa · 🔴 Bỏ |
 
 **Bắt buộc soát parser trước khi tin số:** chạy `collect`, so số bug / run / TC với danh mục (`docs/bugs/README.md`, `docs/testcases/README.md`). Lệch → tìm file bị bỏ sót (định dạng cũ, cột đổi tên) và ghi vào mục *Giới hạn dữ liệu* của báo cáo; **không** lấp số bằng tay.
@@ -155,7 +155,7 @@ TC trỏ REQ đổi nhưng **bug còn mở, dev chưa sửa, lần trước FAIL
 
 ### 3.2 Điểm
 
-`+40` trỏ REQ đổi (`+10` nếu chỉ cùng module) · Risk Level `Critical 20 / High 15 / Medium 8 / Low 3` · Priority `Critical 15 / High 10 / Medium 5 / Low 2` · `+10` `@Smoke` · `+10` `@CriticalPath` · `+10` chưa chạy lần nào · `+20` mới fail · `+10` lật PASS↔FAIL · `+8` lần gần nhất BLOCKED · `+25` bug đã fix chờ retest · `−15` bug mở chưa fix mà lần trước FAIL.
+`+40` trỏ REQ đổi (`+10` nếu chỉ cùng module) · Risk Level `Critical 20 / High 15 / Medium 8 / Low 3` · Priority `P1` (`Critical`) `15` · `P2` (`High`, `Medium`) `5` · `P3` (`Low`) `2` · `+10` `@Smoke` · `+10` `@CriticalPath` · `+10` chưa chạy lần nào · `+20` mới fail · `+10` lật PASS↔FAIL · `+8` lần gần nhất BLOCKED · `+25` bug đã fix chờ retest · `−15` bug mở chưa fix mà lần trước FAIL.
 
 Thời lượng/TC lấy **trung bình phút/TC** các lần chạy trước của cùng module × nền tảng; chưa có lần chạy → 4 phút/TC (ghi rõ là ước tính).
 
@@ -212,7 +212,7 @@ Thang điểm: `.claude/skills/skills-quality-insights/references/scoring.md` ·
 | Tự đổi trạng thái bug, sửa TC, thêm cột vào file bug | Ghi đề xuất + workflow, user tự chạy |
 | Cắt TC nhóm *Bắt buộc* cho vừa quỹ thời gian | Báo vượt quỹ, xin thêm thời gian |
 | Khuyến nghị go/no-go | Đưa bảng rủi ro sang `/generate-test-summary-report` |
-| Gộp web + mobile của một module làm một đơn vị | Tách `module × nền tảng` |
+| Gộp web + API của một module làm một đơn vị | Tách `module × nền tảng` |
 | Dữ liệu khách hàng / credentials trong báo cáo | Chỉ mã bug, TC, REQ; trích dẫn ngắn đã che |
 
 ---
@@ -233,6 +233,6 @@ Thang điểm: `.claude/skills/skills-quality-insights/references/scoring.md` ·
 ## Rules References
 
 - [`.claude/rules/automation_rules.md`](../../rules/automation_rules.md) — test data, độc lập test (khi chọn TC automation)
-- [`skills-rbt-manual-testing`](../skills-rbt-manual-testing/SKILL.md) — `Risk Level`, ý nghĩa `⏭️ Cố ý bỏ`
+- [`skills-manual-testcase-v3`](../skills-manual-testcase-v3/SKILL.md) — `Risk Level`, ý nghĩa `⏭️ Cố ý bỏ`
 - [`skills-test-report-analyzer`](../skills-test-report-analyzer/SKILL.md) — phân loại failure của một lần chạy
 - [`skills-test-summary-reporter`](../skills-test-summary-reporter/SKILL.md) — nơi dùng bảng rủi ro để kết luận go/no-go

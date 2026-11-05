@@ -1,6 +1,18 @@
+---
+paths:
+  - "**/*.spec.ts"
+  - "**/*.spec.js"
+  - "**/*.test.ts"
+  - "**/*.java"
+  - "**/test_*.py"
+  - "**/pages/**"
+  - "**/playwright.config.*"
+  - "**/pom.xml"
+---
+
 # Quy Tắc Chung cho QA Automation
 
-> Áp dụng cho mọi tác vụ automation testing, bất kể framework (Playwright, Selenium, Appium).
+> Áp dụng cho mọi tác vụ automation testing, bất kể framework (Playwright, Selenium).
 
 ## 1. Kiến Trúc & Framework
 
@@ -18,7 +30,7 @@
 - Dữ liệu phải **traceable** — nhìn vào DB biết ngay test nào tạo ra:
   ```
   Format: [prefix]_[testName]_[timestamp]_[random]
-  Ví dụ:  auto_createCustomer_20260402_A3F2@test.com
+  Ví dụ:  auto_createCustomer_20260402_A3F2@yopmail.com
   ```
 - Hỗ trợ chạy parallel: mỗi test method có data riêng biệt, không conflict.
 - **Parallel là mặc định, không phải tuỳ chọn** — framework sinh ra luôn bật sẵn (mặc định 5 luồng). Test đỏ khi chạy song song là **test sai**, phải sửa test data / khử shared state, KHÔNG hạ số luồng để giấu. Chi tiết: `skills-framework-architect/references/CODE_TEMPLATES.md` § 8.
@@ -73,6 +85,37 @@
   // Playwright
   await expect(page.getByText('Đăng nhập thành công')).toBeVisible();
   ```
+
+### 6.1. Test đang phơi bug (`@KnownBug`)
+
+Test đỏ vì app sai so với TC thì không hạ assertion, không xoá, không skip.
+
+| Trạng thái | Điều kiện | Xử lý |
+|---|---|---|
+| Đỏ chưa có bug | Chưa rõ nguyên nhân, hoặc chưa có bug report | **Cấm commit.** Phân tích, sửa test hoặc mở bug |
+| `@KnownBug:<BUG_ID>` | Có bug đang mở, TC đúng theo REQ | Giữ nguyên assertion, đánh dấu expected-fail chặt, được commit |
+| Bug đã sửa | Test bỗng PASS | Pipeline báo đỏ để buộc gỡ tag và expected-fail |
+
+```typescript
+// Playwright
+test('CRM_CUST_TC_018 - ...', async ({ page }) => {
+  test.fail(true, '<BUG_ID>');
+  // assertion giữ nguyên theo TC
+});
+```
+```python
+# pytest
+@pytest.mark.xfail(strict=True, raises=AssertionError, reason="<BUG_ID>")
+```
+```java
+// TestNG
+@Test(expectedExceptions = AssertionError.class, description = "@KnownBug:<BUG_ID>")
+```
+
+- **Không dùng `skip`, `fixme`, hay `xfail` không `strict`** — bug được sửa mà không ai biết
+- Sau khi gắn, mở report kiểm test fail **đúng assertion phơi bug**. `test.fail()` nhận mọi lỗi, kể cả locator gãy
+- Báo cáo tách nhóm **Đang phơi bug**: không tính PASS, bug vẫn đếm vào tiêu chí exit
+- Runner có thể ghi các test này là pass hoặc skip. Trước khi đẩy kết quả lên Xray phải chuyển chúng thành FAIL
 
 ## 7. Report
 

@@ -3,13 +3,13 @@ name: generate-checklist-test
 description: Sinh checklist test ngắn để tick tay (CHECKLIST mode) — smoke / post-hotfix / regression module / release-readiness. Không sinh TC chi tiết có steps.
 ---
 
-> **Skill nền tảng cần nạp trước:** `skills-rbt-manual-testing` — đọc `.claude/skills/<tên-skill>/SKILL.md` của từng skill trước khi bắt đầu.
+> **Skill nền tảng cần nạp trước:** `skills-manual-testcase-v3` — đọc `.claude/skills/<tên-skill>/SKILL.md` của từng skill trước khi bắt đầu.
 
-> **BẮT BUỘC (MANDATORY SKILL):** Bạn PHẢI nạp và đọc kỹ nội dung của skill **`skills-rbt-manual-testing`** (tại `.claude/skills/skills-rbt-manual-testing/SKILL.md`) trước khi bắt đầu tác vụ này. Sử dụng **Mode CHECKLIST** của skill.
+> **BẮT BUỘC (MANDATORY SKILL):** Bạn PHẢI nạp và đọc kỹ nội dung của skill **`skills-manual-testcase-v3`** (tại `.claude/skills/skills-manual-testcase-v3/SKILL.md`) trước khi bắt đầu tác vụ này. Sử dụng **Mode CHECKLIST** của skill.
 
 # Workflow: Sinh Checklist Test
 
-Workflow này sử dụng **Mode CHECKLIST** của skill `skills-rbt-manual-testing` để sinh **danh sách rà soát ngắn gọn, tick tay** — dùng khi chạy nhanh trước release, bàn giao cho tester thủ công, hoặc rà lại sau hotfix.
+Workflow này sử dụng **Mode CHECKLIST** của skill `skills-manual-testcase-v3` để sinh **danh sách rà soát ngắn gọn, tick tay** — dùng khi chạy nhanh trước release, bàn giao cho tester thủ công, hoặc rà lại sau hotfix.
 
 ## ⚠️ Nguyên tắc
 
@@ -75,6 +75,7 @@ Checklist không chấm bảng đối soát 4 vòng, nhưng lấy mục **theo v
 6. **Gắn metadata:** `Priority` (P1/P2/P3), `REQ ID` (nếu có), `TC ID liên quan` (nếu TC-based, không có ghi `—`)
 6b. **Gắn trạng thái từ execution đã có** — quét `docs/executions/<module>/<nền-tảng>/run_*/execution_report.md`, điền cột `Trạng thái` + `Execution ID` (luật đầy đủ ở skill, mục *Cột Trạng thái & Execution ID*):
    - Nguồn 1: lần chạy **chính checklist này** (khớp mã mục `CL-…-<nn>`) · Nguồn 2 (chỉ TC-based): lần chạy **bộ TC** cùng module + nền tảng, theo `TC ID liên quan`. Checklist khác **không** là nguồn
+   - Chỉ mượn kết quả cùng `Build đang rà`; lần chạy khác build thì để `☐`. `Build đang rà` là `❓` thì không mượn
    - Mỗi TC lấy lần chạy mới nhất khác `SKIPPED`; mục nhiều TC lấy mức xấu nhất `FAIL` > `BLOCKED` > `SKIPPED` > `PASS`; còn TC chưa chạy mà phần còn lại PASS → `☐`
    - `Execution ID` = `[<run_id>](../../../executions/<module>/<nền-tảng>/<run_id>/execution_report.md)<br><sub>DD-MM-YYYY</sub>` — lần chạy quyết định trạng thái, ngày chạy chữ nhỏ dưới ID. Chưa có kết quả → `☐` / `—`
    - Header ghi dòng `Trạng thái lấy từ:` — số mục đã có kết quả + nguồn + các `run_id`
@@ -121,6 +122,7 @@ Nhánh `docs/checklists/`, có tầng nền tảng như `docs/testcases/`:
 **Nguồn:** TC-based (`docs/testcases/<module>/<nền-tảng>/test_cases_<module>_<nền-tảng>.md`) | REQ-based
 **Scope:** <module / luồng / role>
 **Mã checklist:** `CL-<phần tên file sau checklist_>` (VD `CL-smoke_20261009` · `CL-post-hotfix_CRM-812`) — mã mục khi chạy = `<Mã checklist>-<số mục 2 chữ số>`
+**Build đang rà:** <số build, hoặc `❓ không rõ`>
 **Trạng thái lấy từ:** <n>/<tổng> mục đã có kết quả — <nguồn: lần chạy checklist này | lần chạy bộ TC> `<run_id>`, … | Chưa có lần chạy nào
 
 ### Nhóm: <Tên nhóm chức năng>

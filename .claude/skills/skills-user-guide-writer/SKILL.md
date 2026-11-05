@@ -21,7 +21,7 @@ Purpose: Biến thứ QA đã biết rất rõ về hệ thống (requirements, 
 | Tình huống | Dùng cái khác |
 |---|---|
 | Cần mô tả *hệ thống phải làm gì* cho QA/dev | `skills-requirements-analyzer` |
-| Cần kịch bản kiểm thử | `skills-rbt-manual-testing` |
+| Cần kịch bản kiểm thử | `skills-manual-testcase-v3` |
 | Module **chưa recon**, chưa có evidence | Chạy `/discover-system` → `/generate-requirements-from-website` trước. **Không** viết hướng dẫn cho màn hình chưa từng nhìn thấy |
 | Cần tài liệu kỹ thuật cho lập trình viên (API docs, kiến trúc) | Ngoài phạm vi skill này |
 
@@ -81,7 +81,7 @@ Hướng dẫn sử dụng sai **nguy hiểm hơn** requirements sai: người d
 |---|---|
 | Một tấm ảnh trong `docs/requirements/<module>/<nền-tảng>/evidence/` | Mở ảnh ra xem thật, không đọc tên file rồi đoán |
 | Một dòng REQ trong `REQUIREMENTS_<TÊN_MODULE>_SUMMARY.md` | Dẫn được REQ ID |
-| Một lần thao tác thật qua Playwright MCP trong phiên này | Mode FULL |
+| Một lần thao tác thật qua Playwright MCP trong phiên này | Mode LIVE hoặc VIDEO |
 
 Không truy được về nguồn nào → **không viết bước đó**. Gắn `⚠️ Chưa xác minh` và liệt kê ở mục *Vùng chưa xác minh* cuối tài liệu.
 
@@ -383,6 +383,6 @@ Mỗi lần sửa: tăng **Phiên bản tài liệu** và cập nhật **Áp d�
 ## Rules References
 
 - Nguồn dữ liệu: `docs/requirements/<module>/` do `skills-requirements-analyzer` sinh — **không** viết hướng dẫn cho module chưa recon
-- Quy tắc mở evidence trước khi viết: cùng cơ chế với `skills-rbt-manual-testing` mục *Quy Tắc Đối Chiếu Evidence*
+- Quy tắc mở evidence trước khi viết: cùng cơ chế với `skills-manual-testcase-v3` mục *Quy Tắc Đối Chiếu Evidence*
 - 🔒 Không đưa giá trị bí mật, dữ liệu khách hàng thật vào `docs/` — `CLAUDE.md` mục 6b
 - Công cụ ảnh/video/HTML: [`scripts/user-guide/README.md`](../../../scripts/user-guide/README.md) — `ug-lib.js`, `boot.js`, `rec-template.js`, `annotate.py`, `webm2mp4.py`, `md2html.py`

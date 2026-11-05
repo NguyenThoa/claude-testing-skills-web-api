@@ -3,7 +3,7 @@ name: generate-traceability-matrix
 description: Sinh ma trận truy vết (RTM) Requirements ↔ Test Cases ↔ Automation Scripts — chỉ ra requirement chưa cover, TC chưa automate, và orphan tests.
 ---
 
-> **Skill nền tảng cần nạp trước:** `skills-coverage-traceability` · `skills-requirements-analyzer` · `skills-rbt-manual-testing` — đọc `.claude/skills/<tên-skill>/SKILL.md` của từng skill trước khi bắt đầu.
+> **Skill nền tảng cần nạp trước:** `skills-coverage-traceability` · `skills-requirements-analyzer` · `skills-manual-testcase-v3` — đọc `.claude/skills/<tên-skill>/SKILL.md` của từng skill trước khi bắt đầu.
 
 # Workflow: Sinh Ma Trận Truy Vết (RTM)
 
@@ -51,7 +51,7 @@ description: Sinh ma trận truy vết (RTM) Requirements ↔ Test Cases ↔ Aut
 5. ⏭️ **chỉ** khi tài liệu có căn cứ (bảng *REQ cố ý KHÔNG có TC*, REQ ⚪ Chưa implement / 🔴 Deprecated). Không có căn cứ → 🔴, agent **không** tự quyết loại trừ
 
 ### Bước 3: Tính Metrics & Phát Hiện Gap
-1. Mẫu số = REQ trong phạm vi (đã trừ ⏭️). Requirement / Platform / Automation Coverage, pass rate lần chạy gần nhất
+1. Mẫu số = REQ trong phạm vi (đã trừ ⏭️). Requirement Coverage (cả dòng trên REQ đã duyệt `✅`) / Platform / Automation Coverage, pass rate lần chạy gần nhất
 2. Lập **Việc cần làm** theo thứ tự trong skill (🔴 → 🟠 → ❌ FAIL → ▶️ chưa chạy → 🗑️ → ⚠️ → 🟡 automate), mỗi việc kèm workflow
 3. **⬛ Ngoài tầm nhìn của RTM — điểm mù, BẮT BUỘC kiểm:**
    Đọc `docs/requirements/README.md`, xếp module vào 3 nhóm: ⬜ chưa khảo sát (`Trạng thái recon` = ⬜ / 🟨 / ⏸️) · 📄 có REQ nhưng chưa có TC · 🕓 có REQ + TC nhưng chưa sinh RTM.

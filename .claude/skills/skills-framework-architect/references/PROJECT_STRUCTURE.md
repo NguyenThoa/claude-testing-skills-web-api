@@ -3,7 +3,7 @@
 > **📍 NGUỒN DUY NHẤT** của project structure. Mọi thay đổi cấu trúc thư mục chỉ sửa ở file này — không sao chép sang nơi khác.
 
 **Skill:** `skills-framework-architect`
-**Workflow dùng file này:** `/generate-automation-framework` · `/generate-automation-web` · `/generate-automation-mobile` · `/generate-automation-api` (và bộ định tuyến `/generate-automation-from-testcases`)
+**Workflow dùng file này:** `/generate-automation-framework` · `/generate-automation-web` · `/generate-automation-api` (và bộ định tuyến `/generate-automation-from-testcases`)
 
 ---
 
@@ -32,13 +32,6 @@ Code mẫu cho các file trong cấu trúc (BasePage, DriverFactory, ConfigReade
 | **Playwright + Python** | Python | Pytest | Allure, pytest-html | pip |
 | **Selenium + Java** | Java | TestNG | Allure, ExtentReports | Maven / Gradle |
 | **Selenium + Python** | Python | Pytest | Allure, pytest-html | pip |
-
-### 📱 Mobile Automation
-
-| Stack | Ngôn ngữ | Runner | Report | Build Tool |
-|---|---|---|---|---|
-| **Appium + Java** | Java | TestNG | Allure, ExtentReports | Maven / Gradle |
-| **Appium + Python** | Python | Pytest | Allure, pytest-html | pip |
 
 ### 🔌 API Automation
 
@@ -262,101 +255,7 @@ project-root/
         └── selenium.yml
 ```
 
-### 6. Appium + Java (Maven + TestNG)
-
-```text
-project-root/
-├── pom.xml
-├── testng.xml                    # parallel="tests" — MỖI <test> LÀ MỘT DEVICE
-├── .env.example
-├── .gitignore
-├── README.md
-├── capabilities/
-│   └── devices.json              # caps từng device: udid, systemPort/wdaLocalPort riêng
-│                                 # tách khối riêng cho native vs Flutter — xem CODE_TEMPLATES § 9.1
-├── src/
-│   ├── main/java/
-│   │   └── com/project/
-│   │       ├── screens/          # Screen Objects (tương đương Page Objects)
-│   │       │   ├── BaseScreen.java       # Base screen — common mobile methods + byPlatform()
-│   │       │   ├── LoginScreen.java
-│   │       │   └── HomeScreen.java
-│   │       ├── drivers/          # Appium driver management
-│   │       │   ├── AppiumDriverFactory.java   # ThreadLocal — parallel luôn bật
-│   │       │   └── CapabilitiesManager.java
-│   │       ├── config/
-│   │       │   └── AppConfig.java
-│   │       └── utils/
-│   │           ├── MobileGestures.java   # Swipe, scroll, tap helpers
-│   │           ├── ScreenshotUtil.java
-│   │           └── TestDataGenerator.java
-│   └── test/java/
-│       └── com/project/
-│           ├── base/
-│           │   └── BaseTest.java
-│           └── tests/
-│               ├── LoginTest.java
-│               └── HomeTest.java
-├── apps/                         # APK/IPA files
-│   └── .gitkeep
-├── reports/                      # TOÀN BỘ output report (git-ignored) — xem mục "Thư Mục Output"
-│   ├── allure-results/           # raw results
-│   ├── allure-report/            # HTML report
-│   ├── allure-report-single/     # report gộp 1 file
-│   ├── html/                     # HTML report của runner
-│   ├── logs/                     # log thực thi
-│   └── screenshots/              # ảnh chụp lưu đĩa
-├── test-data/
-│   └── users.json
-└── .github/
-    └── workflows/
-        └── appium.yml
-```
-
-### 7. Appium + Python (Pytest)
-
-```text
-project-root/
-├── pyproject.toml
-├── requirements.txt
-├── conftest.py                   # Root fixtures + Appium driver setup
-├── .env.example
-├── .gitignore
-├── README.md
-├── src/
-│   ├── screens/
-│   │   ├── base_screen.py
-│   │   ├── login_screen.py
-│   │   └── home_screen.py
-│   ├── drivers/
-│   │   ├── appium_driver_factory.py
-│   │   └── capabilities_manager.py
-│   ├── utils/
-│   │   ├── config.py
-│   │   ├── test_data.py
-│   │   ├── mobile_gestures.py
-│   │   └── screenshot_util.py
-│   └── tests/
-│       ├── conftest.py
-│       ├── test_login.py
-│       └── test_home.py
-├── apps/
-│   └── .gitkeep
-├── reports/                      # TOÀN BỘ output report (git-ignored) — xem mục "Thư Mục Output"
-│   ├── allure-results/           # raw results
-│   ├── allure-report/            # HTML report
-│   ├── allure-report-single/     # report gộp 1 file
-│   ├── html/                     # HTML report của runner
-│   ├── logs/                     # log thực thi
-│   └── screenshots/              # ảnh chụp lưu đĩa
-├── test-data/
-│   └── users.json
-└── .github/
-    └── workflows/
-        └── appium.yml
-```
-
-### 8. REST Assured (Java + TestNG)
+### 6. REST Assured (Java + TestNG)
 
 ```text
 project-root/
@@ -408,7 +307,7 @@ project-root/
 
 ## Thư Mục Output — `reports/`
 
-Mọi sản phẩm sinh ra khi chạy test gom vào **một** thư mục `reports/` ở gốc project. Cấu trúc này giống nhau cho **cả 8 stacks**:
+Mọi sản phẩm sinh ra khi chạy test gom vào **một** thư mục `reports/` ở gốc project. Cấu trúc này giống nhau cho **mọi stack**:
 
 ```text
 reports/
@@ -437,7 +336,7 @@ Mỗi framework PHẢI bao gồm các thành phần sau:
 | 1 | **Project Structure** | ✅ | Thư mục rõ ràng, phân tách pages/tests/utils/config |
 | 2 | **Config Management** | ✅ | Environment qua `.env` + config file — KHÔNG hardcode |
 | 3 | **Browser / Driver Management** | ✅ | Factory pattern cho browser/driver setup |
-| 4 | **Base Classes** | ✅ | BasePage/BaseScreen chứa common methods |
+| 4 | **Base Classes** | ✅ | BasePage chứa common methods |
 | 5 | **Page Object Model** | ✅ | Mỗi page → 1 class, locators khai báo ở đầu class |
 | 6 | **Test Data Management** | ✅ | Data factory + external data (JSON/YAML) + unique/traceable |
 | 7 | **Utilities** | ✅ | Wait helpers, screenshot utils, logger, string generators |

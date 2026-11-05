@@ -96,7 +96,7 @@ Nếu app là **môi trường demo/staging nhiều người dùng chung**:
 1. **Đọc file ma trận** từ user cung cấp:
    - File local → `Read`
    - Inline trong chat → parse trực tiếp
-   - URL → `WebFetch`
+   - URL → tải thô `curl -sSL -o <file>` rồi `Read`. **Không** dùng `WebFetch` vì ma trận dài bị cắt âm thầm. Không tải được bản gốc thì nhờ user xuất file
 
 2. **Parse và validate:**
    - Xác định danh sách dimensions (D1, D2, D3...)
@@ -257,7 +257,7 @@ Nếu app là **môi trường demo/staging nhiều người dùng chung**:
 
 #### Output cho Mode GENERATE:
 
-Tạo artifact file(s) theo format user yêu cầu:
+Tạo file theo format user yêu cầu, lưu ở `docs/test-plans/cross-module/data/combo_<feature>_<YYYYMMDD>.<đuôi>`. Không ghi dữ liệu thật và credentials vào file này:
 
 **JSON (mặc định):**
 ```json
@@ -353,7 +353,7 @@ export const combinatorialData = [
 | Chạy PIPELINE trên môi trường dùng chung mà không xác nhận | Hỏi user + ghi lại ID để dọn dẹp |
 | Kết thúc PIPELINE mà không liệt kê ID đã tạo | Report PHẢI có mục "Data cần dọn dẹp" |
 | Bỏ qua combo fail, không report | Ghi log đầy đủ: combo nào fail, tại sao, screenshot |
-| Đọc `.env` để lấy credentials | Hỏi User hoặc dùng fixture sẵn có |
+| Hỏi mật khẩu trong chat, in giá trị `.env` ra log | Dùng fixture sẵn có hoặc đọc `.env`; thiếu biến thì báo tên biến |
 
 ---
 

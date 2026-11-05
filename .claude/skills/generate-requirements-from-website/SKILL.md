@@ -1,6 +1,6 @@
 ---
 name: generate-requirements-from-website
-description: Sinh tài liệu requirements (REQ ID) cho một module từ website đang chạy (Playwright MCP). App mobile dùng /generate-requirements-from-mobile, API dùng /generate-requirements-from-api.
+description: Sinh tài liệu requirements (REQ ID) cho một module từ website đang chạy (Playwright MCP). API dùng /generate-requirements-from-api.
 ---
 
 > **Skill nền tảng cần nạp trước:** `skills-requirements-analyzer` — đọc `.claude/skills/<tên-skill>/SKILL.md` của từng skill trước khi bắt đầu.
@@ -11,7 +11,7 @@ description: Sinh tài liệu requirements (REQ ID) cho một module từ websit
 >
 > Workflow này chạy **nhánh UI Recon** — dùng mục **2 + 2.1 + 2.2** (đánh mã · một prefix trên mọi nền tảng), **3.1** (trích xuất từ UI), **3.1.1** (tầng network), **3.1.2** (phân quyền khi thiếu account), **4** (AMB/RISK), **5** (quy mô/tách file), **5.8** (tầng khám phá), **6** (cấu trúc đầu ra), **7.1 + 7.2** (strict rules).
 >
-> 📱 Cùng module nhưng là **app mobile** → `/generate-requirements-from-mobile` · mặt **API** → `/generate-requirements-from-api`. Ba workflow dùng chung skill, chung thư mục module và chung dải REQ — mỗi workflow ghi vào **tầng nền tảng** của mình (`web/` · `mobile/` · `api/`), REQ dùng chung ≥ 2 nền tảng ghi vào index (mục **2.2**, **5.3**).
+> 📱 Cùng module nhưng là mặt **API** → `/generate-requirements-from-api`. Hai workflow dùng chung skill, chung thư mục module và chung dải REQ — mỗi workflow ghi vào **tầng nền tảng** của mình (`web/` · `api/`), REQ dùng chung ≥ 2 nền tảng ghi vào index (mục **2.2**, **5.3**).
 > ❌ KHÔNG dùng mục **3.2** (Document Analysis) trừ khi user cung cấp kèm tài liệu — khi đó:
 > - Tài liệu phủ **đầy đủ** module → chạy 3.2 trước, 3.1 sau, đối chiếu theo mục **3.3**
 > - Tài liệu chỉ phủ **một phần** (phổ biến nhất) → chạy mục **3.3.1** — lập Bản đồ phủ tài liệu rồi recon theo chiến lược riêng từng vùng
@@ -53,7 +53,7 @@ Workflow này giúp bạn phân tích một module hoặc trang web được cun
    - ⚠️ **TRƯỚC KHI GÁN MÃ REQ ĐẦU TIÊN — làm đủ 2 bước:**
      1. Đọc danh mục `docs/requirements/README.md` — biết module nào đã có, **prefix nào đã bị chiếm** (module mới phải chọn prefix chưa dùng), mã kế tiếp của từng module.
         **Dự án mới, file chưa tồn tại → TẠO file danh mục trước** theo mục **5.7.1** của skill, đừng bỏ qua rồi ghi thẳng tài liệu module
-     2. Mở `docs/requirements/<module>/REQUIREMENTS_<TÊN_MODULE>_SUMMARY.md`. Nếu module đã có tài liệu, **đánh tiếp từ số REQ cuối cùng**, KHÔNG đánh lại từ `01` (mục **2.1** của skill). Áp cả cho `AMB-<MODULE>-XX` và `RISK-<MODULE>-XX`. Tài liệu đã có REQ của **nền tảng khác** (app, API) → rule trùng thì **mở rộng cột `Nền tảng`** của REQ cũ, không cấp mã mới (mục **2.2**)
+     2. Mở `docs/requirements/<module>/REQUIREMENTS_<TÊN_MODULE>_SUMMARY.md`. Nếu module đã có tài liệu, **đánh tiếp từ số REQ cuối cùng**, KHÔNG đánh lại từ `01` (mục **2.1** của skill). Áp cả cho `AMB-<MODULE>-XX` và `RISK-<MODULE>-XX`. Tài liệu đã có REQ của **nền tảng khác** (API) → rule trùng thì **mở rộng cột `Nền tảng`** của REQ cũ, không cấp mã mới (mục **2.2**)
    - **TRƯỚC KHI GHI FILE:** đếm tổng số REQ đã sinh, đối chiếu **bảng ngưỡng tại mục 5.1** của skill để quyết định cấu trúc đầu ra (1 file / 1 file + Epic-Story / tách nhiều file). Xem các module đã có trong `docs/requirements/` để giữ đúng convention (mục 5.6).
    - Tuân thủ **Output Format (mục 6)** và **Quy Ước Đánh Mã (mục 2)** trong skill `skills-requirements-analyzer`:
      * **Tổng quan (Overview):** Mục đích của module/trang.
@@ -78,7 +78,7 @@ Workflow này giúp bạn phân tích một module hoặc trang web được cun
      docs/requirements/<module>/web/evidence/*.png
      docs/requirements/<module>/web/stories/story_NN_<slug>.md      ← chỉ khi file web vượt ngưỡng
      ```
-     Module mới cũng tạo đủ index + `web/` dù chỉ có web — thêm app/API về sau không phải di chuyển file. Module cũ chưa có tầng nền tảng → chuyển một lần theo luật ở skill mục 5.3.
+     Module mới cũng tạo đủ index + `web/` dù chỉ có web — thêm API về sau không phải di chuyển file. Module cũ chưa có tầng nền tảng → chuyển một lần theo luật ở skill mục 5.3.
    - **BẮT BUỘC cập nhật danh mục** `docs/requirements/README.md`: thêm/sửa dòng của module ở bảng mục 1 (cột `Nền tảng` → `Web ✅` nếu module có nhiều nền tảng · **`Trạng thái recon` → ✅ Đã có tài liệu** khi mọi nền tảng module có đều ✅, `Mức phủ tài liệu`, `REQ đã dùng`, `Mã kế tiếp`, `AMB treo`, `Story`, `Cập nhật`), bảng trạng thái mục 2, và ambiguity 🔴 High ở mục 3.
    - **BẮT BUỘC — tự đối chiếu danh mục sau khi cập nhật** (xem khối "Đối chiếu danh mục" bên dưới). Làm nhiều phiên thì danh mục trôi khỏi thực tế mà **không có cảnh báo nào**; đối chiếu ngay lúc còn nhớ rẻ hơn nhiều so với dò lại sau 10 module.
    - **Nếu đã có `_discovery/system_map.md`:** ghi 1 dòng vào Nhật ký khám phá khi phát hiện lệch so với bản đồ (module lớn hơn/nhỏ hơn dự kiến, có tab con là entity riêng nên phải tách, route đổi). Bản đồ sai mà không sửa thì module sau lại đi nhầm đường.

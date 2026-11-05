@@ -154,3 +154,6 @@ task.md
 # Output chạy test / so thiết kế (page source, spec JSON) — reporting_rules.md mục 6
 reports/
 __pycache__/
+
+# Cache chay Xray export — chua du lieu Jira that
+.claude/skills/skills-xray-export/.cache_*.json

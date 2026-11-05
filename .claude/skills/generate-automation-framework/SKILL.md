@@ -1,7 +1,9 @@
 ---
 name: generate-automation-framework
-description: Thiết kế và scaffold automation framework hoàn chỉnh. Hỗ trợ Playwright, Selenium, Appium — Web, Mobile, API.
+description: Thiết kế và scaffold automation framework hoàn chỉnh. Hỗ trợ Playwright, Selenium — Web, API.
 ---
+
+> **Rule phải đọc trước:** `.claude/rules/automation_rules.md` · `.claude/rules/reporting_rules.md` · `.claude/rules/locator_strategy.md` · `.claude/rules/playwright_rules.md` hoặc `.claude/rules/selenium_rules.md` theo framework đang dùng. Các rule này chỉ tự nạp khi đã mở file khớp `paths`, nên workflow phải tự đọc.
 
 > **Skill nền tảng cần nạp trước:** `skills-framework-architect` · `skills-qa-automation-engineer` — đọc `.claude/skills/<tên-skill>/SKILL.md` của từng skill trước khi bắt đầu.
 
@@ -15,23 +17,23 @@ Workflow này giúp agent thiết kế, scaffold và triển khai một automati
 
 - **Tất cả output bằng Tiếng Việt**
 - **KHÔNG đoán** tech stack — phải hỏi user xác nhận trước khi scaffold
-- **PHẢI tạo artifact `task.md`** để theo dõi tiến độ
+- **PHẢI tạo file `task.md`** để theo dõi tiến độ
 - Mỗi file sinh ra phải **biên dịch/chạy được ngay** — không để placeholder `// TODO`
 - Framework phải tuân thủ design principles trong skill `skills-framework-architect`
 
 ## Stacks hỗ trợ
 
-| Platform | Stack | Ngôn ngữ | Runner | Report |
-|---|---|---|---|---|
-| 🌐 Web | Playwright | TypeScript | Playwright Test | HTML Report, Allure |
-| 🌐 Web | Playwright | Java | TestNG / JUnit5 | Allure |
-| 🌐 Web | Playwright | Python | Pytest | pytest-html, Allure |
-| 🌐 Web | Selenium | Java | TestNG | Allure, ExtentReports |
-| 🌐 Web | Selenium | Python | Pytest | pytest-html, Allure |
-| 📱 Mobile | Appium | Java | TestNG | Allure, ExtentReports |
-| 📱 Mobile | Appium | Python | Pytest | Allure |
-| 🔌 API | REST Assured | Java | TestNG | Allure |
-| 🔌 API | Playwright API | TypeScript | Playwright Test | HTML Report |
+| Platform | Stack | Ngôn ngữ | Runner | Report | Mẫu base class |
+|---|---|---|---|---|---|
+| 🌐 Web | Playwright | TypeScript | Playwright Test | HTML Report, Allure | ✅ |
+| 🌐 Web | Playwright | Java | TestNG | Allure | ✅ |
+| 🌐 Web | Playwright | Python | Pytest | pytest-html, Allure | ✅ |
+| 🌐 Web | Selenium | Java | TestNG | Allure | ✅ |
+| 🌐 Web | Selenium | Python | Pytest | pytest-html, Allure | ⚠️ Chỉ có cấu trúc |
+| 🔌 API | REST Assured | Java | TestNG | Allure | ⚠️ Chỉ có cấu trúc |
+| 🔌 API | Playwright API | TypeScript | Playwright Test | HTML Report | ⚠️ Chưa có |
+
+> Stack ⚠️ không có code mẫu: báo user trước khi scaffold rằng base class do agent tự viết và phải chạy được 1 test thật. Stack ngoài bảng thì hỏi user, không tự chọn.
 
 ## Các bước thực hiện
 
@@ -41,9 +43,9 @@ Workflow này giúp agent thiết kế, scaffold và triển khai một automati
 
    | Câu hỏi | Mục đích | Mặc định nếu không trả lời |
    |---|---|---|
-   | Ứng dụng cần test là gì? (Web / Mobile / API / Hybrid) | Chọn platform | Web |
-   | Framework nào? (Playwright / Selenium / Appium) | Chọn tool | Playwright |
-   | Ngôn ngữ? (TypeScript / Java / Python) | Chọn language | TypeScript (Playwright), Java (Selenium/Appium) |
+   | Ứng dụng cần test là gì? (Web / API) | Chọn platform | Web |
+   | Framework nào? (Playwright / Selenium) | Chọn tool | Playwright |
+   | Ngôn ngữ? (TypeScript / Java / Python) | Chọn language | TypeScript (Playwright), Java (Selenium) |
    | Project name? | Đặt tên thư mục | `automation-framework` |
    | Reporting tool? | Tích hợp report | Mặc định theo stack |
    | Có test API song song không? | Thêm API testing layer | Không |
@@ -77,7 +79,7 @@ Workflow này giúp agent thiết kế, scaffold và triển khai một automati
 
 ### Bước 2: Scaffold Project Structure (Foundation)
 
-1. **Tạo artifact `task.md`** để theo dõi checklist:
+1. **Tạo file `task.md`** để theo dõi checklist:
    ```markdown
    # Framework Setup Progress
    - [x] Bước 1: Thu thập yêu cầu
@@ -89,31 +91,26 @@ Workflow này giúp agent thiết kế, scaffold và triển khai một automati
    ```
 
 2. **Tạo thư mục project** theo template chuẩn:
-   - **Nguồn duy nhất:** `.claude/skills/skills-framework-architect/references/PROJECT_STRUCTURE.md` — chọn đúng mục § tương ứng stack (8 stacks)
+   - **Nguồn duy nhất:** `.claude/skills/skills-framework-architect/references/PROJECT_STRUCTURE.md` — chọn đúng mục tương ứng stack
    - **Code mẫu base classes:** `.claude/skills/skills-framework-architect/references/CODE_TEMPLATES.md` — copy & sửa, KHÔNG viết lại từ đầu
    - Tạo toàn bộ thư mục + file cấu hình gốc
 
 3. **Sinh file cấu hình build** (tuỳ stack):
 
    **Playwright + TypeScript:**
-   - `package.json` — dependencies: `@playwright/test`, `allure-playwright`, **`allure`** (CLI cục bộ — xem Bước 5 mục 2)
-   - `playwright.config.ts` — baseURL, viewport (1920x1080), timeout, retries, reporter, **`fullyParallel` + `workers`**
+   - `package.json` — dependencies: `@playwright/test`, `allure-playwright`, `allure-js-commons`, `dotenv`, **`allure`** (CLI cục bộ — xem Bước 5 mục 2)
+   - `playwright.config.ts` — baseURL, viewport theo chế độ (headed `1600×750`, headless `1920×1080`), timeout, retries, reporter, **`fullyParallel` + `workers`**
    - `allurerc.mjs` — `output` trỏ vào `reports/allure-report`
    - `tsconfig.json` — paths, strict mode
    - `.env.example` — template environment variables, **có `WORKERS=5`**
 
    **Selenium + Java:**
-   - `pom.xml` — dependencies: selenium-java, testng, webdrivermanager, allure-testng, log4j · plugin: **`allure-maven`** (CLI cục bộ)
+   - `pom.xml` — dependencies: selenium-java, testng, allure-testng, log4j · plugin: **`allure-maven`** (CLI cục bộ)
    - `testng.xml` — suite configuration, listeners, **`parallel="methods" thread-count="5"`**
    - `log4j2.xml` — logging configuration
 
-   **Appium + Java:**
-   - `pom.xml` — dependencies: appium-java-client, selenium-java, testng, allure · plugin: **`allure-maven`** (CLI cục bộ)
-   - `testng.xml` — suite configuration, **`parallel="tests"` — mỗi `<test>` một device**
-   - Capabilities config file (JSON/YAML) cho Android + iOS, **`systemPort` / `wdaLocalPort` riêng từng device**
-
    **Playwright + Python:**
-   - `requirements.txt` — playwright, pytest, pytest-playwright, allure-pytest, **`pytest-xdist`**
+   - `requirements.txt` — playwright, pytest, python-dotenv, pytest-html, allure-pytest, **`pytest-xdist`**, `pytest-repeat` (chạy lặp khi phân tích flaky)
    - `pyproject.toml` — pytest config, **`-n 5` trong `addopts`**
    - `conftest.py` — root fixtures, browser setup
    - `package.json` tối giản + `allurerc.mjs` — chỉ để chứa CLI `allure` cục bộ (PyPI **không** có gói nào ship Allure CLI)
@@ -125,9 +122,7 @@ Workflow này giúp agent thiết kế, scaffold và triển khai một automati
    | Playwright TS | `playwright.config.ts` | `fullyParallel: true` · `workers: Number(process.env.WORKERS ?? 5)` | Sửa `WORKERS` trong `.env`, hoặc `WORKERS=2 npx playwright test` |
    | Pytest | `pyproject.toml` → `addopts` | `-n 5` (pytest-xdist) | `python -m pytest -n 2` — cờ dòng lệnh thắng `addopts` |
    | TestNG (Selenium / Playwright Java) | `testng.xml` | `parallel="methods" thread-count="5"` | Sửa `thread-count` — **một chỗ duy nhất** |
-   | Appium | `testng.xml` | `parallel="tests"`, **thread-count = số device thật** | Thêm/bớt khối `<test>` theo số device |
 
-   **⚠️ Appium là ngoại lệ:** không thể chạy 5 luồng trên 1 emulator. Số luồng = **số device/emulator đang chạy thật**. Mỗi device phải có `systemPort` (Android) / `wdaLocalPort` (iOS) **riêng**, trùng port là hai phiên giẫm chân nhau.
 
    **Điều kiện để parallel không sinh flaky** — sinh code phải đảm bảo ngay từ đầu:
    - Driver/browser instance **theo thread** — `ThreadLocal` (Java) / fixture theo worker (Python) / context riêng mỗi test (Playwright)
@@ -154,7 +149,6 @@ Workflow này giúp agent thiết kế, scaffold và triển khai một automati
    |---|---|---|
    | Playwright TS | `src/utils/env.config.ts` | Đọc `.env`, export typed config object |
    | Selenium Java | `src/main/.../config/ConfigReader.java` | Đọc properties file, singleton pattern |
-   | Appium Java | `src/main/.../config/AppConfig.java` | Đọc capabilities JSON, env variables |
    | Playwright Python | `src/utils/config.py` | Đọc `.env` bằng `python-dotenv` |
 
 2. **Browser / Driver Management:**
@@ -163,7 +157,6 @@ Workflow này giúp agent thiết kế, scaffold và triển khai một automati
    |---|---|---|
    | Playwright TS | `playwright.config.ts` + fixtures | Browser config trong config, auth trong fixtures |
    | Selenium Java | `DriverFactory.java` | Factory pattern, **`ThreadLocal<WebDriver>` — bắt buộc vì parallel luôn bật** |
-   | Appium Java | `AppiumDriverFactory.java` + `CapabilitiesManager.java` | Appium server URL, capabilities per device, **`ThreadLocal` + port riêng mỗi device** |
    | Playwright Python | `conftest.py` | Fixtures cho browser, context, page — mỗi worker xdist một browser riêng |
 
    🚨 **Parallel luôn bật → driver KHÔNG được là biến static dùng chung.** Java phải `ThreadLocal` và `remove()` trong teardown (rò rỉ ThreadLocal làm worker sau nhận driver đã đóng). Đây không phải tuỳ chọn tối ưu, là điều kiện để suite chạy đúng.
@@ -188,7 +181,7 @@ Workflow này giúp agent thiết kế, scaffold và triển khai một automati
 ### Bước 4: Sinh Example Tests (Validation Layer)
 
 1. **Tạo ít nhất 1 example Page Object:**
-   - `LoginPage` (hoặc `LoginScreen` cho mobile) với locators + methods thực tế
+   - `LoginPage` với locators + methods thực tế
 
    **Nếu user đã cung cấp URL hệ thống** (khuyến nghị — cho locator dùng được ngay):
    - Mở browser qua Playwright MCP: `navigate` → `wait_for(page_load)` → `snapshot`
@@ -224,7 +217,6 @@ Workflow này giúp agent thiết kế, scaffold và triển khai một automati
    |---|---|---|
    | Playwright TS | HTML + Allure | `reporter` trong playwright.config.ts |
    | Selenium Java | Allure | `allure-testng` dependency + `@Step`, `@Attachment` annotations |
-   | Appium Java | Allure + ExtentReports | `allure-testng` + `ExtentManager` singleton |
    | Playwright Python | pytest-html + Allure | `conftest.py` hooks + pytest addopts |
 
    **Chuẩn report BẮT BUỘC** — tuân thủ `.claude/rules/reporting_rules.md`:
@@ -261,7 +253,7 @@ Workflow này giúp agent thiết kế, scaffold và triển khai một automati
    | Stack | Cài gì **vào project** | Máy cần sẵn | Lệnh mở report |
    |---|---|---|---|
    | **Node** (Playwright TS/JS) | devDependency `allure` (Allure 3) | Node.js — đã cần để chạy test | `npm run report` |
-   | **Java + Maven** (Selenium / Appium / Playwright Java) | **giải nén hẳn bộ Allure 2 vào `.allure/`** bằng `maven-dependency-plugin` + `allure-maven` trỏ về đó | JDK — đã cần để chạy test | `mvn allure:serve` hoặc gọi thẳng `.allure/allure-<ver>/bin/allure` |
+   | **Java + Maven** (Selenium / Playwright Java) | **giải nén hẳn bộ Allure 2 vào `.allure/`** bằng `maven-dependency-plugin` + `allure-maven` trỏ về đó | JDK — đã cần để chạy test | `mvn allure:serve` hoặc gọi thẳng `.allure/allure-<ver>/bin/allure` |
    | **Python + Pytest** | `package.json` tối giản + devDependency `allure` | Node.js | `npm run report` |
 
    **Vì sao dùng `allure` (Allure 3) cho Node/Python chứ không phải `allure-commandline`:** gói đó chỉ là lớp bọc npm của CLI Allure 2 viết bằng Java — máy **vẫn phải có JRE**, tức chưa giải quyết được vấn đề. Allure 3 viết bằng TypeScript, chạy thuần Node, **không cần Java**, và vẫn đọc được thư mục `allure-results` do `allure-playwright` / `allure-pytest` / `allure-testng` sinh ra.
@@ -304,7 +296,7 @@ Workflow này giúp agent thiết kế, scaffold và triển khai một automati
 
 4. **Docker support** (optional — chỉ nếu user yêu cầu):
    - Dockerfile cho test execution environment
-   - docker-compose.yml nếu cần Selenium Grid / Appium server
+   - docker-compose.yml nếu cần Selenium Grid
 
 ### Bước 6: Verify & Deliver (Quality Gate)
 
@@ -314,9 +306,6 @@ Workflow này giúp agent thiết kế, scaffold và triển khai một automati
    npm install && npx playwright install && npx playwright test --list
 
    # Selenium Java
-   mvn clean compile
-
-   # Appium Java
    mvn clean compile
 
    # Playwright Python
@@ -350,12 +339,12 @@ Workflow này giúp agent thiết kế, scaffold và triển khai một automati
 4. **Verify Parallel thật sự chạy song song** — không chỉ khai trong config:
 
    ```bash
-   npx playwright test --list          # Playwright: dòng đầu in ra số worker
-   python -m pytest -n 5 --collect-only
+   npx playwright test                 # Playwright: phải thấy dòng "using 5 workers"
+   python -m pytest -n 5               # Pytest: phải thấy "5 workers"
    mvn test                            # TestNG: log in ra tên thread khác nhau
    ```
 
-   - Nhìn log thấy **nhiều thread/worker khác nhau** cùng chạy → đạt
+   - Phải **chạy thật**, không dùng `--list` hay `--collect-only` vì hai lệnh đó không chạy test. Nhìn log thấy **nhiều thread/worker khác nhau** cùng chạy → đạt
    - Chỉ thấy 1 thread → config parallel chưa ăn, **sửa ngay**
    - Example test **PASS khi chạy song song 2 lần liên tiếp** — parallel làm lộ test phụ thuộc nhau, phát hiện ở đây rẻ hơn nhiều so với phát hiện lúc suite đã 200 test
 
@@ -397,14 +386,11 @@ Workflow này giúp agent thiết kế, scaffold và triển khai một automati
 
 | Tình huống | Cách xử lý |
 |---|---|
-| **Chỉ có 1 device/emulator (Appium)** | Số luồng = 1. **KHÔNG** đặt 5 — 5 thread trên 1 device là chắc chắn hỏng. Giữ nguyên cấu trúc parallel để thêm device sau là chạy được ngay |
 | **App không chịu nổi 5 phiên đăng nhập cùng lúc** | Hạ `WORKERS` xuống và **ghi lý do vào README** — đây là giới hạn của app, không phải của framework. Đừng âm thầm tắt parallel |
 | **Test dùng chung 1 tài khoản, chạy song song là đá nhau** | Sửa **test data** (mỗi luồng một tài khoản/bản ghi riêng), KHÔNG tắt parallel để né |
-| **User muốn hybrid (Web + Mobile)** | Tạo shared layer (utils, config) + tách pages vs screens |
 | **User muốn hybrid (Web + API)** | Thêm API layer song song (api helpers + api tests folder) |
 | **User có framework cũ cần refactor** | Đọc code hiện tại → đề xuất migration plan → refactor từng phần |
 | **User muốn multi-browser** | Config parallel projects trong playwright.config.ts hoặc test suite XML |
-| **User muốn multi-device (Appium)** | CapabilitiesManager hỗ trợ load từ JSON per device (Android/iOS) |
 | **User không biết chọn stack** | Gợi ý dựa trên: team skill, project type, CI infra |
 
 ## Output
@@ -418,4 +404,4 @@ Workflow này giúp agent thiết kế, scaffold và triển khai một automati
 - **Reporting integration** (Allure CLI cài trong project — máy không cần cài gì)
 - **CI/CD pipeline** (GitHub Actions — **luôn có**, headless + parallel + upload `reports/`)
 - **README.md** (setup guide + project overview)
-- **Artifact `task.md`** (checklist tiến độ)
+- **File `task.md`** (checklist tiến độ)

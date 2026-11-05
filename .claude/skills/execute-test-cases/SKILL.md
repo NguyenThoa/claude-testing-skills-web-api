@@ -3,6 +3,8 @@ name: execute-test-cases
 description: Thực thi manual test cases trên browser thật qua Playwright MCP — chấm PASS/FAIL/BLOCKED/SKIPPED, thu evidence (ảnh + video từng TC), xuất execution report (HTML nhúng ảnh + video khi được yêu cầu). Dành cho tester manual, KHÔNG sinh code automation.
 ---
 
+> **Rule phải đọc trước:** `.claude/rules/playwright_rules.md`. Các rule này chỉ tự nạp khi đã mở file khớp `paths`, nên workflow phải tự đọc.
+
 > **Skill nền tảng cần nạp trước:** `skills-manual-test-executor` · `skills-bug-reporter` — đọc `.claude/skills/<tên-skill>/SKILL.md` của từng skill trước khi bắt đầu.
 
 > **BẮT BUỘC (MANDATORY SKILL):** Bạn PHẢI nạp và đọc kỹ nội dung của skill **`skills-manual-test-executor`** (tại `.claude/skills/skills-manual-test-executor/SKILL.md`) trước khi bắt đầu tác vụ này.
@@ -27,7 +29,7 @@ Chạy bộ manual test cases trực tiếp trên browser thật, đối chiếu
 | Phạm vi chạy | ⭐ Bắt buộc | Toàn bộ · theo tag (`@Smoke`) · theo TC ID range · theo nhóm chức năng · **danh sách TC ID** theo thứ tự (khối *Phạm vi cho `/execute-test-cases`* của `/select-regression-tests`). **Không có → agent hỏi**, không tự chạy hết |
 | URL & tài khoản | ⭐ Bắt buộc | Môi trường đang test + tài khoản đăng nhập |
 | Môi trường dùng chung? | ⭐ Bắt buộc | Có → bật auto-skip TC phá huỷ; Không → chạy đầy đủ, ghi rõ trong report |
-| Build / Version | Khuyến nghị | Để truy vết kết quả về đúng bản build |
+| Build / Version | ⭐ Bắt buộc | Báo cáo tổng hợp chỉ tính kết quả trên build hợp lệ. Không biết thì hỏi một lần; vẫn không có thì ghi `❓ không rõ` và báo trước rằng kết quả sẽ vào nhóm ⏳ Cần chạy lại |
 | Quay video | Tuỳ chọn — mặc định **`Có`** | `Có` · `Chỉ giữ FAIL` (quay hết, xoá video TC PASS) · `Không` (*"không quay video"*). Không nói → `Có`, không hỏi thêm |
 
 > Phạm vi là **danh sách TC ID** (thường từ `/select-regression-tests`) → chạy **đúng thứ tự** đã cho. Danh sách trải nhiều module / nền tảng → tách thành **nhiều lần chạy**, mỗi lần một module × một nền tảng (`executions/<module>/<nền-tảng>/run_*`), các lần chạy xếp theo vị trí TC đầu tiên của nhóm trong danh sách — công bố kế hoạch tách trước khi chạy. TC ID không tìm thấy trong file TC nào, hoặc mang `@Deprecated` → liệt kê riêng, không chạy, báo user.
@@ -46,7 +48,7 @@ Chạy bộ manual test cases trực tiếp trên browser thật, đối chiếu
 
 ### Bước 2: Chuẩn bị
 1. Tạo `run_id` dạng `run_<timestamp>`
-2. Tạo thư mục evidence `docs/executions/<module>/<nền-tảng>/<run_id>/evidence/` và — khi `Quay video` ≠ `Không` — thư mục **`video/` ngang cấp** — `<nền-tảng>` là nền tảng của file TC đang chạy. Workflow này chạy trên **trình duyệt** nên là `web`; TC `@Android` / `@iOS` / `@API` không chạy ở đây. Checklist Release-readiness (`docs/checklists/_release/<nền-tảng>/`) thì `<module>` là **`_release`**
+2. Tạo thư mục evidence `docs/executions/<module>/<nền-tảng>/<run_id>/evidence/` và — khi `Quay video` ≠ `Không` — thư mục **`video/` ngang cấp** — `<nền-tảng>` là nền tảng của file TC đang chạy. Workflow này chạy trên **trình duyệt** nên là `web`; TC `@API` không chạy ở đây. Checklist Release-readiness (`docs/checklists/_release/<nền-tảng>/`) thì `<module>` là **`_release`**
 3. Khởi tạo file report `docs/executions/<module>/<nền-tảng>/<run_id>/execution_report.md` với phần header — **bắt buộc** có ô `Loại nguồn` (`Bộ TC` / `Checklist <loại> · <Mã checklist>`) và ô `Video`
 4. `Quay video` ≠ `Không`: kiểm có tool `browser_start_video` — không có → config `"capabilities": ["devtools"]` chưa nạp: dừng, báo user khởi động lại Claude Code hoặc chạy với `Quay video: Không`
 
@@ -109,11 +111,15 @@ Agent chạy tiếp qua TC fail (fail-forward), **chỉ dừng** khi:
 - Mọi dữ liệu tạo ra phải traceable (`Auto_<Module>_<timestamp>`) và có kế hoạch xoá
 - KHÔNG `browser_navigate` lại nếu đã ở đúng trang — tránh reload làm mất trạng thái đang test
 
+**🔔 Thông báo cập nhật Xray:** kết quả manual chưa có đường đẩy tự động lên Xray. Câu trả lời cuối của lượt chạy **luôn** có bảng để user tự cập nhật: `TC ID · Mã Test trên Xray · Kết quả · Build · Link evidence`. Mã Test tra trong `.claude/skills/skills-xray-export/.cache_*.json`; không có thì ghi `— chưa có trên Xray`. Chỉ liệt kê, **không** tự ghi lên Jira.
+
 ## Bước tiếp theo sau khi có report
 
 | Tình huống | Làm gì |
 |---|---|
+| TC mang `@KnownBug:<BUG_ID>` hoặc đã có bug đang mở | Vẫn chấm FAIL, ghi mã bug cạnh kết quả, **không** mở bug mới |
+| TC `@KnownBug` chạy PASS | `/retest-fixed-bugs` — bug có thể đã được sửa, chưa gỡ tag khi chưa retest |
 | Có TC FAIL | `/create-bug-report` — sinh bug report chuẩn từ evidence đã thu. Mục checklist FAIL: bug đặt theo **module của mục** (cột `Module` với checklist release) |
 | Nhiều TC FAIL cần gom nhóm root cause | `/analyze-test-report` |
-| Cần đẩy kết quả lên Xray | `/import-test-results-xray` |
+| Kết quả **automation** cần lên Xray | `/import-test-results-xray` — kết quả manual cập nhật tay theo bảng 🔔 ở Bước 7 |
 | TC FAIL do TC viết sai (không phải lỗi hệ thống), kể cả TC `@NeedsVerify` lệch Expected | `/review-testcases` mode FIX — **không sửa TC trong lúc chạy** |

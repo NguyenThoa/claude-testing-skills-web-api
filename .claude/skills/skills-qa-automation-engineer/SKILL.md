@@ -64,17 +64,17 @@ When the user request matches a specific task, select the appropriate workflow s
 
 ### Generate test cases from requirements
 
-> **Delegate:** Tác vụ này thuộc skill **`skills-rbt-manual-testing`** — không phải `skills-qa-automation-engineer`.
+> **Delegate:** Tác vụ này thuộc skill **`skills-manual-testcase-v3`** — không phải `skills-qa-automation-engineer`.
 
 Use workflow: `generate-testcases-from-requirements` (QUICK mode), `generate-testcases-manual-rbt` (FULL RBT mode) hoặc `generate-checklist-test` (CHECKLIST mode).
 
 Triggers when user asks:
 
-- generate test cases → **delegate to `skills-rbt-manual-testing` (QUICK mode)**
-- write manual test cases → **delegate to `skills-rbt-manual-testing` (QUICK mode)**
-- test scenarios from requirement → **delegate to `skills-rbt-manual-testing` (QUICK mode)**
-- sinh test cases đầy đủ / quy trình 6 bước → **delegate to `skills-rbt-manual-testing` (FULL RBT mode)**
-- sinh checklist test / checklist smoke / danh sách rà soát trước release → **delegate to `skills-rbt-manual-testing` (CHECKLIST mode)**
+- generate test cases → **delegate to `skills-manual-testcase-v3` (QUICK mode)**
+- write manual test cases → **delegate to `skills-manual-testcase-v3` (QUICK mode)**
+- test scenarios from requirement → **delegate to `skills-manual-testcase-v3` (QUICK mode)**
+- sinh test cases đầy đủ / quy trình 6 bước → **delegate to `skills-manual-testcase-v3` (FULL RBT mode)**
+- sinh checklist test / checklist smoke / danh sách rà soát trước release → **delegate to `skills-manual-testcase-v3` (CHECKLIST mode)**
 
 ---
 
@@ -92,14 +92,13 @@ Triggers when user asks:
 
 ### Generate automation from UI steps (chưa có TC)
 
-Use workflow: `generate-automation-web` mode FLOW (web) · `generate-automation-mobile` mode FLOW (app mobile)
+Use workflow: `generate-automation-web` mode FLOW (web)
 
 Triggers when user asks:
 
 - automate this UI flow
 - generate automation from steps
 - run UI steps and generate Selenium script
-- mở app, đăng nhập, tạo đơn — viết Appium giùm
 
 ---
 
@@ -186,7 +185,6 @@ Triggers when user asks:
 - create automation framework
 - design Selenium framework
 - design Playwright framework
-- design Appium framework
 - scaffold automation project
 - thiết kế framework mới
 
@@ -196,7 +194,7 @@ Triggers when user asks:
 
 Use workflow: `generate-application-test-plan`
 
-> Workflow này có **2 modes**: PLAN (mặc định — chỉ test plan) và FULL (test plan + automation skeleton).
+> Workflow này có **2 modes**: PLAN (mặc định — chỉ scenario) và FULL (scenario rồi điều phối các workflow chuẩn sinh REQ, TC, automation).
 > Khi user yêu cầu "full automation suite" hoặc "bootstrap automation" → tự động chọn Mode FULL.
 
 Triggers when user asks:
@@ -217,7 +215,7 @@ Use workflow: `run-and-fix-tests`
 
 > Dành cho suite **đã có code**. 2 modes: RUN (chạy + báo cáo) và FIX (chạy + sửa + chạy lại).
 >
-> 🚨 Rule bất biến: **KHÔNG sửa test cho xanh khi nguyên nhân là bug của app.** Nhóm 🐛 giữ nguyên đỏ → `create-bug-report`. Nhóm 🌐 Environment → dừng, báo user.
+> 🚨 Rule bất biến: **KHÔNG sửa test cho xanh khi nguyên nhân là bug của app.** Nhóm 🐛 giữ nguyên assertion: chưa có bug → `create-bug-report`, có bug đang mở → `@KnownBug` theo `automation_rules.md` mục 6.1. Nhóm 🌐 Environment → dừng, báo user.
 
 Triggers when user asks:
 
@@ -231,13 +229,13 @@ Triggers when user asks:
 
 ### Update existing automation from Delta TC List (delta mode)
 
-> **Delegate:** skill **`skills-coverage-traceability`** để map TC ID ↔ script · recon theo nền tảng: **`skills-ui-debug-agent`** (web) · **`skills-mobile-debug-agent`** (mobile) · `skills-requirements-analyzer` mục 3.4.4 (API).
+> **Delegate:** skill **`skills-coverage-traceability`** để map TC ID ↔ script · recon theo nền tảng: **`skills-ui-debug-agent`** (web) · `skills-requirements-analyzer` mục 3.4.4 (API).
 
 Use workflow: `update-automation-from-impact`
 
 > Mắt xích **cuối** của chuỗi delta 3 tầng: `update-requirements-from-ticket` → `update-testcases-from-impact` → workflow này. Đầu vào là file **`docs/testcases/<module>/impact/delta_tc_<TICKET-ID>.md`** do tầng giữa ghi ra — chỉ có Impact Report mà chưa có file này nghĩa là TC chưa đồng bộ, phải dừng. Bỏ tầng giữa là sửa script theo kỳ vọng cũ — TC còn mô tả hành vi cũ thì script sửa xong vẫn sai mà vẫn xanh.
 >
-> TC đổi → sửa **đúng phần đổi** trong script đã có, **tách theo nền tảng** của TC (web · mobile `@Android`/`@iOS` · API), mỗi nền tảng một lượt. 2 modes: PLAN (kế hoạch) và APPLY (sửa + chạy lại).
+> TC đổi → sửa **đúng phần đổi** trong script đã có, **tách theo nền tảng** của TC (web · API), mỗi nền tảng một lượt. 2 modes: PLAN (kế hoạch) và APPLY (sửa + chạy lại).
 >
 > ⚠️ Rule bất biến: **KHÔNG sinh lại cả module** (đó là `generate-automation-from-testcases`), **KHÔNG xoá file** cho TC 🗑️ Deprecated, **KHÔNG sửa script** của TC `⏸️ @NeedsVerify` chưa được sửa, **KHÔNG bịa mapping** TC ↔ script.
 
@@ -321,15 +319,6 @@ Triggers when user asks:
 - extract user stories from web page
 
 ---
-
-### Generate requirements from mobile app
-
-Use workflow: `generate-requirements-from-mobile`
-
-Triggers when user asks / provides:
-
-- generate requirements from mobile app, Android/iOS screen
-- file `.apk` / `.ipa`, package / bundle id kèm yêu cầu "phân tích", "sinh requirements"
 
 ---
 
@@ -509,12 +498,11 @@ Default stack theo platform — dùng khi user **không chỉ định**. Bảng 
 | Platform | Framework mặc định | Ngôn ngữ | Runner | Report |
 |---|---|---|---|---|
 | 🌐 Web | **Playwright** | TypeScript | Playwright Test | HTML Report + Allure |
-| 📱 Mobile | **Appium** | Java | TestNG | Allure |
 | 🔌 API | **REST Assured** | Java | TestNG | Allure |
 
-- **Design pattern:** Page Object Model (POM) — mobile dùng Screen Object
+- **Design pattern:** Page Object Model (POM)
 - **Stack thay thế** (khi user yêu cầu): Selenium WebDriver + Java + TestNG cho Web, Playwright + Java/Python
-- **Danh sách đầy đủ 8 stacks được hỗ trợ:** xem `skills-framework-architect` > Supported Stacks
+- **Danh sách đầy đủ stack được hỗ trợ:** xem `skills-framework-architect` > Supported Stacks
 
 > ⚠️ **KHÔNG tự chọn stack khi user đã nêu ràng buộc** (team dùng Java, CI chỉ có Maven…). Hỏi xác nhận trước khi scaffold.
 
@@ -557,7 +545,6 @@ The agent MUST also follow the detailed rules defined in `.claude/rules/`:
 - [`.claude/rules/locator_strategy.md`](../../rules/locator_strategy.md) — Detailed locator selection rules
 - [`.claude/rules/playwright_rules.md`](../../rules/playwright_rules.md) — Playwright-specific rules
 - [`.claude/rules/selenium_rules.md`](../../rules/selenium_rules.md) — Selenium-specific rules
-- [`.claude/rules/appium_rules.md`](../../rules/appium_rules.md) — Appium mobile automation rules
 
 ---
 
@@ -570,7 +557,7 @@ Skill này **không** kèm file hồ sơ dự án để user điền sẵn. Agen
 | Cần biết | Lấy ở đâu | Ghi vào đâu |
 |---|---|---|
 | **Hệ thống có những module nào** (chưa biết gì về hệ thống) | `/discover-system` — crawl navigation cấp hệ thống | `docs/requirements/_discovery/system_map.md` + `README.md` |
-| Module X làm gì, luồng nào, field nào | **Recon UI thực tế** qua Playwright MCP — `/generate-requirements-from-website` (web) · qua Appium MCP — `/generate-requirements-from-mobile` (app) | `docs/requirements/<module>/REQUIREMENTS_<TÊN_MODULE>_SUMMARY.md` |
+| Module X làm gì, luồng nào, field nào | **Recon UI thực tế** qua Playwright MCP — `/generate-requirements-from-website` (web) | `docs/requirements/<module>/REQUIREMENTS_<TÊN_MODULE>_SUMMARY.md` |
 | Mặt API của module X — endpoint, schema, auth | `/discover-system` nhánh API → `/generate-requirements-from-api` (Swagger · Scalar · Postman · tài liệu API .docx) | `docs/requirements/<module>/api/requirements_<module>_api.md` + index — một nghiệp vụ một prefix, một thư mục module trên mọi nền tảng |
 | Prefix module, mã REQ/TC kế tiếp | Đọc danh mục hiện có | `docs/requirements/README.md` · `docs/testcases/README.md` |
 | Business rules ẩn, known issues (CAPTCHA, OTP…) | Gặp khi recon / chạy test → ghi lại ngay | Mục "Ghi chú" của tài liệu module + Nhật ký thay đổi |
@@ -584,7 +571,7 @@ Skill này **không** kèm file hồ sơ dự án để user điền sẵn. Agen
 
 External references:
 
-- [`skills-framework-architect/references/PROJECT_STRUCTURE.md`](../skills-framework-architect/references/PROJECT_STRUCTURE.md) — Project structure cho 8 stacks (**nguồn duy nhất**)
+- [`skills-framework-architect/references/PROJECT_STRUCTURE.md`](../skills-framework-architect/references/PROJECT_STRUCTURE.md) — Project structure của các stack (**nguồn duy nhất**)
 - [`skills-framework-architect/references/CODE_TEMPLATES.md`](../skills-framework-architect/references/CODE_TEMPLATES.md) — Code mẫu base classes / factory / config
 - `CLAUDE.md` > "Cleanup & Delivery" — Quality checklist / Definition of Done
 

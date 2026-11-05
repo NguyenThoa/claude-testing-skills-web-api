@@ -3,7 +3,7 @@ name: review-testcases
 description: Review chất lượng manual test cases — chấm điểm theo rubric 6 tiêu chí, phát hiện TC mơ hồ/trùng lặp, chỉ ra coverage gaps. Hỗ trợ 3 mode — REVIEW (chỉ báo cáo), FIX (báo cáo + sửa TC) và AUTOMATION (chấm độc lập TC nào làm automation được theo bảng tiêu chí).
 ---
 
-> **Skill nền tảng cần nạp trước:** `skills-testcase-reviewer` · `skills-rbt-manual-testing` — đọc `.claude/skills/<tên-skill>/SKILL.md` của từng skill trước khi bắt đầu.
+> **Skill nền tảng cần nạp trước:** `skills-testcase-reviewer` · `skills-manual-testcase-v3` · `skills-api-testcase-v3` (chỉ khi bộ TC là API) — đọc `.claude/skills/<tên-skill>/SKILL.md` của từng skill trước khi bắt đầu.
 
 # Workflow: Review Manual Test Cases
 
@@ -11,7 +11,7 @@ description: Review chất lượng manual test cases — chấm điểm theo ru
 
 > 🚨 **KHÔNG dùng workflow này để cập nhật TC theo ticket đã đổi requirements** → dùng `/update-testcases-from-impact`.
 >
-> Workflow này chấm **chất lượng cách viết** theo rubric 6 tiêu chí. Một TC mô tả rất tốt về hành vi **đã bị thay đổi** vẫn đạt 12/12 điểm — rubric không đối chiếu với REQ mới, nên **không bắt được TC stale**.
+> Workflow này chấm **chất lượng cách viết** theo rubric 6 tiêu chí. Một TC mô tả rất tốt về hành vi **đã bị thay đổi** vẫn đạt 12/12 điểm — rubric không đối chiếu với REQ mới. Mục *Đối chiếu Expected với REQ* chỉ báo chỗ lệch, không thay việc đồng bộ.
 >
 > Thứ tự đúng: `/update-testcases-from-impact` đồng bộ nội dung **trước** → workflow này chấm chất lượng **sau**.
 
@@ -55,14 +55,17 @@ description: Review chất lượng manual test cases — chấm điểm theo ru
 ### Bước 2: Review Từng TC
 1. Chấm điểm 6 tiêu chí (0-2 mỗi tiêu chí, tối đa 12) theo rubric trong skill — TC `@Deprecated` không chấm. Tiêu chí 2 soát ngôn ngữ DOM/HTTP ở phần TC chính; tiêu chí 6 **không** trừ điểm TC gộp đúng Kiểu A/B
    - **Expected đọc cùng Pre-Condition + Test Data** của chính TC đó (mục *Đọc Expected cùng Pre-Condition* của skill): không đòi Expected bổ sung thứ Pre-Condition đã nêu, không trừ vì Expected không lặp lại tiền đề, không gọi "mâu thuẫn" khi hai chỗ cùng dẫn tới một trạng thái
-2. Xếp loại: 🟢 (10-12) / 🟡 (6-9) / 🔴 (0-5)
-3. Với mỗi TC 🔴/🟡: trích nguyên văn chỗ chưa đạt + viết đề xuất sửa cụ thể
+2. **Đối chiếu Expected với REQ** theo mục cùng tên của skill: ✅ / ❌ / ⚠️ / ❔. Bộ TC API chấm theo mục *Bộ TC API*
+3. Xếp loại: 🟢 (10-12) / 🟡 (6-9) / 🔴 (0-5); ❌ Lệch REQ luôn là 🔴, ⚠️ Vượt REQ tối đa 🟡
+4. Với mỗi TC 🔴/🟡: trích nguyên văn chỗ chưa đạt + viết đề xuất sửa cụ thể
 
 ### Bước 3: Phân Tích Mức Bộ TC
 
 > Mọi mục dưới đây **bỏ** các phần thuộc Danh sách loại trừ (Bước 1.3): không ghi vào gap, không vào cột *Mục thiếu*, không đề xuất TC / REQ mới, không nhắc ở Kết luận. Nhánh 4 vòng chỉ thiếu phần đã loại → `⏭️` kèm mã quyết định. Báo cáo chỉ ghi **một dòng** `Loại trừ theo requirements:` ở Tổng quan.
 
-1. **Đối soát 4 vòng (BẮT BUỘC)** — duyệt mọi nhánh của **Bản Đồ Loại Kiểm Thử — 4 Vòng** trong `skills-rbt-manual-testing`, chấm `✅` / `🟡 nông` / `🔴 thiếu` / `➖ không áp dụng (lý do kỹ thuật)` / `⏭️ cố ý bỏ` (giữ nguyên nhánh bộ TC đã chấm `⏭️` hợp lệ — có lý do + ai quyết + điều kiện rà lại — **không** tính là gap; `⏭️` rơi vào thứ không bao giờ được rút thì chấm 🔴). Soi kỹ ba nhánh hay mất nhất: `UI cơ bản` (V1), `Validation` (V2), `Permission` (V3)
+> Bộ TC API: mục 1 và 2 dùng section A → K và 10 loại field theo mục *Bộ TC API* của skill.
+
+1. **Đối soát 4 vòng (BẮT BUỘC)** — duyệt mọi nhánh của **Bản Đồ Loại Kiểm Thử — 4 Vòng** trong `skills-manual-testcase-v3`, chấm `✅` / `🟡 nông` / `🔴 thiếu` / `➖ không áp dụng (lý do kỹ thuật)` / `⏭️ cố ý bỏ` (giữ nguyên nhánh bộ TC đã chấm `⏭️` hợp lệ — có lý do + ai quyết + điều kiện rà lại — **không** tính là gap; `⏭️` rơi vào thứ không bao giờ được rút thì chấm 🔴). Soi kỹ ba nhánh hay mất nhất: `UI cơ bản` (V1), `Validation` (V2), `Permission` (V3)
 2. **Đối soát bảng 15 loại field** — với TỪNG field, so từng mục của dòng loại field tương ứng với TC thực có; thiếu mục nào nêu đích danh mục đó
 3. Coverage gaps: liệt kê kịch bản cụ thể, **ghi kèm vòng/nhánh** tương ứng — không ghi "thiếu negative case" suông
 4. TC trùng lặp → đề xuất merge: giữ một TC, TC kia đánh dấu `@Deprecated` (không xoá dòng, không đánh lại số)
@@ -78,14 +81,15 @@ description: Review chất lượng manual test cases — chấm điểm theo ru
 
 ### Bước 5: Sửa TC (Mode FIX — chỉ khi user xác nhận)
 1. Ghi lại **mốc git** của file TC trước khi sửa: `git status --short <file TC>` có dòng (thay đổi chưa commit) → **dừng**, đề nghị user commit trước, agent không tự commit; sạch thì ghi `git log -1 --format=%h -- <file TC>`. File **chưa** được git theo dõi (VD Excel/CSV khách gửi) → **hỏi user** trước khi ghi đè, vì không có cách lấy lại bản cũ
-2. Sửa **tại chỗ**, chỉ các TC đã duyệt: TC 🟢 giữ nguyên; TC 🟡 sửa theo đề xuất; TC 🔴 viết lại (tuân thủ chuẩn `skills-rbt-manual-testing`)
-3. **Giữ nguyên TC ID** — không đánh lại số. Tách TC → phần tách ra cấp **số mới nối tiếp dải** (không `TC_xxa`). TC bỏ hẳn → tag `@Deprecated` + tiền tố `🗑️ Deprecated (<lý do>, <ngày>) —` ở `Test Scenario`, **không** xoá dòng. Bỏ một biến thể → ghi lại lý do ngay trong Expected của TC đó
+2. Sửa **tại chỗ**, chỉ các TC đã duyệt: TC 🟢 giữ nguyên; TC 🟡 sửa theo đề xuất; TC 🔴 viết lại (tuân thủ chuẩn `skills-manual-testcase-v3`)
+3. **Giữ nguyên TC ID** — không đánh lại số. Tách TC → phần tách ra cấp **số mới nối tiếp dải** (không `TC_xxa`). TC bỏ hẳn → tag `@Deprecated` + tiền tố `🗑️ Deprecated (<lý do>, <ngày>) —` ở `Test Summary`, **không** xoá dòng. Bỏ một biến thể → ghi lại lý do ngay trong Expected của TC đó
 4. Bổ sung TC mới cho coverage gaps ưu tiên High (nếu user đồng ý) — **nối tiếp** mã TC kế tiếp của module, tuân thủ **Bản Đồ Loại Kiểm Thử — 4 Vòng** và **Bảng Field-Level Validation Checklist**, đặt vào đúng nhánh đã báo thiếu
 5. **Đồng bộ file index** `TEST_CASES_<TÊN_MODULE>_SUMMARY.md`: Assumptions · Bảng Đối Soát Coverage · Vùng chưa có evidence · Đối soát 4 vòng · tổng số TC / biến thể · Bộ chạy đề xuất
 6. Ghi **1 dòng Nhật ký thay đổi** vào index: nguồn `/review-testcases` mode FIX + link báo cáo · TC nào sửa gì · **mốc git trước khi sửa**
+7. **Đồng bộ Xray:** sau khi sửa xong file TC, chạy mục *Tự đồng bộ khi test case đổi* của `/export-to-xray`, rồi báo Test đã sửa và TC chưa có trên Xray.
 
 ### Bước A1: Chấm khả năng automation (Mode AUTOMATION)
-1. Đọc **[Tiêu chí chấm cột Automation](../skills-rbt-manual-testing/references/automation_criteria.md)** — đủ 8 mục, trước TC đầu tiên
+1. Đọc **[Tiêu chí chấm cột Automation](../skills-manual-testcase-v3/references/automation_criteria.md)** — đủ 8 mục, trước TC đầu tiên
 2. Chấm **độc lập**: bỏ qua cột `Automation` có sẵn trong lúc chấm. Mỗi TC: Expected cốt lõi → Trục 1 (bảng 3A theo dấu hiệu, không khớp thì 3B) → Trục 2 → Trục 3 → lấy mức thấp nhất
 3. Kết luận khác `Yes` → trích nguyên văn chữ trong TC làm căn cứ. TC mơ hồ → `❓ Chưa chấm được`, không đoán
 4. Vướng tạm thời → `⏸️ Hoãn`, không hạ giá trị. TC phơi bug không hoãn
@@ -99,7 +103,7 @@ description: Review chất lượng manual test cases — chấm điểm theo ru
 
 ### Bước A3: Ghi ngược cột Automation (chỉ khi user duyệt)
 1. Ghi **mốc git** của file TC trước khi sửa — file đang có thay đổi chưa commit → **dừng**, đề nghị user commit trước. File chưa được git theo dõi → **hỏi user** trước khi ghi đè
-2. Sửa **tại chỗ** ô `Automation` của các TC đã duyệt — đúng một từ `Yes`/`Partial`/`No`. File chưa có cột → thêm cột tên đúng `Automation`. **Không** đụng Steps/Expected
+2. Sửa **tại chỗ** ô `Automation` của các TC đã duyệt — đúng một từ `Yes`/`Partial`/`No`. File v3 → ghi vào `Automatable` của `automation_matrix.md`, không thêm cột vào bảng TC. File cũ chưa có cột → thêm cột tên đúng `Automation`. **Không** đụng Steps/Expected
 3. Ghi / cập nhật mục `## Đối soát cột Automation` ở index (mẫu mục 7.1 của tiêu chí)
 4. Ghi **1 dòng Nhật ký thay đổi**: nguồn `/review-testcases` Mode AUTOMATION + link báo cáo · số TC đổi giá trị · mốc git
 

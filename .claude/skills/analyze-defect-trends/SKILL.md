@@ -25,7 +25,7 @@ Trả lời: *lỗi đang dồn vào đâu · có vấn đề nào lặp lại �
 |---|---|---|
 | Phạm vi hệ thống | Không | Mọi hệ thống trong `docs/` — hệ thống thứ hai (`_<hệ-thống>/`) tách bảng |
 | Module | Không | Mọi module có bug hoặc lần chạy |
-| Nền tảng | Không | Cả `web` · `mobile` · `api` |
+| Nền tảng | Không | Cả `web` · `api` |
 
 ## ⚠️ Nguyên tắc thực thi
 
@@ -59,7 +59,7 @@ Ghi thẳng vào `docs/quality-insights/` để link trong bảng mở được 
 
 1. **Mở từng file bug** ở bảng C (không chỉ đọc tiêu đề) — mục *Actual Result*, *Nghi ngờ root cause*, môi trường, nền tảng
 2. Gán **một** loại nguyên nhân (bảng 1.2 của skill) + **một câu căn cứ** trích từ file bug
-3. Tìm **vấn đề lặp lại** theo ngưỡng 1.3: cùng loại ở ≥ 2 lỗi và (≥ 2 module / ≥ 2 màn hình / cùng dấu hiệu nguyên văn). Đặt tên vấn đề bằng ngôn ngữ dev hiểu (*"Lưu dữ liệu trên Android thất bại với lỗi chung chung"*), không bằng mã loại
+3. Tìm **vấn đề lặp lại** theo ngưỡng 1.3: cùng loại ở ≥ 2 lỗi và (≥ 2 module / ≥ 2 màn hình / cùng dấu hiệu nguyên văn). Đặt tên vấn đề bằng ngôn ngữ dev hiểu (*"Lưu dữ liệu thất bại với lỗi chung chung"*), không bằng mã loại
 4. Đối chiếu với `RISK-<MODULE>-nn` trong requirements: rủi ro nào đã có lỗi thật chứng minh
 
 ## Bước 4: Phân loại TC FAIL chưa có bug

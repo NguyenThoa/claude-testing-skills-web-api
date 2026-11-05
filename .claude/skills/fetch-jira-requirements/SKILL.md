@@ -1,61 +1,40 @@
 ---
 name: fetch-jira-requirements
-description: Lấy Requirements / User Stories từ Jira ticket và lưu thành file markdown hoặc JSON.
+description: Lấy Requirements / User Stories từ Jira và Confluence qua MCP jira-cybertech, lưu thành file markdown làm nguồn cho bước phân tích. Chỉ đọc, không ghi lên Jira.
 ---
 
-> **Skill nền tảng cần nạp trước:** `skills-jira-integration` — đọc `.claude/skills/<tên-skill>/SKILL.md` của từng skill trước khi bắt đầu.
+> **Skill nền tảng cần nạp trước:** `skills-jira-integration` — đọc `.claude/skills/skills-jira-integration/SKILL.md` trước khi bắt đầu.
 
 # Workflow: Fetch Jira Requirements
 
-> **BẮT BUỘC (MANDATORY SKILL):** Bạn PHẢI nạp và đọc kỹ nội dung của skill **`skills-jira-integration`** (tại `.claude/skills/skills-jira-integration/SKILL.md`) để biết cách sử dụng scripts trước khi bắt đầu.
+Workflow này chỉ đọc Jira. Không tạo, sửa hay comment trên ticket.
 
-Workflow này giúp lấy requirements, user stories, hoặc issues từ Jira và chuyển thành tài liệu phục vụ test automation.
+## Các bước
 
-## Các bước thực hiện:
+1. **Xác định phạm vi.** Hỏi user nếu chưa rõ:
 
-1. **Kiểm tra prerequisites:**
-   - Đọc skill `skills-jira-integration` để nắm cấu trúc scripts.
-   - Kiểm tra file `.env` đã tồn tại và được cấu hình đúng.
-   - Kiểm tra dependencies đã được cài đặt (`scripts/integrations/node_modules/`).
-   - Nếu chưa cài, chạy: `cd scripts/integrations && npm install`
+   | Đầu vào | Cách lấy |
+   |---|---|
+   | Một ticket, VD `PROJ-123` | `jira_get_issue`, `include` = `comments,remote_links` |
+   | Project + loại issue | `jira_search`, JQL `project = PROJ AND issuetype = Story` |
+   | JQL tuỳ chỉnh | `jira_search` |
+   | Epic | `jira_search`, JQL `parent = PROJ-10` hoặc `"Epic Link" = PROJ-10` tuỳ cấu hình Jira |
 
-2. **Xác định thông tin cần lấy:**
-   - Hỏi user cung cấp thông tin:
-     - **Issue key** cụ thể (VD: `PROJ-123`) → dùng `--issue`
-     - **Project key + Issue type** (VD: `PROJ`, `Story`) → dùng `--project --type`
-     - **JQL query** tùy chỉnh → dùng `--jql`
-     - **Epic key** (lấy children) → dùng `--epic`
-   - Xác định format output: `json` (default) hoặc `md` (markdown requirement)
+2. **Lấy đủ nội dung.** Theo mục *Đọc dữ liệu* của skill. Có file đính kèm thì dùng `jira_download_attachments`. Có link Confluence thì đọc bằng `confluence_get_page`. Không đọc được phần nào thì ghi rõ, không bỏ qua im lặng.
 
-3. **Thực thi script:**
-   - Chạy lệnh phù hợp:
-   ```bash
-   # Lấy 1 issue cụ thể
-   node scripts/integrations/jira/jira_fetcher.js --issue <ISSUE_KEY>
+3. **Lưu file** vào `docs/requirements/_discovery/sources/jira_<ISSUE-KEY>.md`, gồm:
+   - Mã, tiêu đề, loại, trạng thái, Fix Version, ngày lấy.
+   - Mô tả và tiêu chí chấp nhận giữ nguyên văn.
+   - Comment có ảnh hưởng tới nghiệp vụ.
+   - Danh sách đính kèm, Confluence và issue liên quan.
+   - Phần chưa đọc được.
 
-   # Lấy issues theo project
-   node scripts/integrations/jira/jira_fetcher.js --project <PROJECT_KEY> --type <TYPE> --max <N>
+   🔒 Không ghi token hay mật khẩu xuất hiện trong ticket. Thay bằng mô tả hình thái, ví dụ `<16 ký tự hex>`.
 
-   # Tìm theo JQL
-   node scripts/integrations/jira/jira_fetcher.js --jql "<JQL_QUERY>"
+4. **Bàn giao.** Tóm tắt bằng Tiếng Việt: số ticket, đường dẫn file, điểm mơ hồ phát hiện được, phần chưa đọc được. Bước tiếp theo:
+   - Phân tích ticket mới: `/analyze-requirement-document`
+   - Module đã có tài liệu và ticket làm đổi requirement: `/update-requirements-from-ticket`
 
-   # Xuất Markdown
-   node scripts/integrations/jira/jira_fetcher.js --issue <KEY> --format md --output ./requirements/jira
-   ```
+## Khi có lỗi
 
-4. **Xử lý kết quả:**
-   - Kiểm tra output file được tạo trong `requirements/jira/` (hoặc `--output` chỉ định).
-   - Nếu format `json`: Đọc và hiển thị tóm tắt issues cho user.
-   - Nếu format `md`: Hiển thị nội dung markdown requirement cho user review.
-   - Nếu gặp lỗi: Đọc log, phân tích nguyên nhân theo bảng Troubleshooting trong skill.
-
-5. **Xử lý lỗi thường gặp:**
-   - **HTTP 401**: Token sai → hướng dẫn user kiểm tra `JIRA_API_TOKEN` hoặc `JIRA_PAT`
-   - **HTTP 404**: Issue không tồn tại hoặc `JIRA_BASE_URL` sai
-   - **File .env not found**: Hướng dẫn user copy `.env.example` → `.env`
-   - **Module not found**: Chạy `npm install` trong `scripts/integrations/`
-
-6. **Delivery:**
-   - Trình bày kết quả bằng Tiếng Việt.
-   - Nếu user yêu cầu chuyển thành requirement document, sử dụng skill `skills-requirements-analyzer` để format lại.
-   - Lưu file output vào thư mục phù hợp (`requirements/jira/`).
+Xử lý theo bảng *Lỗi thường gặp* trong skill. MCP chưa kết nối thì dừng và báo user.

@@ -1,6 +1,6 @@
 ---
 name: skills-figma-design-comparator
-description: Skill so bản thiết kế Figma với giao diện đã xây dựng thật — web desktop, mobile web (Playwright MCP giả lập thiết bị) và app mobile Android/iOS/Hybrid (Appium MCP). Trích spec Figma bằng script chỉ-đọc (chữ, toạ độ, font, màu), thu cây phần tử + ảnh của UI thật, đo lệch theo đơn vị dp/pt/px có neo theo bề ngang màn hình, người soát đi lưới soát ngoài → trong để không sót phần tử, xác nhận trên ảnh đặt cạnh nhau rồi ghi DIFF có loại · mức độ · ai xử lý, kèm ảnh khoanh đúng (Figma) / sai (App) có ghi chú. Cache spec + ảnh Figma để khỏi tốn lượt gọi MCP; một lệch dùng chung khung Figma giữa mobile web và app không bị log trùng. Dùng khi tester cần biết app/web có làm đúng thiết kế không, soát UI trước release, review pixel-perfect, đối chiếu mockup với bản build, kiểm màn hình theo Figma — kể cả khi user chỉ dán link figma.com và hỏi "app đã đúng design chưa".
+description: Skill so bản thiết kế Figma với giao diện đã xây dựng thật — web desktop, mobile web (Playwright MCP giả lập thiết bị). Trích spec Figma bằng script chỉ-đọc (chữ, toạ độ, font, màu), thu cây phần tử + ảnh của UI thật, đo lệch theo đơn vị CSS px có neo theo bề ngang màn hình, người soát đi lưới soát ngoài → trong để không sót phần tử, xác nhận trên ảnh đặt cạnh nhau rồi ghi DIFF có loại · mức độ · ai xử lý, kèm ảnh khoanh đúng (Figma) / sai (App) có ghi chú. Cache spec + ảnh Figma để khỏi tốn lượt gọi MCP; một lệch dùng chung khung Figma giữa desktop và mobile web không bị log trùng. Dùng khi tester cần biết app/web có làm đúng thiết kế không, soát UI trước release, review pixel-perfect, đối chiếu mockup với bản build, kiểm màn hình theo Figma — kể cả khi user chỉ dán link figma.com và hỏi "app đã đúng design chưa".
 ---
 
 # Figma Design Comparator
@@ -15,7 +15,7 @@ Mẫu báo cáo riêng của team (nếu có): `plans/design-compare/report_temp
 
 ## When to Use
 
-- Có link Figma (khung màn hình) và một bản build web / app chạy được — cần biết làm đúng thiết kế chưa
+- Có link Figma (khung màn hình) và một bản build web chạy được — cần biết làm đúng thiết kế chưa
 - Soát UI trước release, sau khi dev báo "đã làm theo design", hoặc khi designer cập nhật Figma
 - Đối chiếu một luồng nhiều màn (đăng nhập → dashboard → menu…) với bộ khung Figma tương ứng
 
@@ -52,17 +52,13 @@ Mọi phía đều quy về **spec JSON** cùng cấu trúc — `dc.py` so đư�
 Figma ──(use_figma + figma_extract.js, CHỈ ĐỌC · cache theo dấu vân tay)─┐
 Web   ──(browser_evaluate + collect_dom.js, filename=…)──────┤→ spec JSON → dc.py match → bảng đo
 Mobile web ─(như Web, trên server playwright-mobile --device)─┤          dc.py checklist → lưới soát ngoài → trong
-Android ─(page source + ảnh + dc.py android-tree)──────────┤          dc.py visual → ảnh đặt cạnh nhau / chồng / khác biệt
-iOS   ──(page source + ảnh + dc.py ios-tree)──────────────────┘          dc.py mark → ảnh khoanh đúng / sai + ghi chú
 ```
 
 | Nguồn | Có gì | Thiếu gì |
 |---|---|---|
 | Figma (`figma_extract.js`) | Chữ thật (kể cả chữ trong component), toạ độ tương đối khung, cỡ/độ đậm/font/line-height, màu chữ, màu nền/viền, bo góc | — (nguồn đầy đủ nhất) |
 | Web (`collect_dom.js`) | Như Figma — computed style chính xác, khung chữ đo bằng Range (ink box) | Bóng đổ, gradient chỉ biết có/không |
-| Mobile web (`collect_dom.js` trên `playwright-mobile`) | Như Web — trang ở đúng chế độ mobile (UA, cảm ứng, DPR) | Engine thật của máy (Safari iOS) — cần thì chụp thêm máy thật để soát mắt (`web.md` 7.3) |
-| Android / iOS native | Chữ, khung phần tử (dp/pt) | **Không có** font, cỡ chữ, màu → màu lấy mẫu trên ảnh chụp; cỡ chữ suy từ chiều cao dòng |
-| Hybrid WebView không bật debug | Như native — WebView đưa chữ lên cây trợ năng, hay **gộp** chữ của phần tử con | Như native |
+| Mobile web (`collect_dom.js` trên `playwright-mobile`) | Như Web — trang ở đúng chế độ mobile (UA, cảm ứng, DPR) | Engine trình duyệt thật của điện thoại |
 
 > **Vì sao không dùng `get_metadata` / `get_design_context` làm nguồn chính:** `get_metadata` không trả chữ bên trong instance (nút chỉ hiện `name="Label"`), không có màu/font; `get_design_context` trả code React/Tailwind — trích được nhưng phải parse JSX. `figma_extract.js` qua `use_figma` trả thẳng `characters`, `fontSize`, `fills` của từng node — chính xác và gọn. Hai tool kia vẫn dùng để **xem** (ảnh, token biến `get_variable_defs`).
 
@@ -116,7 +112,6 @@ Evidence đặt tên `_figma_render.png`; báo cáo ghi rõ khung nào dùng ả
 
 Chi tiết theo nền tảng — đọc **đúng một** file:
 
-- App mobile (Android / iOS / Hybrid): [`references/mobile.md`](references/mobile.md)
 - Web desktop: [`references/web.md`](references/web.md)
 - Mobile web (trình duyệt trên điện thoại): [`references/web.md`](references/web.md) **+ mục 7** — server `playwright-mobile`, không thu hẹp Chrome desktop
 
@@ -129,7 +124,7 @@ python scripts/design-compare/dc.py match   figma.json actual.json --actual-top 
 python scripts/design-compare/dc.py visual  figma.png  app.png --design figma.json --actual actual.json --actual-top <đỉnh header app> -o reports/design-compare/<run>/<mã>
 ```
 
-**Mốc dọc** = đỉnh header ở cả hai phía (rule mục 3): thiết kế tự lấy đáy khối `StatusBar`; app truyền `--actual-top` = y của khối header trong spec app (mobile) — đo một lần, dùng cho mọi khung.
+**Mốc dọc** (rule mục 3): chỉ cần khi khung Figma vẽ thanh trạng thái giả — thiết kế tự lấy đáy khối `StatusBar`, app truyền `--actual-top` = y của khối header trong spec app. Khung không vẽ thanh này thì bỏ `--actual-top`.
 
 | Tình huống | Thêm tham số |
 |---|---|
@@ -144,10 +139,10 @@ python scripts/design-compare/dc.py visual  figma.png  app.png --design figma.js
 | Cột | Nghĩa | Đọc thế nào |
 |---|---|---|
 | Δx (neo) | Lệch ngang theo kiểu neo khớp nhất (trái · phải · giữa · tỉ lệ · tâm-…) | Neo `tỉ lệ` mà vẫn lệch → phần tử co giãn sai |
-| Δy | Lệch dọc tính từ dưới status bar (hoặc từ đáy với phần tử `neo đáy`) | Lớn mà Δ khoảng cách nhỏ → **kế thừa**, không phải lỗi của phần tử này |
+| Δy | Lệch dọc tính từ mốc dọc (hoặc từ đáy với phần tử `neo đáy`) | Lớn mà Δ khoảng cách nhỏ → **kế thừa**, không phải lỗi của phần tử này |
 | Δ khoảng cách | Khoảng cách tới phần tử khớp ngay phía trên, app trừ thiết kế | **Đây là cột tìm chỗ khởi phát xô lệch** |
 | Δ cao | Chiều cao khung app − khung chữ thiết kế | ≥ 0,6 × line-height → xuống dòng khác |
-| Màu · ΔE | Màu thiết kế → màu app (web: computed · mobile: lấy mẫu ảnh) | So ngưỡng rule mục 4 |
+| Màu · ΔE | Màu thiết kế → màu app (computed style) | So ngưỡng rule mục 4 |
 
 Bảng khối (B1, B2…) ghép khối có nền/viền qua chữ bên trong — **heuristic**, phải xem ảnh.
 
@@ -167,7 +162,6 @@ Mở `<mã>_side.png` cạnh lưới, đi **đúng thứ tự** L0 khung màn �
 |---|---|---|
 | 🔍 Thiếu trên app | Thật sự thiếu · **hoặc** app thay bằng ảnh/icon (chữ "A" của avatar thành ảnh) · **hoặc** trạng thái thoáng qua chưa tái tạo (toast) | Ảnh đặt cạnh nhau |
 | ➕ Thừa trên app | Thật sự thừa (khối thiết kế chưa vẽ) · hoặc chữ nằm dưới thanh điều hướng/bị che | Cuộn xem; ảnh app |
-| ❔ chung node | WebView gộp chữ (`User mgttotal: 3294 users`) — chữ **có**, chỉ không đo tự động được | Nhìn ảnh: vị trí/màu có lệch thấy rõ không |
 | ❌ Δy ở phần tử đầu | Nguyên nhân thường ở khối **không có chữ** phía trên (banner, ảnh, header cao hơn) | Ảnh: khối nào cao hơn → DIFF ghi cho **khối đó** |
 | ⚠️/❌ màu ở khối | Thiết kế nền phẳng, app nền gradient/đổ bóng — lấy mẫu một điểm không đại diện | Ảnh; wireframe thì chỉ ghi "tham khảo" |
 | ❌ chữ `<mẫu:…>` "khác nội dung" | Dữ liệu thật khác **hình dạng** mẫu (tên có chữ số) — không phải lệch · **hoặc** app bỏ trống đúng chỗ dữ liệu (`delete , after…`) — lệch thật | Đọc cột *Trên app*: còn phần cố định của câu mà thiếu dữ liệu → DIFF |
@@ -182,14 +176,14 @@ Mở `<mã>_side.png` cạnh lưới, đi **đúng thứ tự** L0 khung màn �
 - [ ] Ảnh/banner: có, đúng tỉ lệ khung, không méo, không vỡ
 - [ ] Bo góc, viền, đường phân cách, đổ bóng (mockup)
 - [ ] Chữ bị cắt `…`, tràn khung, chồng lên nhau
-- [ ] Phần tử bị che (bởi bàn phím, bottom nav, status bar)
+- [ ] Phần tử bị che (bởi header cố định, bottom nav, bàn phím ảo)
 - [ ] Trạng thái: nút disabled/enabled, ô nhập focus/lỗi — đúng như khung vẽ
 - [ ] Thứ tự đọc và căn lề tổng thể của khối
 
 **5c — Tra DIFF đã có trước khi cấp mã.** Mỗi dòng xác nhận lệch thật → một `DIFF`. Nhiều dòng cùng **một nguyên nhân** → **một** DIFF (VD 5 tab bottom nav cùng lệch −6,8 do thanh cao hơn = 1 DIFF cho thanh). Trước khi cấp mã nối tiếp, tra theo thứ tự:
 
 1. Lượt trước của **cùng** module × nền tảng × biến thể → còn lệch thì giữ mã (rule mục 6 — vòng đời)
-2. **Sổ khung Figma** trong danh mục → cùng node-id khung đã có DIFF ở **nền tảng / biến thể khác** (mobile web ↔ app, desktop ↔ mobile web) → chung mã nguồn giao diện: dùng lại mã, thêm nền tảng · khác mã nguồn: mã mới + cột *Liên quan* (rule mục 6 — *một lệch, không log trùng*)
+2. **Sổ khung Figma** trong danh mục → cùng node-id khung đã có DIFF ở **nền tảng / biến thể khác** (desktop ↔ mobile web) → chung mã nguồn giao diện: dùng lại mã, thêm nền tảng · khác mã nguồn: mã mới + cột *Liên quan* (rule mục 6 — *một lệch, không log trùng*)
 3. Bảng **Thành phần dùng chung** → lệch ở header, bottom nav, ô nhập… đã có mã ở module khác: dẫn chiếu
 
 **5d — Ảnh khoanh đúng / sai** (rule mục 7) — mỗi khung có DIFF một ảnh `_marked.png`: Figma | App cạnh nhau, khung **xanh** bên Figma = đúng, khung **đỏ** bên App = sai, cùng số, dải ghi chú *Thiết kế (đúng) / Thực tế (sai)* bên dưới. Viết spec JSON (ghi chú viết theo *Viết một DIFF* bên dưới — không toạ độ):
@@ -198,8 +192,8 @@ Mở `<mã>_side.png` cạnh lưới, đi **đúng thứ tự** L0 khung màn �
 {"title": "B-07 · Chọn khuyến mãi",
  "items": [{"diff": "DIFF-BK-BOOK-07", "title": "Bảng khuyến mãi tràn ngang, cột Name bị cắt",
             "figma": {"box": "B2"}, "app": {"box": "B2"},
-            "expected": "Bảng nằm gọn trong thẻ; cột CODE rộng 118 dp, cột Name hiện đủ tên + mô tả",
-            "actual": "Cột CODE rộng 219 dp đẩy cột Name ra mép phải — tên bị cắt, mô tả xuống 3 dòng"},
+            "expected": "Bảng nằm gọn trong thẻ; cột CODE rộng 118 px, cột Name hiện đủ tên + mô tả",
+            "actual": "Cột CODE rộng 219 px đẩy cột Name ra mép phải — tên bị cắt, mô tả xuống 3 dòng"},
            {"diff": "DIFF-BK-BOOK-12", "title": "Thiếu ô tìm kiếm", "figma": {"text": "^Search"}, "app": null,
             "expected": "Ô Search… phía trên bảng", "actual": "Không có ô tìm kiếm"}]}
 ```
@@ -213,7 +207,7 @@ python scripts/design-compare/dc.py mark figma_<id>.png <mã>_app.png --design f
 |---|---|
 | `{"text": "<regex>"}` | Phần tử có chữ — lấy phần tử nhỏ nhất khớp; thêm `"all": true` để gộp mọi phần tử khớp (5 tab bottom nav) |
 | `{"row": 6}` · `{"box": "B2"}` | Theo dòng / khối của bảng đo (cần `--match`) — hai phía tự lấy đúng cặp đã ghép |
-| `{"name": "<regex>"}` | Khối / icon / ảnh theo tên (Figma: tên layer · app: `resource-id` / class) |
+| `{"name": "<regex>"}` | Khối / icon / ảnh theo tên (Figma: tên layer · app: `id` / class) |
 | `{"rect": [x, y, w, h]}` | Vùng không có chữ (khoảng trống, banner) — đơn vị của phía đó |
 | `[đích, đích, …]` | Gộp khung của nhiều đích |
 | `"app": null` | App **thiếu** → khung đỏ nét đứt ở chỗ đáng lẽ có (neo theo phần tử khớp gần nhất phía trên) |
@@ -244,12 +238,10 @@ Mục 4 *Chi tiết từng khung* dán bảng đo của **mọi** đoạn chụp
 ```markdown
 | Mã | Trạng thái | Nền tảng | Khung | Loại | Mức độ | Ai xử lý | Mô tả | Thực tế | Thiết kế | Liên quan | Evidence |
 |---|---|---|---|---|---|---|---|---|---|---|---|
-| DIFF-BK-BOOK-11 | 🔴 Mở | Android | B-09 | CONTENT | Medium | Dev | Câu xác nhận xoá **thiếu tên sách** — người dùng không biết đang xoá sách nào | `Do you want delete , after delete you can't undo` | `Do you want delete <tên sách>, after delete you can't undo` | — | [side](evidence/B-09_delete_book_confirm_side.png) · [marked](evidence/B-09_delete_book_confirm_marked.png) |
-| DIFF-SHOP-CART-04 | 🔴 Mở | Mobile web · Android | C-02 | LAYOUT | Low | Dev | Menu **Sort By** hẹp hơn và dính sát mép phải màn hình (app Hybrid chung frontend với mobile web → một mã) | Rộng **160 dp** · cách mép phải **0 dp** | Rộng **220 dp** · cách mép phải **16 dp** | — | [marked](evidence/C-02_cart_sort_menu_marked.png) |
-| DIFF-SHOP-CART-07 | 🔴 Mở | iOS | C-03 | LAYOUT | Medium | Dev | Gap giữa ô **Mã giảm giá** và nút **Thanh toán** rộng hơn thiết kế | Gap **25 pt** | Gap **18 pt** | `DIFF-SHOP-CART-03` (Android — app native, sửa riêng) | [marked](evidence/C-03_checkout_marked.png) |
+| DIFF-SHOP-CART-04 | 🔴 Mở | Mobile web | C-02 | LAYOUT | Low | Dev | Menu **Sort By** hẹp hơn và dính sát mép phải màn hình (desktop và mobile web chung frontend → một mã) | Rộng **160 px** · cách mép phải **0 px** | Rộng **220 px** · cách mép phải **16 px** | — | [marked](evidence/C-02_cart_sort_menu_marked.png) |
 ```
 
-Ô **Thực tế** và **Thiết kế** ghi **số đo** hoặc **nguyên văn chữ**, không ghi "trông hơi to" — và **không** ghi toạ độ thô (`x 272`, `Δy +15`): dùng kích thước + margin / padding / gap như rule mục 6 *Viết DIFF cho người không đọc toạ độ* (dịch `Δx` của bảng đo thành *"cách mép trái 32 dp, thiết kế 16 dp"*, `Δ khoảng cách` thành *"gap tới … 25 dp, thiết kế 18 dp"*). Gọi phần tử bằng chữ / vai trò người dùng nhìn thấy, không bằng `B2` hay số dòng bảng đo. Cột **Nền tảng** liệt kê mọi nền tảng / biến thể đã thấy lệch này (DIFF dùng lại ở nền tảng chung mã nguồn); cột **Liên quan** trỏ mã cùng lệch ở nền tảng khác mã nguồn. Ô **Mô tả** nói hậu quả với người dùng khi có (*"không biết đang xoá sách nào"*) — đó là thứ giúp PO xếp ưu tiên. Nguyên nhân chỉ ghi khi đã xác định trên ảnh/số đo; chưa rõ thì thôi — không suy diễn code của dev. DIFF hành vi giao `Dev` ghi thêm các bước tái hiện + `tái hiện n/n lần`.
+Ô **Thực tế** và **Thiết kế** ghi **số đo** hoặc **nguyên văn chữ**, không ghi "trông hơi to" — và **không** ghi toạ độ thô (`x 272`, `Δy +15`): dùng kích thước + margin / padding / gap như rule mục 6 *Viết DIFF cho người không đọc toạ độ* (dịch `Δx` của bảng đo thành *"cách mép trái 32 px, thiết kế 16 px"*, `Δ khoảng cách` thành *"gap tới … 25 px, thiết kế 18 px"*). Gọi phần tử bằng chữ / vai trò người dùng nhìn thấy, không bằng `B2` hay số dòng bảng đo. Cột **Nền tảng** liệt kê mọi nền tảng / biến thể đã thấy lệch này (DIFF dùng lại ở nền tảng chung mã nguồn); cột **Liên quan** trỏ mã cùng lệch ở nền tảng khác mã nguồn. Ô **Mô tả** nói hậu quả với người dùng khi có (*"không biết đang xoá sách nào"*) — đó là thứ giúp PO xếp ưu tiên. Nguyên nhân chỉ ghi khi đã xác định trên ảnh/số đo; chưa rõ thì thôi — không suy diễn code của dev. DIFF hành vi giao `Dev` ghi thêm các bước tái hiện + `tái hiện n/n lần`.
 
 ---
 
@@ -259,13 +251,10 @@ Mục 4 *Chi tiết từng khung* dán bảng đo của **mọi** đoạn chụp
 |---|---|---|
 | `get_metadata` không `nodeId` chỉ liệt kê page đã tải | Tưởng file chỉ có 1 page | Liệt kê bằng `figma_extract.js` (`FRAME_IDS = []`) |
 | Chữ trong instance không có trong `get_metadata` | Bỏ sót chữ của nút, ô nhập | Dùng `figma_extract.js` |
-| Bounds mobile là khung phần tử, không phải khung chữ | Báo "khác số dòng" giả, Δx lệch | `dc.py` nhận diện khung chứa → so tâm; vẫn phải xem ảnh |
-| WebView gộp chữ con không có khoảng trắng | Thiếu/không khớp giả | `dc.py` khớp kiểu "chứa"; xác nhận trên ảnh |
-| Lấy status bar làm mốc dọc (thiết kế 36 · thật 53 dp, app lại vẽ header ở 40 dp) | Mọi Δy lệch giả cùng một lượng | Mốc = đỉnh header cả hai phía (`--actual-top`) |
+| Lấy thanh trạng thái giả trong khung Figma làm mốc dọc | Mọi Δy lệch giả cùng một lượng | Mốc = đỉnh header cả hai phía (`--actual-top`) |
 | Menu/dialog mở → cây phần tử chỉ còn lớp phủ | Cả màn nền báo "thiếu" | `SCOPE` trong `figma_extract.js` — so riêng lớp phủ |
 | Một khung Figma vẽ hai trạng thái không cùng lúc | Không bao giờ tái tạo được khung | Tái tạo từng trạng thái, DIFF `STATE` cho thiết kế |
-| Toast biến khỏi cây phần tử sau ~2 giây | Không đo được bằng page source | Ảnh chụp ngay là bằng chứng, đo vị trí trên ảnh |
-| Form giữ giá trị cũ khi quay lại màn | Chữ nhập mới bị nối vào sau, trạng thái sai | Xoá ô trước khi nhập (`appium_set_value` thay toàn bộ) |
+| Toast biến khỏi cây phần tử sau ~2 giây | Chạy `collect_dom.js` muộn thì không còn phần tử để đo | Ảnh chụp ngay là bằng chứng, đo vị trí trên ảnh |
 | `get_screenshot` khung cao > 1024 | Ảnh Figma bị thu nhỏ, ảnh đặt cạnh nhau lệch tỉ lệ | `maxDimension` = chiều cao khung |
 | So khung "có toast" lúc toast đã tắt | DIFF "thiếu" giả | Tái tạo hành động rồi chụp ngay; không kịp → ❔ |
 | Phần trang dưới màn đầu không có trong khung Figma (khung cố định một màn) | Bỏ sót cả khối chức năng app có mà thiết kế không vẽ | Luôn **cuộn hết** màn thật một lượt dù khung Figma không ghi "full scroll" |
@@ -278,7 +267,6 @@ Mục 4 *Chi tiết từng khung* dán bảng đo của **mọi** đoạn chụp
 | Ảnh evidence chỉ khoanh bên App, nhãn chỉ có mã DIFF | Người nhận mở ảnh không biết đúng phải trông thế nào, đọc DIFF thì gặp toạ độ — *"học hơi lú"* | `dc.py mark`: Figma xanh / App đỏ cùng số + ghi chú Thiết kế / Thực tế (Bước 5d) |
 | Mô tả DIFF chép thẳng `x 272`, `Δy +15` từ bảng đo | Dev/PO không dịch được ra phần tử nào, lệch kiểu gì | Viết bằng margin / padding / gap / kích thước + tên phần tử nhìn thấy (rule mục 6) |
 | Soát ảnh theo cảm hứng, chỉ đi các dòng ❌ của bảng đo | Sót icon, ảnh, khoảng cách giữa khối, lề trong thẻ — bảng đo không có dòng nào cho chúng | Lưới soát `dc.py checklist` đi ngoài → trong, mỗi dòng phải có kết quả (Bước 5a) |
-| Chạy app sau mobile web (chung khung Figma) mà không tra lượt trước | Log trùng lệch đã có, không ai biết hai mã là một | Tra *Sổ khung Figma* trước khi cấp mã (Bước 5c) |
 | Mobile web bằng Chrome desktop thu hẹp, hoặc giả lập CDP trong server `playwright` chính | Trang ở layout desktop (UA, không cảm ứng); CDP bị lệnh chụp ảnh đặt lại về 1600 px mà không báo lỗi | Server `playwright-mobile` (`web.md` mục 7) |
 | Mỗi lượt so lại đều trích + chụp lại mọi khung Figma | Hết hạn mức gói Starter giữa phiên | `dc.py cache plan / get / put` theo dấu vân tay khung (Bước 1–2) |
 
@@ -288,7 +276,6 @@ Mục 4 *Chi tiết từng khung* dán bảng đo của **mọi** đoạn chụp
 
 | File | Khi nào đọc |
 |---|---|
-| [`references/mobile.md`](references/mobile.md) | Bước 3 — mode MOBILE |
 | [`references/web.md`](references/web.md) | Bước 3 — mode WEB · mode MOBILE-WEB (mục 7) |
 | `plans/design-compare/report_template.md` (nếu project có) | Bước 6 — mẫu báo cáo riêng của team, thay mẫu chuẩn |
 | [`references/report_template.md`](references/report_template.md) | Bước 6 |

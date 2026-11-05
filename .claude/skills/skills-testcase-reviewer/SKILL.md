@@ -15,14 +15,14 @@ Sử dụng skill này khi:
 
 - User đưa file test cases (Excel/Markdown/CSV) và yêu cầu "review", "đánh giá", "check chất lượng"
 - Cần biết **TC nào làm automation được** — bộ TC bất kỳ, kể cả file khách gửi không có cột `Automation` → **Mode AUTOMATION** (mục riêng bên dưới)
-- Sau khi sinh TC bằng `skills-rbt-manual-testing` và cần một vòng kiểm tra độc lập
+- Sau khi sinh TC bằng `skills-manual-testcase-v3` và cần một vòng kiểm tra độc lập
 - Onboard bộ TC cũ từ dự án khác
 
 **KHÔNG** sử dụng skill này khi:
 
-- **Requirements vừa đổi theo ticket, cần đồng bộ TC** → dùng `skills-rbt-manual-testing` **Mode DELTA** qua workflow `/update-testcases-from-impact`
+- **Requirements vừa đổi theo ticket, cần đồng bộ TC** → dùng `skills-manual-testcase-v3` **Mode DELTA** qua workflow `/update-testcases-from-impact`
 
-> 🚨 **Phân biệt rõ:** skill này chấm **chất lượng cách viết** theo rubric — một TC mô tả rất tốt về hành vi **đã bị thay đổi** vẫn đạt 12/12 điểm, vì rubric không đối chiếu với REQ mới. Nó **không bắt được TC stale**.
+> 🚨 **Phân biệt rõ:** skill này chấm **chất lượng cách viết** theo rubric — một TC mô tả rất tốt về hành vi **đã bị thay đổi** vẫn đạt 12/12 điểm, vì rubric không đối chiếu với REQ mới. Mục *Đối chiếu Expected với REQ* chỉ báo chỗ lệch, không thay việc đồng bộ.
 >
 > Thứ tự đúng: `/update-testcases-from-impact` đồng bộ nội dung **trước** → skill này chấm chất lượng **sau**.
 
@@ -35,11 +35,11 @@ Mỗi test case chấm theo 6 tiêu chí, thang điểm 0-2 (0 = không đạt, 
 | # | Tiêu chí | Câu hỏi kiểm tra |
 |---|---|---|
 | 1 | **Rõ ràng (Clarity)** | Người chưa biết feature đọc có thực hiện được không? Steps có đánh số, mỗi step 1 hành động? |
-| 2 | **Expected Result đo được** | Expected có cụ thể, verify được **bằng mắt thường** không? (❌ "hoạt động đúng" / ✅ "hiển thị message X, chuyển sang trang Dashboard"). Steps/Expected ở phần TC chính dùng ngôn ngữ DOM/DevTools (`document.`, `querySelector`, `className`, selector CSS/XPath, mã HTTP, header) → **tối đa 1 điểm** — trừ TC `Auto Type` = `API` và phần nằm dưới `🔧 Ghi chú kỹ thuật (cần DevTools):` của TC có tag `@TechCheck` (Quy Tắc Ngôn Ngữ Kiểm Chứng của `skills-rbt-manual-testing`) |
+| 2 | **Expected Result đo được** | Expected có cụ thể, verify được **bằng mắt thường** không? (❌ "hoạt động đúng" / ✅ "hiển thị message X, chuyển sang trang Dashboard"). Steps/Expected ở phần TC chính dùng ngôn ngữ DOM/DevTools (`document.`, `querySelector`, `className`, selector CSS/XPath, mã HTTP, header) → **tối đa 1 điểm** — trừ bộ TC API (mục *Bộ TC API*) và phần nằm dưới `🔧 Ghi chú kỹ thuật (cần DevTools):` của TC có tag `@TechCheck` (Quy Tắc Ngôn Ngữ Kiểm Chứng của `skills-manual-testcase-v3`) |
 | 3 | **Độc lập (Independence)** | TC có tự chuẩn bị precondition không, hay phụ thuộc TC khác chạy trước? |
 | 4 | **Test data cụ thể** | Data có được chỉ định rõ không? Field unique có ghi chú cần random không? |
 | 5 | **Truy vết được (Traceability)** | TC có link về requirement/user story không? |
-| 6 | **Đúng trọng tâm (Focus)** | 1 TC verify **1 hành vi**. TC ở độ hạt GỘP **hợp lệ** — Bảng biến thể Kiểu A (cùng trường, cùng thao tác, cùng loại phản hồi) hoặc Bảng kiểm Kiểu B (quan sát tĩnh cùng màn hình) — **không** bị trừ điểm. Chỉ trừ khi vi phạm bảng **CẤM gộp** của `skills-rbt-manual-testing` (khác trường · khác loại phản hồi · gộp TC smoke khác hành vi · gộp TC thiết kế để FAIL · > 6 biến thể · biến thể không có mã riêng) hoặc gộp nhiều hành vi không theo hai kiểu trên |
+| 6 | **Đúng trọng tâm (Focus)** | 1 TC verify **1 hành vi**. TC ở độ hạt GỘP **hợp lệ** — Bảng biến thể Kiểu A (cùng trường, cùng thao tác, cùng loại phản hồi) hoặc Bảng kiểm Kiểu B (quan sát tĩnh cùng màn hình) — **không** bị trừ điểm. Chỉ trừ khi vi phạm bảng **CẤM gộp** của `skills-manual-testcase-v3` (khác trường · khác loại phản hồi · gộp TC smoke khác hành vi · gộp TC thiết kế để FAIL · > 6 biến thể · biến thể không có mã riêng) hoặc gộp nhiều hành vi không theo hai kiểu trên |
 
 > TC mang tag `@Deprecated` (chức năng đã gỡ) **không** chấm rubric, **không** tính vào coverage — liệt kê riêng số lượng ở phần Tổng quan.
 
@@ -62,6 +62,39 @@ Pre-Condition · Test Data · Expected là **một hợp đồng**: Pre-Conditio
 - 🟢 **10-12:** Tốt — dùng được ngay
 - 🟡 **6-9:** Cần sửa — có đề xuất cụ thể
 - 🔴 **0-5:** Viết lại — chỉ ra hướng viết lại
+
+---
+
+## Đối chiếu Expected với REQ (BẮT BUỘC khi có requirements)
+
+Rubric chỉ chấm cách viết. Mục này kiểm **Expected có đúng test basis không**, độc lập với điểm rubric. Với từng TC, mở đúng các REQ ở cột `REQ ID`, so Expected cốt lõi với Acceptance Criteria, rồi chấm một trong bốn mức:
+
+| Kết quả | Khi nào | Xử lý |
+|---|---|---|
+| ✅ Khớp | Expected nói đúng điều REQ quy định | — |
+| ❌ Lệch REQ | Expected nói khác REQ, kể cả khi TC viết rất rõ | Xếp 🔴 **dù rubric cao**, trích nguyên văn cả Expected và AC |
+| ⚠️ Vượt REQ | Expected khẳng định thứ REQ không nói: message, ngưỡng, mã lỗi | Xếp tối đa 🟡. Có `ASM`/`AMB` thì giữ, chưa có thì đề xuất mở |
+| ❔ Không đối chiếu được | Thiếu REQ, sai mã REQ, hoặc AC quá mơ hồ | Nêu trong báo cáo, không tự suy diễn |
+
+- REQ có cột `Nguồn` **chỉ** là `UI thực tế` hoặc `Kiểm chứng thực tế` mô tả hiện trạng, chưa có tài liệu hay người duyệt, cột `Duyệt` là `⏳` hoặc chưa có → ghi `⚠️ REQ theo hiện trạng`. Khớp với REQ này **không** chứng minh app đúng
+- Bộ TC viết theo ảnh hoặc response thật thay cho REQ đã duyệt là lỗi ❌, không phải ⚠️
+- Mục này tìm lệch, không thay `/update-testcases-from-impact`: đồng bộ theo ticket vẫn phải qua workflow đó
+
+---
+
+## Bộ TC API — chấm theo chuẩn của `skills-api-testcase-v3`
+
+Nhận diện: file ở tầng `api/`, hoặc header có cột `Mục đích kiểm tra`. Khi đó đọc thêm `skills-api-testcase-v3` (`format_api.md`, `test_design_api.md`, `section_coverage.md`) và thay các phần sau:
+
+| Phần | Bộ TC web | Bộ TC API |
+|---|---|---|
+| Tên cột | `Test Summary` · `Pre-condition` · `Action` · `Test Data` · `Expected Result` | `Mục đích kiểm tra` · `Tiền điều kiện` · `Các bước thực hiện` · `Dữ liệu test` · `Kết quả mong đợi` |
+| Tiêu chí 2 | Kiểm được bằng mắt, không dùng ngôn ngữ DOM/HTTP | Có mã HTTP đúng ngữ nghĩa và nội dung response kiểm được. Mã HTTP, header, JSON là ngôn ngữ **đúng**, không trừ điểm |
+| Đối soát loại kiểm thử | Bản đồ 4 vòng | Section A → K theo `Risk Level` của endpoint (`test_design_api.md` mục 4) + 4 thứ không bao giờ rút |
+| Đối soát field | Bảng 15 loại field | 10 loại field request body (`section_coverage.md`) |
+| Kiểm thêm | — | Ma trận auth theo từng operation · BOLA/IDOR chỉ bằng 2 tài khoản tự tạo · phân biệt 401 và 403 · phép thử 6b: mỗi REQ có TC mà Expected cốt lõi là đúng REQ đó |
+
+Không báo gap `UI cơ bản`, `Responsive`, `Accessibility` cho bộ TC API. Mode FIX giữ đúng 11 cột và format của `format_api.md`.
 
 ---
 
@@ -100,14 +133,14 @@ Ngoài review từng TC, đánh giá độ phủ của cả bộ — **trừ** c
 | Khía cạnh | Kiểm tra |
 |---|---|
 | **Đối soát 4 vòng** ⭐ | Xem bên dưới — đây là phần bắt lỗi "bộ TC nông" hiệu quả nhất |
-| **Đối soát bảng 15 loại field** ⭐ | Với TỪNG field, so từng mục của dòng loại field trong `skills-rbt-manual-testing` với TC thực có. Thiếu mục nào, liệt kê đích danh mục đó |
+| **Đối soát bảng 15 loại field** ⭐ | Với TỪNG field, so từng mục của dòng loại field trong `skills-manual-testcase-v3` với TC thực có. Thiếu mục nào, liệt kê đích danh mục đó |
 | **Trùng lặp** | Các TC verify cùng 1 thứ → đề xuất merge |
-| **Ưu tiên** | TC có gán priority (High/Medium/Low) chưa? Có hợp lý với risk không? |
+| **Ưu tiên** | TC có gán `Priority` (`P1` · `P2` · `P3`; file cũ dùng chữ thì quy đổi theo `CLAUDE.md`) chưa? Có hợp lý với `Risk Level` không? |
 | **Số biến thể (khi độ hạt GỘP)** | Đếm biến thể thật trong Bảng biến thể. Bộ TC gộp mà tổng biến thể ít bất thường = đã rụng case, dù số REQ vẫn phủ đủ |
 
 ### Đối soát 4 vòng (BẮT BUỘC — mức bộ TC)
 
-Dùng **Bản Đồ Loại Kiểm Thử — 4 Vòng** trong `skills-rbt-manual-testing`. Duyệt từng nhánh, chấm bộ TC đang review:
+Dùng **Bản Đồ Loại Kiểm Thử — 4 Vòng** trong `skills-manual-testcase-v3`. Duyệt từng nhánh, chấm bộ TC đang review:
 
 | Vòng | Nhánh phải soi |
 |---|---|
@@ -157,10 +190,10 @@ Lưu tại `docs/testcases/<module>/review/testcase_review_report_<nền-tảng>
 - **Loại trừ theo requirements:** <mã REQ / AMB / khu vực — hoặc "Không có"> (không chấm, không đề xuất)
 
 ## Chi tiết từng TC
-| TC ID | Điểm | Xếp loại | Vấn đề chính | Đề xuất sửa |
-|---|---|---|---|---|
-| TC_01 | 11/12 | 🟢 | Thiếu ghi chú data random | Thêm "email = random unique" |
-| TC_02 | 7/12 | 🟡 | Expected mơ hồ; gộp 2 hành vi khác loại phản hồi (bị chặn ngay trên form vs máy chủ báo lỗi) | Tách: TC_02 giữ kịch bản bị chặn trên form; kịch bản máy chủ báo lỗi cấp **TC mới nối tiếp dải** (VD TC_087) — KHÔNG đặt `TC_02a/02b`; Expected: "..." |
+| TC ID | Điểm | Đối chiếu REQ | Xếp loại | Vấn đề chính | Đề xuất sửa |
+|---|---|---|---|---|---|
+| TC_01 | 11/12 | ✅ | 🟢 | Thiếu ghi chú data random | Thêm "email = random unique" |
+| TC_02 | 7/12 | ⚠️ | 🟡 | Expected mơ hồ; gộp 2 hành vi khác loại phản hồi (bị chặn ngay trên form vs máy chủ báo lỗi) | Tách: TC_02 giữ kịch bản bị chặn trên form; kịch bản máy chủ báo lỗi cấp **TC mới nối tiếp dải** (VD TC_087) — KHÔNG đặt `TC_02a/02b`; Expected: "..." |
 
 ## Đối soát loại kiểm thử (4 vòng)
 | Vòng | Nhánh | Trạng thái | Ghi chú |
@@ -174,9 +207,9 @@ Lưu tại `docs/testcases/<module>/review/testcase_review_report_<nền-tảng>
 ## Coverage Gaps (TC còn thiếu)
 | # | Kịch bản thiếu | Vòng / Nhánh | Priority đề xuất |
 |---|---|---|---|
-| 1 | Màn hình Login hiển thị đủ nhãn `Email Address`, `Password`, nút `Login`, liên kết `Forgot Password?` đúng thứ tự | V1 · UI cơ bản | High |
-| 2 | Mật khẩu: chặn dán · nút hiện/ẩn · độ dài tối đa · ký tự khoảng trắng | V2 · Validation | High |
-| 3 | Login với account bị khóa | V2 · Business Rule | High |
+| 1 | Màn hình Login hiển thị đủ nhãn `Email Address`, `Password`, nút `Login`, liên kết `Forgot Password?` đúng thứ tự | V1 · UI cơ bản | P2 |
+| 2 | Mật khẩu: chặn dán · nút hiện/ẩn · độ dài tối đa · ký tự khoảng trắng | V2 · Validation | P2 |
+| 3 | Login với account bị khóa | V2 · Business Rule | P2 |
 
 ## TC trùng lặp — đề xuất merge
 - TC_05 ≈ TC_12 (cùng verify validation email) → giữ TC_05; TC_12 gắn `@Deprecated` + tiền tố `🗑️ Deprecated (trùng TC_05, <ngày>) —`, **không** xoá dòng. Biến thể riêng của TC_12 (nếu có) chuyển vào Bảng biến thể của TC_05
@@ -189,6 +222,7 @@ Lưu tại `docs/testcases/<module>/review/testcase_review_report_<nền-tảng>
 
 ## Quality Checklist
 
+- [ ] Đã đối chiếu Expected với REQ cho **từng** TC; ❌ xếp 🔴 dù rubric cao; bộ TC API chấm theo mục *Bộ TC API*
 - [ ] Mỗi TC 🔴/🟡 đều có đề xuất sửa cụ thể (không chê chung chung)
 - [ ] Mọi nhận xét về Expected đã đối chiếu Pre-Condition + Test Data của chính TC đó — không đòi bổ sung thứ đã có, không gọi "mâu thuẫn" khi hai chỗ cùng dẫn tới một trạng thái
 - [ ] Đã lập Danh sách loại trừ từ requirements — không mục nào trong đó xuất hiện ở Coverage Gaps, đối soát 15 loại field, đề xuất TC/REQ mới, Kết luận; nhánh 4 vòng chỉ thiếu phần đã loại chấm `⏭️` kèm mã quyết định
@@ -212,7 +246,7 @@ Lưu tại `docs/testcases/<module>/review/testcase_review_report_<nền-tảng>
 | **File đang có thay đổi chưa commit** | `git status --short <file>` có dòng → **dừng**, đề nghị user commit trước. Agent không tự commit; sửa đè lên thay đổi chưa commit là mất bản đối chiếu (cùng luật với Mode DELTA) |
 | **Giữ bản cũ thế nào** | Ghi **mốc git** (`git log -1 --format=%h -- <file>`) vào Nhật ký thay đổi của index; xem lại bằng `git show <mốc>:<file>` |
 | **File chưa được git theo dõi** (Excel/CSV khách gửi) | **Hỏi user** trước khi ghi đè — không có mốc git để lấy lại bản cũ |
-| **TC ID** | Giữ nguyên. TC bỏ hẳn → tag `@Deprecated` + tiền tố `🗑️ Deprecated (<lý do>, <ngày>) —` ở `Test Scenario`, không xoá dòng. TC mới (kể cả phần tách ra) → nối tiếp mã kế tiếp của dải, không chèn giữa |
+| **TC ID** | Giữ nguyên. TC bỏ hẳn → tag `@Deprecated` + tiền tố `🗑️ Deprecated (<lý do>, <ngày>) —` ở `Test Summary`, không xoá dòng. TC mới (kể cả phần tách ra) → nối tiếp mã kế tiếp của dải, không chèn giữa |
 | **Phạm vi** | Chỉ các TC user đã duyệt ở checkpoint — không tiện tay sửa TC khác |
 | **Sau khi sửa** | Đồng bộ file index (Assumptions · Coverage · Vùng chưa có evidence · 4 vòng · tổng TC/biến thể · Bộ chạy) + 1 dòng Nhật ký |
 
@@ -222,7 +256,7 @@ Lưu tại `docs/testcases/<module>/review/testcase_review_report_<nền-tảng>
 
 ## Mode AUTOMATION — TC nào làm automation được
 
-> Chấm theo **[Tiêu chí chấm cột Automation](../skills-rbt-manual-testing/references/automation_criteria.md)** — đúng bảng mà `skills-rbt-manual-testing` dùng lúc sinh TC, nên kết quả review độc lập so thẳng được với cột `Automation` người viết đã điền.
+> Chấm theo **[Tiêu chí chấm cột Automation](../skills-manual-testcase-v3/references/automation_criteria.md)** — đúng bảng mà `skills-manual-testcase-v3` dùng lúc sinh TC, nên kết quả review độc lập so thẳng được với cột `Automation` người viết đã điền.
 >
 > Mode này **không** chấm rubric 6 tiêu chí, **không** đối soát 4 vòng. Nó trả lời đúng một câu: *TC nào automate được ngay, TC nào cần điều kiện gì, TC nào không làm và vì sao*. Cần cả chất lượng lẫn automation → chạy REVIEW trước, AUTOMATION sau.
 
@@ -256,7 +290,7 @@ Lưu tại `docs/testcases/<module>/review/automation_review_<nền-tảng>_<YYY
 
 ## Tổng quan
 - **Nguồn:** <file path> · **Số TC:** N
-- **Tiêu chí:** `.claude/skills/skills-rbt-manual-testing/references/automation_criteria.md`
+- **Tiêu chí:** `.claude/skills/skills-manual-testcase-v3/references/automation_criteria.md`
 - **Kết quả:** ✅ Yes x · 🟡 Partial y · ⛔ No z · ⏸️ Hoãn h · ❓ Chưa chấm được k
 - **Automate được ngay:** x/N · **khi đủ điều kiện:** (x+y)/N
 
@@ -295,7 +329,7 @@ Lưu tại `docs/testcases/<module>/review/automation_review_<nền-tảng>_<YYY
 Theo đúng luật của mục *Sửa TC (Mode FIX)*: sửa **tại chỗ**, ghi mốc git trước khi sửa, file chưa được git theo dõi thì hỏi trước khi ghi đè. Riêng mode này:
 
 - **Chỉ** sửa ô `Automation` (đúng một từ `Yes`/`Partial`/`No`) của các TC đã duyệt — **không** đụng Steps, Expected. TC mơ hồ để Mode FIX
-- File chưa có cột `Automation` → thêm cột tên đúng `Automation` (viewer map cột theo tên)
+- File v3 (10 hoặc 11 cột) → ghi vào cột `Automatable` của `automation_matrix.md`, **không** thêm cột vào bảng TC. File cũ hoặc file ngoài chưa có cột → thêm cột tên đúng `Automation`
 - Ghi / cập nhật mục `## Đối soát cột Automation` ở index theo mẫu mục 7.1 của tiêu chí
 - 1 dòng Nhật ký thay đổi: nguồn `/review-testcases` Mode AUTOMATION + link báo cáo · số TC đổi giá trị · mốc git
 
@@ -313,6 +347,6 @@ Theo đúng luật của mục *Sửa TC (Mode FIX)*: sửa **tại chỗ**, ghi
 
 ## Rules References
 
-- `.claude/skills/skills-rbt-manual-testing/SKILL.md` — Chuẩn viết TC (để đối chiếu khi review)
-- `.claude/skills/skills-rbt-manual-testing/references/automation_criteria.md` — Tiêu chí chấm cột Automation (Mode AUTOMATION)
+- `.claude/skills/skills-manual-testcase-v3/SKILL.md` — Chuẩn viết TC (để đối chiếu khi review)
+- `.claude/skills/skills-manual-testcase-v3/references/automation_criteria.md` — Tiêu chí chấm cột Automation (Mode AUTOMATION)
 - `.claude/skills/skills-coverage-traceability/SKILL.md` — Truy vết TC ↔ requirements sâu hơn

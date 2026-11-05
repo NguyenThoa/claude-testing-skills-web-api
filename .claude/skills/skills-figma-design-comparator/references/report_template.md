@@ -3,17 +3,17 @@
 > Bước 6 của skill. Project có mẫu riêng `plans/design-compare/report_template.md` → dùng mẫu đó, giữ hợp đồng tối thiểu ở cuối file này. Ghi tại `docs/design-reviews/<module>/<nền-tảng>/run_<YYYYMMDD_HHMMSS>/design_compare_report.md` (namespace hệ thống thứ hai: `docs/design-reviews/_<hệ-thống>/<module>/…`). Ngày trong nội dung viết `DD-MM-YYYY`.
 
 ````markdown
-# So thiết kế Figma ↔ <Web | Mobile web | Android | iOS> — <Tên module> (`<PREFIX>`)
+# So thiết kế Figma ↔ <Web | Mobile web> — <Tên module> (`<PREFIX>`)
 
 | Mục | Giá trị |
 |---|---|
-| Mode | WEB / MOBILE-WEB / MOBILE |
-| Biến thể | Desktop <bề ngang> · Mobile web — <thiết bị giả lập> <bề ngang> · Android / iOS — <thiết bị> |
+| Mode | WEB / MOBILE-WEB |
+| Biến thể | Desktop <bề ngang> · Mobile web — <thiết bị giả lập> <bề ngang> |
 | Ngày chạy | DD-MM-YYYY HH:MM – HH:MM (kiểu **Bổ sung**: thêm `· bổ sung <khung>: DD-MM-YYYY HH:MM – HH:MM (cùng bản build)`) |
 | Figma | `<tên file>` · page `<tên page>` · <link figma.com/design/<fileKey>> |
 | Độ trung thực thiết kế | Wireframe / Mockup / Prototype — <căn cứ nhận biết> |
-| Bản build | <URL môi trường web · hoặc app id + version (build)> |
-| Môi trường | <Trình duyệt + viewport · hoặc thiết bị, OS, density, status bar, cỡ chữ hệ thống, dark mode, ngôn ngữ> |
+| Bản build | <URL môi trường web + version (build)> |
+| Môi trường | <Trình duyệt + viewport · thiết bị giả lập (mobile web) · cỡ chữ trình duyệt, dark mode, ngôn ngữ> |
 | Mốc dọc | Đỉnh header: thiết kế <n> ↔ app <n> (`--actual-top`) — web: không có |
 | Dung sai | Vị trí ±<n> · cỡ chữ ±<n> · ΔE chữ ≤ <n> · ΔE nền ≤ <n> (rule `design_compare_rules.md` mục 4 / quy định dự án) |
 | Phạm vi khung | <n>/<m> khung (<mã đầu> → <mã cuối>) · <k> ❔ không đưa app tới được |
@@ -47,11 +47,11 @@
 
 | Mã | Trạng thái | Nền tảng | Khung | Loại | Mức độ | Ai xử lý | Mô tả | Thực tế (số đo) | Thiết kế (số đo) | Liên quan | Evidence |
 |---|---|---|---|---|---|---|---|---|---|---|---|
-| DIFF-<MODULE>-01 | 🔴 Mở | Android | A-01 | CONTENT | Low | Dev | | | | — | [side](evidence/…_side.png) · [marked](evidence/…_marked.png) |
+| DIFF-<MODULE>-01 | 🔴 Mở | Web | A-01 | CONTENT | Low | Dev | | | | — | [side](evidence/…_side.png) · [marked](evidence/…_marked.png) |
 
 > Loại: `CONTENT` · `MISSING` · `EXTRA` · `LAYOUT` · `STYLE` · `ASSET` · `STATE` — rule mục 6.
 > *Mô tả* · *Thực tế* · *Thiết kế*: tên phần tử người dùng nhìn thấy + kích thước / margin / padding / gap — **không** toạ độ thô (rule mục 6 *Viết DIFF cho người không đọc toạ độ*). *marked* = ảnh `dc.py mark` (Figma xanh / App đỏ + ghi chú) — bắt buộc với mọi DIFF.
-> *Nền tảng*: mọi nền tảng / biến thể đã thấy lệch này (`Mobile web · Android` khi dùng lại mã ở nền tảng chung mã nguồn). *Liên quan*: mã cùng lệch ở nền tảng khác mã nguồn.
+> *Nền tảng*: mọi nền tảng / biến thể đã thấy lệch này (`Web · Mobile web` khi dùng lại mã ở nền tảng chung mã nguồn). *Liên quan*: mã cùng lệch ở nền tảng khác mã nguồn.
 > Cột *Khung*: `A-01 · A-03` · dải `B-01 → B-04` · khung module khác `(+ B-09)` (thành phần dùng chung).
 > Trạng thái: `🔴 Mở` · `✅ Đã khắc phục (run_<timestamp>)` · `⚪ Chấp nhận — <ai>, <ngày>, <lý do>` · `🗑️ Không còn áp dụng (Figma đổi <ngày>)`. Chạy lại: DIFF cũ **giữ mã và giữ dòng**, chỉ đổi trạng thái + số đo; cột *Mô tả* ghi thêm `(phát hiện lần đầu: run_<timestamp>)` với DIFF không mới.
 
@@ -109,13 +109,12 @@ Khác biệt nằm ngoài phạm vi theo độ trung thực (VD wireframe: màu 
 
 | Nền tảng | Biến thể | Bản build | Chung mã nguồn giao diện với | Căn cứ |
 |---|---|---|---|---|
-| Android | Pixel 10 Pro XL · 448 dp | app Hybrid (Capacitor) | Mobile web | User xác nhận DD-MM-YYYY |
 
 ## Sổ khung Figma — tra trước khi cấp mã
 
 | Khung Figma (node-id) | Tên khung | Đã so ở (nền tảng · biến thể → mã khung) | DIFF mở |
 |---|---|---|---|
-| `6:123` | Sign in | Mobile web 390 → A-01 · Android → A-01 | `DIFF-<MODULE>-02` |
+| `6:123` | Sign in | Web 1440 → A-01 · Mobile web 390 → A-01 | `DIFF-<MODULE>-02` |
 
 ## Nhật ký
 
@@ -128,7 +127,7 @@ Khác biệt nằm ngoài phạm vi theo độ trung thực (VD wireframe: màu 
 |---|---|---|
 ```
 
-`DIFF đã dùng` / `Mã kế tiếp` đếm **theo module**, dùng chung mọi nền tảng (giống dải REQ) — DIFF web và DIFF Android của cùng module không trùng số. Dòng danh mục khoá theo **module × nền tảng × biến thể** (web desktop và mobile web là hai dòng, cùng thư mục `web/`).
+`DIFF đã dùng` / `Mã kế tiếp` đếm **theo module**, dùng chung mọi nền tảng (giống dải REQ) — DIFF desktop và DIFF mobile web của cùng module không trùng số. Dòng danh mục khoá theo **module × nền tảng × biến thể** (web desktop và mobile web là hai dòng, cùng thư mục `web/`).
 
 ---
 

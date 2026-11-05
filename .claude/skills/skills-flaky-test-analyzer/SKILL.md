@@ -82,7 +82,7 @@ await expect(page.getByRole('button', { name: 'Submit' })).toBeVisible();
 
 **Fix:** Use unique, traceable random data:
 ```
-<testName>_<timestamp>@test.com
+<testName>_<timestamp>@yopmail.com
 ```
 
 ---
@@ -95,7 +95,7 @@ After fixing a flaky test, verify:
 - [ ] No hard sleep or fixed delays
 - [ ] Test data is unique and deterministic
 - [ ] Test is independent (no dependency on other tests)
-- [ ] Test passes 5+ consecutive runs
+- [ ] Test passes 10/10 consecutive runs (retries off). Test mới không bị gán flaky vẫn theo Definition of Done: PASS 2 lần
 
 ---
 

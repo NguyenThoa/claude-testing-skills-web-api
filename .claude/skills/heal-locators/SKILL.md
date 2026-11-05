@@ -3,6 +3,8 @@ name: heal-locators
 description: Đối chiếu locator trong Page Object với DOM thực tế trên browser, phát hiện locator đã gãy hoặc sắp gãy, sửa và verify. Hỗ trợ 2 mode — SCAN (chỉ báo cáo) và HEAL (sửa + verify).
 ---
 
+> **Rule phải đọc trước:** `.claude/rules/locator_strategy.md` · `.claude/rules/playwright_rules.md` hoặc `.claude/rules/selenium_rules.md` theo framework đang dùng. Các rule này chỉ tự nạp khi đã mở file khớp `paths`, nên workflow phải tự đọc.
+
 > **Skill nền tảng cần nạp trước:** `skills-locator-healer-agent` · `skills-ui-debug-agent` · `skills-smart-locator-agent` — đọc `.claude/skills/<tên-skill>/SKILL.md` của từng skill trước khi bắt đầu.
 
 # Workflow: Rà & Sửa Locator

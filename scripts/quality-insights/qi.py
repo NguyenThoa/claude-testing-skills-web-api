@@ -30,7 +30,13 @@ SEV_ORDER = ['Critical', 'Major', 'Minor', 'Trivial']
 SEV_WEIGHT = {'Critical': 5, 'Major': 3, 'Minor': 1, 'Trivial': 0.5}
 SEV_ICON = {'Critical': '🔴', 'Major': '🟠', 'Minor': '🟡', 'Trivial': '🟢'}
 LEVEL_PTS = {'Critical': 20, 'High': 15, 'Medium': 8, 'Low': 3}
-PRIO_PTS = {'Critical': 15, 'High': 10, 'Medium': 5, 'Low': 2}
+PRIO_PTS = {'Critical': 15, 'High': 5, 'Medium': 5, 'Low': 2}
+
+
+def high_impact(tc):
+    """TC thuộc chức năng tác động Cao — Risk Level đã gồm cả khả năng lỗi nên cần xét thêm tag."""
+    return tc['risk'] in ('High', 'Critical') or '@HighImpact' in tc['tags']
+
 DEFAULT_MIN_PER_TC = 4.0
 LOW_SAMPLE = 5
 
@@ -103,8 +109,8 @@ def unit_label(key):
 
 def norm_level(text):
     t = (text or '').lower()
-    for k, words in (('Critical', ('critical', 'blocker', 'nghiêm trọng')), ('High', ('high', 'cao')),
-                     ('Medium', ('medium', 'trung bình', 'major')), ('Low', ('low', 'thấp', 'minor', 'trivial'))):
+    for k, words in (('Critical', ('critical', 'p1', 'blocker', 'nghiêm trọng')), ('High', ('high', 'cao')),
+                     ('Medium', ('medium', 'trung bình', 'major', 'p2')), ('Low', ('low', 'thấp', 'minor', 'trivial', 'p3'))):
         if any(w in t for w in words):
             return k
     return None
@@ -300,7 +306,7 @@ def collect_testcases(root):
                         row[h] = cells[-1 - j]
             tc = base_tc(cells[0])
             risk = next((v for k, v in row.items() if 'Risk' in k), '')
-            scen = next((v for k, v in row.items() if 'Scenario' in k or 'Title' in k), '')
+            scen = next((v for k, v in row.items() if 'Scenario' in k or 'Title' in k or 'Summary' in k or 'Mục đích' in k), '')
             tags = re.findall(r'@[\w-]+', row.get('Tags', ''))
             tcs[tc] = {
                 'id': tc, 'file': p, 'system': system, 'module': module, 'platform': platform,
@@ -609,7 +615,7 @@ def build_risk(d, today, tickets, since, want=()):
             ran = sum(1 for t in unit_tcs if t['id'] in per_tc)
             pct = 100 * ran / len(unit_tcs)
             G = 3 - band(pct, [29.99, 59.99, 89.99])
-            hi = [t for t in unit_tcs if t['risk'] in ('High', 'Critical') and t['id'] not in per_tc]
+            hi = [t for t in unit_tcs if high_impact(t) and t['id'] not in per_tc]
             ev['G'] = f"đã chạy {ran}/{len(unit_tcs)} TC ({pct:.0f}%)" + (f" · {len(hi)} TC rủi ro High/Critical chưa chạy lần nào" if hi else '')
             if changed:
                 changed_uncovered = [r for r in changed if not any(r in t['reqs'] for t in unit_tcs)]
@@ -621,9 +627,9 @@ def build_risk(d, today, tickets, since, want=()):
             ev['G'] = '⬛ chưa có TC nào cho đơn vị này'
         # B — tầm ảnh hưởng nghiệp vụ (theo Risk Level đã chấm ở RBT)
         if unit_tcs:
-            hi_share = 100 * sum(1 for t in unit_tcs if t['risk'] in ('High', 'Critical')) / len(unit_tcs)
+            hi_share = 100 * sum(1 for t in unit_tcs if high_impact(t)) / len(unit_tcs)
             B = band(hi_share, [24.99, 49.99, 74.99])
-            ev['B'] = f"{hi_share:.0f}% TC chấm High/Critical"
+            ev['B'] = f"{hi_share:.0f}% TC chấm High/Critical hoặc @HighImpact"
         else:
             B = 2
             ev['B'] = '⬛ chưa chấm (không có TC) — tính 2'

@@ -3,12 +3,12 @@ name: update-testcases-from-impact
 description: Cập nhật manual test cases đã có theo Impact Report (chế độ delta) — sửa TC stale tại chỗ trong file nền tảng, đánh dấu @Deprecated TC của chức năng bị gỡ, ghi Nhật ký thay đổi, ghi Delta TC List ra file làm đầu vào cho automation. Hỗ trợ 2 mode — PLAN (chỉ lập kế hoạch) và APPLY (sửa + cập nhật danh mục).
 ---
 
-> **Skill nền tảng cần nạp trước:** `skills-rbt-manual-testing` · `skills-coverage-traceability` · `skills-testcase-reviewer` — đọc `.claude/skills/<tên-skill>/SKILL.md` của từng skill trước khi bắt đầu.
+> **Skill nền tảng cần nạp trước:** `skills-manual-testcase-v3` · `skills-coverage-traceability` · `skills-testcase-reviewer` — đọc `.claude/skills/<tên-skill>/SKILL.md` của từng skill trước khi bắt đầu.
 
 # Workflow: Cập Nhật Test Cases Theo Impact Report
 
 > **BẮT BUỘC (MANDATORY SKILLS):** Nạp và đọc kỹ trước khi bắt đầu:
-> - **`skills-rbt-manual-testing`** (`.claude/skills/skills-rbt-manual-testing/SKILL.md`) — **Mode DELTA** + Quy Tắc Xuất File (index bất biến, ngưỡng tách part, Bảng Đối Soát Coverage)
+> - **`skills-manual-testcase-v3`** (`.claude/skills/skills-manual-testcase-v3/SKILL.md`) — **Mode DELTA** + Quy Tắc Xuất File (index bất biến, 1 module × 1 nền tảng = 1 file, Bảng Đối Soát Coverage)
 > - **`skills-coverage-traceability`** (`.claude/skills/skills-coverage-traceability/SKILL.md`) — Mapping Rules để nối REQ ID ↔ TC ID
 
 Mắt xích **giữa** của chuỗi delta 3 tầng. Requirements đổi → Impact Report chỉ ra TC stale → **workflow này** sửa đúng TC đó → `/update-automation-from-impact` sửa script tương ứng.
@@ -18,7 +18,7 @@ Mắt xích **giữa** của chuỗi delta 3 tầng. Requirements đổi → Imp
         ↓ docs/requirements/<module>/impact/impact_<TICKET-ID>.md
 /update-testcases-from-impact      (tầng test case — WORKFLOW NÀY)
         ↓ docs/testcases/<module>/impact/delta_tc_<TICKET-ID>.md
-/update-automation-from-impact     (tầng automation — web · mobile · API)
+/update-automation-from-impact     (tầng automation — web · API)
 ```
 
 > **Một hậu tố cho cả chuỗi.** `<TICKET-ID>` của mọi file sau lấy **đúng hậu tố** của Impact Report nguồn: `impact_TICKET-123.md` → `impact_plan_TICKET-123.md` → `delta_tc_TICKET-123.md` → `automation_plan_TICKET-123.md`. Impact Report do spec API đổi (`impact_spec_2026-09-01.md`) → `delta_tc_spec_2026-09-01.md`. User tự liệt kê REQ, không có ticket → `adhoc_<YYYY-MM-DD>`. Một mã tra ra đủ ba tầng.
@@ -45,7 +45,7 @@ Hai workflow trả lời **hai câu hỏi khác nhau**. Chạy sai cái là bỏ
 - **Tất cả output bằng Tiếng Việt**
 - 🚨 **CẤM sinh lại cả file/module TC.** Chỉ sửa đúng dòng của TC nằm trong delta. Sinh lại là xoá sạch công biên tập tay và các TC bổ sung đã tích luỹ
 - 🚨 **CẤM đổi TC ID, CẤM đánh lại số từ `001`** — TC ID là khoá nối sang automation (`allure.label('testId', ...)`) và RTM. Đứt TC ID là vỡ truy vết cả hai chiều
-- 🚨 **CẤM xoá dòng TC** — chức năng bị gỡ thì gắn tag `@Deprecated` ở cột `Tags` **và** tiền tố `🗑️ Deprecated (<TICKET-ID>, <DD-MM-YYYY>) —` ở đầu ô `Test Scenario`, giữ nguyên dòng (đối xứng quy tắc "KHÔNG xoá dòng REQ" của tầng requirements). Bảng TC không có cột trạng thái — **tag** là thứ `/execute-test-cases`, RTM và Bảng Đối Soát Coverage lọc theo
+- 🚨 **CẤM xoá dòng TC** — chức năng bị gỡ thì gắn tag `@Deprecated` ở cột `Tags` **và** tiền tố `🗑️ Deprecated (<TICKET-ID>, <DD-MM-YYYY>) —` ở đầu ô `Test Summary`, giữ nguyên dòng (đối xứng quy tắc "KHÔNG xoá dòng REQ" của tầng requirements). Bảng TC không có cột trạng thái — **tag** là thứ `/execute-test-cases`, RTM và Bảng Đối Soát Coverage lọc theo
 - 🚨 **CẤM sinh file `_improved` / `_v2` / `_new`** — tên index **bất biến** là `TEST_CASES_<TÊN_MODULE>_SUMMARY.md`. Bản trước khi sửa **không** chép ra đâu cả — ghi **mốc git** (hash commit) và tra bằng `git show`. **KHÔNG** tạo thư mục `archive/`
 - **KHÔNG tự viết TC cho REQ mới (nhóm ➕)** — ngoài phạm vi, route sang `/generate-testcases-manual-rbt` hoặc `/generate-testcases-from-requirements`
 - **KHÔNG sửa TC theo suy đoán từ tên TC** — phải đọc **nội dung REQ sau khi đổi** trong tài liệu requirements. Tên TC không chứa đủ thông tin để biết kỳ vọng mới là gì
@@ -87,7 +87,7 @@ Hai workflow trả lời **hai câu hỏi khác nhau**. Chạy sai cái là bỏ
 3. Đọc **Nhật ký thay đổi** ở cuối tài liệu requirements — nó ghi rõ đổi từ gì sang gì, đây là nguồn chính xác nhất
 4. Ghi rõ **đổi cái gì**: precondition / steps / expected result / test data / message nguyên văn / phân quyền
 
-> Thay đổi đụng bố cục, nhãn, thứ tự field, định dạng hiển thị → **BẮT BUỘC mở evidence** theo Quy Tắc Đối Chiếu Evidence của `skills-rbt-manual-testing`. Sửa TC chỉ từ chữ là đường ngắn nhất tới TC bịa.
+> Thay đổi đụng bố cục, nhãn, thứ tự field, định dạng hiển thị → **BẮT BUỘC mở evidence** theo Quy Tắc Đối Chiếu Evidence của `skills-manual-testcase-v3`. Sửa TC chỉ từ chữ là đường ngắn nhất tới TC bịa.
 
 ### Bước 2: Map REQ → TC
 
@@ -121,7 +121,7 @@ Phân loại hành động cho TC — **khác** với hành động dành cho sc
 | Đổi **quy tắc nghiệp vụ / trạng thái** | **V2 · Business Rule · State Transition** | Sửa bảng quyết định / bảng transition, kiểm cả ô hợp lệ lẫn ô bị chặn | Nhóm TC tương ứng |
 | Đổi **phân quyền** | **V3 · Permission** | Sửa TC phân quyền, kiểm ma trận role còn khớp | Nhóm TC phân quyền |
 | Đổi **breakpoint / trình duyệt cam kết** | **V4 · Responsive · Compatibility** | Sửa danh sách kích thước/trình duyệt trong TC | Nhóm TC V4 |
-| Chức năng **bị gỡ** (REQ 🔴) | Nhánh của TC đó | Gắn tag `@Deprecated` + tiền tố `🗑️ Deprecated (TICKET-XXX, <ngày>) —` ở `Test Scenario`, **KHÔNG xoá dòng** | Cột `Tags` + ô `Test Scenario` |
+| Chức năng **bị gỡ** (REQ 🔴) | Nhánh của TC đó | Gắn tag `@Deprecated` + tiền tố `🗑️ Deprecated (TICKET-XXX, <ngày>) —` ở `Test Summary`, **KHÔNG xoá dòng** | Cột `Tags` + ô `Test Summary` |
 | REQ **mới** (🟢) | — | ❌ Ngoài phạm vi → `/generate-testcases-manual-rbt` | — |
 
 Mỗi mục ghi: `file:dòng`, TC ID, **vòng · nhánh**, sửa ô nào, có cần mở evidence không.
@@ -136,7 +136,7 @@ Mỗi mục ghi: `file:dòng`, TC ID, **vòng · nhánh**, sửa ô nào, có c�
 - Field đổi thành bắt buộc → có TC nào khác **dùng field đó ở bước phụ** mà giờ sẽ fail không?
 - TC bị Deprecated → có TC nào **lấy nó làm precondition** không?
 - Thêm field mới → **bảng 15 loại field** của loại field đó đã được đối soát đủ chưa (Password 7 mục, Email 9 mục…), hay mới sinh 2–3 TC cho xong?
-- Số TC sau khi thêm có **vượt ngưỡng** của file nền tảng không (> 40 TC ở độ hạt TÁCH · > 50 TC ở độ hạt GỘP) → phải tách `parts/` theo quy tắc của skill?
+- Số TC tăng nhiều gây khó đọc → chia thêm section trong cùng file, **không** tách `parts/`
 
 ### Bước 4: Báo Cáo & Xin Duyệt (CHECKPOINT)
 
@@ -165,7 +165,8 @@ Mỗi mục ghi: `file:dòng`, TC ID, **vòng · nhánh**, sửa ô nào, có c�
    ```
 4. TC negative/boundary **mới sinh trong phạm vi REQ 🟡** → cấp TC ID **tiếp theo dải hiện có** của module, KHÔNG chèn số vào giữa
 5. Cập nhật **Bảng Đối Soát Coverage** ở index — **không đếm** TC `@Deprecated`. REQ 🔴 không còn TC active là **đúng**, phải ghi rõ lý do; REQ 🟡 vẫn phải có ≥1 TC active; REQ 🟢 ghi *"chưa có TC — ngoài phạm vi DELTA"* kèm workflow sinh bổ sung
-6. Cập nhật **Bảng Đối soát loại kiểm thử (4 vòng)** ở cuối index — **chỉ những nhánh ticket chạm tới**, giữ nguyên phần còn lại:
+6. Cập nhật **`automation_matrix.md`** cùng nền tảng: TC mới thêm dòng, TC đổi Steps hoặc Expected thì chấm lại `Automatable`, TC `@Deprecated` ghi `🚫 Skip auto`. Bộ TC cũ chưa có file này thì bỏ qua
+7. Cập nhật **Bảng Đối soát loại kiểm thử (4 vòng)** ở cuối index — **chỉ những nhánh ticket chạm tới**, giữ nguyên phần còn lại:
    - Nhánh có TC bị sửa/thêm → cập nhật lại dải TC ID và **số biến thể** (độ hạt GỘP)
    - Nhánh mà ticket vừa làm phát sinh nhu cầu mới nhưng chưa có TC → chấm `🔴 Thiếu`, bổ sung trước khi kết thúc
    - Nhánh mà chức năng vừa bị gỡ khiến không còn TC active → chuyển `➖` kèm lý do *"chức năng gỡ theo TICKET-XXX"*, **không** xoá dòng khỏi bảng
@@ -195,7 +196,7 @@ Mỗi mục ghi: `file:dòng`, TC ID, **vòng · nhánh**, sửa ô nào, có c�
 | Ngày áp | 17-08-2026 |
 | Impact Report nguồn | [`impact_TICKET-123.md`](../../../requirements/project/impact/impact_TICKET-123.md) |
 | Kế hoạch đã duyệt | [`impact_plan_TICKET-123.md`](impact_plan_TICKET-123.md) |
-| Mốc git trước khi sửa | web → `web/test_cases_project_web.md` @ `a1b2c3d` · mobile → `mobile/test_cases_project_mobile.md` @ `e4f5a6b` |
+| Mốc git trước khi sửa | web → `web/test_cases_project_web.md` @ `a1b2c3d` |
 | Trạng thái | ⚠️ CÒN VIỆC NGOÀI PHẠM VI |
 
 ## TC đã xử lý
@@ -204,10 +205,8 @@ Mỗi mục ghi: `file:dòng`, TC ID, **vòng · nhánh**, sửa ô nào, có c�
 |---|---|---|---|---|
 | CRM_PRJ_TC_002 | web | V1 · UI cơ bản | ✏️ Đã sửa | Thêm dòng bảng kiểm cho field `Deadline` → sửa assertion danh sách thành phần màn hình |
 | CRM_PRJ_TC_018 | web | V2 · Required | ✏️ Đã sửa | Expected result: giờ báo lỗi khi Deadline trống → sửa assertion |
-| CRM_PRJ_TC_052 | mobile · @Android @iOS | V2 · Required | ✏️ Đã sửa | Như TC_018 trên app — lỗi hiện dưới ô Deadline → sửa assertion cả hai nền tảng |
 | CRM_PRJ_TC_077 | web | V2 · Required | ➕ Mới (trong REQ 🟡) | TC negative mới → cần viết script mới |
 | CRM_PRJ_TC_031 | web | V2 · Save/Edit/Delete | 🗑️ Deprecated | Script tương ứng đánh dấu skip, KHÔNG xoá file |
-| CRM_PRJ_TC_060 | mobile · @Android | V1 · UI cơ bản | ⏸️ @NeedsVerify — chưa sửa | Chưa có ảnh màn hình sau khi đổi → KHÔNG sửa script |
 
 ## Ngoài phạm vi
 
@@ -227,23 +226,25 @@ Mỗi mục ghi: `file:dòng`, TC ID, **vòng · nhánh**, sửa ô nào, có c�
 | Luật | Vì sao |
 |---|---|
 | Chỉ ghi ở **Mode APPLY**, sau khi TC đã sửa xong. Mode PLAN **không** ghi | `impact_plan_` là kế hoạch — có thể bị user gạch bớt khi duyệt. Automation chỉ được đọc thứ **đã thật sự sửa** |
-| Cột **Nền tảng** bắt buộc: `web` · `mobile · @Android` / `@iOS` / `@Android @iOS` · `api` | Dải TC ID chung toàn module nên nhìn mã không biết TC thuộc nền tảng nào — thiếu cột này automation không biết chuyển sang Playwright, Appium hay API client, và không biết phải chạy lại trên Android, iOS hay cả hai |
+| Cột **Nền tảng** bắt buộc: `web` · `api` | Dải TC ID chung toàn module nên nhìn mã không biết TC thuộc nền tảng nào — thiếu cột này automation không biết chuyển sang Playwright hay API client |
 | Cột **Vòng · Nhánh** bắt buộc | Giúp chọn đúng kiểu sửa script: `V1 · UI cơ bản` thường là assertion trên danh sách phần tử (`Automation: Partial`), `V2 · Validation` thường map sang test data-driven |
 | TC không sửa được vì thiếu evidence → vẫn ghi, hành động `⏸️ @NeedsVerify — chưa sửa` | Bỏ dòng đi thì automation tưởng TC không bị ảnh hưởng. Ghi rõ để automation **biết mà không chạm** |
 | Dòng **Mốc git trước khi sửa** ghi đúng hash của từng file nền tảng | Automation chạy `git diff <hash> -- <file>` ra đúng ô đã đổi, không phải đoán từ cột mô tả |
 | Chạy APPLY lại cho **cùng ticket** (VD recon xong TC `⏸️`) → sửa **tại chỗ** dòng tương ứng + thêm dòng Nhật ký. KHÔNG tạo `delta_tc_<TICKET-ID>_v2.md` | Một ticket một file — automation chạy lại chỉ nhận những dòng đã đổi hành động |
 
-3. Sau khi Quality Gate ở Bước 7 đạt, chat chỉ hiện **tóm tắt theo nền tảng** (VD *"web 3 TC · mobile 1 TC `@Android @iOS` · 1 TC ⏸️ chưa sửa"*) + đường dẫn file. Nhắc user chuỗi tiếp theo: module đã có automation → `/update-automation-from-impact` (đọc đúng file vừa ghi) → `/generate-traceability-matrix` (khớp lại RTM)
+3. Sau khi Quality Gate ở Bước 7 đạt, chat chỉ hiện **tóm tắt theo nền tảng** (VD *"web 3 TC · 1 TC ⏸️ chưa sửa"*) + đường dẫn file. Nhắc user chuỗi tiếp theo: module đã có automation → `/update-automation-from-impact` (đọc đúng file vừa ghi) → `/generate-traceability-matrix` (khớp lại RTM)
 
 > 🚨 **Không được để Delta TC List chỉ nằm trong chat.** `/update-automation-from-impact` thường chạy ở phiên khác, có khi do người khác chạy — đóng phiên là mất, và dựng lại từ Nhật ký thì mất cột Nền tảng lẫn trạng thái `⏸️`.
 
 ### Bước 7: Quality Gate Delta
 
+**Đồng bộ Xray:** sau khi sửa xong file TC, chạy mục *Tự đồng bộ khi test case đổi* của `/export-to-xray`, rồi báo Test đã sửa và TC chưa có trên Xray.
+
 Chạy **sau** khi đã ghi Nhật ký và Delta TC List — kiểm đủ 8 mục (khớp Quality Gate DELTA của skill), thiếu mục nào là chưa xong:
 
 - [ ] **1. Mọi TC ID giữ nguyên** — không TC nào bị đổi số hay đánh lại
 - [ ] **2. Tên file index không đổi** — không sinh `_improved` / `_v2` / thư mục `archive/`
-- [ ] **3. Không dòng TC nào bị xoá** — TC gỡ đều mang **cả** tag `@Deprecated` **và** tiền tố `🗑️ Deprecated (<mã ticket>, <ngày>) —` ở `Test Scenario`
+- [ ] **3. Không dòng TC nào bị xoá** — TC gỡ đều mang **cả** tag `@Deprecated` **và** tiền tố `🗑️ Deprecated (<mã ticket>, <ngày>) —` ở `Test Summary`
 - [ ] **4. Bảng Đối Soát Coverage** khớp lại: mọi REQ 🟡 và REQ chưa đổi còn active có ≥1 TC **không** `@Deprecated`; REQ 🔴 không còn TC active có ghi lý do; REQ 🟢 **không** chấm ở gate này — nằm ở *Ngoài phạm vi*
 - [ ] **5. Bảng Đối soát loại kiểm thử (4 vòng)** đã cập nhật **đúng những nhánh ticket chạm tới** — không rà lại cả module, không để nhánh nào rơi vào trạng thái sai sau khi sửa. Ticket đụng thành phần màn hình mà nhánh `V1 · UI cơ bản` không đổi gì = **dấu hiệu đã bỏ sót**
 - [ ] **6.** Số TC ở index (Bản đồ tài liệu) **khớp** tổng số TC của các file nền tảng / `parts/`, tách rõ số TC `@Deprecated`
@@ -282,7 +283,7 @@ Chạy **sau** khi đã ghi Nhật ký và Delta TC List — kiểm đủ 8 mụ
 | Trước đó — chưa có nguồn map REQ ↔ TC | `/generate-traceability-matrix` |
 | REQ mới hoàn toàn, chưa có TC | `/generate-testcases-manual-rbt` · `/generate-testcases-from-requirements` |
 | Sau đó — cập nhật automation script **đã có** (đọc `delta_tc_<TICKET-ID>.md`) | `/update-automation-from-impact` |
-| Sau đó — automate TC mới hoàn toàn | `/generate-automation-from-testcases` (tự chuyển sang workflow web / mobile / API) |
+| Sau đó — automate TC mới hoàn toàn | `/generate-automation-from-testcases` (tự chuyển sang workflow web / API) |
 | Sau đó — chấm chất lượng bộ TC vừa sửa | `/review-testcases` |
 | Sau đó — chạy lại phần TC bị ảnh hưởng | `/execute-test-cases` |
 | Sau đó — khớp lại ma trận truy vết | `/generate-traceability-matrix` |

@@ -1,7 +1,9 @@
 ---
 name: generate-locator
-description: Sinh locator ổn định cho UI element. Hỗ trợ Playwright, Selenium, Appium.
+description: Sinh locator ổn định cho UI element. Hỗ trợ Playwright, Selenium.
 ---
+
+> **Rule phải đọc trước:** `.claude/rules/locator_strategy.md` · `.claude/rules/playwright_rules.md` hoặc `.claude/rules/selenium_rules.md` theo framework đang dùng. Các rule này chỉ tự nạp khi đã mở file khớp `paths`, nên workflow phải tự đọc.
 
 > **Skill nền tảng cần nạp trước:** `skills-smart-locator-agent` · `skills-ui-debug-agent` — đọc `.claude/skills/<tên-skill>/SKILL.md` của từng skill trước khi bắt đầu.
 
@@ -24,12 +26,12 @@ description: Sinh locator ổn định cho UI element. Hỗ trợ Playwright, Se
 |-------|----------|-------|
 | Mô tả element | ✅ | VD: "nút Login", "dropdown chọn Country", "ô nhập Email" |
 | URL trang chứa element | ✅ | Để AI navigate và inspect DOM thực tế |
-| Framework | ✅ | `playwright`, `selenium`, hoặc `appium` |
+| Framework | ✅ | `playwright` hoặc `selenium` |
 | HTML snippet | ❌ | Nếu User đã có sẵn DOM context — AI dùng để phân tích nhanh |
 | Page class đích | ❌ | File Page class mà locator sẽ được thêm vào |
 | Login yêu cầu | ❌ | Nếu trang yêu cầu đăng nhập — User cho biết cách login |
 
-> **Lưu ý về Login:** Nếu trang yêu cầu đăng nhập, User PHẢI chỉ rõ cách login (fixture, script, URL login...). AI KHÔNG ĐƯỢC tự đọc `.env` hay đoán credentials.
+> **Lưu ý về Login:** Trang yêu cầu đăng nhập thì dùng fixture sẵn có hoặc tài khoản trong `.env`. Đọc `.env` ở gốc project theo `CLAUDE.md`, không in giá trị ra log. Thiếu biến thì báo tên biến và nhờ user tự thêm vào `.env`, không hỏi giá trị trong chat. Không đoán credentials.
 
 ---
 
@@ -48,7 +50,6 @@ description: Sinh locator ổn định cho UI element. Hỗ trợ Playwright, Se
    |-----------|-----------|
    | Playwright | `.claude/rules/playwright_rules.md` |
    | Selenium | `.claude/rules/selenium_rules.md` |
-   | Appium | `.claude/rules/appium_rules.md` |
 
 3. **Kiểm tra Page class hiện tại (nếu User chỉ định):**
    - Đọc file Page class → biết locator đã có sẵn
@@ -88,26 +89,13 @@ description: Sinh locator ổn định cho UI element. Hỗ trợ Playwright, Se
    - Thực hiện action mở element: `browser_click(ref=<trigger>)`
    - Capture lại: `browser_snapshot()`
 
-#### 2B. Mobile (Appium)
-
-4. **Dùng Appium Inspector** hoặc `page_source` để lấy UI hierarchy
-5. **Ghi lại attributes:** `accessibility-id`, `resource-id`, `content-desc`, `text`, `class`, `bounds`
-6. **Nếu element nằm trong scroll view** → scroll đến element trước khi inspect
-
 ---
 
 ### Phase 3: Sinh locator theo Priority
 
 9. **Áp dụng bản đồ ưu tiên (Master Priority Map):**
 
-   | # | Loại | Khi nào dùng |
-   |---|------|-------------|
-   | 1 | Accessibility / Aria | Element có `role`, `aria-label` rõ ràng |
-   | 2 | Test attribute | Element có `data-testid`, `data-test`, `data-qa` |
-   | 3 | ID / name | Element có `id` hoặc `name` ổn định (không auto-generated) |
-   | 4 | Framework semantic | Playwright: `getByRole`, `getByLabel`... |
-   | 5 | CSS Selector | Dùng attribute cụ thể, tránh class động |
-   | 6 | XPath | Lựa chọn cuối cùng — chỉ dùng XPath tương đối |
+   Thứ tự theo `.claude/rules/locator_strategy.md` mục 1. CSS dùng attribute cụ thể, tránh class động. XPath là lựa chọn cuối, chỉ dùng XPath tương đối.
 
 10. **Sinh locator theo framework:**
 
@@ -116,21 +104,21 @@ description: Sinh locator ổn định cho UI element. Hỗ trợ Playwright, Se
     // Priority 1: Role-based
     page.getByRole('button', { name: 'Submit' })
 
-    // Priority 2: Test ID
-    page.getByTestId('submit-btn')
-
-    // Priority 3: Label / Placeholder
+    // Priority 2-3: Label / Placeholder
     page.getByLabel('Email')
     page.getByPlaceholder('Enter your password')
 
-    // Priority 4: Text
+    // Priority 4: Test ID
+    page.getByTestId('submit-btn')
+
+    // Priority 5: Text
     page.getByText('Submit')
 
-    // Priority 5: CSS
+    // Priority 6: CSS
     page.locator('#submit-button')
     page.locator('[data-testid="submit-btn"]')
 
-    // Priority 6: XPath (cuối cùng)
+    // Priority 7: XPath (cuối cùng)
     page.locator('//button[@type="submit"]')
     ```
 
@@ -139,20 +127,20 @@ description: Sinh locator ổn định cho UI element. Hỗ trợ Playwright, Se
     # Priority 1: Role-based
     page.get_by_role("button", name="Submit")
 
-    # Priority 2: Test ID
-    page.get_by_test_id("submit-btn")
-
-    # Priority 3: Label / Placeholder
+    # Priority 2-3: Label / Placeholder
     page.get_by_label("Email")
     page.get_by_placeholder("Enter your password")
 
-    # Priority 4: Text
+    # Priority 4: Test ID
+    page.get_by_test_id("submit-btn")
+
+    # Priority 5: Text
     page.get_by_text("Submit")
 
-    # Priority 5: CSS
+    # Priority 6: CSS
     page.locator("#submit-button")
 
-    # Priority 6: XPath (cuối cùng)
+    # Priority 7: XPath (cuối cùng)
     page.locator("//button[@type='submit']")
     ```
 
@@ -174,24 +162,6 @@ description: Sinh locator ổn định cho UI element. Hỗ trợ Playwright, Se
     driver.findElement(By.xpath("//button[@type='submit']"));
     ```
 
-    **Appium (Java):**
-    ```java
-    // Priority 1: Accessibility ID
-    driver.findElement(AppiumBy.accessibilityId("login_button"));
-
-    // Priority 2: Resource ID (Android)
-    driver.findElement(AppiumBy.id("com.app:id/login_button"));
-
-    // Priority 3: iOS Predicate
-    driver.findElement(AppiumBy.iOSNsPredicateString("label == 'Login'"));
-
-    // Priority 4: Class Chain (iOS)
-    driver.findElement(AppiumBy.iOSClassChain("**/XCUIElementTypeButton[`label == 'Login'`]"));
-
-    // Priority 5: XPath (cuối cùng)
-    driver.findElement(AppiumBy.xpath("//android.widget.Button[@text='Login']"));
-    ```
-
 ---
 
 ### Phase 4: Validate locator
@@ -206,12 +176,6 @@ description: Sinh locator ổn định cho UI element. Hỗ trợ Playwright, Se
     **Selenium:**
     ```java
     List<WebElement> matches = driver.findElements(By.<strategy>("<locator>"));
-    assert matches.size() == 1;
-    ```
-
-    **Appium:**
-    ```java
-    List<WebElement> matches = driver.findElements(AppiumBy.<strategy>("<locator>"));
     assert matches.size() == 1;
     ```
 
@@ -237,7 +201,7 @@ description: Sinh locator ổn định cho UI element. Hỗ trợ Playwright, Se
 ```markdown
 ## Locator Result: [Mô tả element]
 
-**Framework:** [Playwright / Selenium / Appium]
+**Framework:** [Playwright / Selenium]
 
 ### 🎯 Primary Locator (Recommended)
 ```<language>
@@ -314,13 +278,13 @@ driver.findElement(By.xpath("//tr[contains(., 'John Doe')]//button[text()='Edit'
 
 | ❌ Không được làm | ✅ Thay thế đúng |
 |-------------------|-----------------|
-| Đoán locator không inspect DOM/UI | `browser_snapshot()` hoặc Appium Inspector trước |
+| Đoán locator không inspect DOM/UI | `browser_snapshot()` trước |
 | Dùng CSS class động (`css-1n2xyz`, `sc-xxx`) | Dùng role, aria, data-testid, text |
 | Dùng XPath tuyệt đối (`//html/body/div[1]...`) | Dùng XPath tương đối với attribute |
 | Dùng auto-generated ID (`ember123`, `:r1:`) | Dùng stable attribute hoặc text |
 | Trả locator không verify uniqueness | Luôn verify match đúng 1 element |
 | Chỉ trả 1 locator, không có fallback | Trả Primary + Fallback + Reasoning |
-| Đọc `.env` để lấy credentials login | Hỏi User cách login hoặc dùng fixture có sẵn |
+| Hỏi mật khẩu trong chat, đoán credentials, in giá trị `.env` ra log | Dùng fixture có sẵn hoặc đọc `.env`; thiếu biến thì báo tên biến |
 
 ---
 

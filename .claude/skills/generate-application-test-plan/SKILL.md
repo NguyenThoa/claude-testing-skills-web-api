@@ -1,6 +1,6 @@
 ---
 name: generate-application-test-plan
-description: Khám phá ứng dụng web, sinh test plan và test scenarios. Hỗ trợ 2 mode — PLAN (chỉ test plan) và FULL (test plan + automation skeleton).
+description: Khám phá ứng dụng web, sinh test scenarios theo rủi ro, đối chiếu scenario với REQ để cảnh báo phần thiếu. Hỗ trợ 2 mode — PLAN (chỉ scenario) và FULL (scenario rồi điều phối các workflow chuẩn sinh REQ, TC, automation).
 ---
 
 > **Skill nền tảng cần nạp trước:** `skills-qa-automation-engineer` · `skills-requirements-analyzer` · `skills-ui-debug-agent` — đọc `.claude/skills/<tên-skill>/SKILL.md` của từng skill trước khi bắt đầu.
@@ -23,7 +23,7 @@ Workflow này giúp agent tự động khám phá một ứng dụng web, phân 
 | Mode | Khi nào sử dụng | Output |
 |---|---|---|
 | **PLAN** (mặc định) | User cần khám phá app, lập test plan, xác định scenarios | Modules, User Flows, Test Scenarios, Priority |
-| **FULL** | User yêu cầu thêm automation skeleton hoặc nói "full automation suite" | Như PLAN + Manual Test Cases + Automation Skeleton (POM + Test classes) |
+| **FULL** | User yêu cầu thêm test case, automation hoặc nói "full automation suite" | Như PLAN, rồi gọi các workflow chuẩn sinh REQ, TC, automation cho module đã chọn |
 
 > Nếu user nói "generate full automation suite", "bootstrap automation", hoặc yêu cầu code → tự động chuyển sang **Mode FULL**.
 
@@ -34,7 +34,7 @@ Hai workflow cùng bắt đầu bằng "khám phá app" nhưng **đi về hai đ
 | Mục tiêu của user | Workflow đúng | Đầu ra |
 |---|---|---|
 | *"Hệ thống này không có tài liệu, tôi cần **tài liệu requirements**"* | **`/discover-system`** → rồi `/generate-requirements-from-website` từng module | `docs/requirements/` — có **REQ ID** truy vết được |
-| *"Tôi cần biết **test cái gì trước**, lập kế hoạch kiểm thử"* | **Workflow này** | `test_plan.md` — scenarios + priority, **không** có REQ ID |
+| *"Tôi cần biết **test cái gì trước**, lập kế hoạch kiểm thử"* | **Workflow này** | `test_scenarios_<mốc hoặc YYYYMMDD>.md` — scenarios + priority, **không** cấp REQ ID |
 
 > 📌 **Đã chạy `/discover-system` rồi thì đọc `docs/requirements/_discovery/system_map.md` ở Bước 1** — bản đồ module, entity, phụ thuộc và risk đã có sẵn, không cần crawl lại từ đầu. Chỉ bổ sung phần workflow này cần thêm: user flow chi tiết và scenario.
 >
@@ -54,7 +54,7 @@ Hai workflow cùng bắt đầu bằng "khám phá app" nhưng **đi về hai đ
    - Tên module / trang
    - Các thành phần UI chính (forms, tables, buttons, modals)
    - Các action có thể thực hiện (CRUD, search, filter, export...)
-5. Nếu app yêu cầu đăng nhập → hỏi user cung cấp credentials hoặc dùng fixture sẵn có
+5. Nếu app yêu cầu đăng nhập → dùng fixture sẵn có hoặc tài khoản trong `.env`. Thiếu biến thì báo tên biến, không hỏi giá trị trong chat
 
 ### Bước 2: Phân tích & Xác nhận scope (Analysis — CHECKPOINT)
 
@@ -62,10 +62,7 @@ Hai workflow cùng bắt đầu bằng "khám phá app" nhưng **đi về hai đ
    - **Modules đã phát hiện** (tên, mô tả ngắn, số lượng features)
    - **User Flows chính** (Happy Path cho mỗi module)
    - **Dependencies** giữa các modules (nếu có)
-2. Đánh giá **Risk Level** sơ bộ cho mỗi module:
-   - 🔴 **High Risk** — Module core, ảnh hưởng nhiều user, logic phức tạp
-   - 🟡 **Medium Risk** — Module phụ trợ, sử dụng thường xuyên
-   - 🟢 **Low Risk** — Module ít sử dụng, ít thay đổi
+2. Đánh giá **Risk Level** sơ bộ cho mỗi module bằng ma trận hai trục tác động × khả năng lỗi (`skills-manual-testcase-v3/references/test_types_4_rounds.md`, mục *Chấm mức rủi ro*). Mức của module lấy theo chức năng cao nhất, ghi căn cứ cả hai trục. Khi sinh TC sẽ chấm lại từng chức năng
 3. **⏸️ DỪNG LẠI — Trình bày cho user review:**
    - Danh sách modules + risk level
    - User flows đã xác định
@@ -81,48 +78,72 @@ Hai workflow cùng bắt đầu bằng "khám phá app" nhưng **đi về hai đ
 2. Gán **Priority** cho mỗi scenario dựa trên Risk Level:
    - **P1 (Critical)** — Core flows, regression blockers, dữ liệu nhạy cảm
    - **P2 (High)** — Main features, tính năng sử dụng thường xuyên
-   - **P3 (Medium)** — Secondary features, UI/UX checks
-   - **P4 (Low)** — Nice-to-have, cosmetic checks
+   - **P3 (Low)** — Secondary features, UI/UX checks, nice-to-have, cosmetic checks
+3. Gán mã `SCN-<MODULE>-<nn>`, dùng prefix ở `docs/requirements/README.md`. Module chưa có prefix thì dùng tên tạm và ghi rõ cần chạy `/discover-system` để cấp prefix. Mã SCN **không** phải REQ: không vào RTM, không dùng tính độ phủ
 
-### Bước 4: Đóng gói Test Plan (Output — Mode PLAN)
+### Bước 4: Đối chiếu Scenario ↔ REQ (CHECKPOINT cảnh báo)
 
-1. Tạo **artifact** `test_plan.md` với cấu trúc:
+> **Có REQ không có nghĩa là REQ đã đủ.** Sinh TC chỉ từ REQ thì phần REQ bỏ sót cũng không có TC, trong khi RTM vẫn báo phủ đủ. Scenario lấy từ app thật là nguồn đối chiếu độc lập.
+
+1. Với mỗi module trong phạm vi, đọc `REQUIREMENTS_<TÊN_MODULE>_SUMMARY.md`, theo `## Bản đồ tài liệu` đọc file nền tảng, rồi so từng scenario:
+   ```markdown
+   ⚠️ Đối chiếu Scenario ↔ REQ — module <module>
+   | Scenario | Tìm thấy trong app | REQ tương ứng | Kết luận |
+   |---|---|---|---|
+   | SCN-CUST-04 Xuất Excel danh sách | Có nút Export | — | 🔴 Chưa có REQ |
+   | SCN-CUST-07 Khoá khách hàng | Có menu Khoá | REQ-CUST-12 | ✅ |
+
+   Nguồn REQ: <số từ ticket> từ ticket, <số từ UI> từ khảo sát UI · Trạng thái khảo sát: <ở danh mục> · <n>/<tổng> scenario chưa có REQ
+   ```
+   Dòng `✅` phải ghi mã REQ để người đọc kiểm được. Không chắc thì ghi `❔`, xử lý như `🔴`, không ghi `✅`.
+2. **Cảnh báo cả module**, kể cả khi mọi scenario đều khớp:
+   - Chưa khảo sát UI, đang khảo sát dở, hoặc REQ chỉ đến từ ticket → nêu rõ, đề xuất `/generate-requirements-from-website`
+   - Toàn bộ REQ chép từ UI → nêu rõ chưa có nguồn nào cho thấy tính năng còn thiếu, PO cần rà
+3. **⏸️ DỪNG, user chọn cách xử lý từng dòng `🔴` và `❔`:**
+
+   | Lựa chọn | Kết quả |
+   |---|---|
+   | **Bổ sung REQ** (mặc định) | Thêm REQ `⏳` rồi mới sinh TC cho scenario đó |
+   | **Cố ý chưa làm** | `⏭️` kèm lý do, người quyết định, điều kiện rà lại |
+   | **Scenario sai** | Bỏ scenario, ghi lý do |
+
+   Không chặn cứng: user vẫn được chạy tiếp, nhưng quyết định và phần còn hở phải ghi vào file scenario và báo cáo cuối. Không tự chọn thay user.
+
+> ⚠️ **Giới hạn phải nêu trong báo cáo:** bước này bắt được thứ có trên app mà thiếu REQ, **không** bắt được tính năng chưa ai làm. Nó cũng không thay Bảng đối soát 4 vòng khi sinh TC.
+
+### Bước 5: Đóng gói kế hoạch (Mode PLAN)
+
+1. Ghi file `docs/test-plans/scenarios/test_scenarios_<mốc hoặc YYYYMMDD>.md`, là ảnh chụp tại một thời điểm, không sửa tại chỗ:
    - **Tổng quan ứng dụng** — mục đích, tech stack (nếu xác định được), URL
    - **Danh sách Modules** — bảng gồm: Module, Mô tả, Risk Level, Số scenarios
    - **User Flows** — mô tả từng flow chính (steps)
-   - **Test Scenarios** — bảng: `| ID | Module | Scenario | Priority | Loại (Happy/Negative/Edge) |`
-   - **Automation Candidates** — đánh dấu scenarios nào nên tự động hóa và lý do
-2. Nếu user chọn **Mode PLAN** → **KẾT THÚC** tại đây
+   - **Test Scenarios** — bảng: `| ID | Module | Scenario | Priority | Loại (Happy/Negative/Edge) | REQ tương ứng |`
+   - **Đối chiếu Scenario ↔ REQ** — bảng, cảnh báo và quyết định ở Bước 4
+   - **Automation Candidates** — gợi ý sơ bộ kèm lý do; chốt bằng `/review-testcases` mode AUTOMATION khi đã có TC
+   - **Việc tiếp theo** — module theo thứ tự rủi ro, kèm lệnh tiếp theo của từng module
+2. Mode PLAN → **KẾT THÚC** tại đây. **Không** sinh TC
 
-### Bước 5: Sinh Manual Test Cases (Mode FULL)
+### Bước 6: Điều phối các workflow chuẩn (Mode FULL)
 
-> Chỉ thực hiện khi ở **Mode FULL**
+> Chỉ thực hiện khi ở **Mode FULL**. Workflow này **không tự viết** TC hay code: TC viết riêng ở đây sẽ thiếu đối chiếu evidence và quality gate, code không chạy thì trái Definition of Done.
 
-1. Chuyển test scenarios (Bước 3) thành **manual test cases đầy đủ**:
-   - TC ID, Module, Test Title, Pre-conditions, Test Steps, Expected Results, Test Data, Priority
-2. Test Data phải **cụ thể** (không placeholder chung chung)
-3. Xuất dưới dạng bảng Markdown trong artifact
+Chỉ chạy cho module user chọn ở Bước 2, bắt đầu từ module rủi ro cao. Gọi lần lượt, **giữ nguyên mọi checkpoint** của từng workflow:
 
-### Bước 6: Sinh Automation Skeleton (Mode FULL)
+| # | Điều kiện | Workflow | Ghi chú |
+|---|---|---|---|
+| 1 | Chưa có REQ, hoặc có dòng chọn *Bổ sung REQ* | `/generate-requirements-from-website` | Đánh tiếp mã, REQ mới là `⏳`. Sau đó chạy lại Bước 4 cho module |
+| 2 | Có REQ, chưa có file TC web | `/generate-testcases-from-requirements` | **Chỉ sinh khi module đã có REQ.** Không ghi `REQ ID` trống. Scenario chỉ để tham khảo, Expected lấy từ REQ |
+| 3 | Đã có file TC web | **Không** sinh lại cả file | Sinh lại làm TC ID đánh lại từ đầu, vỡ truy vết. REQ mới chưa có TC → `/generate-testcases-from-requirements` chế độ BỔ SUNG. REQ đã đổi → `/update-testcases-from-impact` |
+| 4 | Có TC, user cần automation | `/generate-automation-web` mode TC | Inspect DOM thật, chạy và PASS 2 lần theo workflow đó. Chưa có framework thì `/generate-automation-framework` trước |
 
-> Chỉ thực hiện khi ở **Mode FULL**
-
-1. Xác định **tech stack** automation (hỏi user nếu chưa rõ):
-   - Mặc định: Playwright + TypeScript (hoặc Selenium + Java theo preference)
-2. Sinh **Page Object classes** cho mỗi module:
-   - Locator thu thập từ DOM thực tế (Bước 1), KHÔNG đoán
-   - Methods tương tác rõ nghĩa
-3. Sinh **Test class skeleton** cho top-priority scenarios (P1, P2)
-4. Đảm bảo tuân thủ **POM pattern** và **locator strategy** theo rules
+User chưa muốn làm requirements → dừng ở Bước 5, không sinh TC.
 
 ## Output
 
 ### Mode PLAN
-- Artifact `test_plan.md` gồm: App overview, Modules, User Flows, Test Scenarios (có Priority), Automation Candidates
+- File `docs/test-plans/scenarios/test_scenarios_<mốc hoặc YYYYMMDD>.md`
 
 ### Mode FULL
-- Tất cả output của Mode PLAN, cộng thêm:
-- Manual Test Cases (bảng Markdown)
-- Page Object classes
-- Test class skeletons
-- Assertions validating expected behavior
+- File scenario như Mode PLAN
+- REQ, TC, code và report nằm đúng chỗ của từng workflow đã gọi
+- Báo cáo cuối: từng module đã qua bước nào · dòng `⏭️` và phần còn hở · module chưa làm và lý do

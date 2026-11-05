@@ -54,6 +54,8 @@ Bất kể tổng điểm, các lỗi sau **luôn** đánh 🔴 và phải sửa
 | Locator dùng dynamic class (`css-1a2b3c`, `sc-xxx`, `MuiXxx-root`) hoặc XPath vị trí (`//div[3]/button[2]`) | Gãy ở build kế tiếp |
 | Thiếu screenshot cuối test | Không chứng minh được test chạy thật trên UI |
 | Credentials thật nằm trong code / file config commit được | Rủi ro lộ dữ liệu |
+| `test.fail` · `xfail` · `expectedExceptions` thiếu mã bug, hoặc `xfail` không `strict`; `skip` · `fixme` để né test đỏ | Bug được sửa mà không ai biết (`automation_rules.md` mục 6.1) |
+| `@KnownBug:<BUG_ID>` trỏ tới bug đã đóng hoặc không tồn tại | Test đang phơi một bug không còn thật |
 
 ---
 
@@ -63,14 +65,15 @@ Chạy trước khi đọc kỹ, để khoanh vùng. Kết quả grep là **manh
 
 | Vi phạm | Pattern tìm |
 |---|---|
-| Hard sleep | `waitForTimeout\|Thread\.sleep\|time\.sleep\|setTimeout\(` |
+| Hard sleep | `waitForTimeout\|Thread\.sleep\|time\.sleep\|setTimeout\(`. Độ trễ giả lập trong route mock không phải hard sleep |
 | Debug log | `console\.log\|System\.out\.print\|print\(` |
 | Locator inline trong test | trong thư mục test: `page\.locator\(\|By\.\|getByRole\(` |
 | Dynamic class / XPath vị trí | `css-[0-9a-z]{6}\|sc-[A-Za-z]\|\]\[[0-9]\+\]\|div\[[0-9]\+\]` |
-| Data hardcoded | `@test\.com\|@email\.com\|admin123\|password123` |
+| Data hardcoded | `@test\.com\|@yopmail\.com\|@email\.com\|admin123\|password123`. Email sinh động có timestamp thì hợp lệ |
 | Thiếu metadata Allure | file test **không** chứa `severity\|allure\.label\|@Severity` |
 | Thiếu screenshot teardown | file test/fixture **không** chứa `screenshot\|Attachment\|attach` |
 | Credentials trong code | `password\s*=\s*["']\|api[_-]?key\s*=\s*["']\|token\s*=\s*["']` |
+| Né test đỏ | `test\.skip\|test\.fixme\|test\.fail\|xfail\|expectedExceptions\|@Ignore\|enabled = false` |
 
 > Nhóm 5 và 6 thường phải đọc file mới chấm được — grep chỉ bắt được sự vắng mặt, không đánh giá được chất lượng tên step hay sức mạnh assertion.
 

@@ -3,7 +3,7 @@ name: assess-release-risk
 description: Chấm rủi ro chất lượng của một mốc release theo module × nền tảng — 5 yếu tố minh bạch (thay đổi · lỗi mở · bất ổn · khoảng trống thực thi · tầm ảnh hưởng), đối chiếu Master Test Plan và rủi ro đã công bố, đề xuất kiểm soát cho từng vùng nóng. Số liệu từ scripts/quality-insights/qi.py. KHÔNG khuyến nghị go/no-go.
 ---
 
-> **Skill nền tảng cần nạp trước:** `skills-quality-insights` · `skills-rbt-manual-testing` · `skills-test-summary-reporter` — đọc `.claude/skills/<tên-skill>/SKILL.md` của từng skill trước khi bắt đầu.
+> **Skill nền tảng cần nạp trước:** `skills-quality-insights` · `skills-manual-testcase-v3` · `skills-test-summary-reporter` — đọc `.claude/skills/<tên-skill>/SKILL.md` của từng skill trước khi bắt đầu.
 
 # Workflow: Đánh Giá Rủi Ro Release
 
@@ -63,7 +63,7 @@ Với **mỗi** đơn vị 🔴 và 🟠:
 1. **C** — REQ đổi chưa có TC: đọc *Tóm tắt* của impact report — REQ đó có phải **cố ý ngoài phạm vi viết TC** không. Có → ghi *Nhận định QA: G thực tế thấp hơn vì …*
 2. **D** — lỗi Critical/Major: đọc file bug — đã có hướng sửa chưa, có đường vòng không, có chặn tiêu chí exit nào của plan (mục 4.2) không
 3. **I** — ⬛ chưa có lần chạy: ghi rõ đơn vị này **chưa có bằng chứng thực thi**, không phải "ổn"
-4. **G** — TC High/Critical chưa chạy: liệt kê số lượng, đề xuất chạy trước
+4. **G** — TC `P1` hoặc `Risk Level` `High` chưa chạy: liệt kê số lượng, đề xuất chạy trước
 5. Đối chiếu bảng **8.2 Rủi ro sản phẩm** của plan / `RISK-<MODULE>-nn`: rủi ro nào đã **thành hiện thực** (có lỗi), rủi ro nào **chưa có bằng chứng kiểm** (đơn vị ⬛)
 6. **Kiểm soát đề xuất** cho từng đơn vị — workflow cụ thể: `/select-regression-tests` · `/execute-test-cases` · `/retest-fixed-bugs` · `/update-testcases-from-impact`
 
