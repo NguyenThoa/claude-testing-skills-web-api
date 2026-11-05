@@ -37,7 +37,8 @@ Workflow đọc test case web (hoặc mô tả flow), tự mở browser inspect 
 - **TUYỆT ĐỐI KHÔNG ĐOÁN locator** — phải inspect DOM thực tế bằng MCP browser tools
 - **Mode FLOW: phải chạy từng bước UI trên browser thật** trước khi sinh code
 - **Desktop viewport headed theo `--viewport-size` lúc launch** — KHÔNG gọi `browser_resize` (xem `.claude/rules/playwright_rules.md` mục 1)
-- ⚠️ **Rule E3 (CRITICAL):** Khi test FAIL → tự đọc log → phân tích → sửa code → chạy lại. **CẤM hỏi user trong quá trình fix lỗi.** Chỉ hỏi khi gặp business rule mâu thuẫn hoặc hết 5 vòng auto-heal
+- ⚠️ **Rule E3 (CRITICAL):** Khi test FAIL → tự đọc log → phân tích → sửa code → chạy lại. **CẤM hỏi user trong quá trình fix lỗi.** Chỉ hỏi khi gặp business rule mâu thuẫn hoặc hết 3 vòng auto-heal
+- 🚧 **TC `@Disruptive`:** sinh script nhưng gắn tag để loại khỏi suite mặc định và CI. Chỉ chạy khi user duyệt đích danh trong chat
 - **File `task.md`** — PHẢI tạo để theo dõi tiến độ
 
 ## Input cần thu thập
@@ -328,7 +329,7 @@ Nếu user chưa cung cấp đủ → hỏi trước khi bắt đầu.
    **Nếu FAIL → Vào vòng lặp Auto-Heal:**
 
    ```
-   WHILE test FAIL (tối đa 5 vòng):
+   WHILE test FAIL (tối đa 3 vòng):
      1. Đọc error log / stack trace → xác định step fail
      2. Phân loại lỗi:
 
@@ -352,7 +353,7 @@ Nếu user chưa cung cấp đủ → hỏi trước khi bắt đầu.
 3. **⚠️ Rule E3 — CẤM HỎI USER khi fix lỗi.** Chỉ được hỏi khi:
    - Business logic mâu thuẫn (TC nói A nhưng app hiển thị B)
    - Server/app không accessible · cần CAPTCHA
-   - Đã hết 5 vòng auto-heal mà vẫn fail
+   - Đã hết 3 vòng auto-heal mà vẫn fail
 
 4. **Verify stability** — test phải PASS **2 lần liên tiếp**:
    ```bash

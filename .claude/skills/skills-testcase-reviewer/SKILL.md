@@ -277,7 +277,7 @@ Lưu tại `docs/testcases/<module>/review/testcase_review_report_<nền-tảng>
 4. TC viết mơ hồ → `❓ Chưa chấm được`, **không đoán** — đề xuất Mode REVIEW cho các TC đó
 5. **Gom điều kiện**: mỗi điều kiện của `Partial` một dòng, đếm số TC nó mở khoá, xếp giảm dần — đây là danh sách QA mang đi xin dev/DevOps. Điều kiện chỉ mở 1–2 TC mà cần dựng hạ tầng mới → đề xuất `No` theo Trục 3
 6. Điều kiện **đã có sẵn** trên môi trường (user nói, hoặc bảng năng lực ở `docs/requirements/README.md`) → TC phụ thuộc chấm `Yes`, điều kiện ghi trạng thái ✅. Không biết → ghi `❓ Chưa rõ`, giữ `Partial`
-7. Vướng tạm thời (AMB 🔴 chưa chốt, `@NeedsVerify`, màn hình đang làm lại) → `⏸️ Hoãn`, **không** hạ giá trị. TC phơi bug (`@KnownBug`) **không** hoãn
+7. Vướng tạm thời (AMB 🔴 chưa chốt, `@NeedsVerify`, màn hình đang làm lại) → `⏸️ Hoãn`, **không** hạ giá trị. TC phơi bug (`@KnownBug`, `@AppDeviation`) **không** hoãn
 8. File có sẵn cột `Automation` → liệt kê **dòng lệch**, mỗi dòng nói vì sao
 9. Đề xuất thứ tự automate trong nhóm `Yes` theo mục 5 của tiêu chí
 

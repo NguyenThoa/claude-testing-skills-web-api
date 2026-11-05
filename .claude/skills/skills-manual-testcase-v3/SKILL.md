@@ -61,7 +61,7 @@ Tra nhanh theo tên mục được các skill khác nhắc tới:
 | `Action` | Đánh số, mỗi bước 1 hành động | Xray Step: Action |
 | `Test Data` | Khớp số với `Action`, giá trị cụ thể | Xray Step: Data |
 | `Expected Result` | Đánh số khớp bước, chi tiết dùng `-` và `+` | Xray Step: Expected |
-| `Tags` | `@Smoke` · `@Regression` · `@CriticalPath` · `@TechCheck` · `@NeedsVerify` · `@Deprecated` · `@KnownBug:<BUG_ID>` · `@HighImpact` · `@PersonalOnly` · tag nền tảng | Lọc phạm vi chạy, RTM |
+| `Tags` | `@Smoke` · `@Regression` · `@CriticalPath` · `@TechCheck` · `@NeedsVerify` · `@AppDeviation` · `@Disruptive` · `@Deprecated` · `@KnownBug:<BUG_ID>` · `@HighImpact` · `@PersonalOnly` · tag nền tảng | Lọc phạm vi chạy, RTM |
 
 - **`Risk Level` ≠ `Priority` ≠ Severity:** Risk Level là rủi ro chức năng được test, chấm trước khi chạy. Priority là thứ tự chạy. Severity thuộc về **bug**, chấm sau khi lỗi xảy ra. TC rủi ro `High` có thể là `P2` nếu không thuộc luồng chặn release.
 - **Cột automation** (`Automatable` · `Type` · `Auto Status`) nằm ở `automation_matrix.md`, không nhét vào bảng chính.

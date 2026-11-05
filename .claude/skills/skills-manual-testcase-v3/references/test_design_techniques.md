@@ -44,7 +44,7 @@ Tìm ra lỗi trong requirement ở bước phân tích là **kết quả kiểm
 - **Dữ liệu cụ thể nhưng không phải dữ liệu thật của khách hàng.**
 - **Phủ 100% REQ không có nghĩa là đủ.** Soát thêm bảng 4 vòng, ISO/IEC 25010, và chiều ngược: một TC không được là chỗ dựa duy nhất của nhiều REQ.
 - **Không đếm TC để đo chất lượng.** Nhiều TC trùng lặp làm tăng chi phí bảo trì và làm loãng kết quả.
-- **Người viết không tự duyệt.** Bộ TC rủi ro `High` nên qua `/review-testcases` hoặc một reviewer độc lập.
+- **Người viết không tự duyệt.** Bộ TC rủi ro `High` phải qua `/review-testcases` ở phiên mới, hoặc một reviewer độc lập.
 
 ---
 
@@ -69,6 +69,8 @@ Khi form/UI có các input fields, agent **BẮT BUỘC** phải liệt kê từ
 | **Rich Text Editor (WYSIWYG)** | Sanitize HTML tags nguy hiểm (`<script>`, `<iframe>`) · Paste văn bản kèm format/ảnh · Character counter tính theo text thô vs HTML markup |
 | **Multi-Select / Tag Input** | Giới hạn số lượng tag · Tag trùng lặp · Xóa tag bằng Backspace/nút X · Tag có ký tự đặc biệt |
 | **Range Slider / Stepper** | Giới hạn min/max · Bước nhảy (step increment violation) · Nhập tay trực tiếp so với kéo slider |
+
+> TC vượt số lần nhập sai, gửi lại OTP liên tục, hoặc khoá tài khoản dùng chung phải gắn `@Disruptive`: chỉ chạy khi user duyệt. Payload injection dùng loại không phá huỷ, cấm loại ghi hoặc xoá dữ liệu.
 
 ### Template TC cho Text field có max = N
 

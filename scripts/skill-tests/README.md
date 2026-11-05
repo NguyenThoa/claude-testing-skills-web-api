@@ -9,7 +9,8 @@ node --test "scripts/skill-tests/*.test.js"
 | File | Kiểm tra |
 |---|---|
 | `skills.test.js` | Frontmatter · tham chiếu skill, workflow, link · bản đồ `references/` · `paths` của rule · chốt an toàn · cú pháp `settings.json` · format test case · dấu vết thứ đã gỡ · giá trị bí mật |
-| `contracts.test.js` | Hợp đồng giữa các file: luật đã chốt không bị nơi khác nói ngược (`.env`, tên tool cũ, email test, TC ID, `@KnownBug`, mẫu báo cáo, locator, ngưỡng flaky, mẫu framework, quyền git) |
+| `contracts.test.js` | Hợp đồng giữa các file: luật đã chốt không bị nơi khác nói ngược (`.env`, tên tool cũ, email test, TC ID, `@KnownBug`, mẫu báo cáo, locator, ngưỡng flaky, mẫu framework, quyền git, `@AppDeviation`, `@Disruptive`, tiêu chí exit, cơ chế bí mật, vòng tự sửa) |
+| `tc_lint.test.js` | Script kiểm bộ TC bắt đúng từng lỗi, chấp nhận file đúng |
 | `tools.test.js` | Parser test case · CLI Xray từ chối ghi khi thiếu `--yes` · báo lỗi trung thực với Jira giả lập · `qi.py` · cột của viewer |
 
 **Giới hạn:** bộ test này kiểm tra cấu trúc và công cụ, không kiểm tra chất lượng nội dung do agent sinh ra. Sau khi sửa lớn, vẫn nên chạy thử cả chuỗi trên một module mẫu và có người đọc lại kết quả.

@@ -1022,8 +1022,8 @@ public class LoginTest extends BaseTest {
     @Severity(SeverityLevel.BLOCKER)
     @Description("Kiểm tra người dùng đăng nhập bằng email và mật khẩu hợp lệ "
             + "thì được chuyển vào Dashboard và thấy menu điều hướng.")
-    // Surefire ghi tên method vào JUnit XML. Cần đẩy lên Xray thì đặt TC ID trong tên method, hoặc dùng định dạng xray
-    public void testLoginWithValidCredentials() {
+    // Surefire chỉ ghi tên method vào JUnit XML nên tên method chứa TC ID
+    public void CRM_LOGIN_TC_001_dangNhapThanhCong() {
         Allure.label("testId", "CRM_LOGIN_TC_001");
 
         LoginPage loginPage = new LoginPage(driver());

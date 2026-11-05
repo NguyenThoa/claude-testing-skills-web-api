@@ -8,6 +8,14 @@
 ## Được phép lấy thông tin tài khoản mật khẩu từ .env để nhập liệu trong quá trình chạy.
 Tôi cho phép Claude đọc file `.env` trong root project để lấy thông tin tài khoản, mật khẩu, token, cookie xác thực, session id, API key… phục vụ cho việc chạy test automation. File `.env` **không** được commit lên git (đã `.gitignore`) — Claude chỉ đọc để dùng, không ghi lại hay hiển thị ra log.
 
+**Để giá trị không vào log phiên** (mọi nội dung đọc bằng tool hoặc gõ qua tool đều nằm trong transcript):
+
+- **Nhập trên browser:** gõ **tên biến** vào `browser_type` / `browser_fill_form`, VD `TEST_PASSWORD`. `.claude/playwright-mcp-start.cjs` khai báo các biến có tên chứa `PASS` · `PWD` · `SECRET` · `TOKEN` · `COOKIE` · `SESSION` · `KEY` · `OTP` · `USER` · `EMAIL` · `ACCOUNT` với Playwright MCP: server tự thay giá trị, kết quả trả về chỉ hiện `<secret>TEN_BIEN</secret>`. Sửa `.env` thì khởi động lại Claude Code
+- **Tra tên biến:** `grep -oE '^[A-Za-z0-9_]+=' .env`
+- **Script automation:** đọc biến môi trường lúc chạy, không truyền giá trị trên dòng lệnh
+- **Gọi API thử:** dùng biến shell, VD `curl -H "Authorization: Bearer $API_TOKEN"`, không bật `-v`, không in response chứa token
+- Chỉ mở giá trị trong `.env` khi không còn cách khác, và không lặp lại giá trị đó trong chat hay file
+
 ---
 
 ## An Toàn Khi Agent Chạy (BẮT BUỘC)
@@ -387,6 +395,7 @@ Các trang tĩnh trong `scripts/`, mở bằng cách double-click, chạy offlin
 | `scripts/design-compare/dc.py` (chạy bằng Python) | spec JSON của Figma (`figma_extract.js`) + của UI thật (`collect_dom.js`) | Đo lệch thiết kế ↔ UI (`match`), dựng ảnh Figma \| App đặt cạnh nhau (`visual`), dựng ảnh Figma từ JSON khi hết hạn mức MCP (`render`), khoanh DIFF (`annotate`), che dữ liệu cá nhân (`mask` · `match --redact`), ghép mục báo cáo (`sections`), ΔE màu — xem `scripts/design-compare/README.md` |
 | `scripts/design-review-viewer/bundle.html` | cả thư mục `docs/design-reviews/` (danh mục + `design_compare_report.md` + `evidence/`) | Lọc DIFF theo module · nền tảng · trạng thái · mức độ · ai xử lý, xem ảnh Figma \| App và ảnh khoanh, cảnh báo High / Cần PO quyết / khung ❔, xuất CSV/Excel |
 | `scripts/quality-insights/qi.py` (chạy bằng Python) | cả `docs/` — `bugs/` · `executions/` · `testcases/` · `requirements/**/impact/` | Tính số liệu cho 3 workflow Quality Insights: `trends` (xu hướng lỗi, xu hướng từng TC qua các lần chạy) · `risk` (điểm rủi ro module × nền tảng) · `select` (chọn + xếp hạng TC theo thay đổi và quỹ phút) · `collect` (dữ liệu thô để soát). Thang điểm: `skills-quality-insights/references/scoring.md` |
+| `scripts/tc-lint/tc_lint.js` (chạy bằng Node) | `test_cases_*.md` · index · file requirements | Kiểm bằng máy cột, TC ID, Priority, Expected mơ hồ, tag trạng thái, REQ có thật, link evidence. Bắt buộc trước khi báo đạt Quality Gate |
 | `scripts/bugs-viewer/bundle.html` | `docs/bugs/README.md` (danh mục) · `docs/bugs/<module>/<nền-tảng>/BUG_*.md` | Lọc bug theo Severity/Priority/Trạng thái, xem Lịch sử retest, xuất CSV/Excel |
 
 ### Quy tắc bất biến

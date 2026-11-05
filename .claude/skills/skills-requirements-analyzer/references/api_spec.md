@@ -85,6 +85,13 @@ Khác nhánh UI (3.1.1 **cấm** gọi API trực tiếp vì UI là nguồn sự
 | Đọc response header + `Set-Cookie` | `HttpOnly`/`Secure`/`SameSite`, header lộ phiên bản | Chỉ thấy khi gọi thật |
 | Status code thực tế vs spec | `200` vs `201`, `400` vs `422` | Kỳ vọng sai là nguồn FAIL giả số 1 ở tầng TC |
 
+**🚧 Thao tác gây gián đoạn — không thuộc nhóm probe:** brute force, thử vượt rate limit, khoá tài khoản, chuỗi cực dài (ReDoS), upload dung lượng lớn, gửi đồng thời hàng loạt. Những thao tác này có thể khoá tài khoản người khác, làm chậm hoặc làm sập môi trường, kể cả môi trường test.
+
+- Khi khám phá và soạn TC: **không gọi thật**, ghi REQ/TC ở mức `Spec`. Probe "quá dài" chỉ vượt `maxLength` vừa đủ để bị từ chối, mỗi field một request
+- TC mang tag `@Disruptive`. Khoá đúng tài khoản do chính TC tạo ra, không ảnh hưởng người khác, thì không cần tag
+- Chỉ chạy khi user duyệt **đích danh TC trong chat ở lượt đó**, trên môi trường không dùng chung hoặc người vận hành đã biết. Production thì không chạy
+- Injection dùng payload không phá huỷ (`' OR '1'='1`), **cấm** payload ghi hoặc xoá như `DROP TABLE`
+
 Mỗi sai lệch ở tầng khám phá ghi thành **phát hiện `F-nn`** kèm bằng chứng nguyên văn (request + status + trích body, **đã che token và dữ liệu cá nhân**). Chỗ hệ thống làm **đúng** cũng ghi — đó là REQ/TC chống hồi quy.
 
 #### 3.4.5. Trích REQ từ spec

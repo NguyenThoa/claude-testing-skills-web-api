@@ -1,5 +1,9 @@
 # Anti-Patterns, Quality Gate, Output, Liên Kết
 
+> **Kiểm bằng máy trước, tự chấm sau.** Chạy `node scripts/tc-lint/tc_lint.js <file TC> <index> --req <file requirements>...`. Còn dòng `LỖI` thì chưa được báo đạt. Dán dòng `Tổng kết` và mọi `CẢNH BÁO` vào báo cáo.
+>
+> Script chỉ kiểm định dạng, mã, REQ và link ảnh. Các tiêu chí còn lại là tự khai, nên báo cáo ghi rõ `Review độc lập: Có` / `Chưa`. Bộ TC có `Risk Level` `High` phải chạy `/review-testcases` ở **phiên mới hoặc subagent mới**, không mang ngữ cảnh lúc sinh TC. Chưa review thì nêu là rủi ro, không ghi là đạt.
+
 ## 8. Anti-Patterns (NGHIÊM CẤM — cả 2 modes)
 
 ### Về Q&A (FULL RBT)

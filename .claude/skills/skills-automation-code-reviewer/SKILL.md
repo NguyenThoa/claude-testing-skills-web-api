@@ -54,7 +54,7 @@ Bất kể tổng điểm, các lỗi sau **luôn** đánh 🔴 và phải sửa
 | Locator dùng dynamic class (`css-1a2b3c`, `sc-xxx`, `MuiXxx-root`) hoặc XPath vị trí (`//div[3]/button[2]`) | Gãy ở build kế tiếp |
 | Thiếu screenshot cuối test | Không chứng minh được test chạy thật trên UI |
 | Credentials thật nằm trong code / file config commit được | Rủi ro lộ dữ liệu |
-| `test.fail` · `xfail` · `expectedExceptions` thiếu mã bug, hoặc `xfail` không `strict`; `skip` · `fixme` để né test đỏ | Bug được sửa mà không ai biết (`automation_rules.md` mục 6.1) |
+| `test.fail` gọi trực tiếp thay vì `knownBug(...)` · `expectedExceptions` thiếu `expectedExceptionsMessageRegExp` · `test.fail` · `xfail` · `expectedExceptions` thiếu mã bug, hoặc `xfail` không `strict`; `skip` · `fixme` để né test đỏ | Bug được sửa mà không ai biết (`automation_rules.md` mục 6.1) |
 | `@KnownBug:<BUG_ID>` trỏ tới bug đã đóng hoặc không tồn tại | Test đang phơi một bug không còn thật |
 
 ---

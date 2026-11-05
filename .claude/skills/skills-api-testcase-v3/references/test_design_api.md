@@ -17,7 +17,7 @@ Requirement và spec đã duyệt là test basis. API thật chỉ cho biết hi
 
 | Tình huống | Expected Result viết theo | Bắt buộc kèm |
 |---|---|---|
-| Spec nói một đằng, API trả một nẻo | **Spec / REQ đã duyệt** | Dòng `⚠️ Lệch với API: <hiện trạng>`, tag `@NeedsVerify`, mở `AMB-<MODULE>-nn`, báo user vì có thể là bug |
+| Spec nói một đằng, API trả một nẻo | **Spec / REQ đã duyệt** | Dòng `⚠️ Lệch với API: <hiện trạng>`, tag `@AppDeviation`, mở `AMB-<MODULE>-nn`, báo user vì có thể là bug |
 | Spec không đề cập | Hành vi đã gọi thật, coi là giả định | `ASM-<MODULE>-nn`, tag `@NeedsVerify` |
 | Chưa được gọi thật | Spec | Tag `@NeedsVerify` |
 
@@ -65,6 +65,7 @@ Chấm từng endpoint, ghi căn cứ cả hai trục: rủi ro = tác động �
 | **Trạng thái sau lỗi** | Request lỗi không để lại dữ liệu dở. Gọi API đọc để kiểm chứng |
 | **Giới hạn** | Payload quá lớn, rate limit, phân trang vượt khoảng |
 | **Không kiểm trên production** | Mọi TC ghi dữ liệu hoặc gửi ra ngoài chỉ chạy trên môi trường được phép |
+| **Gây gián đoạn** | Brute force, vượt rate limit, tải lớn: tag `@Disruptive`, chỉ chạy khi user duyệt (`skills-requirements-analyzer` mục 3.4.4) |
 
 - **Mỗi TC chứng minh một mục tiêu.** Một request chứng minh được nhiều REQ vẫn phải tách TC.
 - **TC độc lập:** dữ liệu cần có đưa vào `Tiền điều kiện` hoặc tự tạo trong bước đầu.

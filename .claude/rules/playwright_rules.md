@@ -95,7 +95,7 @@ test.describe('Tên Module', () => {
     // Setup: navigate, login...
   });
 
-  test('mô tả hành vi cần test', async ({ page }) => {
+  test('CRM_LOGIN_TC_001 - mô tả hành vi cần test', async ({ page }) => {
     // Arrange: khởi tạo page objects, data
     // Act: thực hiện hành động
     // Assert: kiểm tra kết quả
@@ -106,3 +106,15 @@ test.describe('Tên Module', () => {
 - Mỗi test block phải có **assertion rõ ràng**
 - Sử dụng `test.describe` để nhóm test theo module
 - Sử dụng `beforeEach` / `afterEach` để setup / teardown
+
+## Nhập mật khẩu và token qua Playwright MCP
+
+Gõ **tên biến** thay cho giá trị: `browser_type(text = "TEST_PASSWORD")`. Giá trị do server thay vào, không đi qua hội thoại. Cách khai báo và danh sách tên biến: `CLAUDE.md` mục tài khoản, mật khẩu.
+
+Ô không che ký tự (`type=text`) vẫn hiện giá trị trên ảnh chụp và video, nên kiểm evidence trước khi lưu.
+
+## Nhập mật khẩu và token qua Playwright MCP
+
+Gõ **tên biến** thay cho giá trị: `browser_type(text = "TEST_PASSWORD")`. Giá trị do server thay vào, không đi qua hội thoại. Cách khai báo và danh sách tên biến: `CLAUDE.md` mục tài khoản, mật khẩu.
+
+Ô không che ký tự (`type=text`) vẫn hiện giá trị trên ảnh chụp và video, nên kiểm evidence trước khi lưu.

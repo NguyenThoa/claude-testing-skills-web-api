@@ -83,29 +83,32 @@ Wait<WebDriver> fluentWait = new FluentWait<>(driver)
 ```java
 public class LoginTest extends BaseTest {
 
-    @BeforeMethod
-    public void setUp() {
-        // Navigate, setup data...
+    // BaseTest đã có setUp() và tearDown(ITestResult). Hook riêng phải đặt tên khác:
+    // ghi đè setUp thì driver không được tạo, ghi đè tearDown thì mất ảnh cuối test và rò driver.
+    // TestNG chạy @BeforeMethod của lớp cha trước, @AfterMethod của lớp cha sau.
+    @BeforeMethod(alwaysRun = true)
+    public void openLoginPage() {
+        new LoginPage(driver()).open();
     }
 
-    @Test(groups = {"smoke", "regression"})
-    public void testLoginWithValidCredentials() {
-        // Arrange
-        LoginPage loginPage = new LoginPage(driver);
-        String email = DataGenerator.generateEmail("login");
+    // Tên method chứa TC ID vì JUnit XML của Surefire chỉ ghi tên method
+    @Test(groups = {"smoke", "regression"}, description = "Đăng nhập thành công với tài khoản hợp lệ")
+    public void CRM_LOGIN_TC_001_dangNhapThanhCong() {
+        // Arrange: chạy song song nên Page Object tạo trong method, không giữ làm field
+        LoginPage loginPage = new LoginPage(driver());
 
         // Act
-        loginPage.login(email, "ValidPass@123");
+        loginPage.login(config.getUsername(), config.getPassword());
 
         // Assert
-        DashboardPage dashboard = new DashboardPage(driver);
-        Assert.assertTrue(dashboard.isDisplayed(),
-            "Dashboard phải hiển thị sau khi đăng nhập thành công");
+        DashboardPage dashboard = new DashboardPage(driver());
+        Assert.assertTrue(dashboard.isNavigationDisplayed(),
+            "Menu điều hướng phải hiển thị sau khi đăng nhập thành công");
     }
 
-    @AfterMethod
-    public void tearDown() {
-        // Cleanup...
+    @AfterMethod(alwaysRun = true)
+    public void cleanTestData() {
+        // Chỉ dọn dữ liệu do test này tạo
     }
 }
 ```

@@ -23,11 +23,13 @@ App đang chạy có thể đang sai. Viết Expected Result theo hành vi hiệ
 
 | Loại xung đột | Ví dụ | Expected Result viết theo | Bắt buộc kèm |
 |---|---|---|---|
-| **Hành vi, quy tắc nghiệp vụ, thông báo** có trong requirement đã duyệt | Tài liệu: tối đa 100 ký tự, app nhận 255 | **Requirement** | Dòng `⚠️ Lệch với app: <hiện trạng> — <tên ảnh>`, tag `@NeedsVerify`, mở `AMB-<MODULE>-nn`, báo user vì có thể là bug |
+| **Hành vi, quy tắc nghiệp vụ, thông báo** có trong requirement đã duyệt | Tài liệu: tối đa 100 ký tự, app nhận 255 | **Requirement** | Dòng `⚠️ Lệch với app: <hiện trạng> — <tên ảnh>`, tag `@AppDeviation`, mở `AMB-<MODULE>-nn`, báo user vì có thể là bug |
 | **Trình bày** mà requirement không phải nguồn chính thức, hoặc tài liệu rõ ràng đã cũ | Nhãn nút, thứ tự cột sau khi đổi giao diện | **Ảnh / DOM** | `ASM-<MODULE>-nn` kèm tên ảnh, báo user để cập nhật requirement |
 | **Tài liệu không đề cập** | Hành vi chỉ thấy trên app | **Ảnh / DOM**, coi là giả định | `ASM-<MODULE>-nn`, tag `@NeedsVerify` |
 
 `Requirement đã duyệt` = REQ có `✅` ở cột `Duyệt`, hoặc tài liệu mà user xác nhận trong chat là đã duyệt. REQ `⏳` chép từ chính UI không dùng để chấm UI sai. REQ `⏳` lấy từ tài liệu mà lệch app → vẫn viết theo tài liệu như dòng đầu, `AMB` hỏi PO bên nào đúng.
+
+`@AppDeviation` khác `@NeedsVerify`: `@AppDeviation` có Expected đáng tin và app đang lệch, nên FAIL là phát hiện lỗi. `@NeedsVerify` là Expected chưa có căn cứ, nên FAIL phải đối chiếu lại TC trước. Không dùng `@NeedsVerify` cho trường hợp đã có requirement.
 
 Không tự xử lý im lặng. Mọi xung đột phải xuất hiện ở phần tóm tắt cuối.
 

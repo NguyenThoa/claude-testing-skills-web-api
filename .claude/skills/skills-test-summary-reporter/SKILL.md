@@ -48,7 +48,7 @@ Báo cáo này đưa ra **khuyến nghị go/no-go kèm căn cứ**. Quyết đ�
 9. **Tiêu chí exit chỉ tính kết quả trên build hợp lệ.** Build hợp lệ lấy ở plan mục 4.2 *Build tính tiêu chí*; không có plan thì hỏi user. TC chỉ có kết quả trên build khác, hoặc report thiếu ô `Build / Version`, vào nhóm **⏳ Cần chạy lại**, in riêng:
    - #3: tính vào mẫu số, không tính PASS — P1 chưa chạy lại phải kéo tỷ lệ xuống
    - #4 · #5: không tính, vì chưa chạy trên build này
-   - #6: không tính là PASS · #7: cặp module × nền tảng chỉ có kết quả build khác là **chưa đạt**
+   - #6: không tính là PASS · #7: cặp module × nền tảng chỉ có kết quả build khác là **chưa đạt** · #8: tính là chưa chạy
    - Ngoại lệ: vùng không đổi có thể giữ kết quả cũ khi PM chấp nhận bằng văn bản; ghi rõ TC, build gốc, người chấp nhận
 10. **Test automation `@KnownBug` báo nhóm riêng "Đang phơi bug".** Runner có thể ghi các test này là pass hoặc skip, nên phải tách ra trước khi tính tỷ lệ: không tính PASS. Bug của chúng vẫn đếm ở #1 · #2
 
@@ -60,7 +60,7 @@ Báo cáo này đưa ra **khuyến nghị go/no-go kèm căn cứ**. Quyết đ�
 
 **Nguồn tiêu chí, theo thứ tự:**
 
-1. **Master Test Plan của mốc** — `docs/test-plans/test_plan_<mốc>.md` mục **4.2**, gồm **cả bảng mặc định lẫn bảng *Tiêu chí bổ sung của dự án*** (#8 trở đi). Có plan thì lấy đúng bộ đã công bố, **không hỏi lại**. Plan đánh dấu *bộ mặc định chờ PM xác nhận* mà chưa có người duyệt → báo cáo vẫn ghi "chưa được xác nhận". Lịch sử thay đổi của plan cho thấy tiêu chí bị đổi **sau** ngày bắt đầu thực thi → nêu ra ở mục 3
+1. **Master Test Plan của mốc** — `docs/test-plans/test_plan_<mốc>.md` mục **4.2**, gồm **cả bảng mặc định lẫn bảng *Tiêu chí bổ sung của dự án*** (#9 trở đi). Có plan thì lấy đúng bộ đã công bố, **không hỏi lại**. Plan đánh dấu *bộ mặc định chờ PM xác nhận* mà chưa có người duyệt → báo cáo vẫn ghi "chưa được xác nhận". Lịch sử thay đổi của plan cho thấy tiêu chí bị đổi **sau** ngày bắt đầu thực thi → nêu ra ở mục 3
 2. Không có plan → hỏi user tiêu chí của dự án
 3. Không có cả hai → dùng bộ mặc định dưới đây và **ghi rõ trong báo cáo là bộ mặc định của agent, cần PM xác nhận**
 
@@ -75,10 +75,13 @@ Báo cáo này đưa ra **khuyến nghị go/no-go kèm căn cứ**. Quyết đ�
 | 5 | Tỷ lệ **BLOCKED** | ≤ 5% |
 | 6 | Mỗi REQ có TC **P1** đều có ít nhất 1 TC P1 **PASS** | 100% |
 | 7 | Module trong phạm vi release đã có TC và đã chạy — tính trên **từng cặp module × nền tảng** trong phạm vi | 100% |
+| 8 | TC trong phạm vi đã chạy tới `PASS` hoặc `FAIL` trên build hợp lệ. Mẫu số: mọi TC của các cặp module × nền tảng trong phạm vi, trừ `@Deprecated` và TC cố ý bỏ có người duyệt | **P1: 100%** · toàn bộ: ≥ 95% |
 
 > Tiêu chí #3 và #6 tính trên cột `Priority` của TC. Bộ TC cũ còn Priority dạng chữ thì quy đổi theo `CLAUDE.md` trước khi chấm: `Critical` = P1 · `High`, `Medium` = P2 · `Low` = P3.
 >
 > Tiêu chí #7 chấm theo **cặp module × nền tảng**: module có web đã chạy nhưng API trong phạm vi chưa chạy thì cặp API là **chưa đạt** — không được tính đủ nhờ lần chạy web.
+
+> Tiêu chí #8 chặn trường hợp pass rate đẹp vì chạy rất ít TC: #3 · #4 · #5 chỉ tính trên phần đã chạy, còn #7 đạt khi module đã chạy một phần. `BLOCKED`, `SKIPPED` và ⏳ Cần chạy lại đều tính là chưa chạy. Thiếu vì hết thời gian thì ghi là ngoại lệ và nêu ai chấp nhận.
 
 **Kết quả checklist trong các tiêu chí:**
 
@@ -87,6 +90,7 @@ Báo cáo này đưa ra **khuyến nghị go/no-go kèm căn cứ**. Quyết đ�
 | #3 · #4 · #5 — pass rate, tỷ lệ BLOCKED | ❌ Không — các tiêu chí này đo **bộ TC**. Plan có tiêu chí bổ sung riêng cho checklist (VD *"smoke 100% mục P1 PASS"*) thì chấm tiêu chí đó trên bảng 4b, theo đúng Priority `P1` · `P2` · `P3` của mục |
 | #6 — REQ có TC P1 đã PASS | ⚠️ Chỉ khi REQ **không có TC nào** (checklist REQ-based) — mục checklist `P1` có `REQ ID` đó PASS thì tính, và cột *Thực tế* ghi rõ số REQ đạt nhờ checklist (VD `12/12 · 2 REQ chỉ có checklist PASS`). REQ đã có TC thì phải có TC PASS |
 | #7 — module × nền tảng đã có TC và đã chạy | ❌ Cặp chỉ có lần chạy checklist là **chưa đạt** — ghi *"chỉ rà checklist <loại>"* ở mục 2 |
+| #8 — tỷ lệ TC đã chạy | ❌ Không — chỉ đếm TC của bộ TC |
 
 > 🚨 **Checklist mới hơn mà FAIL, bộ TC cũ hơn mà PASS → tin checklist.** Mục checklist FAIL có `TC ID liên quan` đã PASS ở lần chạy bộ TC trước đó trên build cũ hơn = **build mới đã vỡ**. Nêu ở mục 5 như regression, ghi cả hai nguồn — **không** để con số PASS cũ của bộ TC che đi.
 
@@ -163,7 +167,7 @@ Báo cáo này tương ứng với **ISO/IEC/IEEE 29119-3 — Test Completion Re
 
 > ## 🟡 GO CÓ ĐIỀU KIỆN
 >
-> Đạt 5/7 tiêu chí exit. Có thể release **nếu** chấp nhận 2 điểm tồn đọng dưới đây.
+> Đạt 5/8 tiêu chí exit. Có thể release **nếu** chấp nhận 2 điểm tồn đọng dưới đây.
 
 **Điều kiện kèm theo:**
 1. Module **Báo cáo** chưa được kiểm thử (0 TC) — chỉ release được nếu module này chưa mở cho người dùng cuối
@@ -196,6 +200,7 @@ Báo cáo này tương ứng với **ISO/IEC/IEEE 29119-3 — Test Completion Re
 | 2 | Bug Major đang mở | 0 / có workaround | 1 (có workaround) | 🟡 Ngoại lệ — chờ PM duyệt |
 | 3 | Pass rate TC P1 | ≥ 95% | 97.2% | ✅ Đạt |
 | 7 | Module trong phạm vi đã chạy | 100% | 5/6 | ❌ Không đạt |
+| 8 | TC trong phạm vi đã chạy | P1 100% · toàn bộ ≥ 95% | P1 100% · toàn bộ 92% | ❌ Không đạt |
 
 > Bộ tiêu chí đang dùng: **mặc định của agent** — cần PM xác nhận hoặc thay bằng tiêu chí dự án.
 

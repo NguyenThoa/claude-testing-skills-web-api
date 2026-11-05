@@ -170,7 +170,7 @@ Ghi plan đúng cấu trúc dưới đây, thay các ô `<…>` bằng dữ li�
 
 | Nhóm | Chỉ số | Nguồn | Dùng để |
 |---|---|---|---|
-| Tiến độ kiểm thử | TC đã viết / đã review · TC đã chạy / chưa chạy · PASS · FAIL · BLOCKED | `docs/testcases/` · `execution_report.md` | Báo cáo tiến độ · tiêu chí exit #3, #4, #5, #7 |
+| Tiến độ kiểm thử | TC đã viết / đã review · TC đã chạy / chưa chạy · PASS · FAIL · BLOCKED | `docs/testcases/` · `execution_report.md` | Báo cáo tiến độ · tiêu chí exit #3, #4, #5, #7, #8 |
 | Tiến độ dự án | Công sức thực tế so với ước lượng 7.2 | Báo cáo tiến độ | Phát hiện trễ sớm |
 | Lỗi | Bug mới / đã fix / đang mở theo Severity · regression phát sinh | `docs/bugs/` · công cụ quản lý bug | Tiêu chí exit #1, #2 |
 | Độ phủ | REQ có TC · REQ đã duyệt `✅` có TC · REQ có TC P1 đã PASS | `docs/traceability/traceability_matrix.md` (số tổng) + file module (cột `Kết quả gần nhất`) | Tiêu chí exit #6 |
@@ -242,8 +242,9 @@ Ghi plan đúng cấu trúc dưới đây, thay các ô `<…>` bằng dữ li�
 | 5 | Tỷ lệ **BLOCKED** | ≤ 5% |
 | 6 | Mỗi REQ có TC **P1** đều có ít nhất 1 TC P1 **PASS** | 100% |
 | 7 | Module trong phạm vi release đã có TC và đã chạy — tính trên **từng cặp module × nền tảng** trong phạm vi | 100% |
+| 8 | TC trong phạm vi đã chạy tới `PASS` hoặc `FAIL` trên build hợp lệ. Mẫu số: mọi TC của các cặp module × nền tảng trong phạm vi, trừ `@Deprecated` và TC cố ý bỏ có người duyệt | **P1: 100%** · toàn bộ: ≥ 95% |
 
-**Tiêu chí bổ sung của dự án** *(chỉ khi phiếu `Tiêu chí ra bổ sung` có dữ liệu — đánh số tiếp từ #8)*:
+**Tiêu chí bổ sung của dự án** *(chỉ khi phiếu `Tiêu chí ra bổ sung` có dữ liệu — đánh số tiếp từ #9)*:
 
 | # | Tiêu chí | Ngưỡng |
 |---|---|---|
@@ -252,7 +253,7 @@ Ghi plan đúng cấu trúc dưới đây, thay các ô `<…>` bằng dữ li�
 
 **Build tính tiêu chí:** <build ứng viên, hoặc "từ build X trở đi" sau code freeze; chưa biết thì ghi ❓ và chốt trước khi chấm>. Kết quả trên build khác, hoặc report thiếu ô Build, vào nhóm *⏳ Cần chạy lại*, trừ khi PM chấp nhận bằng văn bản. Luật đầy đủ: `skills-test-summary-reporter`, Nguyên tắc số liệu #9.
 
-> **Kết quả checklist (`/generate-checklist-test`) được tính thế nào** — ghi nguyên đoạn này vào plan để người duyệt biết trước: #3 · #4 · #5 · #7 chỉ tính trên **bộ TC**; #6 nhận mục checklist PASS **chỉ** cho REQ chưa có TC nào; cặp module × nền tảng chỉ có checklist là #7 **chưa đạt**. Đợt muốn dùng checklist làm điều kiện ra (smoke, release-readiness) → thêm vào bảng bổ sung, VD *"Checklist release-readiness: 100% mục P1 PASS"*. Luật đầy đủ: `skills-test-summary-reporter` mục *Kết quả checklist trong các tiêu chí*.
+> **Kết quả checklist (`/generate-checklist-test`) được tính thế nào** — ghi nguyên đoạn này vào plan để người duyệt biết trước: #3 · #4 · #5 · #7 · #8 chỉ tính trên **bộ TC**; #6 nhận mục checklist PASS **chỉ** cho REQ chưa có TC nào; cặp module × nền tảng chỉ có checklist là #7 **chưa đạt**. Đợt muốn dùng checklist làm điều kiện ra (smoke, release-readiness) → thêm vào bảng bổ sung, VD *"Checklist release-readiness: 100% mục P1 PASS"*. Luật đầy đủ: `skills-test-summary-reporter` mục *Kết quả checklist trong các tiêu chí*.
 
 ☐ Bộ mặc định  ☐ Bộ mặc định + bổ sung  ☐ Bộ tiêu chí riêng của dự án
 

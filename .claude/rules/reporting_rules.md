@@ -25,7 +25,7 @@ Mỗi test case **PHẢI** khai báo đủ 5 mục sau. Thiếu bất kỳ mục
 
 | Mục | Nội dung | Ví dụ |
 |---|---|---|
-| **Tên test (title)** | Mô tả hành vi bằng **Tiếng Việt**, không phải tên hàm | `Đăng nhập thành công với tài khoản admin hợp lệ` |
+| **Tên test (title)** | `<TC ID> - <mô tả hành vi bằng Tiếng Việt>`, không phải tên hàm | `CRM_LOGIN_TC_001 - Đăng nhập thành công với tài khoản admin hợp lệ` |
 | **Description** | 1–2 câu: test kiểm tra gì, điều kiện gì, kỳ vọng gì | `Kiểm tra người dùng đăng nhập bằng email và mật khẩu hợp lệ thì được chuyển vào Dashboard và thấy menu điều hướng.` |
 | **Severity** | `blocker` / `critical` / `normal` / `minor` / `trivial` | `blocker` cho luồng login |
 | **Tags / Labels** | Nhóm chạy: `smoke`, `regression`, tên module | `smoke`, `login` |
@@ -33,7 +33,7 @@ Mỗi test case **PHẢI** khai báo đủ 5 mục sau. Thiếu bất kỳ mục
 
 **KHÔNG** để tên test hiển thị trong report là tên hàm kiểu `test_login_with_valid_credentials` — đó là tên code, không phải tên test case.
 
-**TC ID** gắn qua label riêng (không nhét vào title) để skill `skills-coverage-traceability` map được RTM.
+**TC ID phải có ở cả hai nơi:** trong tên test để `/import-test-results-xray` và `/update-automation-from-impact` tra được, và trong label `testId` để `skills-coverage-traceability` map RTM. TestNG: JUnit XML chỉ ghi tên method nên tên method chứa TC ID (`CRM_LOGIN_TC_001_dangNhapThanhCong`), tên Tiếng Việt đặt ở `description`. pytest: ghi TC ID bằng `record_property`, tên Tiếng Việt đặt ở `allure.title`.
 
 ---
 

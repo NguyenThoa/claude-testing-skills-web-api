@@ -23,6 +23,7 @@ description: Review chất lượng manual test cases — chấm điểm theo ru
 - **Mode FIX sửa TẠI CHỖ** trong file TC đang dùng, **chỉ** các TC user đã duyệt ở checkpoint Bước 4. 🚨 **CẤM sinh bản sao** `_improved` / `_v2` / `_new` hay thư mục `archive/` — tên file TC là **bất biến**, mọi workflow phía sau (`/execute-test-cases`, `/generate-automation-*`, `/generate-traceability-matrix`) đọc theo mẫu tên; bản sao làm chúng tiếp tục đọc bản cũ và để lại hai bộ TC không ai biết bộ nào có hiệu lực. Bản trước khi sửa tra bằng **mốc git** ghi trong Nhật ký
 - Mọi nhận xét phải kèm **ví dụ sửa cụ thể** — không chê chung chung
 - Nếu thiếu requirements → vẫn review 5/6 tiêu chí, ghi chú rõ không đánh giá được traceability
+- **Review độc lập:** chạy ở phiên mới hoặc subagent mới, chỉ đọc file TC và requirements. Cùng phiên vừa sinh TC thì ghi `Review độc lập: Chưa` ở đầu báo cáo
 
 ## 3 Chế độ (Mode)
 
@@ -46,6 +47,7 @@ description: Review chất lượng manual test cases — chấm điểm theo ru
 ## Các bước thực hiện
 
 ### Bước 1: Đọc Input
+0. Chạy `node scripts/tc-lint/tc_lint.js <file TC> --req <file requirements>` nếu file theo format v3 hoặc API. Đưa `LỖI` và `CẢNH BÁO` vào báo cáo
 1. Đọc file TC, xác định format và số lượng. File **index** `TEST_CASES_<TÊN_MODULE>_SUMMARY.md` → theo `## Bản đồ tài liệu` đọc các file nền tảng (index không chứa dòng TC); chấm riêng từng nền tảng khi chúng khác người viết/khác độ phủ
 2. Đọc requirements (nếu có)
 3. **Lập Danh sách loại trừ** theo mục *Phạm vi loại trừ* của skill — mục `Ngoài phạm vi`, REQ ghi ngoài phạm vi viết TC / 🔴 Deprecated, AMB `⏭️` *"không viết TC"* / *"chuyển sang module khác"*, RISK đã chấp nhận kèm quyết định không kiểm, dòng `⚪ Ngoài phạm vi` của index TC. User bảo bỏ qua index TC → vẫn lấy phần loại trừ **từ requirements**

@@ -115,6 +115,77 @@ test('mẫu framework: viewport đặt sau devices, Java không giữ driver hay
   assert.match(templates, /allure-js-commons/);
 });
 
+test('REQ đã duyệt mà app lệch mang @AppDeviation, FAIL thì báo bug', () => {
+  const executor = skill('skills-manual-test-executor');
+  assert.match(executor, /\*\*`@AppDeviation`\*\*.*\/create-bug-report/);
+  assert.match(skill('analyze-test-report'), /@AppDeviation.*\/create-bug-report/);
+  assert.match(skill('skills-test-report-analyzer'), /@AppDeviation.*\/create-bug-report/);
+  const conflictRow = /Lệch với (app|API): <hiện trạng>.*@NeedsVerify/;
+  assert.deepEqual(findInDocs(conflictRow), []);
+});
+
+test('tiêu chí exit có tỷ lệ TC đã chạy, bảng mặc định khớp ở reporter và plan', () => {
+  const row = text => text.split('\n').find(line => line.startsWith('| 8 | TC trong phạm vi đã chạy tới'));
+  const reporter = row(skill('skills-test-summary-reporter'));
+  assert.ok(reporter);
+  assert.equal(row(read('.claude/skills/generate-master-test-plan/references/plan_template.md')), reporter);
+  assert.deepEqual(findInDocs(/#8 trở đi|tiếp từ #8/), []);
+});
+
+test('thao tác gây gián đoạn chỉ chạy khi user duyệt', () => {
+  assert.match(read('.claude/skills/skills-requirements-analyzer/references/api_spec.md'), /Thao tác gây gián đoạn[\s\S]*đích danh TC trong chat/);
+  assert.match(skill('skills-manual-test-executor'), /\*\*`@Disruptive`\*\*.*SKIPPED/);
+  for (const name of ['generate-automation-api', 'generate-automation-web', 'generate-testcases-api']) {
+    assert.match(skill(name), /@Disruptive/, name);
+  }
+  assert.doesNotMatch(skill('generate-test-data'), /DROP TABLE/);
+});
+
+test('bí mật: MCP khởi động qua file khai báo --secrets, ghim phiên bản, không đưa cả .env', () => {
+  const { mcpServers } = JSON.parse(read('.mcp.json'));
+  for (const server of Object.values(mcpServers)) {
+    assert.equal(server.command, 'node');
+    assert.equal(server.args[0], '.claude/playwright-mcp-start.cjs');
+  }
+  const start = require(path.join(root, '.claude/playwright-mcp-start.cjs'));
+  const kept = start.secretLines('BASE_URL=https://x.test\nWORKERS=5\nTEST_PASSWORD=abcd1234\n# TOKEN=cu\nAPI_TOKEN=\nexport TEST_USERNAME=auto_user\nOTP=12\n');
+  assert.deepEqual(kept, ['TEST_PASSWORD=abcd1234', 'export TEST_USERNAME=auto_user']);
+  assert.match(read('.claude/playwright-mcp-start.cjs'), /@playwright\/mcp@\d+\.\d+\.\d+/);
+  assert.match(read('CLAUDE.md'), /gõ \*\*tên biến\*\*/);
+});
+
+test('Quality Gate có bước kiểm bằng máy và báo review độc lập', () => {
+  for (const rel of ['skills-manual-testcase-v3', 'skills-api-testcase-v3']) {
+    const gates = read(`.claude/skills/${rel}/references/quality_gates.md`);
+    assert.match(gates, /tc_lint\.js/, rel);
+    assert.match(gates, /Review độc lập/, rel);
+  }
+  assert.match(skill('review-testcases'), /tc_lint\.js/);
+  assert.match(skill('review-testcases'), /phiên mới hoặc subagent mới/);
+});
+
+test('mẫu Selenium không ghi đè hook của BaseTest, không giữ driver làm field', () => {
+  const rules = read('.claude/rules/selenium_rules.md');
+  assert.doesNotMatch(rules, /public void setUp\(\)|public void tearDown\(\)/);
+  assert.doesNotMatch(rules, /new \w+Page\(driver\)|ValidPass/);
+  assert.match(rules, /new LoginPage\(driver\(\)\)/);
+});
+
+test('vòng tự sửa thống nhất 3 vòng, expected-fail kiểm đúng assertion', () => {
+  assert.deepEqual(findInDocs(/5 vòng/), []);
+  const rules = read('.claude/rules/automation_rules.md');
+  assert.match(rules, /function knownBug/);
+  assert.match(rules, /testInfo\.expectedStatus = 'passed'/);
+  assert.match(rules, /expectedExceptionsMessageRegExp/);
+});
+
+test('TC ID có trong tên test lẫn label', () => {
+  assert.match(read('.claude/rules/reporting_rules.md'), /TC ID phải có ở cả hai nơi/);
+  assert.deepEqual(findInDocs(/không nhét vào title|TC_LOGIN_01/), []);
+  assert.doesNotMatch(read('.claude/rules/automation_rules.md'), /testLoginWithValidCredentials/);
+  assert.match(read('.claude/skills/skills-framework-architect/references/CODE_TEMPLATES.md'), /public void CRM_LOGIN_TC_001_/);
+});
+
 test('settings chặn đủ lệnh git đổi trạng thái code', () => {
   const { permissions } = JSON.parse(read('.claude/settings.json'));
   for (const command of ['pull', 'checkout', 'merge', 'rebase', 'reset', 'restore', 'switch', 'stash', 'clean', 'revert']) {

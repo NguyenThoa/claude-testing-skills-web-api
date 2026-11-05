@@ -31,7 +31,8 @@ Workflow đọc **file test case API**, sinh project automation (client · DTO �
 - **Đầu vào là TC, không phải spec.** Chưa có file TC API → **dừng**, đề nghị chạy `/generate-testcases-api` trước. Spec + `api_map.md` chỉ dùng để lấy schema (DTO), auth và base path — **không** tự sinh thêm kịch bản ngoài TC
 - **KHÔNG đoán** schema/endpoint — lấy từ snapshot spec trong `_discovery/sources/`, resolve `$ref`
 - **Chỉ gọi API khi dòng `Gọi API` ở danh mục `docs/requirements/README.md` là ✅** và đã chốt môi trường
-- ⚠️ **Rule E3:** Khi test FAIL → tự đọc log → phân tích → sửa → chạy lại. KHÔNG hỏi user trong quá trình fix lỗi
+- ⚠️ **Rule E3:** Khi test FAIL → tự đọc log → phân tích → sửa → chạy lại. KHÔNG hỏi user trong quá trình fix lỗi; hết 3 vòng thì dừng và báo user
+- 🚧 **TC `@Disruptive`:** sinh script nhưng gắn tag để loại khỏi suite mặc định và CI. Chỉ chạy khi user duyệt đích danh trong chat (`skills-requirements-analyzer` mục 3.4.4)
 - **File `task.md`** — PHẢI tạo để theo dõi tiến độ
 
 ## 🚨 Quy tắc dữ liệu test (BẮT BUỘC — đọc trước request đầu tiên)
@@ -101,7 +102,7 @@ Theo skill `skills-framework-architect` (project mới) hoặc cấu trúc sẵn
 
 1. **Chạy test** bằng `Bash` (hoặc `PowerShell` trên Windows) — `npm test`, `mvn test`, `pytest`…
 2. **Test chạy lâu** → `run_in_background: true`, nhận thông báo khi xong. **KHÔNG** poll bằng `sleep`
-3. **Auto-Heal:** FAIL → tự đọc log, sửa code và chạy lại (tối đa 5 vòng) mà KHÔNG làm phiền user
+3. **Auto-Heal:** FAIL → tự đọc log, sửa code và chạy lại (tối đa 3 vòng) mà KHÔNG làm phiền user. Hết 3 vòng vẫn đỏ thì dừng, báo nguyên nhân còn lại
 4. **⚠️ Chỉ sửa test, KHÔNG sửa kỳ vọng để né bug app.** Test FAIL vì hệ thống sai (như phát hiện `F-nn`) → giữ nguyên assertion, đề xuất `/create-bug-report`; có bug đang mở thì gắn `@KnownBug:<BUG_ID>` + expected-fail chặt theo `automation_rules.md` mục 6.1. Hạ assertion cho xanh báo cáo là **cấm**
 5. **Verify stability** — TC mà hệ thống đúng phải PASS **2 lần liên tiếp**
 

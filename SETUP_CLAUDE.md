@@ -151,6 +151,8 @@ Kèm file `.claude/playwright-mcp-config.json`:
 | `--window-position=0,0` | Ghim cửa sổ về góc trên trái, khỏi bị lệch ra ngoài màn |
 | `initPage` → `.claude/playwright-mcp-init.cjs` | Tắt popup **Save password? · Change your password · Save address? · Save card?** của Chrome — Chrome không có cờ dòng lệnh cho các popup này nên script mở `chrome://settings` một lần lúc khởi động, đặt preference (`credentials_enable_service`, `profile.password_manager_leak_detection`, `autofill.profile_enabled`, `autofill.credit_card_enabled` = `false`). Đường dẫn tính theo thư mục file config |
 
+> 🔒 **`.mcp.json` của repo khởi động qua `node .claude/playwright-mcp-start.cjs <tên server> <tham số>`** thay vì gọi `npx` trực tiếp. File này ghim phiên bản `@playwright/mcp` và khai báo bí mật trong `.env`, để agent gõ bằng tên biến. Khối cấu hình trong tài liệu này là dạng tối thiểu; dùng được nhưng không có cơ chế che bí mật.
+>
 > 📂 **Không có `--output-dir`, và đó là cố ý.** Server khai trong `.mcp.json` chạy với cwd = gốc project, nên snapshot / console log / screenshot tự rơi vào `.playwright-mcp/` của **đúng project này**. Dùng server global thì cwd bám theo project nào khởi động server trước — evidence sẽ lạc sang project khác. File cũng không chứa đường dẫn tuyệt đối nên mang sang máy khác vẫn chạy.
 
 > 🖥️ **Màn hình không phải Full HD?** Tính lại theo công thức đo thực tế (Windows, Google Chrome): viewport `1600×750` → cửa sổ `1614×885`. Khung chiếm **+135 dọc** (ổn định) và **+14…17 ngang** (dao động theo scrollbar của trang).

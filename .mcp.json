@@ -1,20 +1,20 @@
 {
   "mcpServers": {
     "playwright": {
-      "command": "npx",
+      "command": "node",
       "args": [
-        "-y",
-        "@playwright/mcp",
+        ".claude/playwright-mcp-start.cjs",
+        "main",
         "--viewport-size=1600,750",
         "--config",
         ".claude/playwright-mcp-config.json"
       ]
     },
     "playwright-mobile": {
-      "command": "npx",
+      "command": "node",
       "args": [
-        "-y",
-        "@playwright/mcp",
+        ".claude/playwright-mcp-start.cjs",
+        "mobile",
         "--device=Pixel 7",
         "--isolated",
         "--config",

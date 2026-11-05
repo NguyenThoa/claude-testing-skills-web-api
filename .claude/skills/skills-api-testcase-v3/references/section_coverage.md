@@ -169,6 +169,8 @@ Nếu dự án có common auth (HMAC, JWT chuẩn), **tách ra file dùng chung*
 ### Section H — OWASP API Security Testing (BẮT BUỘC bao phủ)
 
 > Bổ sung vào Section D (BOLA), Section A (Injection), Section F (Rate limit) — không cần section riêng, gắn tag `@Security` cho các TC này.
+>
+> **Bắt buộc bao phủ là bắt buộc viết TC, không phải bắt buộc chạy.** Dòng ReDoS và Rate Limiting thêm tag `@Disruptive`: chỉ chạy khi user duyệt theo `skills-requirements-analyzer` mục 3.4.4.
 
 | Nhóm | Test cases |
 |---|---|
@@ -176,9 +178,9 @@ Nếu dự án có common auth (HMAC, JWT chuẩn), **tách ra file dùng chung*
 | **BOLA / IDOR** | Section D2 — chỉ dùng userA/userB tự tạo |
 | **Mass Assignment** | Section D3 — gửi field đặc quyền trong body |
 | **Auth Bypass** | Không token → 401 · Token hết hạn → 401 · Token role thấp gọi API role cao → 403 · Token bị tamper → 401 · Bearer với chuỗi rỗng → 401 |
-| **ReDoS** | Truyền chuỗi > 10.000 chars vào field validate regex → phải reject nhanh, không hang |
+| **ReDoS** `@Disruptive` | Truyền chuỗi > 10.000 chars vào field validate regex → phải reject nhanh, không hang |
 | **Sensitive Data Exposure** | Response KHÔNG chứa: password/hash/secretKeys · Internal IDs / stack traces · Server info (`X-Powered-By`, `Server` header) · Credentials trong URL |
-| **Rate Limiting** | Section F — 429 khi vượt limit · brute force login lock account |
+| **Rate Limiting** `@Disruptive` | Section F — 429 khi vượt limit · brute force login lock account (chỉ tài khoản tự tạo) |
 | **CORS & Headers** | `Access-Control-Allow-Origin` không được `*` với credentials · `Content-Type` sai → 415 · `Accept` sai → 406 |
 
 ### Section K — Verify visual (CHỈ khi API sinh file)

@@ -82,7 +82,7 @@ Format `<HỆ_THỐNG>_<MODULE>_TC_<nnn>`:
 ### 1.2c. Tags
 
 - Cách nhau bằng dấu cách. Luôn có `@API`.
-- Nhóm chạy: `@Smoke` · `@Regression` · `@CriticalPath`. Trạng thái: `@NeedsVerify` · `@Deprecated` · `@KnownBug:<BUG_ID>`. Tầm ảnh hưởng: `@HighImpact`. Loại: `@Security` · `@Permission` · `@Boundary`.
+- Nhóm chạy: `@Smoke` · `@Regression` · `@CriticalPath`. Trạng thái: `@NeedsVerify` · `@AppDeviation` · `@Deprecated` · `@KnownBug:<BUG_ID>`. Gây gián đoạn: `@Disruptive`. Tầm ảnh hưởng: `@HighImpact`. Loại: `@Security` · `@Permission` · `@Boundary`.
 
 ### 1.3. Mục đích kiểm tra (Test purpose)
 

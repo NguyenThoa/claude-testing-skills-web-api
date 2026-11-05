@@ -51,11 +51,12 @@ Sử dụng skill này khi:
 1. **Map bằng ID là chuẩn nhất** — TC ghi `REQ-001` trong cột Requirement; automation ghi TC ID trong tag/annotation:
    ```typescript
    // Playwright — tag trong tên test
-   test('TC_LOGIN_01 - đăng nhập thành công', ...)
+   test('CRM_LOGIN_TC_001 - Đăng nhập thành công', ...)
    ```
    ```java
-   // TestNG — description hoặc groups
-   @Test(description = "TC_LOGIN_01")
+   // TestNG — tên method chứa TC ID, tên Tiếng Việt đặt ở description
+   @Test(description = "Đăng nhập thành công")
+   public void CRM_LOGIN_TC_001_dangNhapThanhCong() { ... }
    ```
 2. **Map bằng nội dung khi thiếu ID** — so khớp mô tả TC với tên test method; kết quả đánh dấu ⚠️ cần người xác nhận
 3. **1 requirement có thể map nhiều TC** và ngược lại — RTM là quan hệ n-n

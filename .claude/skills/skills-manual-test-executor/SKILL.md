@@ -125,6 +125,8 @@ Ghi vào report: `⏭️ SKIPPED — thao tác phá huỷ trên môi trường d
 | **Độ hạt GỘP — Bảng kiểm** (Kiểu B, mục `1`, `2`, `3`…) | Đối chiếu từng mục trên cùng màn hình | PASS khi mọi mục đạt. Mục lệch → ghi số mục + REQ của mục đó |
 | **`@TechCheck`** — có dòng `🔧 Ghi chú kỹ thuật (cần DevTools):` | Chấm phần TC chính như bình thường. Phần 🔧: agent kiểm **nếu làm được** bằng công cụ đang có (`browser_evaluate`, `browser_network_requests`, xem cookie) | Phần chính quyết định PASS/FAIL. Phần 🔧 kiểm được mà lệch → `FAIL`. Không kiểm được → vẫn chấm theo phần chính, cột Ghi chú ghi `🔧 chưa kiểm — <lý do>`. 🔒 Ghi **hình thái**, không chép giá trị cookie/token thật vào report |
 | **`@NeedsVerify`** — Expected ghi `⚠️ chưa có evidence` | Chạy bình thường, **ghi lại nguyên văn** điều quan sát được ở chỗ chưa có evidence | Khớp Expected → `PASS`, ghi chú *"đã xác nhận trên UI — đề nghị gỡ `@NeedsVerify`"*. Lệch → `FAIL` kèm ghi chú *"Expected chưa có evidence — đối chiếu lại TC trước khi báo bug"*; mục Đề xuất trỏ `/review-testcases`, **không** trỏ thẳng `/create-bug-report` |
+| **`@AppDeviation`** — Expected theo REQ/spec đã duyệt, có dòng `⚠️ Lệch với app/API` | Chạy bình thường, ghi nguyên văn điều quan sát được | Vẫn lệch → `FAIL`, mục Đề xuất trỏ `/create-bug-report`. REQ còn `⏳` thì bug ghi kèm mã `AMB` đang chờ PO. Hết lệch → `PASS`, đề nghị gỡ tag và dòng `⚠️` |
+| **`@Disruptive`** — có thể khoá tài khoản, vượt giới hạn hoặc gây tải lớn | Chỉ chạy khi user duyệt đích danh TC trong chat ở lượt này, và môi trường không dùng chung hoặc người vận hành đã biết | Chưa duyệt → `SKIPPED`, ghi *"chờ duyệt TC gây gián đoạn"*. Không tự chạy dù đang chạy cả bộ |
 | **Mục checklist** (nguồn `checklist_*.md`) | Mỗi mục `#` là một đơn vị chạy — thao tác theo cột `Hạng mục kiểm tra`, đối chiếu cột `Kết quả kỳ vọng` | Xem mục **Chạy checklist** ngay dưới. Kết quả ghi vào execution report; chạy xong cập nhật **đúng hai cột** `Trạng thái` · `Execution ID` của checklist (luật 5). Bảng ký nhận của checklist do người chịu trách nhiệm tự điền |
 
 ### Chạy checklist — 5 luật để kết quả nối được về sau
@@ -378,5 +380,6 @@ File: `docs/executions/<module>/<nền-tảng>/<run_id>/execution_report.md` —
 - ❌ Tự bỏ qua TC giá trị biên vì "chuỗi dài" — chuỗi dài vào một field không phải thao tác phá huỷ
 - ❌ TC gộp FAIL mà không ghi **mã biến thể** — người sửa không biết case nào hỏng
 - ❌ TC `@NeedsVerify` lệch Expected rồi đề xuất báo bug ngay — Expected chưa có evidence, phải đối chiếu lại TC trước
+- ❌ TC `@AppDeviation` lệch mà chuyển sang xét TC sai — Expected đã có REQ/spec đã duyệt, đây là lỗi cần báo
 - ❌ Bỏ qua mục "Dữ liệu đã tạo & dọn dẹp" trong report
 - ❌ Chạy checklist mà ghi `#3` trần ở cột `TC ID`, hoặc bỏ trống ô `Loại nguồn` — kết quả checklist sẽ bị nối nhầm và cộng lẫn vào số của bộ TC

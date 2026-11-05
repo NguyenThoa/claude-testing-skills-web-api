@@ -2,6 +2,10 @@
 
 > Chấm trên bộ TC đã ghi file. `Automation` và `Auto Type` trong file này là cột `Automatable` và `Type` của `automation_matrix.md`.
 
+> **Kiểm bằng máy trước, tự chấm sau.** Chạy `node scripts/tc-lint/tc_lint.js <file TC> <index> --req <file requirements>...`. Còn dòng `LỖI` thì chưa được báo đạt. Dán dòng `Tổng kết` và mọi `CẢNH BÁO` vào báo cáo.
+>
+> Script chỉ kiểm định dạng, mã, REQ và link ảnh. Các tiêu chí còn lại là tự khai, nên báo cáo ghi rõ `Review độc lập: Có` / `Chưa`. Bộ TC có `Risk Level` `High` phải chạy `/review-testcases` ở **phiên mới hoặc subagent mới**, không mang ngữ cảnh lúc sinh TC. Chưa review thì nêu là rủi ro, không ghi là đạt.
+
 ## 🛡️ AI Self-Quality Gate (Quy trình Tự Kiểm Định Chất Lượng)
 
 Trước khi xuất kết quả cuối cùng cho user, Agent **BẮT BUỘC** tự rà soát qua 11 tiêu chí (0–10):
@@ -173,7 +177,7 @@ Trước khi xuất kết quả cuối cùng cho user, Agent **BẮT BUỘC** t�
 - ❌ Sinh >30 TC mà không tạo `task.md` / task list → user không theo dõi được tiến độ
 - ❌ **Ghi dòng TC đầu tiên khi chưa mở hết ảnh trong `evidence/`** — lỗi gốc gây bịa bố cục/nhãn/mặc định
 - ❌ Viết Expected Result khẳng định chắc chắn về thứ tự Tab, vị trí phần tử, nhãn nút, định dạng hiển thị khi **không nhìn thấy trong ảnh** mà không gắn `@NeedsVerify`
-- ❌ Thấy tài liệu và ảnh mâu thuẫn nhưng **tự chọn một bên rồi im lặng** — phân loại theo bảng ở `evidence_and_language.md` mục 2: hành vi, quy tắc, thông báo đã có trong requirement đã duyệt → viết theo requirement, thêm `⚠️ Lệch với app`, `@NeedsVerify`, `AMB-<MODULE>-nn`; chỉ trình bày, hoặc tài liệu không đề cập → viết theo ảnh, thêm `ASM-<MODULE>-nn`; luôn báo user
+- ❌ Thấy tài liệu và ảnh mâu thuẫn nhưng **tự chọn một bên rồi im lặng** — phân loại theo bảng ở `evidence_and_language.md` mục 2: hành vi, quy tắc, thông báo đã có trong requirement đã duyệt → viết theo requirement, thêm `⚠️ Lệch với app`, `@AppDeviation`, `AMB-<MODULE>-nn`; chỉ trình bày, hoặc tài liệu không đề cập → viết theo ảnh, thêm `ASM-<MODULE>-nn`; luôn báo user
 - ❌ Đọc checkbox **xám mờ (disabled)** thành "không tick" — bỏ sót nguyên một business rule phụ thuộc
 - ❌ Xuất bộ TC mà không kèm **Bảng Đối Soát Evidence** (tiêu chí 7 Quality Gate)
 - ❌ Sinh TC cho đủ 9 ô của bảng đặc tính chất lượng — đặc tính không áp dụng thì chấm `➖` kèm lý do, TC lấp bảng là TC rác

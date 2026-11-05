@@ -87,7 +87,7 @@ Chạy thẳng workflow này khi chưa có hai tầng trước vẫn được �
 
 Điều kiện: dòng `Gọi API` ở danh mục là ✅ — chưa có thì hỏi user một lần và ghi vào danh mục.
 
-Gọi **10–20 request thật** theo **bảng nhóm probe ở skill 3.4.4** (GET công khai không token · endpoint cần token mà không gửi token · tài khoản tự đăng ký gọi endpoint nhạy cảm · bơm giá trị ngoài ràng buộc · đọc header + `Set-Cookie` · đối chiếu status thực tế vs spec). Đọc trước, ghi sau — và ghi thì tuân thủ quy tắc dữ liệu ở trên.
+Gọi **10–20 request thật** theo **bảng nhóm probe ở skill 3.4.4** (GET công khai không token · endpoint cần token mà không gửi token · tài khoản tự đăng ký gọi endpoint nhạy cảm · bơm giá trị ngoài ràng buộc · đọc header + `Set-Cookie` · đối chiếu status thực tế vs spec). Đọc trước, ghi sau — và ghi thì tuân thủ quy tắc dữ liệu ở trên. **Không** gọi thật các thao tác gây gián đoạn (brute force, vượt rate limit, chuỗi cực dài): đó là `@Disruptive` theo skill 3.4.4.
 
 Mỗi sai lệch ghi thành một **phát hiện** `F-nn` kèm **bằng chứng nguyên văn** (request + status + trích body, **đã che** token và dữ liệu cá nhân), phân mức 🔴/🟠/🟡. Chỗ nào hệ thống làm **đúng** cũng ghi lại — đó là TC chống hồi quy.
 
@@ -151,7 +151,7 @@ Cập nhật `README.md` danh mục hệ thống (tạo mới nếu chưa có): 
 
    Với mỗi endpoint có request body (POST/PUT/PATCH), agent **PHẢI liệt kê từng field** trong body và sinh negative TCs riêng cho TỪNG field (String, Email, Phone, Number, Boolean, Date, Enum, Array, Nested Object, File).
 
-5. **OWASP API Security Testing Checklist:**
+5. **OWASP API Security Testing Checklist:** viết TC cho mọi dòng áp dụng. Dòng ReDoS và Rate Limiting gắn `@Disruptive`, không gọi thật lúc sinh TC.
 
    | Loại | Test Scenarios |
    |---|---|

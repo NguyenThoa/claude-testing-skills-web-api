@@ -121,7 +121,7 @@ code:     TC_BOOK_1712049200
 | **Unicode** | Ký tự đặc biệt Unicode | `"Nguyễn Văn 🎉"` |
 | **Very long** | Chuỗi cực dài | `"a" * 10000` |
 | **Whitespace** | Khoảng trắng đầu/cuối | `"  email@yopmail.com  "` |
-| **SQL injection** | Pattern SQL injection | `"'; DROP TABLE users; --"` |
+| **SQL injection** | Pattern không phá huỷ, cấm payload ghi hoặc xoá dữ liệu | `"' OR '1'='1"` |
 | **HTML tags** | HTML trong text field | `"<b>bold</b><img src=x onerror=alert(1)>"` |
 | **Null/undefined** | Giá trị null | `null` |
 | **Special numbers** | Số đặc biệt | `0.1 + 0.2`, `Number.MAX_SAFE_INTEGER`, `NaN` |

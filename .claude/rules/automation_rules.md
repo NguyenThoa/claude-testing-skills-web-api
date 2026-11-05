@@ -58,7 +58,7 @@ paths:
 |---|---|---|
 | Page class | PascalCase + hậu tố `Page` | `LoginPage.java`, `CartPage.java` |
 | Test class | PascalCase + hậu tố `Test` | `LoginTest.java`, `CartTest.java` |
-| Test method | Bắt đầu bằng `test` + mô tả hành vi | `testLoginWithValidCredentials()` |
+| Test method | TC ID + mô tả hành vi, vì JUnit XML chỉ ghi tên method | `CRM_LOGIN_TC_001_dangNhapThanhCong()` |
 | Locator biến | lowerCamelCase + hậu tố mô tả element | `loginButton`, `usernameInput` |
 | Utils class | PascalCase + mô tả chức năng | `DataGenerator.java`, `WaitHelper.java` |
 
@@ -68,7 +68,7 @@ paths:
 |---|---|---|
 | Page class | PascalCase + hậu tố `Page` | `LoginPage.ts`, `CartPage.ts` |
 | Test file | kebab-case + `.spec.ts` | `login.spec.ts`, `cart.spec.ts` |
-| Test block | `test('mô tả hành vi')` | `test('đăng nhập thành công')` |
+| Test block | `test('<TC ID> - mô tả hành vi')` | `test('CRM_LOGIN_TC_001 - Đăng nhập thành công')` |
 | Locator biến | lowerCamelCase hoặc readonly | `readonly loginButton` |
 | Utils | PascalCase hoặc kebab-case | `DataGenerator.ts`, `data-generator.ts` |
 
@@ -97,10 +97,23 @@ Test đỏ vì app sai so với TC thì không hạ assertion, không xoá, khô
 | Bug đã sửa | Test bỗng PASS | Pipeline báo đỏ để buộc gỡ tag và expected-fail |
 
 ```typescript
-// Playwright
+// Playwright: test.fail() nhận mọi lỗi nên phải kèm kiểm tra đúng assertion
+export function knownBug(bugId: string, assertion: RegExp) {
+  test.fail(true, bugId);
+  test.info().annotations.push({ type: 'knownBugAssertion', description: assertion.source });
+}
+
+test.afterEach(async ({}, testInfo) => {
+  const mark = testInfo.annotations.find(a => a.type === 'knownBugAssertion');
+  if (!mark || testInfo.status === 'passed') return;
+  const message = testInfo.errors.map(e => e.message ?? '').join('\n');
+  if (!new RegExp(mark.description!).test(message)) testInfo.expectedStatus = 'passed'; // lỗi khác: báo đỏ
+});
+
 test('CRM_CUST_TC_018 - ...', async ({ page }) => {
-  test.fail(true, '<BUG_ID>');
-  // assertion giữ nguyên theo TC
+  knownBug('<BUG_ID>', /Tổng tiền phải bằng/);
+  // assertion giữ nguyên theo TC, có message để khớp regex
+  await expect(total, 'Tổng tiền phải bằng 110.000').toHaveText('110.000');
 });
 ```
 ```python
@@ -109,11 +122,14 @@ test('CRM_CUST_TC_018 - ...', async ({ page }) => {
 ```
 ```java
 // TestNG
-@Test(expectedExceptions = AssertionError.class, description = "@KnownBug:<BUG_ID>")
+@Test(expectedExceptions = AssertionError.class,
+      expectedExceptionsMessageRegExp = "(?s).*Tổng tiền phải bằng.*",
+      description = "@KnownBug:<BUG_ID>")
 ```
 
 - **Không dùng `skip`, `fixme`, hay `xfail` không `strict`** — bug được sửa mà không ai biết
-- Sau khi gắn, mở report kiểm test fail **đúng assertion phơi bug**. `test.fail()` nhận mọi lỗi, kể cả locator gãy
+- Assertion phơi bug phải có message riêng để khớp. Lỗi khác (locator gãy, timeout, lỗi môi trường) phải làm test đỏ, không được tính là đang phơi bug
+- pytest: `raises=AssertionError` loại lỗi thao tác, nhưng `expect` của Playwright Python báo `AssertionError` cả khi element không có, nên vẫn mở report kiểm đúng assertion
 - Báo cáo tách nhóm **Đang phơi bug**: không tính PASS, bug vẫn đếm vào tiêu chí exit
 - Runner có thể ghi các test này là pass hoặc skip. Trước khi đẩy kết quả lên Xray phải chuyển chúng thành FAIL
 

@@ -96,6 +96,7 @@ Phân loại dựa trên **Expected vs Actual**, vì không có stack trace:
 | Category | Dấu hiệu trong report | Hành động |
 |---|---|---|
 | 🐛 **Bug ứng dụng** | Actual lệch Expected, Expected có căn cứ REQ, tái hiện được | `/create-bug-report` |
+| 🐛 **Bug ứng dụng đã thấy lệch từ lúc viết TC** | TC `@AppDeviation` FAIL — Expected theo REQ/spec đã duyệt | `/create-bug-report`, **không** xét TC sai |
 | 📝 **TC viết sai / mơ hồ** | Expected không đo được, TC không nói rõ pre-condition, 2 TC cùng ID, **TC `@NeedsVerify` lệch Expected** (report ghi *"Expected chưa có evidence"* — Expected chưa từng được kiểm chứng, xét nhóm này **trước** khi kết luận bug) | `/review-testcases` — **KHÔNG** báo bug |
 | 📄 **Requirement đã lệch** | App chạy đúng logic mới, TC dựa trên requirement cũ | `/update-requirements-from-ticket` → `/update-testcases-from-impact` (**KHÔNG** dùng `/review-testcases` — rubric không bắt được TC stale) |
 | 🌐 **Môi trường / pre-condition** | Phần lớn BLOCKED, cùng lý do "không dựng được pre-condition", "không đăng nhập được" | Sửa môi trường trước, **KHÔNG** kết luận gì về chất lượng app |

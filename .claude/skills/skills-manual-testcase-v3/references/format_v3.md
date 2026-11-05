@@ -20,7 +20,8 @@ Script Xray và các workflow tìm cột **theo tên ở header**, nên phải v
 - Cách nhau bằng dấu cách: `@Regression @NegativeCase`.
 - Nhóm chạy: `@Smoke` · `@Regression` · `@CriticalPath`.
 - Tầm ảnh hưởng: `@HighImpact` — chức năng tác động Cao mà `Risk Level` chưa tới `High` vì khả năng lỗi thấp.
-- Trạng thái: `@NeedsVerify` · `@TechCheck` · `@Deprecated` · `@KnownBug:<BUG_ID>` (TC đúng theo REQ, app đang sai, bug đang mở — gỡ khi bug đóng).
+- Trạng thái: `@NeedsVerify` (Expected chưa có căn cứ) · `@AppDeviation` (Expected theo REQ/spec đã duyệt, app đang lệch, chưa có bug) · `@TechCheck` · `@Deprecated` · `@KnownBug:<BUG_ID>` (TC đúng theo REQ, app đang sai, bug đang mở — gỡ khi bug đóng). Mở bug xong thì đổi `@AppDeviation` thành `@KnownBug:<BUG_ID>`.
+- Gây gián đoạn: `@Disruptive` — chỉ chạy khi user duyệt, xem `skills-requirements-analyzer` mục 3.4.4.
 - Nền tảng khi module có ≥ 2 nền tảng: `@Web` · `@API`.
 
 ### 2.1. TC ID

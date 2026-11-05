@@ -64,7 +64,7 @@ Thử nghiệm A/B, feature flag, ngôn ngữ trình duyệt: ghi giá trị đa
 ## 3. Đưa trang về đúng trạng thái
 
 - Điều hướng theo Screen Map; thao tác bằng locator từ `browser_snapshot` (không bấm toạ độ)
-- **Đăng nhập:** tài khoản test từ `.env`. Mật khẩu gõ qua tool sẽ nằm trong log của phiên → ưu tiên **đăng nhập một lần** (tester gõ, hoặc agent gõ một lần đầu phiên) rồi giữ phiên trình duyệt cho mọi khung; không gõ lại ở từng khung
+- **Đăng nhập:** tài khoản test từ `.env`, gõ **tên biến** theo `CLAUDE.md` mục tài khoản, mật khẩu. Đăng nhập một lần đầu phiên rồi giữ phiên trình duyệt cho mọi khung; không gõ lại ở từng khung
 - **Trạng thái tương tác** — mỗi trạng thái Figma vẽ là một lượt đo riêng:
 
 | Trạng thái | Tạo bằng |
