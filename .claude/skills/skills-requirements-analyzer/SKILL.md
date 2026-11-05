@@ -22,7 +22,7 @@ Kỹ năng này cung cấp các hướng dẫn chi tiết để AI (Claude Code)
 | **Requirement** | `REQ-<MODULE>-<SỐ>` | `REQ-LOGIN-01` | Từng yêu cầu chức năng, business rule, validation rule |
 | **Story** | `STORY-<MODULE>-<SỐ>` | `STORY-PRJ-03` | Nhóm REQ thành đơn vị công việc (backlog view) — xem mục 5 |
 | **Ambiguity** | `AMB-<MODULE>-<SỐ>` | `AMB-LOGIN-03` | Điểm mơ hồ cần clarify với PO/BA |
-| **Risk** | `RISK-<MODULE>-<SỐ>` | `RISK-PRJ-02` | Rủi ro kiểm thử |
+| **Risk** | `RISK-<MODULE>-<SỐ>` | `RISK-PRJ-02` | Rủi ro sản phẩm hoặc dự án, kèm khả năng · tác động · mức |
 
 **Quy tắc:**
 - Mỗi yêu cầu **đủ nhỏ để test được độc lập** — nếu 1 câu chứa nhiều rule, tách thành nhiều REQ

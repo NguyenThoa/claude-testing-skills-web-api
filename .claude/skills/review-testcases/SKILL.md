@@ -23,7 +23,7 @@ description: Review chất lượng manual test cases — chấm điểm theo ru
 - **Mode FIX sửa TẠI CHỖ** trong file TC đang dùng, **chỉ** các TC user đã duyệt ở checkpoint Bước 4. 🚨 **CẤM sinh bản sao** `_improved` / `_v2` / `_new` hay thư mục `archive/` — tên file TC là **bất biến**, mọi workflow phía sau (`/execute-test-cases`, `/generate-automation-*`, `/generate-traceability-matrix`) đọc theo mẫu tên; bản sao làm chúng tiếp tục đọc bản cũ và để lại hai bộ TC không ai biết bộ nào có hiệu lực. Bản trước khi sửa tra bằng **mốc git** ghi trong Nhật ký
 - Mọi nhận xét phải kèm **ví dụ sửa cụ thể** — không chê chung chung
 - Nếu thiếu requirements → vẫn review 5/6 tiêu chí, ghi chú rõ không đánh giá được traceability
-- **Review độc lập:** chạy ở phiên mới hoặc subagent mới, chỉ đọc file TC và requirements. Cùng phiên vừa sinh TC thì ghi `Review độc lập: Chưa` ở đầu báo cáo
+- **Review độc lập:** chạy ở phiên mới hoặc subagent mới, chỉ đọc file TC và requirements. Cùng phiên vừa sinh TC thì ghi `Review độc lập: Chưa` ở đầu báo cáo. Ghi thêm `Loại review` (CTFL 3.2.4): agent review tương đương **informal review**, không thay review của người. Bộ TC rủi ro `High` thì đề xuất walkthrough hoặc technical review có người tham gia
 
 ## 3 Chế độ (Mode)
 

@@ -93,8 +93,10 @@ Sinh **tuần tự V1 → V4**, không nhảy cóc. Lý do không phải hình t
 | **Responsive / UI Stability** | App có bản web đáp ứng | Các breakpoint **đã chốt** (VD 1920 · 1366 · 768 · 375) · không tràn ngang · không đè chữ · phóng to 125% | Phải chốt danh sách breakpoint — cấm ghi *"mọi kích thước màn hình"* |
 | **Accessibility** | Luôn (mức cơ bản) | Tab theo thứ tự hợp lý · Enter/Space kích hoạt · viền focus nhìn thấy được · ảnh có văn bản thay thế | WCAG đầy đủ cần công cụ riêng → phần đó `➖` |
 | **Performance** | Có ngưỡng thời gian đã cam kết | Chỉ mức quan sát thô: trang tải quá lâu · danh sách lớn bị treo | Đo tải thật → `➖`, ghi đội hiệu năng |
-| **Regression** | Module đã từng có bug được đóng | Mỗi bug đã đóng = 1 TC chống tái phát, **trỏ về mã bug** | Nguồn: `docs/bugs/<module>/` |
+| **Regression** | Module đã từng có bug được đóng | Mỗi bug đã đóng = 1 TC chống tái phát, **trỏ về mã bug** | Nguồn: `docs/bugs/<module>/`. Đây chỉ là một phần của regression; phạm vi cho một thay đổi chọn theo impact analysis bằng `/select-regression-tests` |
 | **E2E** | Luồng đi qua ≥2 module | Kịch bản xuyên module, dữ liệu chảy từ module này sang module kia | Luồng phức tạp → chuyển sang `/generate-cross-module-test-plan` |
+
+> `Regression` và `E2E` nằm ở V4 chỉ để xếp lô sinh TC. Theo CTFL, regression là kiểm thử liên quan đến thay đổi (2.2.3), E2E là kiểm thử chức năng ở cấp System (2.2.1); không tính chúng vào phi chức năng.
 
 ---
 

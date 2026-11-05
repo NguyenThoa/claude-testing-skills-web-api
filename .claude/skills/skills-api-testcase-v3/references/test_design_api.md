@@ -1,6 +1,6 @@
 # Thiết Kế Kiểm Thử API — Bám ISTQB CTFL v4.0
 
-> Bám nội dung syllabus ISTQB CTFL v4.0, diễn giải cho test API. Đây không phải chứng nhận tuân thủ, số mục cần đối chiếu lại khi syllabus đổi phiên bản.
+> Bám nội dung syllabus ISTQB CTFL v4.0 (đã đối chiếu bản v4.0.1), diễn giải cho test API. Đây không phải chứng nhận tuân thủ, số mục cần đối chiếu lại khi syllabus đổi phiên bản.
 
 ## 1. Quy trình và testware
 
@@ -29,10 +29,10 @@ Spec sinh tự động chưa chắc đã được duyệt. Nghi ngờ thì hỏi
 |---|---|---|---|
 | Hộp đen | **Equivalence Partitioning** | Mọi field trong request, enum, kiểu dữ liệu | Mọi partition hợp lệ và không hợp lệ có ≥ 1 TC |
 | Hộp đen | **Boundary Value Analysis** | Field có min/max, kích thước file, phân trang | `Low` · `Medium`: BVA 2 giá trị. `High`: BVA 3 giá trị |
-| Hộp đen | **Decision Table** | ≥ 3 điều kiện kết hợp; vai trò × hành động × chủ sở hữu | Mọi cột khả thi. > 20 tổ hợp: pairwise, ghi lý do |
-| Hộp đen | **State Transition** | API async, entity có status flow | Mọi chuyển đổi hợp lệ. `High`: thêm mọi chuyển đổi bị chặn |
+| Hộp đen | **Decision Table** | ≥ 3 điều kiện kết hợp; vai trò × hành động × chủ sở hữu | Mọi cột khả thi. > 20 tổ hợp: bỏ cột không khả thi, gộp cột, rồi chọn theo rủi ro và ghi lý do |
+| Hộp đen | **State Transition** | API async, entity có status flow | Mọi chuyển đổi hợp lệ. `High`: thêm mọi chuyển đổi không hợp lệ, mỗi TC một chuyển đổi |
 | Kinh nghiệm | **Error Guessing** | Luôn luôn | Bảng mục 5 và bug cũ của module |
-| Kinh nghiệm | **Exploratory** | Rủi ro `High` hoặc spec yếu | Đề xuất session có charter, không thay thế TC |
+| Kinh nghiệm | **Exploratory** | Rủi ro `High` hoặc spec yếu | Đề xuất session có charter, thời lượng, phiếu ghi session và buổi debrief; không thay thế TC |
 | Phối hợp | **Tiêu chí chấp nhận** | Nguồn là ticket | Mỗi tiêu chí có ≥ 1 TC |
 
 ## 4. Độ sâu theo rủi ro

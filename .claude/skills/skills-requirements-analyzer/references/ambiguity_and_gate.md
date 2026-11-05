@@ -17,7 +17,11 @@ Các hướng phát hiện:
 
 ### 4.2. Risk (RISK-<MODULE>-XX)
 
-Với mỗi risk, ghi: **Mã · Tên rủi ro · Mô tả · Mitigation** (cách giảm thiểu khi test).
+Với mỗi risk, ghi: **Mã · Tên rủi ro · Mô tả · Loại · Khả năng · Tác động · Mức · Phản hồi · Mitigation**.
+
+- **Loại:** `Sản phẩm` (chất lượng sản phẩm) hoặc `Dự án` (việc quản lý và kiểm soát dự án) — CTFL 5.2.2
+- **Khả năng · Tác động · Mức:** chấm theo ma trận ở `skills-manual-testcase-v3/references/test_types_4_rounds.md` — CTFL 5.2.1, 5.2.3. Đây là đề xuất của agent, người duyệt xác nhận
+- **Phản hồi:** `Giảm bằng kiểm thử` · `Chấp nhận` · `Chuyển giao` · `Dự phòng` — CTFL 5.2.4. Agent chỉ đề xuất. Rủi ro mức Cao mà chọn `Chấp nhận` hoặc `Chuyển giao` thì phải do người có quyền quyết định
 
 ---
 

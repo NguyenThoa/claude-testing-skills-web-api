@@ -135,11 +135,13 @@ Báo cáo này tương ứng với **ISO/IEC/IEEE 29119-3 — Test Completion Re
 | 5. Tình hình lỗi | Test measures (defect metrics) · Residual risks |
 | 6. Độ phủ yêu cầu | Test measures (coverage) |
 | 7. Đề xuất hành động | Recommendations |
-| 8. Yếu tố cản trở & Bài học | Factors blocking progress · Lessons learned · Reusable test assets |
+| 8. Yếu tố cản trở, bài học, sai lệch, việc đóng đợt | Factors blocking progress · Lessons learned · Reusable test assets · Deviations from planned testing |
 
 > ⚠️ Ghi **tên mục** của chuẩn, **KHÔNG ghi số điều khoản** — số đổi giữa các bản phát hành, agent không có bản chuẩn để tra, ghi số là bịa.
 >
 > ⚠️ **KHÔNG tuyên bố "tuân thủ ISO/IEC/IEEE 29119"** — tuân thủ là kết luận của đánh giá viên. Câu đúng: *"biên soạn theo cấu trúc ISO/IEC/IEEE 29119-3 — Test Completion Report"*.
+
+Trong ISTQB CTFL v4.0 mục 5.3.2, đây là **test completion report**. Nội dung điển hình: test summary (1 · 4) · đánh giá theo plan (3) · sai lệch so với plan (2 · 8.4) · trở ngại và cách xử lý (8.1) · chỉ số (4 · 5 · 6) · rủi ro chưa giảm, lỗi chưa sửa (2 · 5) · bài học (8.2).
 
 **Mục 8 là mục hay bị bỏ nhất và mất mát nhiều nhất.** Không ghi lại vì sao đợt này chậm (môi trường sập mấy ngày, chờ tài khoản role, build lỗi phải test lại), thì đợt sau lặp lại nguyên xi và không ai ước lượng đúng được.
 
@@ -308,6 +310,25 @@ Báo cáo này tương ứng với **ISO/IEC/IEEE 29119-3 — Test Completion Re
 | Bộ TC module Khách hàng (36 TC) | `docs/testcases/customers/` | Regression các đợt sau |
 | Checklist smoke 12 mục | `docs/checklists/customers/web/checklist_smoke_20260801.md` | Mọi build mới — sinh lại file theo ngày bằng `/generate-checklist-test` |
 
+### 8.4 Sai lệch so với plan
+
+| Hạng mục | Theo plan | Thực tế | Lý do |
+|---|---|---|---|
+| Lịch · thời lượng | <mục 7.1> | <thực tế> | <…> |
+| Công sức | <mục 7.2> | <thực tế> | <…> |
+| Phạm vi | <mục 2.1> | <thực tế> | <…> |
+
+> Không có plan hoặc không có số thực tế thì ghi `❓ không có dữ liệu`, không để trống.
+
+### 8.5 Việc đóng đợt
+
+| Việc (CTFL 1.4.1) | Kết quả | Người chịu trách nhiệm |
+|---|---|---|
+| Lỗi chưa sửa đã có change request hoặc backlog item | <mã> | |
+| Testware dùng lại được đã lưu hoặc bàn giao | <nơi lưu, bên nhận> | |
+| Môi trường test đã về trạng thái đã thống nhất | <trạng thái> | |
+| Báo cáo đã gửi các bên liên quan | <ngày, người nhận> | |
+
 ---
 
 ## 9. Phụ lục — Ánh xạ chuẩn tài liệu
@@ -345,6 +366,7 @@ Báo cáo này tương ứng với **ISO/IEC/IEEE 29119-3 — Test Completion Re
 - [ ] Không có credentials, không có dữ liệu khách hàng thật trong báo cáo
 - [ ] Mục **8.1** ghi **thời lượng thực tế** của từng yếu tố cản trở, không chỉ tên sự việc
 - [ ] Mục **8.2** mỗi bài học chỉ đích danh **áp dụng vào mục nào** của plan đợt sau — bài học không có nơi áp dụng là câu nói suông
+- [ ] Mục **8.4** có số theo plan và số thực tế, mục **8.5** đủ 4 việc đóng đợt hoặc ghi lý do chưa làm
 - [ ] **Không** có số điều khoản chuẩn (`clause 7.x`); **không** có câu tuyên bố "tuân thủ ISO/IEC/IEEE 29119"
 
 ---

@@ -1,6 +1,6 @@
 # Kỹ Thuật Thiết Kế Kiểm Thử — Bám ISTQB CTFL v4.0
 
-> File này bám nội dung syllabus ISTQB CTFL v4.0, diễn giải theo thực tế dự án. Đây không phải chứng nhận tuân thủ, và số mục có thể cần đối chiếu lại khi syllabus đổi phiên bản.
+> File này bám nội dung syllabus ISTQB CTFL v4.0 (đã đối chiếu bản v4.0.1), diễn giải theo thực tế dự án. Đây không phải chứng nhận tuân thủ, và số mục có thể cần đối chiếu lại khi syllabus đổi phiên bản.
 
 ## 1. Quy trình và testware
 
@@ -19,10 +19,10 @@ Tìm ra lỗi trong requirement ở bước phân tích là **kết quả kiểm
 |---|---|---|---|
 | Hộp đen | **Equivalence Partitioning** | Field có miền giá trị phân nhóm được | Mọi partition, cả hợp lệ và không hợp lệ, có ≥ 1 TC |
 | Hộp đen | **Boundary Value Analysis** | Field có min/max | Rủi ro `Low` · `Medium`: BVA 2 giá trị (`min-1` · `min` · `max` · `max+1`). Rủi ro `High`: BVA 3 giá trị (thêm `min+1` · `max-1`) |
-| Hộp đen | **Decision Table** | ≥ 3 điều kiện kết hợp cho một kết quả | Mọi cột khả thi. > 20 tổ hợp: rút gọn pairwise và ghi lý do |
-| Hộp đen | **State Transition** | Entity có ≥ 3 trạng thái hoặc có status flow | Mọi chuyển đổi hợp lệ. Rủi ro `High`: thêm mọi chuyển đổi không hợp lệ phải bị chặn |
+| Hộp đen | **Decision Table** | ≥ 3 điều kiện kết hợp cho một kết quả | Mọi cột khả thi. > 20 tổ hợp: bỏ cột không khả thi, gộp cột có điều kiện không ảnh hưởng kết quả, rồi chọn theo rủi ro và ghi lý do |
+| Hộp đen | **State Transition** | Entity có ≥ 3 trạng thái hoặc có status flow | Valid transitions coverage: mọi chuyển đổi hợp lệ. Rủi ro `High`: all transitions coverage, thêm mọi chuyển đổi không hợp lệ, mỗi TC chỉ thử một chuyển đổi không hợp lệ để tránh lỗi che lỗi |
 | Dựa trên kinh nghiệm | **Error Guessing** | Luôn luôn | Danh sách lỗi hay gặp ở `Scenarios Chuyên Sâu` và bug cũ của module |
-| Dựa trên kinh nghiệm | **Exploratory** | Rủi ro `High` hoặc requirement yếu | Đề xuất session có charter, thời lượng, người chạy; không thay thế TC |
+| Dựa trên kinh nghiệm | **Exploratory** | Rủi ro `High` hoặc requirement yếu | Đề xuất session có charter, thời lượng, người chạy, phiếu ghi session và buổi debrief; không thay thế TC |
 | Dựa trên kinh nghiệm | **Checklist-based** | Smoke, hotfix, release | Mode CHECKLIST |
 | Dựa trên phối hợp | **User story, tiêu chí chấp nhận** | Nguồn là ticket | Mỗi tiêu chí chấp nhận có ≥ 1 TC; tiêu chí không kiểm chứng được phải thành `AMB` |
 | Hộp trắng | Statement, branch | **Không thuộc manual TC** | Thuộc unit test của dev; ghi ở phần ngoài phạm vi |
@@ -34,7 +34,7 @@ Tìm ra lỗi trong requirement ở bước phân tích là **kết quả kiểm
 | Functional testing | V1, V2 |
 | Non-functional (ISO/IEC 25010) | V4, và `Security` ở V3 |
 | Confirmation testing | `/retest-fixed-bugs` |
-| Regression testing | Nhánh `Regression` ở V4 — mỗi bug đã đóng có 1 TC chống tái phát, trỏ về mã bug; chọn phạm vi bằng `/select-regression-tests` |
+| Regression testing | Xác nhận thay đổi không gây tác dụng phụ, kể cả ở phần không đổi. Phạm vi chọn theo impact analysis bằng `/select-regression-tests`. Nhánh `Regression` ở V4 chỉ là phần TC chống tái phát, trỏ về mã bug |
 
 ## 4. Kinh nghiệm thực tế khi áp dụng
 
@@ -111,8 +111,8 @@ Agent không được chỉ "nhắc tên" kỹ thuật — phải áp dụng the
 | Kỹ thuật | Điều kiện BẮT BUỘC áp dụng | Cách làm |
 |---|---|---|
 | **EP + BVA** | Mọi field có ràng buộc min/max/format | Mỗi partition ≥1 TC; biên test tại `min-1, min, max, max+1` |
-| **Decision Table** | Có **≥3 điều kiện kết hợp** ảnh hưởng đến 1 output (VD: loại KH × hạn mức × trạng thái → được duyệt?) | Lập bảng đầy đủ tổ hợp → mỗi rule (cột) = 1 TC. Nếu >20 tổ hợp → dùng pairwise và ghi chú lý do rút gọn |
-| **State Transition** | Entity có **≥3 trạng thái** hoặc có status flow (Draft → Pending → Approved...) | Vẽ bảng transition → TC cho mọi transition hợp lệ + TC verify mọi transition không hợp lệ bị chặn |
+| **Decision Table** | Có **≥3 điều kiện kết hợp** ảnh hưởng đến 1 output (VD: loại KH × hạn mức × trạng thái → được duyệt?) | Lập bảng đầy đủ tổ hợp → mỗi rule (cột) = 1 TC. Nếu >20 tổ hợp → bỏ cột không khả thi, gộp cột có điều kiện không ảnh hưởng kết quả (`-`), rồi chọn theo rủi ro và ghi lý do. Pairwise ngoài giáo trình CTFL: chỉ dùng khi các điều kiện độc lập, không dùng cho rủi ro `High` |
+| **State Transition** | Entity có **≥3 trạng thái** hoặc có status flow (Draft → Pending → Approved...) | Vẽ bảng transition → TC cho mọi transition hợp lệ. Rủi ro `High`: thêm TC cho mọi transition không hợp lệ, mỗi TC một transition |
 
 **Ví dụ Decision Table (3 điều kiện → 1 output):**
 

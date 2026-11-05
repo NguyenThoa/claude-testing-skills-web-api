@@ -261,3 +261,39 @@ test('agent không tự đứng tên quyết định bỏ test', () => {
   assert.match(read('.claude/skills/skills-manual-testcase-v3/references/mode_quick.md'), /⏳ chờ duyệt/);
   assert.match(read('.claude/skills/skills-manual-testcase-v3/references/quality_gates.md'), /⏳ chờ duyệt/);
 });
+
+test('đối chiếu CTFL v4.0.1: rủi ro có đủ thuộc tính và cách phản hồi', () => {
+  const gate = read('.claude/skills/skills-requirements-analyzer/references/ambiguity_and_gate.md');
+  for (const word of ['Loại', 'Khả năng', 'Tác động', 'Mức', 'Phản hồi', 'Chuyển giao', 'Dự phòng']) assert.match(gate, new RegExp(word), word);
+  assert.match(read('.claude/skills/skills-requirements-analyzer/references/output_format.md'), /Loại \| Khả năng \| Tác động \| Mức \| Phản hồi/);
+});
+
+test('đối chiếu CTFL v4.0.1: kỹ thuật thiết kế đúng giáo trình', () => {
+  const techniques = read('.claude/skills/skills-manual-testcase-v3/references/test_design_techniques.md');
+  const api = read('.claude/skills/skills-api-testcase-v3/references/test_design_api.md');
+  assert.doesNotMatch(techniques, /rút gọn pairwise|dùng pairwise và ghi/);
+  assert.doesNotMatch(api, /tổ hợp: pairwise/);
+  assert.match(techniques, /mỗi TC chỉ thử một chuyển đổi không hợp lệ/);
+  for (const text of [techniques, api]) assert.match(text, /debrief/);
+  assert.match(techniques, /impact analysis/);
+});
+
+test('đối chiếu CTFL v4.0.1: confirmation test chạy lại TC từng FAIL', () => {
+  assert.match(skill('retest-fixed-bugs'), /chạy lại mọi TC từng FAIL do bug này/);
+});
+
+test('đối chiếu CTFL v4.0.1: bug report và báo cáo hoàn tất đủ nội dung điển hình', () => {
+  const bug = skill('skills-bug-reporter');
+  assert.match(bug, /\*\*Người báo cáo:\*\*/);
+  assert.doesNotMatch(bug, /mức ảnh hưởng kỹ thuật/);
+  const summary = skill('skills-test-summary-reporter');
+  for (const part of ['test completion report', '### 8.4 Sai lệch so với plan', '### 8.5 Việc đóng đợt', 'change request']) assert.ok(summary.includes(part), part);
+});
+
+test('đối chiếu CTFL v4.0.1: trích dẫn khớp bản đã đối chiếu', () => {
+  const standards = read('.claude/skills/generate-master-test-plan/references/standards.md');
+  assert.match(standards, /v4\.0\.1 ngày 15-09-2024/);
+  assert.doesNotMatch(standards, /chưa\*\* đối chiếu|organizational test policy/);
+  assert.doesNotMatch(skill('skills-test-progress-reporter'), /ongoing control of the testing/);
+  assert.doesNotMatch(read('.claude/skills/generate-master-test-plan/references/plan_template.md'), /chậm và dễ vỡ/);
+});

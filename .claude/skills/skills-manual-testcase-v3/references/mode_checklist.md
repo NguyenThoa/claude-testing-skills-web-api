@@ -139,6 +139,7 @@ Cột `#` chỉ là số thứ tự **trong một file** — mục `#3` của ch
 
 ## Quy Tắc Viết Mục Checklist (BẮT BUỘC)
 
+- **Không đưa vào checklist** (CTFL 4.4.3): mục máy tự kiểm được, mục nên là tiêu chí vào/ra, mục quá chung. Mỗi đợt mới rà lại theo phân tích lỗi: bỏ mục không còn tác dụng, thêm mục từ lỗi nghiêm trọng mới
 - **Mỗi mục 1 dòng, ≤ 20 từ**, bắt đầu bằng **động từ** (Đăng nhập, Tạo, Sửa, Xóa, Lọc, Xuất...)
 - **Verify được trong ≤ 2 phút** bởi người chưa đọc requirements
 - **Có kết quả kỳ vọng quan sát được** — không viết "hoạt động đúng", phải nêu dấu hiệu cụ thể trên UI

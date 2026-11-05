@@ -24,8 +24,8 @@ Workflow này đóng **vòng lặp cuối** của quy trình kiểm thử: dev b
 
 | Mode | Khi nào dùng | Phạm vi |
 |---|---|---|
-| **RETEST** | Bug nhỏ, fix cô lập (sai chính tả, lệch UI, đổi message) | Chỉ verify đúng bug đó |
-| **FULL** (mặc định) | Mọi bug Severity 🔴 Critical / 🟠 Major, hoặc fix đụng logic dùng chung | Verify bug + regression quanh vùng fix |
+| **RETEST** | Bug nhỏ, fix cô lập (sai chính tả, lệch UI, đổi message) | Confirmation testing: Steps gốc + mọi TC từng FAIL do bug đó |
+| **FULL** (mặc định) | Mọi bug Severity 🔴 Critical / 🟠 Major, hoặc fix đụng logic dùng chung | Như RETEST + regression quanh vùng fix |
 
 > User không nói mode → chọn theo **Severity của bug**: Critical/Major → FULL · Minor/Trivial → RETEST. Ghi rõ đã chọn mode nào và vì sao.
 
@@ -70,6 +70,8 @@ Trích từ bug report gốc, **không diễn giải lại**:
 Theo thứ tự thao tác browser bắt buộc của skill executor: `navigate → wait → snapshot → interact` (KHÔNG resize). Đăng nhập đầu buổi **ngoài** video; `Quay video` ≠ `Không` mà thiếu tool `browser_start_video` → dừng, báo user khởi động lại Claude Code hoặc chạy với `Quay video: Không` (mục *Video quay màn hình* của skill).
 
 **Quay từng lần chạy** (bỏ qua khi `Quay video: Không`; `Chỉ giữ FAIL` thì lần lặp chấm đạt xoá video ngay sau khi dừng)**:** mỗi lần lặp là một video riêng — `browser_start_video` (`filename` = `docs/executions/<module>/<nền-tảng>/retest_<timestamp>/video/<BUG_ID>_lan<n>.webm`, `size` = viewport) → `browser_video_chapter` (`title` = `<BUG_ID> · lần <n>`, `description` = tóm tắt bug, `duration` = `1500`) → chạy đúng steps → chấm → `browser_stop_video` → mới khôi phục trạng thái cho lần sau. Video đầu tiên: kiểm file rơi đúng thư mục `video/` của retest.
+
+**Sau Steps gốc, chạy lại mọi TC từng FAIL do bug này** (kể cả mã biến thể), rồi ghi kết quả vào report (CTFL 2.2.3). Fix làm đổi hành vi thì đề xuất thêm TC mới. Chỉ rút còn Steps gốc khi user báo thiếu thời gian, và ghi rõ vào report.
 
 **Chạy đúng steps gốc, tối thiểu 2 lần** — fix "lúc được lúc không" là dấu hiệu fix chưa triệt để, phải phát hiện ở đây chứ không phải ở production.
 
@@ -149,6 +151,7 @@ Evidence: `docs/executions/<module>/<nền-tảng>/retest_<timestamp>/evidence/`
 | Expected (theo bug gốc) | Bảng hiển thị trạng thái "không có kết quả", trang không báo lỗi |
 | Actual lần này | Bảng hiển thị "Không tìm thấy kết quả", không có thông báo lỗi |
 | Số lần lặp | 2/2 đều đúng |
+| TC từng FAIL do bug | CRM_CUST_TC_011: ✅ PASS |
 | Evidence | ![](evidence/BUG_customers_1785612000_TC011_retest_fixed.png) |
 | Video | <video src="video/BUG_customers_1785612000_TC011_lan1.webm" title="Lần 1 — FIXED" controls></video> <video src="video/BUG_customers_1785612000_TC011_lan2.webm" title="Lần 2 — FIXED" controls></video> |
 
@@ -240,6 +243,7 @@ Bug **đẩy lên Jira** → cập nhật trạng thái tương ứng qua `skill
 
 - [ ] Đã đối chiếu build mới ≠ build lúc log bug
 - [ ] Chạy **đúng** Steps to Reproduce gốc, không rút gọn
+- [ ] Đã chạy lại mọi TC từng FAIL do bug, hoặc ghi rõ user yêu cầu rút gọn vì thiếu thời gian
 - [ ] Lặp tối thiểu 2 lần, kết quả nhất quán (lệch nhau → ghi rõ, không làm tròn thành FIXED)
 - [ ] Có screenshot **kể cả khi FIXED**
 - [ ] Video đúng giá trị `Quay video` (mặc định: **mọi** lần lặp + mọi TC regression), nằm ở `video/` ngang cấp `evidence/`, link trỏ đúng file; header ghi ô `Video`

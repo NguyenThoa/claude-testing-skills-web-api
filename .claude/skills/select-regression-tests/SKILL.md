@@ -91,6 +91,7 @@ Số TC · phút · REQ chưa phủ · số TC bỏ. Hỏi user có muốn chạ
 ## Quality Gate
 
 - [ ] Mỗi REQ đổi có căn cứ; module phụ thuộc thêm vào có căn cứ
+- [ ] Thứ tự chạy đã xét phụ thuộc và nguồn lực (CTFL 5.1.5): TC ưu tiên cao cần kết quả của TC ưu tiên thấp thì TC thấp chạy trước; môi trường hoặc người chỉ có trong khung giờ nhất định thì xếp theo khung đó. Script không biết các ràng buộc này, agent chỉnh và ghi lý do
 - [ ] Nhóm *Bắt buộc* không bị cắt
 - [ ] Danh sách ⏭️ đủ, có ô người duyệt
 - [ ] REQ chưa có TC đã nêu và đề xuất xử lý trước

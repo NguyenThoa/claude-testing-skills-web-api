@@ -174,7 +174,7 @@ Ghi plan đúng cấu trúc dưới đây, thay các ô `<…>` bằng dữ li�
 | Tiến độ dự án | Công sức thực tế so với ước lượng 7.2 | Báo cáo tiến độ | Phát hiện trễ sớm |
 | Lỗi | Bug mới / đã fix / đang mở theo Severity · regression phát sinh | `docs/bugs/` · công cụ quản lý bug | Tiêu chí exit #1, #2 |
 | Độ phủ | REQ có TC · REQ đã duyệt `✅` có TC · REQ có TC P1 đã PASS | `docs/traceability/traceability_matrix.md` (số tổng) + file module (cột `Kết quả gần nhất`) | Tiêu chí exit #6 |
-| Rủi ro | Trạng thái từng rủi ro ở 8.1 | Báo cáo tiến độ | Kiểm soát rủi ro |
+| Rủi ro | Trạng thái từng rủi ro ở 8.1 · mức rủi ro sản phẩm tồn đọng: `RISK-*` và TC `High` chưa PASS | Báo cáo tiến độ · RTM | Kiểm soát rủi ro |
 
 ### 3.7 Chiến lược tự động hoá
 
@@ -184,7 +184,7 @@ Ghi plan đúng cấu trúc dưới đây, thay các ô `<…>` bằng dữ li�
 |---|---|
 | Mục tiêu | <VD: rút thời gian regression · chạy Smoke sau mỗi build> |
 | Hiện trạng | <đã có project automation chưa · số script · đã có pipeline chưa — **đọc từ repo**> |
-| Tầng kiểm thử (kim tự tháp) | <tỷ trọng unit (Dev) / API / UI> — ISTQB CTFL v4.0 mục 5.1.6: càng lên tầng UI, test càng ít, chậm và dễ vỡ |
+| Tầng kiểm thử (kim tự tháp) | <tỷ trọng unit (Dev) / API / UI> — ISTQB CTFL v4.0 mục 5.1.6: càng lên tầng cao, test càng ít, chạy càng chậm và càng phụ thuộc thành phần khác |
 | Tiêu chí chọn TC để tự động | <VD: Priority P1 · chạy lặp mỗi build · kết quả ổn định · không cần mắt người đánh giá> |
 | Framework · report | <theo phiếu `Công cụ` → `Tự động hoá`> · output trong `reports/` |
 | Hệ thống CI | <theo phiếu> |
@@ -249,7 +249,7 @@ Ghi plan đúng cấu trúc dưới đây, thay các ô `<…>` bằng dữ li�
 | # | Tiêu chí | Ngưỡng |
 |---|---|---|
 
-> Gợi ý ISTQB CTFL v4.0 mục 5.1.3 cho bảng bổ sung: mật độ lỗi · đã thực hiện kiểm thử tĩnh (review requirements/TC) · mọi lỗi tìm thấy đã được báo cáo · toàn bộ regression đã được automate.
+> Gợi ý ISTQB CTFL v4.0 mục 5.1.3 cho bảng bổ sung: độ phủ rủi ro sản phẩm (mục 5.3) · mật độ lỗi · đã thực hiện kiểm thử tĩnh (review requirements/TC) · mọi lỗi tìm thấy đã được báo cáo · toàn bộ regression đã được automate.
 
 **Build tính tiêu chí:** <build ứng viên, hoặc "từ build X trở đi" sau code freeze; chưa biết thì ghi ❓ và chốt trước khi chấm>. Kết quả trên build khác, hoặc report thiếu ô Build, vào nhóm *⏳ Cần chạy lại*, trừ khi PM chấp nhận bằng văn bản. Luật đầy đủ: `skills-test-summary-reporter`, Nguyên tắc số liệu #9.
 
@@ -394,6 +394,8 @@ TC FAIL ──/create-bug-report──→ 🔴 Đang mở ──Dev sửa──�
 | 🟡 Đã fix — chờ retest | Dev | Có build chứa bản sửa |
 | ⬛ Đóng | Tester xác nhận | Retest `FIXED` — lặp ≥ 2 lần theo Steps gốc, có người chịu trách nhiệm xác nhận |
 | 🔴 Mở lại | Tester | Retest `NOT_FIXED` hoặc `PARTIAL` — **không** tạo bug trùng |
+| 🔴 Đang mở — Hoãn | Người có quyền ở 4.2 | Đã phân tích, quyết định chưa sửa, có lý do |
+| ⚪ Đã đóng — không phải lỗi | Người phân tích lỗi | False positive, trùng hoặc change request, có lý do |
 
 > Phiếu `Quy trình trạng thái: riêng` (VD workflow Jira có *Từ chối* · *Trùng* · *Hoãn*) → thay sơ đồ và bảng bằng quy trình đó, **giữ** cột *Ai chuyển* và *Điều kiện*. Bug *Hoãn* vẫn tính là **đang mở** khi chấm tiêu chí exit #1, #2 — trừ khi người có quyền ở 4.2 chấp nhận bằng văn bản.
 

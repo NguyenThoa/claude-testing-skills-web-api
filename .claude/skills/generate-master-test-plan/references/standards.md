@@ -14,18 +14,18 @@ Template bám khung **Test Plan** của **ISO/IEC/IEEE 29119-3** (chuẩn hiện
 
 > ⚠️ **KHÔNG** viết *"tuân thủ ISO/IEC/IEEE 29119"* hay *"đạt chuẩn ISTQB"*. Tuân thủ là kết luận của đánh giá viên; ISTQB không cấp chứng nhận cho tài liệu.
 
-### Nội dung điển hình theo ISTQB CTFL v4.0 — mục 5.1.1 (nguyên văn giáo trình)
+### Nội dung điển hình theo ISTQB CTFL v4.0.1 — mục 5.1.1 (theo giáo trình)
 
-Đã đối chiếu với bản giáo trình **v4.0 phát hành 21-04-2023**. Mọi dòng dưới đây **phải có mục tương ứng** trong plan:
+Đã đối chiếu với bản giáo trình **v4.0.1 ngày 15-09-2024** vào 05-11-2026. Mọi dòng dưới đây **phải có mục tương ứng** trong plan:
 
 | ISTQB CTFL v4.0 — 5.1.1 | Mục trong plan |
 |---|---|
-| Context of testing — scope · test objectives · constraints · test basis | 2.1 · 2.2 · 1.1 · 2.3 · 1.2 |
+| Context of testing — test scope · test objectives · test basis | 2.1 · 2.2 · 1.1 · 1.2 |
 | Assumptions and constraints of the test project | 2.3 |
 | Stakeholders — roles · responsibilities · relevance to testing · hiring and training needs | 2.4 · 6 |
 | Communication — forms and frequency of communication · documentation templates | 2.4 |
 | Risk register — product risks · project risks | 8.2 · 8.1 |
-| Test approach — test levels · test types · test techniques · test deliverables · entry criteria and exit criteria · independence of testing · metrics to be collected · test data requirements · test environment requirements · deviations from the organizational test policy and test strategy | 3.1 · 3.2 (+ 3.2.1 phi chức năng) · 3.3 · 10 · 4.1–4.2 · 3.4 · 3.6 · 5.2 · 5.1 · 12.2 |
+| Test approach — test levels · test types · test techniques · test deliverables · entry criteria and exit criteria · independence of testing · metrics to be collected · test data requirements · test environment requirements · deviations from the test policy and test strategy | 3.1 · 3.2 (+ 3.2.1 phi chức năng) · 3.3 · 10 · 4.1–4.2 · 3.4 · 3.6 · 5.2 · 5.1 · 12.2 |
 | Budget and schedule | 7.3 · 7.1 · 7.2 |
 
 Các điểm của **mục 5.1.3 Entry Criteria and Exit Criteria** được đưa vào template:
@@ -67,14 +67,14 @@ Các điểm của **mục 5.1.3 Entry Criteria and Exit Criteria** được đ�
 | 9. Quản lý lỗi | — *(không có mục riêng trong Test Plan; báo cáo sự cố là tài liệu riêng — Incident Report)* | — *(quản lý lỗi: CTFL v4.0 mục 5.5)* | — *(Test incident report là tài liệu riêng)* |
 | 10. Sản phẩm bàn giao | Test strategy — Test deliverables | Test approach — test deliverables | Test deliverables |
 | 11. Phê duyệt | Document-specific information — Approval authority | — | Approvals |
-| 12.2 Điểm làm khác chính sách & chiến lược chung | Test strategy — Deviations from the Organizational Test Strategy | Test approach — deviations from the organizational test policy and test strategy | — |
+| 12.2 Điểm làm khác chính sách & chiến lược chung | Test strategy — Deviations from the Organizational Test Strategy | Test approach — deviations from the test policy and test strategy | — |
 
 > ⚠️ **Hai bản IEEE 829 có cấu trúc KHÁC nhau.** Khung 16 mục phẳng ở cột cuối là **829-1998**. Bản **829-2008** tách thành Master Test Plan và Level Test Plan với dàn mục lồng nhau — khách yêu cầu đúng 829-2008 → **xin file template của khách** rồi ánh xạ theo file đó.
 >
-> ⚠️ **Tên mục 29119-3** ghi theo khung Test Plan của chuẩn; giữa các bản phát hành có điều chỉnh tên gọi. Agent **không có** bản chuẩn để tra → trước khi đem đi audit, người có bản chuẩn phải **đối chiếu lại cột này** — ghi việc đó vào danh sách ô còn treo. Cột **ISTQB** đã đối chiếu nguyên văn giáo trình v4.0; bản sửa lỗi v4.0.1 **chưa** đối chiếu.
+> ⚠️ **Tên mục 29119-3** ghi theo khung Test Plan của chuẩn; giữa các bản phát hành có điều chỉnh tên gọi. Agent **không có** bản chuẩn để tra → trước khi đem đi audit, người có bản chuẩn phải **đối chiếu lại cột này** — ghi việc đó vào danh sách ô còn treo. Cột **ISTQB** đã đối chiếu giáo trình v4.0.1.
 >
 > ⚠️ **Mục 9 Quản lý lỗi và 3.7 Tự động hoá là phần mở rộng** so với khung chuẩn — thêm vì PM/khách cần thấy ngay trong plan *lỗi được phân loại, xử lý thế nào* và *tự động hoá tới đâu*. Không mục nào của 29119-3 bị bỏ; chỉ thêm. Mục 12.1 phải ghi rõ hai mục này là mở rộng, **không** gán cho chúng một tên mục chuẩn không có thật.
 >
-> ⚠️ **Quy tắc ghi chuẩn:** ghi **tên mục**, **KHÔNG ghi số điều khoản** (`clause 7.3.2`) của 29119-3 và 829. Riêng ISTQB được ghi số mục giáo trình (`5.1.1`) vì đã đối chiếu trực tiếp bản v4.0.
+> ⚠️ **Quy tắc ghi chuẩn:** ghi **tên mục**, **KHÔNG ghi số điều khoản** (`clause 7.3.2`) của 29119-3 và 829. Riêng ISTQB được ghi số mục giáo trình (`5.1.1`) vì đã đối chiếu trực tiếp bản v4.0.1.
 
 ---

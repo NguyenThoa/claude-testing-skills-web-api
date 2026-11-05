@@ -47,6 +47,7 @@ Sử dụng skill này khi:
 - **REQ ID liên quan:** <mã REQ — dùng để chọn phạm vi regression khi retest>
 - **Test data đã dùng:** <email/username/id — traceable>
 - **Ngày phát hiện:** <DD-MM-YYYY>
+- **Người báo cáo:** <tên, vai trò, đơn vị> — agent lập thì ghi `Agent <model>`, kèm tên người yêu cầu
 
 ## Steps to Reproduce
 1. ...
@@ -107,7 +108,9 @@ Chi tiết quy trình: workflow `/retest-fixed-bugs`.
 | **P2** | Fix trong sprint kế tiếp |
 | **P3** | Fix khi có thời gian (backlog) |
 
-> Severity đánh giá theo **mức ảnh hưởng kỹ thuật**; Priority theo **mức khẩn cấp business**. Hai giá trị độc lập nhau.
+> Severity đánh giá **mức tác động tới lợi ích của các bên liên quan hoặc tới yêu cầu**; Priority là **mức ưu tiên sửa**. Hai giá trị độc lập nhau (CTFL 5.5).
+>
+> Trạng thái lỗi (CTFL 5.5) không ghi lặp trong file bug: nằm ở cột `Trạng thái` của danh mục và mục `Lịch sử retest`.
 
 ---
 
@@ -145,7 +148,7 @@ Danh mục là **điểm vào tầng bug** và cũng là file `scripts/bugs-view
 
 > ⚠️ **Tên cột là hợp đồng đọc, không phải nhãn trình bày.** `scripts/bugs-viewer` chỉ nhận bảng danh mục khi có **đồng thời** cột `Mã bug` **và** cột `Trạng thái` — thiếu một trong hai (hoặc dịch sang `Bug ID` / `Status`) thì viewer **bỏ toàn bộ bảng**, không báo lỗi gì. Các cột còn lại khớp theo chuỗi con (`Module`, `Tiêu đề`, `Severity`, `Priority`, `TC liên quan`, `Ngày phát hiện`) — thiếu thì chỉ mất cột đó.
 >
-> **Giá trị cột `Trạng thái`** phải chứa một trong các từ khoá viewer nhận: `Đang mở` · `Đã fix` / `Chờ retest` · `rà lại` · `đóng`. Viết kiểu khác thì bug bị xếp mặc định là *Đang mở*.
+> **Giá trị cột `Trạng thái`** phải chứa một trong các từ khoá viewer nhận: `Đang mở` · `Đã fix` / `Chờ retest` · `rà lại` · `đóng`. Viết kiểu khác thì bug bị xếp mặc định là *Đang mở*. Báo cáo hoá ra không phải lỗi (false positive, trùng, change request): `⚪ Đã đóng — không phải lỗi: <lý do>`. Quyết định chưa sửa: `🔴 **Đang mở** — Hoãn <lý do>`.
 >
 > **Ai cập nhật cột này:** `/create-bug-report` ghi `🔴 **Đang mở**` · dev báo đã fix → `🟡 Chờ retest` · `/retest-fixed-bugs` ghi theo kết quả retest (bảng ánh xạ ở Bước 5 của workflow đó). Cột này phải khớp dòng mới nhất của **Lịch sử retest** trong file bug — viewer tính trạng thái file chi tiết từ Lịch sử retest, còn bug chỉ có trong danh mục thì đọc cột này, lệch nhau là hai nơi báo hai trạng thái.
 >

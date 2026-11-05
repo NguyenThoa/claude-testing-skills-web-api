@@ -30,11 +30,11 @@ Purpose: Trả lời câu hỏi PM/QA Lead hỏi **giữa đợt**: *"Kỳ này 
 
 ## Chuẩn tham chiếu
 
-ISTQB CTFL v4.0 mục **5.3.2 Purpose, Content and Audience for Test Reports** — test progress report *"support the ongoing control of the testing"*, thường lập *"on a regular basis (e.g., daily, weekly, etc.)"* và gồm:
+ISTQB CTFL v4.0 mục **5.3.2 Purpose, Content and Audience for Test Reports** — test progress report *"support the ongoing test control"*, thường lập *"on a regular basis (e.g., daily, weekly, etc.)"* và gồm:
 
 | ISTQB CTFL v4.0 — 5.3.2 | Mục trong báo cáo |
 |---|---|
-| Test period | Đầu báo cáo |
+| Testing period | Đầu báo cáo |
 | Test progress (e.g., ahead or behind schedule), including any notable deviations | 1 · 2 |
 | Impediments for testing, and their workarounds | 4 |
 | Test metrics (see section 5.3.1 for examples) | 3 |

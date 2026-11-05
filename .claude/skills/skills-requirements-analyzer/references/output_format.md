@@ -149,7 +149,7 @@ Module không có tài liệu nào → ghi một dòng: *"Không có tài liệu
 
 > AMB đã ✅ hoặc ⏭️ **không được xoá khỏi bảng** — giữ lại để biết quyết định đến từ đâu.
 
-**Bảng Risks:** `RISK-<MODULE>-XX | Rủi ro | Mô tả | Mitigation`
+**Bảng Risks:** `RISK-<MODULE>-XX | Rủi ro | Mô tả | Loại | Khả năng | Tác động | Mức | Phản hồi | Mitigation` — nghĩa từng cột ở mục 4.2. Tài liệu cũ giữ 4 cột, bổ sung khi workflow chạm lại module
 
 ### 6.8. Phân rã Epic / Story (Backlog View) — bắt buộc khi ≥ 25 REQ
 
